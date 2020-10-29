@@ -2,10 +2,11 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\Level;
+use pocketmine\level\utils\SubChunkIteratorManager;
 use Threaded;
 use ThreadedLogger;
 use Throwable;
@@ -36,41 +37,48 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $result;
+	/**
+	 * @var string
+	 */
+	private $selection;
 
 	/**
 	 * EditTask constructor.
-	 * @param Level $level
+	 * @param Selection $selection
 	 */
-	public function __construct(Level $level)
+	public function __construct(Selection $selection)
 	{
 		$this->id = WorkerAdapter::getId();
 		$this->chunkData = igbinary_serialize(array_map(static function (Chunk $chunk) {
 			return $chunk->fastSerialize();
-		}, static::getNeededChunks($level, $this)));
+		}, $selection->getNeededChunks()));
+		$this->selection = igbinary_serialize($selection);
 	}
 
 	public function run(): void
 	{
-		$chunkManager = new ChunkManager();
+		$start = microtime(true);
+		$iterator = new SubChunkIteratorManager(new ChunkManager());
+		$selection = igbinary_unserialize($this->selection);
 
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);
 		}, igbinary_unserialize($this->chunkData)) as $chunk) {
-			$chunkManager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
-		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($chunkManager->getChunks()) . " Chunks");
+		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($iterator->level->getChunks()) . " Chunks");
 
 
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
 		try {
-			$this->execute($chunkManager);
-			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful");
+			$this->execute($iterator, $selection);
+			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s");
 
 			$this->result = igbinary_serialize(array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
-			}, $chunkManager->getChunks()));
+			}, $iterator->level->getChunks()));
 		} catch (Throwable $exception) {
 			$this->getLogger()->logException($exception);
 		}
@@ -90,14 +98,11 @@ abstract class EditTask extends Threaded
 	 */
 	abstract public function getTaskName(): string;
 
-	abstract public function execute(ChunkManager $chunkManager): void;
-
 	/**
-	 * @param Level    $level
-	 * @param EditTask $task
-	 * @return Chunk[]
+	 * @param SubChunkIteratorManager $chunkManager
+	 * @param Selection               $selection
 	 */
-	abstract public static function getNeededChunks(Level $level, EditTask $task): array;
+	abstract public function execute(SubChunkIteratorManager $chunkManager, Selection $selection): void;
 
 	/**
 	 * @return int
