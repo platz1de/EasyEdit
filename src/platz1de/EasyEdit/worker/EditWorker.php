@@ -14,11 +14,6 @@ class EditWorker extends Worker
 	private $logger;
 
 	/**
-	 * @var int
-	 */
-	private $id = 0;
-
-	/**
 	 * EditWorker constructor.
 	 * @param ThreadedLogger $logger
 	 */
@@ -55,13 +50,5 @@ class EditWorker extends Worker
 	 */
 	public function getThreadName() : string{
 		return "EditWorker";
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getId(): int
-	{
-		return ++$this->id;
 	}
 }
