@@ -23,7 +23,7 @@ class EditWorker extends Worker
 	}
 
 
-	public function run()
+	public function run(): void
 	{
 		error_reporting(-1);
 
@@ -48,7 +48,8 @@ class EditWorker extends Worker
 	/**
 	 * @return string
 	 */
-	public function getThreadName() : string{
+	public function getThreadName(): string
+	{
 		return "EditWorker";
 	}
 }
