@@ -90,7 +90,7 @@ class Cube extends Selection
 			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
 
 			$this->pos1->setComponents($minX, $minY, $minZ);
-			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ)->add(1, 1, 1);
+			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ);
 
 			if(($player = Server::getInstance()->getPlayer($this->player)) instanceof Player){
 				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position(0, 0, 0, $this->level))]);
@@ -105,9 +105,9 @@ class Cube extends Selection
 					new IntTag("xStructureOffset", $this->pos1->getX()),
 					new IntTag("yStructureOffset", $this->pos1->getY()),
 					new IntTag("zStructureOffset", $this->pos1->getZ()),
-					new IntTag("xStructureSize", $this->pos2->getX() - $this->pos1->getX()),
-					new IntTag("yStructureSize", $this->pos2->getY() - $this->pos1->getY()),
-					new IntTag("zStructureSize", $this->pos2->getZ() - $this->pos1->getZ()),
+					new IntTag("xStructureSize", $this->pos2->getX() - $this->pos1->getX() + 1),
+					new IntTag("yStructureSize", $this->pos2->getY() - $this->pos1->getY() + 1),
+					new IntTag("zStructureSize", $this->pos2->getZ() - $this->pos1->getZ() + 1),
 					new IntTag("data", 5),
 					new ByteTag("rotation", 0),
 					new ByteTag("mirror", 0),
