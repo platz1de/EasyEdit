@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -41,18 +42,24 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $selection;
+	/**
+	 * @var Pattern
+	 */
+	private $pattern;
 
 	/**
 	 * EditTask constructor.
 	 * @param Selection $selection
+	 * @param Pattern   $pattern
 	 */
-	public function __construct(Selection $selection)
+	public function __construct(Selection $selection, Pattern $pattern)
 	{
 		$this->id = WorkerAdapter::getId();
 		$this->chunkData = igbinary_serialize(array_map(static function (Chunk $chunk) {
 			return $chunk->fastSerialize();
 		}, $selection->getNeededChunks()));
 		$this->selection = igbinary_serialize($selection);
+		$this->pattern = igbinary_serialize($pattern);
 	}
 
 	public function run(): void
@@ -60,6 +67,7 @@ abstract class EditTask extends Threaded
 		$start = microtime(true);
 		$iterator = new SubChunkIteratorManager(new ChunkManager());
 		$selection = igbinary_unserialize($this->selection);
+		$pattern = igbinary_unserialize($this->pattern);
 
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);
@@ -73,7 +81,7 @@ abstract class EditTask extends Threaded
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
 		try {
-			$this->execute($iterator, $selection);
+			$this->execute($iterator, $selection, $pattern);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s");
 
 			$this->result = igbinary_serialize(array_map(static function (Chunk $chunk) {
@@ -101,8 +109,9 @@ abstract class EditTask extends Threaded
 	/**
 	 * @param SubChunkIteratorManager $chunkManager
 	 * @param Selection               $selection
+	 * @param Pattern                 $pattern
 	 */
-	abstract public function execute(SubChunkIteratorManager $chunkManager, Selection $selection): void;
+	abstract public function execute(SubChunkIteratorManager $chunkManager, Selection $selection, Pattern $pattern): void;
 
 	/**
 	 * @return int

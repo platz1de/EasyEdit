@@ -2,8 +2,10 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
+use pocketmine\block\Block;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
 class FillTask extends EditTask
@@ -19,13 +21,16 @@ class FillTask extends EditTask
 	/**
 	 * @param SubChunkIteratorManager $iterator
 	 * @param Selection               $selection
+	 * @param Pattern                 $pattern
 	 */
-	public function execute(SubChunkIteratorManager $iterator, Selection $selection): void
+	public function execute(SubChunkIteratorManager $iterator, Selection $selection, Pattern $pattern): void
 	{
-		$blocki = random_int(0, 5);
 		foreach ($selection->getAffectedBlocks() as $block){
-			$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
-			$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $blocki, 0);
+			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ());
+			if($b instanceof Block){
+				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
+				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $b->getId(), $b->getDamage());
+			}
 		}
 	}
 }
