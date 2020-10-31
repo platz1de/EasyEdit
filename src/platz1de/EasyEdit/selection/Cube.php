@@ -2,10 +2,24 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockIds;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\NetworkLittleEndianNBTStream;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\LongTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\network\mcpe\protocol\BlockActorDataPacket;
+use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\tile\Tile;
+use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
 
 class Cube extends Selection
@@ -20,20 +34,33 @@ class Cube extends Selection
 	private $pos2;
 
 	/**
-	 * Cube constructor.
-	 * @param string  $player
-	 * @param Level   $level
-	 * @param Vector3 $pos1
-	 * @param Vector3 $pos2
+	 * @var Vector3
 	 */
-	public function __construct(string $player, Level $level, Vector3 $pos1, Vector3 $pos2)
+	private $selected1;
+	/**
+	 * @var Vector3
+	 */
+	private $selected2;
+
+	/**
+	 * Cube constructor.
+	 * @param string       $player
+	 * @param Level        $level
+	 * @param null|Vector3 $pos1
+	 * @param null|Vector3 $pos2
+	 */
+	public function __construct(string $player, Level $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
 	{
 		parent::__construct($player, $level);
 
-		self::getEdges($pos1, $pos2);
+		$this->update();
 
-		$this->pos1 = $pos1;
-		$this->pos2 = $pos2;
+		if($pos1 !== null){
+			$this->pos1 = clone($this->selected1 = $pos1);
+		}
+		if($pos2 !== null){
+			$this->pos2 = clone($this->selected2 = $pos2);
+		}
 	}
 
 	/**
@@ -52,21 +79,63 @@ class Cube extends Selection
 		return $blocks;
 	}
 
-	/**
-	 * @param Vector3 $pos1
-	 * @param Vector3 $pos2
-	 */
-	public static function getEdges(Vector3 $pos1, Vector3 $pos2): void
+	public function update(): void
 	{
-		$minX = min($pos1->getX(), $pos2->getX());
-		$maxX = max($pos1->getX(), $pos2->getX());
-		$minY = min($pos1->getX(), $pos2->getX());
-		$maxY = max($pos1->getX(), $pos2->getX());
-		$minZ = min($pos1->getX(), $pos2->getX());
-		$maxZ = max($pos1->getX(), $pos2->getX());
+		if ($this->pos1 instanceof Vector3 && $this->pos2 instanceof Vector3) {
+			$minX = min($this->pos1->getX(), $this->pos2->getX());
+			$maxX = max($this->pos1->getX(), $this->pos2->getX());
+			$minY = min($this->pos1->getY(), $this->pos2->getY());
+			$maxY = max($this->pos1->getY(), $this->pos2->getY());
+			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
+			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
 
-		$pos1->setComponents($minX, $minY, $minZ);
-		$pos2->setComponents($maxX, $maxY, $maxZ);
+			$this->pos1->setComponents($minX, $minY, $minZ);
+			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ)->add(1, 1, 1);
+
+			if(($player = Server::getInstance()->getPlayer($this->player)) instanceof Player){
+				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position(0, 0, 0, $this->level))]);
+
+				$nbt = new CompoundTag("", [
+					new StringTag(Tile::TAG_ID, "StructureBlock"),
+					new IntTag(Tile::TAG_X, 0),
+					new IntTag(Tile::TAG_Y, 0),
+					new IntTag(Tile::TAG_Z, 0),
+					new StringTag("structureName", "selection"),
+					new StringTag("dataField", ""),
+					new IntTag("xStructureOffset", $this->pos1->getX()),
+					new IntTag("yStructureOffset", $this->pos1->getY()),
+					new IntTag("zStructureOffset", $this->pos1->getZ()),
+					new IntTag("xStructureSize", $this->pos2->getX() - $this->pos1->getX()),
+					new IntTag("yStructureSize", $this->pos2->getY() - $this->pos1->getY()),
+					new IntTag("zStructureSize", $this->pos2->getZ() - $this->pos1->getZ()),
+					new IntTag("data", 5),
+					new ByteTag("rotation", 0),
+					new ByteTag("mirror", 0),
+					new FloatTag("integrity", 100.0),
+					new LongTag("seed", 0),
+					new ByteTag("ignoreEntities", 1),
+					new ByteTag("includePlayers", 0),
+					new ByteTag("removeBlocks", 0),
+					new ByteTag("showBoundingBox", 1),
+					new ByteTag("isMovable", 1),
+					new ByteTag("isPowered", 0)
+				]);
+
+				$nbtWriter = new NetworkLittleEndianNBTStream();
+				$spawnData = $nbtWriter->write($nbt);
+				if($spawnData === false) {
+					throw new AssumptionFailedError("NBTStream->write() should not return false when given a CompoundTag");
+				}
+
+				$pk = new BlockActorDataPacket();
+				$pk->x = 0;
+				$pk->y = 0;
+				$pk->z = 0;
+				$pk->namedtag = $spawnData;
+
+				$player->dataPacket($pk);
+			}
+		}
 	}
 
 	/**
@@ -112,5 +181,31 @@ class Cube extends Selection
 		}
 		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
 		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+	}
+
+	/**
+	 * @param Vector3 $pos1
+	 */
+	public function setPos1(Vector3 $pos1): void
+	{
+		$this->pos1 = clone($this->selected1 = $pos1);
+		if($this->selected2 !== null){
+			$this->pos2 = clone($this->selected2);
+		}
+
+		$this->update();
+	}
+
+	/**
+	 * @param Vector3 $pos2
+	 */
+	public function setPos2(Vector3 $pos2): void
+	{
+		if($this->selected1 !== null){
+			$this->pos1 = clone($this->selected1);
+		}
+		$this->pos2 = clone($this->selected2 = $pos2);
+
+		$this->update();
 	}
 }
