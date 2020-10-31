@@ -2,3 +2,5 @@ prefix: "§l§aEasy§bEdit §r> "
 
 selected-pos1: "Selected the first position"
 selected-pos2: "Selected the second position"
+
+no-selection: "You don't have an active Selection"

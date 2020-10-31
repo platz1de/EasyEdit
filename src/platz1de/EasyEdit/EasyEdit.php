@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit;
 
 use Exception;
+use platz1de\EasyEdit\command\FillCommand;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\worker\EditWorker;
@@ -35,6 +36,10 @@ class EasyEdit extends PluginBase
 		$this->getScheduler()->scheduleRepeatingTask(new WorkerAdapter(), 1);
 		
 		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
+
+		Server::getInstance()->getCommandMap()->registerAll("easyedit", [
+			new FillCommand()
+		]);
 	}
 
 	/**
