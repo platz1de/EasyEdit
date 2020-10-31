@@ -2,8 +2,13 @@
 
 namespace platz1de\EasyEdit;
 
+use Exception;
+use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
+use pocketmine\math\Vector3;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 
@@ -22,10 +27,14 @@ class EasyEdit extends PluginBase
 	{
 		self::$instance = $this;
 
+		Messages::load();
+
 		self::$worker = new EditWorker(Server::getInstance()->getLogger());
 		self::$worker->start();
 
 		$this->getScheduler()->scheduleRepeatingTask(new WorkerAdapter(), 1);
+		
+		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
 	}
 
 	/**
@@ -42,5 +51,51 @@ class EasyEdit extends PluginBase
 	public static function getWorker()
 	{
 		return self::$worker;
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param Vector3 $position
+	 */
+	public static function selectPos1(Player $player, Vector3 $position): void
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+			if (!$selection instanceof Cube) {
+				$selection->close();
+				$selection = new Cube($player->getName(), $player->getLevel());
+			}
+		} catch (Exception $exception) {
+			$selection = new Cube($player->getName(), $player->getLevel());
+		}
+
+		$selection->setPos1($position->floor());
+
+		SelectionManager::setForPlayer($player->getName(), $selection);
+
+		Messages::send($player, "selected-pos1");
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param Vector3 $position
+	 */
+	public static function selectPos2(Player $player, Vector3 $position): void
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+			if (!$selection instanceof Cube) {
+				$selection->close();
+				$selection = new Cube($player->getName(), $player->getLevel());
+			}
+		} catch (Exception $exception) {
+			$selection = new Cube($player->getName(), $player->getLevel());
+		}
+
+		$selection->setPos2($position->floor());
+
+		SelectionManager::setForPlayer($player->getName(), $selection);
+
+		Messages::send($player, "selected-pos2");
 	}
 }
