@@ -54,4 +54,8 @@ abstract class Selection implements Serializable
 	{
 		return $this->level;
 	}
+
+	public function close(): void
+	{
+	}
 }
