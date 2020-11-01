@@ -8,14 +8,14 @@ use platz1de\EasyEdit\task\EditTask;
 use pocketmine\block\Block;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class FillTask extends EditTask
+class SetTask extends EditTask
 {
 	/**
 	 * @return string
 	 */
 	public function getTaskName(): string
 	{
-		return "Fill";
+		return "set";
 	}
 
 	/**

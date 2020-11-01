@@ -7,17 +7,17 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\task\selection\FillTask;
+use platz1de\EasyEdit\task\selection\SetTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
-class FillCommand extends Command
+class SetCommand extends Command
 {
 	public function __construct()
 	{
-		parent::__construct("fill", "Fill the selected Area", "/fill <pattern>", ["set"]);
-		$this->setPermission("easyedit.command.fill");
+		parent::__construct("/set", "Set the selected Area", "//set <pattern>", []);
+		$this->setPermission("easyedit.command.set");
 	}
 
 	/**
@@ -50,8 +50,6 @@ class FillCommand extends Command
 			return;
 		}
 
-		var_dump($pattern);
-
-		WorkerAdapter::submit(new FillTask($selection, $pattern));
+		WorkerAdapter::submit(new SetTask($selection, $pattern));
 	}
 }

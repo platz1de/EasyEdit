@@ -10,5 +10,5 @@ permissions:
    easyedit.command:
     default: op
     children:
-     easyedit.command.fill:
+     easyedit.command.set:
       default: op
