@@ -197,7 +197,7 @@ class Pattern
 	 */
 	private static function getPattern(string $pattern, array $children = []): Pattern
 	{
-		$args = explode(":", $pattern);
+		$args = explode(";", $pattern);
 		$name = array_shift($args);
 		switch ($name) {
 			case "even":
