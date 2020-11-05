@@ -8,6 +8,7 @@ use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\utils\SubChunkIteratorManager;
+use pocketmine\math\Vector3;
 use Threaded;
 use ThreadedLogger;
 use Throwable;
@@ -46,20 +47,26 @@ abstract class EditTask extends Threaded
 	 * @var Pattern
 	 */
 	private $pattern;
+	/**
+	 * @var string
+	 */
+	private $place;
 
 	/**
 	 * EditTask constructor.
 	 * @param Selection $selection
 	 * @param Pattern   $pattern
+	 * @param Vector3   $place
 	 */
-	public function __construct(Selection $selection, Pattern $pattern)
+	public function __construct(Selection $selection, Pattern $pattern, Vector3 $place)
 	{
 		$this->id = WorkerAdapter::getId();
 		$this->chunkData = igbinary_serialize(array_map(static function (Chunk $chunk) {
 			return $chunk->fastSerialize();
-		}, $selection->getNeededChunks()));
+		}, $selection->getNeededChunks($place)));
 		$this->selection = igbinary_serialize($selection);
 		$this->pattern = igbinary_serialize($pattern);
+		$this->place = igbinary_serialize($place);
 	}
 
 	public function run(): void
@@ -68,6 +75,7 @@ abstract class EditTask extends Threaded
 		$iterator = new SubChunkIteratorManager(new ChunkManager());
 		$selection = igbinary_unserialize($this->selection);
 		$pattern = igbinary_unserialize($this->pattern);
+		$place = igbinary_unserialize($this->place);
 
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);

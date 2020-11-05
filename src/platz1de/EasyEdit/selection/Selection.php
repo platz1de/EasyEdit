@@ -35,9 +35,10 @@ abstract class Selection implements Serializable
 	abstract public function getAffectedBlocks(): array;
 
 	/**
+	 * @param Vector3 $place
 	 * @return Chunk[]
 	 */
-	abstract public function getNeededChunks(): array;
+	abstract public function getNeededChunks(Vector3 $place): array;
 
 	/**
 	 * @return string
