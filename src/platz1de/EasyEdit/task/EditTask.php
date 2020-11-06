@@ -44,7 +44,7 @@ abstract class EditTask extends Threaded
 	 */
 	private $selection;
 	/**
-	 * @var Pattern
+	 * @var string
 	 */
 	private $pattern;
 	/**
