@@ -11,6 +11,7 @@ use platz1de\EasyEdit\task\selection\SetTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\Player;
 
 class SetCommand extends Command
 {
@@ -27,7 +28,7 @@ class SetCommand extends Command
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args): void
 	{
-		if (!$this->testPermission($sender)) {
+		if (!$sender instanceof Player || !$this->testPermission($sender)) {
 			return;
 		}
 
@@ -50,6 +51,6 @@ class SetCommand extends Command
 			return;
 		}
 
-		WorkerAdapter::submit(new SetTask($selection, $pattern));
+		WorkerAdapter::submit(new SetTask($selection, $pattern, $sender));
 	}
 }
