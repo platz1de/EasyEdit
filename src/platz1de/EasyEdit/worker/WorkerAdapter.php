@@ -6,7 +6,6 @@ use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\scheduler\Task;
-use pocketmine\Server;
 
 class WorkerAdapter extends Task
 {

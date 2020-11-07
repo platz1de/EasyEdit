@@ -2,14 +2,7 @@
 
 namespace platz1de\EasyEdit\command;
 
-use Exception;
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\pattern\ParseError;
-use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\task\selection\SetTask;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
