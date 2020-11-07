@@ -25,6 +25,11 @@ use RuntimeException;
 class Cube extends Selection
 {
 	/**
+	 * @var Level|string
+	 */
+	private $level;
+
+	/**
 	 * @var Vector3
 	 */
 	private $pos1;
@@ -51,7 +56,9 @@ class Cube extends Selection
 	 */
 	public function __construct(string $player, Level $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
 	{
-		parent::__construct($player, $level);
+		parent::__construct($player);
+
+		$this->level = $level;
 
 		$this->update();
 
@@ -208,5 +215,13 @@ class Cube extends Selection
 		$this->pos2 = clone($this->selected2 = $pos2);
 
 		$this->update();
+	}
+
+	/**
+	 * @return Level|string
+	 */
+	private function getLevel()
+	{
+		return $this->level;
 	}
 }

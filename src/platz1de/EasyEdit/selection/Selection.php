@@ -13,20 +13,14 @@ abstract class Selection implements Serializable
 	 * @var string
 	 */
 	protected $player;
-	/**
-	 * @var Level|string
-	 */
-	protected $level;
 
 	/**
 	 * Selection constructor.
 	 * @param string $player
-	 * @param Level  $level
 	 */
-	public function __construct(string $player, Level $level)
+	public function __construct(string $player)
 	{
 		$this->player = $player;
-		$this->level = $level;
 	}
 
 	/**
@@ -46,14 +40,6 @@ abstract class Selection implements Serializable
 	public function getPlayer(): string
 	{
 		return $this->player;
-	}
-
-	/**
-	 * @return Level
-	 */
-	public function getLevel(): Level
-	{
-		return $this->level;
 	}
 
 	public function close(): void
