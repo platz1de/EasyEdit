@@ -36,7 +36,7 @@ class EasyEdit extends PluginBase
 		self::$worker->start();
 
 		$this->getScheduler()->scheduleRepeatingTask(new WorkerAdapter(), 1);
-		
+
 		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
 
 		Server::getInstance()->getCommandMap()->registerAll("easyedit", [

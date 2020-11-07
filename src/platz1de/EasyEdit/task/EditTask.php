@@ -86,7 +86,6 @@ abstract class EditTask extends Threaded
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($iterator->level->getChunks()) . " Chunks");
 
-
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
 		try {

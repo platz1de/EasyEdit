@@ -62,10 +62,10 @@ class Cube extends Selection
 
 		$this->update();
 
-		if($pos1 !== null){
+		if ($pos1 !== null) {
 			$this->pos1 = clone($this->selected1 = $pos1);
 		}
-		if($pos2 !== null){
+		if ($pos2 !== null) {
 			$this->pos2 = clone($this->selected2 = $pos2);
 		}
 	}
@@ -99,7 +99,7 @@ class Cube extends Selection
 			$this->pos1->setComponents($minX, $minY, $minZ);
 			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ);
 
-			if(($player = Server::getInstance()->getPlayer($this->player)) instanceof Player){
+			if (($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position(0, 0, 0, $this->level))]);
 
 				$nbt = new CompoundTag("", [
@@ -130,7 +130,7 @@ class Cube extends Selection
 
 				$nbtWriter = new NetworkLittleEndianNBTStream();
 				$spawnData = $nbtWriter->write($nbt);
-				if($spawnData === false) {
+				if ($spawnData === false) {
 					throw new AssumptionFailedError("NBTStream->write() should not return false when given a CompoundTag");
 				}
 
@@ -197,7 +197,7 @@ class Cube extends Selection
 	public function setPos1(Vector3 $pos1): void
 	{
 		$this->pos1 = clone($this->selected1 = $pos1);
-		if($this->selected2 !== null){
+		if ($this->selected2 !== null) {
 			$this->pos2 = clone($this->selected2);
 		}
 
@@ -209,7 +209,7 @@ class Cube extends Selection
 	 */
 	public function setPos2(Vector3 $pos2): void
 	{
-		if($this->selected1 !== null){
+		if ($this->selected1 !== null) {
 			$this->pos1 = clone($this->selected1);
 		}
 		$this->pos2 = clone($this->selected2 = $pos2);

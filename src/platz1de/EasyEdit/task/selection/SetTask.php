@@ -25,9 +25,9 @@ class SetTask extends EditTask
 	 */
 	public function execute(SubChunkIteratorManager $iterator, Selection $selection, Pattern $pattern): void
 	{
-		foreach ($selection->getAffectedBlocks() as $block){
+		foreach ($selection->getAffectedBlocks() as $block) {
 			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ());
-			if($b instanceof Block){
+			if ($b instanceof Block) {
 				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
 				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $b->getId(), $b->getDamage());
 			}
