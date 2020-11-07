@@ -17,7 +17,7 @@ class EventListener implements Listener
 	public function onBreak(BlockBreakEvent $event): void
 	{
 		$axe = $event->getItem();
-		if ($axe instanceof Axe && $axe->getTier() === TieredTool::TIER_WOODEN) {
+		if ($axe instanceof Axe && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
 			$event->setCancelled();
 			EasyEdit::selectPos1($event->getPlayer(), $event->getBlock()->asVector3());
 		}
@@ -26,7 +26,7 @@ class EventListener implements Listener
 	public function onInteract(PlayerInteractEvent $event): void
 	{
 		$axe = $event->getItem();
-		if(!$event->getBlock() instanceof Air && $axe instanceof Axe && $axe->getTier() === TieredTool::TIER_WOODEN){
+		if($axe instanceof Axe && !$event->getBlock() instanceof Air && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")){
 			$event->setCancelled();
 			EasyEdit::selectPos2($event->getPlayer(), $event->getBlock()->asVector3());
 		}
