@@ -146,10 +146,10 @@ class Cube extends Selection
 	}
 
 	/**
-	 * @param Vector3 $place
+	 * @param Position $place
 	 * @return Chunk[]
 	 */
-	public function getNeededChunks(Vector3 $place): array
+	public function getNeededChunks(Position $place): array
 	{
 		$chunks = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {

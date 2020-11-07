@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use Threaded;
@@ -56,9 +57,9 @@ abstract class EditTask extends Threaded
 	 * EditTask constructor.
 	 * @param Selection $selection
 	 * @param Pattern   $pattern
-	 * @param Vector3   $place
+	 * @param Position  $place
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Vector3 $place)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place)
 	{
 		$this->id = WorkerAdapter::getId();
 		$this->chunkData = igbinary_serialize(array_map(static function (Chunk $chunk) {
@@ -66,7 +67,7 @@ abstract class EditTask extends Threaded
 		}, $selection->getNeededChunks($place)));
 		$this->selection = igbinary_serialize($selection);
 		$this->pattern = igbinary_serialize($pattern);
-		$this->place = igbinary_serialize($place);
+		$this->place = igbinary_serialize($place->asVector3());
 	}
 
 	public function run(): void
