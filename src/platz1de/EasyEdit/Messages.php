@@ -17,9 +17,9 @@ class Messages
 	}
 
 	/**
-	 * @param array|string $players
+	 * @param string|string[]|Player|Player[] $players
 	 * @param string       $id
-	 * @param array|string $replace
+	 * @param string|string[] $replace
 	 */
 	public static function send($players, string $id, $replace = []): void
 	{
@@ -36,7 +36,7 @@ class Messages
 
 	/**
 	 * @param string       $id
-	 * @param array|string $replace
+	 * @param string|string[] $replace
 	 * @return string
 	 */
 	public static function replace(string $id, $replace = []): string
