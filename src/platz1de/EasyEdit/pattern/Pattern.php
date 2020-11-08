@@ -53,6 +53,7 @@ class Pattern
 	 * @param int $y
 	 * @param int $z
 	 * @return bool
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function isValidAt(int $x, int $y, int $z): bool
 	{
@@ -88,7 +89,7 @@ class Pattern
 
 		foreach ($parse as $i => $str) {
 			if ($str === ")") {
-				if ($isPattern && $piece === "") {
+				if ($piece === "" && $isPattern) {
 					throw new ParseError("Pattern was never opened", $i + $start);
 				}
 
