@@ -28,7 +28,7 @@ class RedoTask extends PasteTask
 	 */
 	public function getTaskName(): string
 	{
-		return "undo";
+		return "redo";
 	}
 
 	/**
