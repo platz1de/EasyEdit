@@ -46,6 +46,10 @@ class Cube extends Selection
 	 * @var Vector3
 	 */
 	private $selected2;
+	/**
+	 * @var Vector3
+	 */
+	private $structure;
 
 	/**
 	 * Cube constructor.
@@ -100,21 +104,24 @@ class Cube extends Selection
 			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ);
 
 			if (($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
-				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position(0, 0, 0, $this->level))]);
-
+				if(isset($this->structure)){
+					$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure)]);
+				}
+				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
+				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
 				$nbt = new CompoundTag("", [
 					new StringTag(Tile::TAG_ID, "StructureBlock"),
-					new IntTag(Tile::TAG_X, 0),
-					new IntTag(Tile::TAG_Y, 0),
-					new IntTag(Tile::TAG_Z, 0),
+					new IntTag(Tile::TAG_X, $this->structure->getFloorX()),
+					new IntTag(Tile::TAG_Y, $this->structure->getFloorY()),
+					new IntTag(Tile::TAG_Z, $this->structure->getFloorZ()),
 					new StringTag("structureName", "selection"),
 					new StringTag("dataField", ""),
-					new IntTag("xStructureOffset", $this->pos1->getX()),
-					new IntTag("yStructureOffset", $this->pos1->getY()),
-					new IntTag("zStructureOffset", $this->pos1->getZ()),
-					new IntTag("xStructureSize", $this->pos2->getX() - $this->pos1->getX() + 1),
-					new IntTag("yStructureSize", $this->pos2->getY() - $this->pos1->getY() + 1),
-					new IntTag("zStructureSize", $this->pos2->getZ() - $this->pos1->getZ() + 1),
+					new IntTag("xStructureOffset", $this->pos1->getFloorX() - $this->structure->getFloorX()),
+					new IntTag("yStructureOffset", $this->pos1->getFloorY() - $this->structure->getFloorY()),
+					new IntTag("zStructureOffset", $this->pos1->getFloorZ() - $this->structure->getFloorZ()),
+					new IntTag("xStructureSize", $this->pos2->getFloorX() - $this->pos1->getFloorX() + 1),
+					new IntTag("yStructureSize", $this->pos2->getFloorY() - $this->pos1->getFloorY() + 1),
+					new IntTag("zStructureSize", $this->pos2->getFloorZ() - $this->pos1->getFloorZ() + 1),
 					new IntTag("data", 5),
 					new ByteTag("rotation", 0),
 					new ByteTag("mirror", 0),
@@ -135,9 +142,9 @@ class Cube extends Selection
 				}
 
 				$pk = new BlockActorDataPacket();
-				$pk->x = 0;
-				$pk->y = 0;
-				$pk->z = 0;
+				$pk->x = $this->structure->getFloorX();
+				$pk->y = $this->structure->getFloorY();
+				$pk->z = $this->structure->getFloorZ();
 				$pk->namedtag = $spawnData;
 
 				$player->dataPacket($pk);
@@ -223,5 +230,12 @@ class Cube extends Selection
 	private function getLevel()
 	{
 		return $this->level;
+	}
+
+	public function close(): void
+	{
+		if(isset($this->structure) and ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player){
+			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure)]);
+		}
 	}
 }
