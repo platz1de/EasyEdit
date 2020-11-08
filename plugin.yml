@@ -12,5 +12,9 @@ permissions:
     children:
      easyedit.command.set:
       default: op
+     easyedit.command.undo:
+      default: op
+     easyedit.command.redo:
+      default: op
    easyedit.position:
     default: op

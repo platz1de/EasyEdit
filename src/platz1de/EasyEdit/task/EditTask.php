@@ -2,14 +2,18 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
 use Threaded;
@@ -45,10 +49,6 @@ abstract class EditTask extends Threaded
 	/**
 	 * @var string
 	 */
-	private $result;
-	/**
-	 * @var string
-	 */
 	private $selection;
 	/**
 	 * @var string
@@ -62,6 +62,15 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $level;
+
+	/**
+	 * @var string
+	 */
+	private $result;
+	/**
+	 * @var string
+	 */
+	private $toUndo;
 
 	/**
 	 * EditTask constructor.
@@ -92,8 +101,11 @@ abstract class EditTask extends Threaded
 	{
 		$start = microtime(true);
 		$iterator = new SubChunkIteratorManager(new ReferencedChunkManager($this->level));
+		/** @var Selection $selection */
 		$selection = igbinary_unserialize($this->selection);
+		/** @var Pattern $pattern */
 		$pattern = igbinary_unserialize($this->pattern);
+		/** @var Vector3 $place */
 		$place = igbinary_unserialize($this->place);
 
 		foreach (array_map(static function (string $chunk) {
@@ -108,12 +120,14 @@ abstract class EditTask extends Threaded
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
+		$toUndo = $this->getUndoBlockList($selection, $place, $this->level);
+
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($iterator->level->getChunks()) . " Chunks");
 
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
 		try {
-			$this->execute($iterator, $tiles, $selection, $pattern);
+			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s");
 
 			$result = [];
@@ -122,6 +136,7 @@ abstract class EditTask extends Threaded
 			}, $iterator->level->getChunks());
 			$result[] = $tiles;
 			$this->result = igbinary_serialize($result);
+			$this->toUndo = igbinary_serialize($toUndo);
 		} catch (Throwable $exception) {
 			$this->getLogger()->logException($exception);
 		}
@@ -142,12 +157,14 @@ abstract class EditTask extends Threaded
 	abstract public function getTaskName(): string;
 
 	/**
-	 * @param SubChunkIteratorManager $chunkManager
-	 * @param CompoundTag[]           $tiles
-	 * @param Selection               $selection
-	 * @param Pattern                 $pattern
+	 * @param SubChunkIteratorManager  $chunkManager
+	 * @param CompoundTag[]            $tiles
+	 * @param Selection                $selection
+	 * @param Pattern                  $pattern
+	 * @param Vector3                  $place
+	 * @param StaticBlockListSelection $toUndo
 	 */
-	abstract public function execute(SubChunkIteratorManager $chunkManager, array &$tiles, Selection $selection, Pattern $pattern): void;
+	abstract public function execute(SubChunkIteratorManager $chunkManager, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, StaticBlockListSelection $toUndo): void;
 
 	/**
 	 * @return int
@@ -171,6 +188,15 @@ abstract class EditTask extends Threaded
 	public function getResult(): ?ReferencedChunkManager
 	{
 		if (isset($this->result)) {
+			/** @var Selection $selection */
+			$selection = igbinary_unserialize($this->selection);
+
+			if($this instanceof UndoTask){
+				HistoryManager::addToFuture($selection->getPlayer(), igbinary_unserialize($this->toUndo));
+			}else{
+				HistoryManager::addToHistory($selection->getPlayer(), igbinary_unserialize($this->toUndo));
+			}
+
 			$result = igbinary_unserialize($this->result);
 			$manager = new ReferencedChunkManager($this->level);
 			foreach (array_map(static function (string $chunk) {
@@ -196,4 +222,12 @@ abstract class EditTask extends Threaded
 
 		return null;
 	}
+
+	/**
+	 * @param Selection $selection
+	 * @param Vector3   $place
+	 * @param string    $level
+	 * @return StaticBlockListSelection
+	 */
+	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection;
 }

@@ -4,10 +4,13 @@ namespace platz1de\EasyEdit;
 
 use Exception;
 use platz1de\EasyEdit\command\FirstPositionCommand;
+use platz1de\EasyEdit\command\RedoCommand;
 use platz1de\EasyEdit\command\SecondPositionCommand;
 use platz1de\EasyEdit\command\SetCommand;
+use platz1de\EasyEdit\command\UndoCommand;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;
@@ -42,7 +45,9 @@ class EasyEdit extends PluginBase
 		Server::getInstance()->getCommandMap()->registerAll("easyedit", [
 			new SetCommand(),
 			new FirstPositionCommand(),
-			new SecondPositionCommand()
+			new SecondPositionCommand(),
+			new UndoCommand(),
+			new RedoCommand()
 		]);
 	}
 
