@@ -12,6 +12,7 @@ class Messages
 
 	public static function load(): void
 	{
+		EasyEdit::getInstance()->saveResource("messages.yml");
 		self::$messages = (new Config(EasyEdit::getInstance()->getDataFolder() . "messages.yml", Config::YAML))->getAll();
 	}
 
