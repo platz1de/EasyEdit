@@ -131,6 +131,7 @@ abstract class BlockListSelection extends Selection
 
 	/**
 	 * @param string $serialized
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function unserialize($serialized): void
 	{

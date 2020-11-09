@@ -100,7 +100,8 @@ abstract class EditTask extends Threaded
 	public function run(): void
 	{
 		$start = microtime(true);
-		$iterator = new SubChunkIteratorManager(new ReferencedChunkManager($this->level));
+		$manager = new ReferencedChunkManager($this->level);
+		$iterator = new SubChunkIteratorManager($manager);
 		/** @var Selection $selection */
 		$selection = igbinary_unserialize($this->selection);
 		/** @var Pattern $pattern */
@@ -122,7 +123,7 @@ abstract class EditTask extends Threaded
 
 		$toUndo = $this->getUndoBlockList($selection, $place, $this->level);
 
-		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($iterator->level->getChunks()) . " Chunks");
+		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
 
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
@@ -133,7 +134,7 @@ abstract class EditTask extends Threaded
 			$result = [];
 			$result[] = array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
-			}, $iterator->level->getChunks());
+			}, $manager->getChunks());
 			$result[] = $tiles;
 			$this->result = igbinary_serialize($result);
 			$this->toUndo = igbinary_serialize($toUndo);

@@ -28,7 +28,7 @@ class EasyEdit extends PluginBase
 	 */
 	private static $worker;
 
-	public function onEnable()
+	public function onEnable(): void
 	{
 		self::$instance = $this;
 
@@ -53,7 +53,7 @@ class EasyEdit extends PluginBase
 	/**
 	 * @return EasyEdit
 	 */
-	public static function getInstance()
+	public static function getInstance(): self
 	{
 		return self::$instance;
 	}
@@ -61,7 +61,7 @@ class EasyEdit extends PluginBase
 	/**
 	 * @return EditWorker
 	 */
-	public static function getWorker()
+	public static function getWorker(): EditWorker
 	{
 		return self::$worker;
 	}

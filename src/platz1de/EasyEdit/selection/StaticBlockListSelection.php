@@ -76,6 +76,7 @@ class StaticBlockListSelection extends BlockListSelection
 
 	/**
 	 * @param string $serialized
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function unserialize($serialized): void
 	{
