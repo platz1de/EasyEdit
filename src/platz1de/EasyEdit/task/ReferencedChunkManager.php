@@ -44,7 +44,7 @@ class ReferencedChunkManager extends SimpleChunkManager
 	public function getLevel(): Level
 	{
 		$level = Server::getInstance()->getLevelByName($this->getLevelName());
-		if($level === null){
+		if ($level === null) {
 			throw new UnexpectedValueException("Level " . $this->getLevelName() . " was deleted, unloaded or renamed");
 		}
 		return $level;

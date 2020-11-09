@@ -104,7 +104,7 @@ class Cube extends Selection
 			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ);
 
 			if (($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
-				if(isset($this->structure)){
+				if (isset($this->structure)) {
 					$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure)]);
 				}
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
@@ -250,7 +250,7 @@ class Cube extends Selection
 
 	public function close(): void
 	{
-		if(isset($this->structure) and ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player){
+		if (isset($this->structure) and ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure)]);
 		}
 	}

@@ -93,7 +93,7 @@ class Pattern
 					throw new ParseError("Pattern was never opened", $i + $start);
 				}
 
-				if(substr_count($current, "(") !== substr_count($current, ")")) {
+				if (substr_count($current, "(") !== substr_count($current, ")")) {
 					$current .= $str;
 					continue;
 				}
