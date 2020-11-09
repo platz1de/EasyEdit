@@ -3,13 +3,9 @@
 namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\task\ReferencedChunkManager;
-use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockIds;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
-use pocketmine\math\Vector3;
 
 abstract class BlockListSelection extends Selection
 {

@@ -10,7 +10,6 @@ use platz1de\EasyEdit\command\SetCommand;
 use platz1de\EasyEdit\command\UndoCommand;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;

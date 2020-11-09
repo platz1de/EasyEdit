@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
 use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;

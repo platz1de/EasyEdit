@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\selection;
 
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
-use pocketmine\math\Vector3;
 use Serializable;
 
 abstract class Selection implements Serializable

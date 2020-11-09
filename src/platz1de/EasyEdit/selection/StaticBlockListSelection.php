@@ -3,13 +3,9 @@
 namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\task\ReferencedChunkManager;
-use pocketmine\block\Block;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
-use RuntimeException;
 
 class StaticBlockListSelection extends BlockListSelection
 {

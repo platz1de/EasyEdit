@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\selection;
 
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
