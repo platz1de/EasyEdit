@@ -232,6 +232,22 @@ class Cube extends Selection
 		return $this->level;
 	}
 
+	/**
+	 * @return Vector3
+	 */
+	public function getPos1(): Vector3
+	{
+		return $this->pos1;
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getPos2(): Vector3
+	{
+		return $this->pos2;
+	}
+
 	public function close(): void
 	{
 		if(isset($this->structure) and ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player){
