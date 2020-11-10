@@ -14,7 +14,7 @@ use pocketmine\Server;
 class RedoTask extends PasteTask
 {
 	/**
-	 * UndoTask constructor.
+	 * RedoTask constructor.
 	 * @param StaticBlockListSelection $selection
 	 */
 	public function __construct(StaticBlockListSelection $selection)
