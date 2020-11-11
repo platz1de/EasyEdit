@@ -81,8 +81,8 @@ class Cube extends Selection
 	{
 		$blocks = [];
 		for ($x = $this->pos1->getX(); $x <= $this->pos2->getX(); $x++) {
-			for ($y = $this->pos1->getY(); $y <= $this->pos2->getY(); $y++) {
-				for ($z = $this->pos1->getZ(); $z <= $this->pos2->getZ(); $z++) {
+			for ($z = $this->pos1->getZ(); $z <= $this->pos2->getZ(); $z++) {
+				for ($y = $this->pos1->getY(); $y <= $this->pos2->getY(); $y++) {
 					$blocks[] = new Vector3($x, $y, $z);
 				}
 			}
