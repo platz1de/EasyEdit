@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use Serializable;
@@ -38,5 +39,17 @@ abstract class Selection implements Serializable
 
 	public function close(): void
 	{
+	}
+
+	/**
+	 * @param Selection $selection
+	 * @param string    $expected
+	 * @throws WrongSelectionTypeError
+	 */
+	public static function validate(Selection $selection, string $expected): void
+	{
+		if (get_class($selection) !== $expected) {
+			throw new WrongSelectionTypeError(get_class($selection), $expected);
+		}
 	}
 }

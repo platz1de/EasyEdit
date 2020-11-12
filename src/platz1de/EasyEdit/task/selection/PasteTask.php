@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
-use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
@@ -16,12 +15,14 @@ use pocketmine\nbt\tag\CompoundTag;
 
 class PasteTask extends EditTask
 {
-	public function __construct(Selection $selection, Pattern $pattern, Position $place)
+	/**
+	 * PasteTask constructor.
+	 * @param DynamicBlockListSelection $selection
+	 * @param Position                  $place
+	 */
+	public function __construct(DynamicBlockListSelection $selection, Position $place)
 	{
-		if (!$selection instanceof BlockListSelection) {
-			throw new WrongSelectionTypeError(get_class($selection), BlockListSelection::class);
-		}
-		parent::__construct($selection, $pattern, $place);
+		parent::__construct($selection, new Pattern([], []), $place);
 	}
 
 	/**
@@ -63,9 +64,8 @@ class PasteTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection
 	{
-		if (!$selection instanceof DynamicBlockListSelection) {
-			throw new WrongSelectionTypeError(get_class($selection), DynamicBlockListSelection::class);
-		}
+		/** @var DynamicBlockListSelection $selection */
+		Selection::validate($selection, DynamicBlockListSelection::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $place, $selection->getXSize(), $selection->getYSize(), $selection->getZSize());
 	}
 }

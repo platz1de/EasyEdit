@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
-use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\block\Block;
 use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
@@ -55,9 +54,8 @@ class SetTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection
 	{
-		if (!$selection instanceof Cube) {
-			throw new WrongSelectionTypeError(get_class($selection), BlockListSelection::class);
-		}
+		/** @var Cube $selection */
+		Selection::validate($selection, Cube::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1(), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
 	}
 }
