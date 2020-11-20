@@ -30,9 +30,9 @@ class SetTask extends EditTask
 	 * @param Selection                $selection
 	 * @param Pattern                  $pattern
 	 * @param Vector3                  $place
-	 * @param StaticBlockListSelection $toUndo
+	 * @param BlockListSelection $toUndo
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, StaticBlockListSelection $toUndo): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
 	{
 		/** @var Cube $selection */
 		foreach ($selection->getAffectedBlocks() as $block) {
@@ -52,7 +52,7 @@ class SetTask extends EditTask
 	 * @param string    $level
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
 		/** @var Cube $selection */
 		Selection::validate($selection, Cube::class);

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\selection;
 
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use pocketmine\level\Position;
@@ -30,14 +31,14 @@ class RedoTask extends PasteTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager  $iterator
-	 * @param array                    $tiles
-	 * @param Selection                $selection
-	 * @param Pattern                  $pattern
-	 * @param Vector3                  $place
-	 * @param StaticBlockListSelection $toUndo
+	 * @param SubChunkIteratorManager $iterator
+	 * @param array                   $tiles
+	 * @param Selection               $selection
+	 * @param Pattern                 $pattern
+	 * @param Vector3                 $place
+	 * @param BlockListSelection      $toUndo
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, StaticBlockListSelection $toUndo): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
 	{
 		/** @var StaticBlockListSelection $selection */
 		for ($x = $selection->getPos()->getX(); $x <= ($selection->getPos()->getX() + $selection->getXSize()); $x++) {
@@ -58,7 +59,7 @@ class RedoTask extends PasteTask
 	 * @param string    $level
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);

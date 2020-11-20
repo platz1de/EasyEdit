@@ -34,14 +34,14 @@ class PasteTask extends EditTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager  $iterator
-	 * @param CompoundTag[]            $tiles
-	 * @param Selection                $selection
-	 * @param Pattern                  $pattern
-	 * @param Vector3                  $place
-	 * @param StaticBlockListSelection $toUndo
+	 * @param SubChunkIteratorManager $iterator
+	 * @param CompoundTag[]           $tiles
+	 * @param Selection               $selection
+	 * @param Pattern                 $pattern
+	 * @param Vector3                 $place
+	 * @param BlockListSelection      $toUndo
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, StaticBlockListSelection $toUndo): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
 	{
 		/** @var DynamicBlockListSelection $selection */
 		for ($x = 0; $x <= $selection->getXSize(); $x++) {
@@ -62,7 +62,7 @@ class PasteTask extends EditTask
 	 * @param string    $level
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);

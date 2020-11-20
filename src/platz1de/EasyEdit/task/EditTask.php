@@ -158,14 +158,14 @@ abstract class EditTask extends Threaded
 	abstract public function getTaskName(): string;
 
 	/**
-	 * @param SubChunkIteratorManager  $chunkManager
-	 * @param CompoundTag[]            $tiles
-	 * @param Selection                $selection
-	 * @param Pattern                  $pattern
-	 * @param Vector3                  $place
-	 * @param StaticBlockListSelection $toUndo
+	 * @param SubChunkIteratorManager $iterator
+	 * @param CompoundTag[]           $tiles
+	 * @param Selection               $selection
+	 * @param Pattern                 $pattern
+	 * @param Vector3                 $place
+	 * @param BlockListSelection      $toUndo also used as return value of Task for things like copy
 	 */
-	abstract public function execute(SubChunkIteratorManager $chunkManager, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, StaticBlockListSelection $toUndo): void;
+	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void;
 
 	/**
 	 * @return int
@@ -228,7 +228,7 @@ abstract class EditTask extends Threaded
 	 * @param Selection $selection
 	 * @param Vector3   $place
 	 * @param string    $level
-	 * @return StaticBlockListSelection
+	 * @return BlockListSelection
 	 */
-	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): StaticBlockListSelection;
+	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection;
 }
