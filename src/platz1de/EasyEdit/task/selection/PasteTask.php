@@ -17,10 +17,10 @@ class PasteTask extends EditTask
 {
 	/**
 	 * PasteTask constructor.
-	 * @param DynamicBlockListSelection $selection
+	 * @param BlockListSelection $selection
 	 * @param Position                  $place
 	 */
-	public function __construct(DynamicBlockListSelection $selection, Position $place)
+	public function __construct(BlockListSelection $selection, Position $place)
 	{
 		parent::__construct($selection, new Pattern([], []), $place);
 	}
