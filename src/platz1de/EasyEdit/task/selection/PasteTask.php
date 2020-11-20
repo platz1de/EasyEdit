@@ -47,10 +47,16 @@ class PasteTask extends EditTask
 		for ($x = 0; $x <= $selection->getXSize(); $x++) {
 			for ($z = 0; $z <= $selection->getZSize(); $z++) {
 				for ($y = 0; $y <= $selection->getYSize(); $y++) {
-					$selection->getIterator()->moveTo($x, $y, $z);
-					$iterator->moveTo($x + $place->getX(), $y + $place->getY(), $z + $place->getZ());
-					$toUndo->addBlock($x + $place->getX(), $y + $place->getY(), $z + $place->getZ(), $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-					$iterator->currentSubChunk->setBlock(($x + $place->getX()) & 0x0f, ($y + $place->getY()) & 0x0f, ($z + $place->getZ()) & 0x0f, $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 217 ? 0 : $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					$blockId = $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
+					if ($blockId !== 0) {
+						if ($blockId === 217) {
+							$blockId = 0;
+						}
+						$selection->getIterator()->moveTo($x, $y, $z);
+						$iterator->moveTo($x + $place->getX(), $y + $place->getY(), $z + $place->getZ());
+						$toUndo->addBlock($x + $place->getX(), $y + $place->getY(), $z + $place->getZ(), $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+						$iterator->currentSubChunk->setBlock(($x + $place->getX()) & 0x0f, ($y + $place->getY()) & 0x0f, ($z + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					}
 				}
 			}
 		}
