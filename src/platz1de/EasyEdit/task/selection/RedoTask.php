@@ -18,7 +18,7 @@ class RedoTask extends PasteTask
 	 */
 	public function __construct(StaticBlockListSelection $selection)
 	{
-		parent::__construct($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()));
+		parent::__construct($selection, new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()));
 	}
 
 	/**
