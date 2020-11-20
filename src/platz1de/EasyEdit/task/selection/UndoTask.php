@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task\selection;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use pocketmine\level\Position;
@@ -68,7 +67,7 @@ class UndoTask extends PasteTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
-		/** @var Cube $selection */
+		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos(), $selection->getXSize(), $selection->getYSize(), $selection->getZSize());
 	}
