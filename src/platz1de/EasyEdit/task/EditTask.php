@@ -4,8 +4,10 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -192,9 +194,12 @@ abstract class EditTask extends Threaded
 			/** @var Selection $selection */
 			$selection = igbinary_unserialize($this->selection);
 
-			if($this instanceof UndoTask){
+			if ($this instanceof UndoTask) {
 				HistoryManager::addToFuture($selection->getPlayer(), igbinary_unserialize($this->toUndo));
-			}else{
+			} elseif ($this instanceof CopyTask) {
+				ClipBoardManager::setForPlayer($selection->getPlayer(), igbinary_unserialize($this->toUndo));
+				return null;
+			} else {
 				HistoryManager::addToHistory($selection->getPlayer(), igbinary_unserialize($this->toUndo));
 			}
 

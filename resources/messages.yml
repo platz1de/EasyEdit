@@ -4,6 +4,7 @@ selected-pos1: "Selected the first position"
 selected-pos2: "Selected the second position"
 
 no-selection: "You don't have an active Selection"
+no-clipboard: "You don't have an active Clipboard"
 
 history-nearly-full: "Your History is nearly full, it will not be possible to undo your oldest actions"
 history-full: "Your History is full, it will not be possible to undo your oldest actions anymore"

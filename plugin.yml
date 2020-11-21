@@ -16,5 +16,9 @@ permissions:
       default: op
      easyedit.command.redo:
       default: op
+     easyedit.command.copy:
+      default: op
+     easyedit.command.paste:
+      default: op
    easyedit.position:
     default: op
