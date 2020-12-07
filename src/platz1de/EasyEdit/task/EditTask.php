@@ -17,6 +17,7 @@ use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\Server;
 use pocketmine\tile\Tile;
 use Threaded;
 use ThreadedLogger;
@@ -141,7 +142,7 @@ abstract class EditTask extends Threaded
 			$this->result = igbinary_serialize($result);
 			$this->toUndo = igbinary_serialize($toUndo);
 		} catch (Throwable $exception) {
-			$this->getLogger()->logException($exception);
+			$this->result = igbinary_serialize($exception);
 		}
 		$this->finished = true;
 	}
@@ -191,6 +192,13 @@ abstract class EditTask extends Threaded
 	public function getResult(): ?ReferencedChunkManager
 	{
 		if (isset($this->result)) {
+			$result = igbinary_unserialize($this->result);
+
+			if($result instanceof Throwable){
+				Server::getInstance()->getLogger()->logException($result);
+				return null;
+			}
+
 			/** @var Selection $selection */
 			$selection = igbinary_unserialize($this->selection);
 
@@ -203,7 +211,6 @@ abstract class EditTask extends Threaded
 				HistoryManager::addToHistory($selection->getPlayer(), igbinary_unserialize($this->toUndo));
 			}
 
-			$result = igbinary_unserialize($this->result);
 			$manager = new ReferencedChunkManager($this->level);
 			foreach (array_map(static function (string $chunk) {
 				return Chunk::fastDeserialize($chunk);
