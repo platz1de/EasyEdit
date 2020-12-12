@@ -10,7 +10,7 @@ use pocketmine\item\ItemFactory;
 class Pattern
 {
 	/**
-	 * @var array
+	 * @var Pattern[]
 	 */
 	protected $pieces;
 	/**
@@ -37,12 +37,8 @@ class Pattern
 	public function getFor(int $x, int $y, int $z): ?Block
 	{
 		foreach ($this->pieces as $piece) {
-			if ($piece instanceof self) {
-				if ($piece->isValidAt($x, $y, $z)) {
-					return $piece->getFor($x, $y, $z);
-				}
-			} else {
-				return $piece;
+			if ($piece->isValidAt($x, $y, $z)) {
+				return $piece->getFor($x, $y, $z);
 			}
 		}
 		return null;
@@ -167,7 +163,7 @@ class Pattern
 		$pieces = [];
 		foreach ($pattern as $name => $p) {
 			if ($p instanceof Block) {
-				$pieces[] = $p;
+				$pieces[] = new BlockPattern($p);
 			} else {
 				$pa = self::getPattern($name, self::processPattern($p));
 				$pa->check();
