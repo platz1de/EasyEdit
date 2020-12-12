@@ -37,6 +37,14 @@ abstract class BlockListSelection extends Selection
 	 */
 	private $tiles = [];
 
+	/**
+	 * BlockListSelection constructor.
+	 * @param string                 $player
+	 * @param ReferencedChunkManager $manager
+	 * @param int                    $xSize
+	 * @param int                    $ySize
+	 * @param int                    $zSize
+	 */
 	public function __construct(string $player, ReferencedChunkManager $manager, int $xSize, int $ySize, int $zSize)
 	{
 		parent::__construct($player);

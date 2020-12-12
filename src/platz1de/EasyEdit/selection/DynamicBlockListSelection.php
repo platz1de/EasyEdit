@@ -14,6 +14,14 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	private $point;
 
+	/**
+	 * DynamicBlockListSelection constructor.
+	 * @param string  $player
+	 * @param Vector3 $relativePlace
+	 * @param int     $xSize
+	 * @param int     $ySize
+	 * @param int     $zSize
+	 */
 	public function __construct(string $player, Vector3 $relativePlace, int $xSize, int $ySize, int $zSize)
 	{
 		parent::__construct($player, new ReferencedChunkManager(""), $xSize, $ySize, $zSize);
