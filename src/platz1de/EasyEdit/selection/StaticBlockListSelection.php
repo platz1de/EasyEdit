@@ -70,7 +70,8 @@ class StaticBlockListSelection extends BlockListSelection
 			"chunks" => array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
 			}, $this->getManager()->getChunks()),
-			"level" => $this->getManager()->getLevelName()
+			"level" => $this->getManager()->getLevelName(),
+			"tiles" => $this->getTiles()
 		]);
 	}
 

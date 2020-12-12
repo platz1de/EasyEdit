@@ -41,7 +41,11 @@ class SetTask extends EditTask
 				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
 				$toUndo->addBlock($block->getX(), $block->getY(), $block->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
 				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $b->getId(), $b->getDamage());
-				unset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
+
+				if(isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])){
+					$toUndo->addTile($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
+					unset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
+				}
 			}
 		}
 	}

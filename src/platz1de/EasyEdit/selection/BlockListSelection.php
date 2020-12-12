@@ -4,8 +4,11 @@ namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\tile\Tile;
 
 abstract class BlockListSelection extends Selection
 {
@@ -29,6 +32,10 @@ abstract class BlockListSelection extends Selection
 	 * @var int
 	 */
 	private $ySize;
+	/**
+	 * @var CompoundTag[]
+	 */
+	private $tiles = [];
 
 	public function __construct(string $player, ReferencedChunkManager $manager, int $xSize, int $ySize, int $zSize)
 	{
@@ -113,6 +120,22 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
+	 * @param CompoundTag $tile
+	 */
+	public function addTile(CompoundTag $tile): void
+	{
+		$this->tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+	}
+
+	/**
+	 * @return CompoundTag[]
+	 */
+	public function getTiles(): array
+	{
+		return $this->tiles;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function serialize(): string
@@ -125,7 +148,8 @@ abstract class BlockListSelection extends Selection
 			"chunks" => array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
 			}, $this->getManager()->getChunks()),
-			"level" => $this->getManager()->getLevelName()
+			"level" => $this->getManager()->getLevelName(),
+			"tiles" => $this->getTiles()
 		]);
 	}
 
@@ -147,5 +171,6 @@ abstract class BlockListSelection extends Selection
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 		$this->iterator = new SubChunkIteratorManager($this->manager);
+		$this->tiles = $data["tiles"];
 	}
 }
