@@ -88,7 +88,7 @@ abstract class BlockListSelection extends Selection
 	 */
 	public function addBlock(int $x, int $y, int $z, int $id, int $damage): void
 	{
-		if($id === 0){
+		if ($id === 0) {
 			$id = 217; //structure_void
 		}
 		$this->iterator->moveTo($x, $y, $z);
