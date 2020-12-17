@@ -194,7 +194,7 @@ abstract class EditTask extends Threaded
 		if (isset($this->result)) {
 			$result = igbinary_unserialize($this->result);
 
-			if($result instanceof Throwable){
+			if ($result instanceof Throwable) {
 				Server::getInstance()->getLogger()->logException($result);
 				return null;
 			}

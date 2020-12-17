@@ -39,7 +39,7 @@ class SetCommand extends Command
 
 		try {
 			$pattern = Pattern::parse($args[0]);
-		}catch (ParseError $exception){
+		} catch (ParseError $exception) {
 			$sender->sendMessage($exception->getMessage());
 			return;
 		}

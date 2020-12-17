@@ -18,7 +18,7 @@ class PasteTask extends EditTask
 	/**
 	 * PasteTask constructor.
 	 * @param BlockListSelection $selection
-	 * @param Position                  $place
+	 * @param Position           $place
 	 */
 	public function __construct(BlockListSelection $selection, Position $place)
 	{

@@ -27,7 +27,7 @@ class RedoCommand extends Command
 			return;
 		}
 
-		if(!HistoryManager::canRedo($sender->getName())){
+		if (!HistoryManager::canRedo($sender->getName())) {
 			Messages::send($sender, "no-future");
 		}
 

@@ -70,7 +70,7 @@ class HistoryManager
 	 */
 	public static function undoStep(string $player): void
 	{
-		if (self::canUndo($player)){
+		if (self::canUndo($player)) {
 			$undo = array_pop(self::$past[$player]);
 
 			WorkerAdapter::submit(new UndoTask($undo));
@@ -82,7 +82,7 @@ class HistoryManager
 	 */
 	public static function redoStep(string $player): void
 	{
-		if (self::canRedo($player)){
+		if (self::canRedo($player)) {
 			$redo = array_pop(self::$future[$player]);
 
 			WorkerAdapter::submit(new RedoTask($redo));

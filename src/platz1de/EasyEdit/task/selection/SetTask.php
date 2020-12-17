@@ -25,12 +25,12 @@ class SetTask extends EditTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager  $iterator
-	 * @param CompoundTag[]            $tiles
-	 * @param Selection                $selection
-	 * @param Pattern                  $pattern
-	 * @param Vector3                  $place
-	 * @param BlockListSelection $toUndo
+	 * @param SubChunkIteratorManager $iterator
+	 * @param CompoundTag[]           $tiles
+	 * @param Selection               $selection
+	 * @param Pattern                 $pattern
+	 * @param Vector3                 $place
+	 * @param BlockListSelection      $toUndo
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
 	{
@@ -42,7 +42,7 @@ class SetTask extends EditTask
 				$toUndo->addBlock($block->getX(), $block->getY(), $block->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
 				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $b->getId(), $b->getDamage());
 
-				if(isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])){
+				if (isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])) {
 					$toUndo->addTile($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
 					unset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
 				}

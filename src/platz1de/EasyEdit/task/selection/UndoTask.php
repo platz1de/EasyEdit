@@ -62,7 +62,7 @@ class UndoTask extends PasteTask
 			}
 		}
 
-		foreach ($selection->getTiles() as $tile){
+		foreach ($selection->getTiles() as $tile) {
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 	}

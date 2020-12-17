@@ -27,7 +27,7 @@ class UndoCommand extends Command
 			return;
 		}
 
-		if(!HistoryManager::canUndo($sender->getName())){
+		if (!HistoryManager::canUndo($sender->getName())) {
 			Messages::send($sender, "no-history");
 		}
 
