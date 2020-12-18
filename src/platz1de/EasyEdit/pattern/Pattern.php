@@ -194,27 +194,20 @@ class Pattern
 	 */
 	private static function getPattern(string $pattern, array $children = []): Pattern
 	{
-		$args = explode(";", $pattern);
-		$name = array_shift($args);
-		if ($name[0] === "!") {
-			switch (substr($name, 1)) {
-				case "even":
-					return new Not(new Even($children, $args));
-				case "odd":
-					return new Not(new Odd($children, $args));
-				case "divisible":
-					return new Not(new Divisible($children, $args));
-			}
-		} else {
-			switch ($name) {
-				case "even":
-					return new Even($children, $args);
-				case "odd":
-					return new Odd($children, $args);
-				case "divisible":
-					return new Divisible($children, $args);
-			}
+		if ($pattern[0] === "!") {
+			return new Not(self::getPattern(substr($pattern, 1), $children));
 		}
+
+		$args = explode(";", $pattern);
+		switch (array_shift($args)) {
+			case "even":
+				return new Even($children, $args);
+			case "odd":
+				return new Odd($children, $args);
+			case "divisible":
+				return new Divisible($children, $args);
+		}
+
 		throw new ParseError("Unknown Pattern " . $pattern);
 	}
 
