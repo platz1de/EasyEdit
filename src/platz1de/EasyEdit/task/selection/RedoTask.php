@@ -46,7 +46,7 @@ class RedoTask extends PasteTask
 				for ($y = $selection->getPos()->getY(); $y <= ($selection->getPos()->getY() + $selection->getYSize()); $y++) {
 					$selection->getIterator()->moveTo($x, $y, $z);
 					$blockId = $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
-					if (Selection::processBlock($blockId)){
+					if (Selection::processBlock($blockId)) {
 						$iterator->moveTo($x, $y, $z);
 						$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 						$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
