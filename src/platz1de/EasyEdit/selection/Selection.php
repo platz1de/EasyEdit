@@ -52,4 +52,19 @@ abstract class Selection implements Serializable
 			throw new WrongSelectionTypeError(get_class($selection), $expected);
 		}
 	}
+
+	/**
+	 * @param int $blockId
+	 * @return bool
+	 */
+	public static function processBlock(int &$blockId): bool
+	{
+		$return = ($blockId !== 0);
+
+		if ($blockId === 217) {
+			$blockId = 0;
+		}
+
+		return $return;
+	}
 }
