@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
@@ -51,12 +52,7 @@ class CopyTask extends EditTask
 			$toUndo->addBlock($block->getX() - $selection->getPos1()->getX(), $block->getY() - $selection->getPos1()->getY(), $block->getZ() - $selection->getPos1()->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
 
 			if (isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])) {
-				/** @var CompoundTag $compoundTag */
-				$compoundTag = clone $tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())];
-				$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X)  - $selection->getPos1()->getX());
-				$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y)  - $selection->getPos1()->getY());
-				$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z)  - $selection->getPos1()->getZ());
-				$toUndo->addTile($compoundTag);
+				$toUndo->addTile(TileUtils::offsetCompound($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())], $selection->getPos1()->multiply(-1)));
 			}
 		}
 	}
