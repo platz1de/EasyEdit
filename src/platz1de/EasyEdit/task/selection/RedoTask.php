@@ -6,10 +6,12 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
+use pocketmine\tile\Tile;
 
 class RedoTask extends PasteTask
 {
@@ -50,9 +52,18 @@ class RedoTask extends PasteTask
 						$iterator->moveTo($x, $y, $z);
 						$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 						$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+
+						if (isset($tiles[Level::blockHash($x, $y, $z)])) {
+							$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
+							unset($tiles[Level::blockHash($x, $y, $z)]);
+						}
 					}
 				}
 			}
+		}
+
+		foreach ($selection->getTiles() as $tile) {
+			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 	}
 

@@ -53,7 +53,10 @@ class UndoTask extends PasteTask
 						$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 						$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 
-						unset($tiles[Level::blockHash($x, $y, $z)]);
+						if (isset($tiles[Level::blockHash($x, $y, $z)])) {
+							$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
+							unset($tiles[Level::blockHash($x, $y, $z)]);
+						}
 					}
 				}
 			}
