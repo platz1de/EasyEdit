@@ -65,6 +65,15 @@ class PasteTask extends EditTask
 				}
 			}
 		}
+
+		foreach ($selection->getTiles() as $tile) {
+			/** @var CompoundTag $compoundTag */
+			$compoundTag = clone $tile;
+			$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X) + $place->getX());
+			$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $place->getY());
+			$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $place->getZ());
+			$tiles[Level::blockHash($compoundTag->getInt(Tile::TAG_X), $compoundTag->getInt(Tile::TAG_Y), $compoundTag->getInt(Tile::TAG_Z))] = $compoundTag;
+		}
 	}
 
 	/**
