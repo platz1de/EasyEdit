@@ -13,8 +13,6 @@ use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\tile\Tile;
 
 class CopyTask extends EditTask
 {

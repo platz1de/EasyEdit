@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
