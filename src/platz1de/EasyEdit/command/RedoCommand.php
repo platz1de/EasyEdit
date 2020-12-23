@@ -12,7 +12,7 @@ class RedoCommand extends Command
 {
 	public function __construct()
 	{
-		parent::__construct("/redo", "Revert your lastest undo", "//redo <count>", []);
+		parent::__construct("/redo", "Revert your latest undo", "//redo <count>", []);
 		$this->setPermission("easyedit.command.redo");
 	}
 
