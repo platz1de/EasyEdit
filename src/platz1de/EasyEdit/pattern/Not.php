@@ -29,6 +29,13 @@ class Not extends Pattern
 		return $this->pieces[0]->getFor($x, $y, $z, $iterator);
 	}
 
+	/**
+	 * @param int                     $x
+	 * @param int                     $y
+	 * @param int                     $z
+	 * @param SubChunkIteratorManager $iterator
+	 * @return bool
+	 */
 	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
 	{
 		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator);
