@@ -101,7 +101,7 @@ class Cube extends Selection
 			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
 
 			$this->pos1->setComponents($minX, $minY, $minZ);
-			$this->pos2 = $this->pos2->setComponents($maxX, $maxY, $maxZ);
+			$this->pos2->setComponents($maxX, $maxY, $maxZ);
 
 			if (($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				if (isset($this->structure)) {
