@@ -2,9 +2,11 @@
 
 namespace platz1de\EasyEdit\pattern;
 
+use pocketmine\level\utils\SubChunkIteratorManager;
+
 class Even extends Pattern
 {
-	public function isValidAt(int $x, int $y, int $z): bool
+	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
 	{
 		if (abs($x) % 2 !== 0 && in_array("x", $this->args, true)) {
 			return false;

@@ -39,8 +39,9 @@ class RedoTask extends PasteTask
 	 * @param Pattern                 $pattern
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo
+	 * @param SubChunkIteratorManager $origin
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
 		/** @var StaticBlockListSelection $selection */
 		for ($x = $selection->getPos()->getX(); $x <= ($selection->getPos()->getX() + $selection->getXSize()); $x++) {

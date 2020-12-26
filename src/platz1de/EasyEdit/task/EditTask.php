@@ -105,6 +105,7 @@ abstract class EditTask extends Threaded
 		$start = microtime(true);
 		$manager = new ReferencedChunkManager($this->level);
 		$iterator = new SubChunkIteratorManager($manager);
+		$origin = new SubChunkIteratorManager(clone $manager);
 		/** @var Selection $selection */
 		$selection = igbinary_unserialize($this->selection);
 		/** @var Pattern $pattern */
@@ -116,6 +117,12 @@ abstract class EditTask extends Threaded
 			return Chunk::fastDeserialize($chunk);
 		}, igbinary_unserialize($this->chunkData)) as $chunk) {
 			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+		}
+
+		foreach (array_map(static function (string $chunk) {
+			return Chunk::fastDeserialize($chunk);
+		}, igbinary_unserialize($this->chunkData)) as $chunk) {
+			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
 		$tiles = [];
@@ -131,7 +138,7 @@ abstract class EditTask extends Threaded
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
 		try {
-			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo);
+			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s");
 
 			$result = [];
@@ -167,8 +174,9 @@ abstract class EditTask extends Threaded
 	 * @param Pattern                 $pattern
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo also used as return value of Task for things like copy
+	 * @param SubChunkIteratorManager $origin original World, used for patterns
 	 */
-	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void;
+	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void;
 
 	/**
 	 * @return int

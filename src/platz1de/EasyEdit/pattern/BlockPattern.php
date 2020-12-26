@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\pattern;
 
 use pocketmine\block\Block;
+use pocketmine\level\utils\SubChunkIteratorManager;
 
 class BlockPattern extends Pattern
 {
@@ -16,17 +17,18 @@ class BlockPattern extends Pattern
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
+	 * @param int                     $x
+	 * @param int                     $y
+	 * @param int                     $z
+	 * @param SubChunkIteratorManager $iterator
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z): ?Block
+	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator): ?Block
 	{
 		return $this->args[0];
 	}
 
-	public function isValidAt(int $x, int $y, int $z): bool
+	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
 	{
 		return true;
 	}

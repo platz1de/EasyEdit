@@ -31,12 +31,13 @@ class SetTask extends EditTask
 	 * @param Pattern                 $pattern
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo
+	 * @param SubChunkIteratorManager $origin
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
 		/** @var Cube $selection */
 		foreach ($selection->getAffectedBlocks() as $block) {
-			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ());
+			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ(), $origin);
 			if ($b instanceof Block) {
 				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
 				$toUndo->addBlock($block->getX(), $block->getY(), $block->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));

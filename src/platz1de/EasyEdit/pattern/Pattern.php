@@ -6,6 +6,7 @@ use Exception;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
+use pocketmine\level\utils\SubChunkIteratorManager;
 
 class Pattern
 {
@@ -29,29 +30,31 @@ class Pattern
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
+	 * @param int                     $x
+	 * @param int                     $y
+	 * @param int                     $z
+	 * @param SubChunkIteratorManager $iterator
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z): ?Block
+	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator): ?Block
 	{
 		foreach ($this->pieces as $piece) {
-			if ($piece->isValidAt($x, $y, $z)) {
-				return $piece->getFor($x, $y, $z);
+			if ($piece->isValidAt($x, $y, $z, $iterator)) {
+				return $piece->getFor($x, $y, $z, $iterator);
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
+	 * @param int                     $x
+	 * @param int                     $y
+	 * @param int                     $z
+	 * @param SubChunkIteratorManager $iterator
 	 * @return bool
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function isValidAt(int $x, int $y, int $z): bool
+	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
 	{
 		return false;
 	}

@@ -41,9 +41,10 @@ class CopyTask extends EditTask
 	 * @param Pattern                 $pattern
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo
+	 * @param SubChunkIteratorManager $origin
 	 * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
 		/** @var Cube $selection */
 		foreach ($selection->getAffectedBlocks() as $block) {
