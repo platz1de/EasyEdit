@@ -211,6 +211,8 @@ class Pattern
 				return new Odd($children, $args);
 			case "divisible":
 				return new Divisible($children, $args);
+			case "above":
+				return new Above($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
