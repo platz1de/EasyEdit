@@ -62,6 +62,7 @@ class Pattern
 	/**
 	 * @param string $pattern
 	 * @return Pattern
+	 * @throws ParseError
 	 */
 	public static function parse(string $pattern): Pattern
 	{
@@ -72,6 +73,7 @@ class Pattern
 	 * @param string $pattern
 	 * @param int    $start
 	 * @return array
+	 * @throws ParseError
 	 */
 	public static function parsePiece(string $pattern, int $start = 1): array
 	{
@@ -231,6 +233,7 @@ class Pattern
 	/**
 	 * @param string $string
 	 * @return Block
+	 * @throws ParseError
 	 */
 	public static function getBlock(string $string): Block
 	{
