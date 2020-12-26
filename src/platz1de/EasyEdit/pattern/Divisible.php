@@ -23,7 +23,7 @@ class Divisible extends Pattern
 	public function check(): void
 	{
 		if (!is_numeric($this->args[0] ?? "")) {
-			throw new ParseError("Divisible needs an int as first Argument, " . ($this->args[0] ?? "") . "given");
+			throw new ParseError("Divisible needs an int as first Argument, " . ($this->args[0] ?? "") . " given");
 		}
 	}
 }
