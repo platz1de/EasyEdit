@@ -72,6 +72,8 @@ class Cube extends Selection
 		if ($pos2 !== null) {
 			$this->pos2 = clone($this->selected2 = $pos2);
 		}
+
+		$this->structure = new Vector3(0, 0, 0);
 	}
 
 	/**
@@ -104,9 +106,7 @@ class Cube extends Selection
 			$this->pos2->setComponents($maxX, $maxY, $maxZ);
 
 			if (($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
-				if (isset($this->structure)) {
-					$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure)]);
-				}
+				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
 				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
 				$nbt = new CompoundTag("", [
@@ -181,7 +181,10 @@ class Cube extends Selection
 			"minZ" => $this->pos1->getZ(),
 			"maxX" => $this->pos2->getX(),
 			"maxY" => $this->pos2->getY(),
-			"maxZ" => $this->pos2->getZ()
+			"maxZ" => $this->pos2->getZ(),
+			"structureX" => $this->structure->getX(),
+			"structureY" => $this->structure->getY(),
+			"structureZ" => $this->structure->getZ()
 		]);
 	}
 
@@ -196,6 +199,7 @@ class Cube extends Selection
 		}
 		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
 		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+		$this->structure = new Vector3($data["structureX"], $data["structureY"], $data["structureZ"]);
 	}
 
 	/**
@@ -250,8 +254,11 @@ class Cube extends Selection
 
 	public function close(): void
 	{
-		if (isset($this->structure) and ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
-			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure)]);
+		if (($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
+			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
+			//this happens when whole Chunks get sent
+			$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
+			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure->floor())]);
 		}
 	}
 }
