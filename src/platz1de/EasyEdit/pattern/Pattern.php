@@ -213,6 +213,10 @@ class Pattern
 				return new Divisible($children, $args);
 			case "above":
 				return new Above($children, $args);
+			case "below":
+				return new Below($children, $args);
+			case "around":
+				return new Around($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
