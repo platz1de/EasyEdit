@@ -32,7 +32,7 @@ class Around extends Pattern
 		try {
 			$this->args[0] = Pattern::getBlock($this->args[0] ?? "");
 		} catch (ParseError $error) {
-			throw new ParseError("Around needs an Block as first Argument, " . ($this->args[0] ?? "") . " given");
+			throw new ParseError("Around needs a block as first Argument, " . ($this->args[0] ?? "") . " given");
 		}
 	}
 }
