@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\pattern;
 
 use Exception;
+use platz1de\EasyEdit\pattern\Block as IsBlockPattern;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
@@ -211,6 +212,8 @@ class Pattern
 				return new Odd($children, $args);
 			case "divisible":
 				return new Divisible($children, $args);
+			case "block":
+				return new IsBlockPattern($children, $args);
 			case "above":
 				return new Above($children, $args);
 			case "below":
