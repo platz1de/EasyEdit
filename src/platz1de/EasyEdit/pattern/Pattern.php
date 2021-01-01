@@ -164,7 +164,7 @@ class Pattern
 	 * @param array $pattern
 	 * @return Pattern[]|Block[]
 	 */
-	private static function processPattern(array $pattern): array
+	public static function processPattern(array $pattern): array
 	{
 		$pieces = [];
 		foreach ($pattern as $name => $p) {

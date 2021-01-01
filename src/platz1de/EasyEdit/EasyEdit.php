@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\CopyCommand;
 use platz1de\EasyEdit\command\FirstPositionCommand;
 use platz1de\EasyEdit\command\PasteCommand;
 use platz1de\EasyEdit\command\RedoCommand;
+use platz1de\EasyEdit\command\ReplaceCommand;
 use platz1de\EasyEdit\command\SecondPositionCommand;
 use platz1de\EasyEdit\command\SetCommand;
 use platz1de\EasyEdit\command\UndoCommand;
@@ -50,7 +51,8 @@ class EasyEdit extends PluginBase
 			new UndoCommand(),
 			new RedoCommand(),
 			new CopyCommand(),
-			new PasteCommand()
+			new PasteCommand(),
+			new ReplaceCommand()
 		]);
 	}
 
