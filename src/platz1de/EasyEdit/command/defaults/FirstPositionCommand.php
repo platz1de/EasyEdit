@@ -4,8 +4,6 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\EasyEdit;
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
 class FirstPositionCommand extends EasyEditCommand

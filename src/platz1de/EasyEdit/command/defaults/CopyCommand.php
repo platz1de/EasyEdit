@@ -10,8 +10,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
 class CopyCommand extends EasyEditCommand
