@@ -3,15 +3,16 @@
 namespace platz1de\EasyEdit;
 
 use Exception;
-use platz1de\EasyEdit\command\CopyCommand;
-use platz1de\EasyEdit\command\FirstPositionCommand;
-use platz1de\EasyEdit\command\InsertCommand;
-use platz1de\EasyEdit\command\PasteCommand;
-use platz1de\EasyEdit\command\RedoCommand;
-use platz1de\EasyEdit\command\ReplaceCommand;
-use platz1de\EasyEdit\command\SecondPositionCommand;
-use platz1de\EasyEdit\command\SetCommand;
-use platz1de\EasyEdit\command\UndoCommand;
+use platz1de\EasyEdit\command\CommandManager;
+use platz1de\EasyEdit\command\defaults\CopyCommand;
+use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
+use platz1de\EasyEdit\command\defaults\InsertCommand;
+use platz1de\EasyEdit\command\defaults\PasteCommand;
+use platz1de\EasyEdit\command\defaults\RedoCommand;
+use platz1de\EasyEdit\command\defaults\ReplaceCommand;
+use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
+use platz1de\EasyEdit\command\defaults\SetCommand;
+use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\worker\EditWorker;
@@ -45,7 +46,7 @@ class EasyEdit extends PluginBase
 
 		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
 
-		Server::getInstance()->getCommandMap()->registerAll("easyedit", [
+		CommandManager::registerCommands([
 			new SetCommand(),
 			new FirstPositionCommand(),
 			new SecondPositionCommand(),
