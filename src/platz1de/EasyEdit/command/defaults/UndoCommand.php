@@ -19,7 +19,7 @@ class UndoCommand extends EasyEditCommand
 	 * @param array  $args
 	 * @param array  $flags
 	 */
-	public function process(Player $player, array $args, array $flags)
+	public function process(Player $player, array $args, array $flags): void
 	{
 		if (!HistoryManager::canUndo($player->getName())) {
 			Messages::send($player, "no-history");
