@@ -45,6 +45,7 @@ class CommandManager
 			if ($flag !== null) {
 				$flags[$flag] = $arg;
 				$flag = null;
+			//TODO: Check if flag exists coordinateds like -1 are NOT flags
 			} elseif (strpos($arg, "-") === 0) {
 				$flag = $arg;
 			} else {
