@@ -45,9 +45,8 @@ class CommandManager
 			if ($flag !== null) {
 				$flags[$flag] = $arg;
 				$flag = null;
-			//TODO: Check if flag exists coordinates like -1 are NOT flags
-			} elseif (strpos($arg, "-") === 0) {
-				$flag = $arg;
+			} elseif (strpos($arg, "-") === 0 && !is_numeric(substr($arg, 1))) {
+				$flag = substr($arg, 1);
 			} else {
 				$realArgs[] = $arg;
 			}
