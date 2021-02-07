@@ -50,7 +50,10 @@ abstract class Selection implements Serializable
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
 	{
 		try {
-			$this->level = Server::getInstance()->getLevelByName($level) ?? $level;
+			$this->level = Server::getInstance()->getLevelByName($level);
+			if($this->level === null){
+				$this->level = $level;
+			}
 		} catch (RuntimeException $exception) {
 			$this->level = $level;
 		}
