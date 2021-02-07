@@ -11,3 +11,4 @@ history-full: "Your History is full, it will not be possible to undo your oldest
 
 no-history: "Nothing to undo"
 no-future: "Nothing to redo"
+
