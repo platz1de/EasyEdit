@@ -137,9 +137,11 @@ abstract class EditTask extends Threaded
 
 		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
 
+		$changed = 0;
+
 		try {
-			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin);
-			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s");
+			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed);
+			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
 
 			$result = [];
 			$result[] = array_map(static function (Chunk $chunk) {
@@ -175,8 +177,9 @@ abstract class EditTask extends Threaded
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo also used as return value of Task for things like copy
 	 * @param SubChunkIteratorManager $origin original World, used for patterns
+	 * @param int                     $changed
 	 */
-	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void;
+	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void;
 
 	/**
 	 * @return int

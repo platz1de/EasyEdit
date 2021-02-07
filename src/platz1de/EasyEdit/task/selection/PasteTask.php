@@ -44,8 +44,9 @@ class PasteTask extends EditTask
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo
 	 * @param SubChunkIteratorManager $origin
+	 * @param int                     $changed
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
@@ -57,6 +58,7 @@ class PasteTask extends EditTask
 				$iterator->moveTo($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ());
 				$toUndo->addBlock($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() + $place->getX() & 0x0f, $block->getY() + $place->getY() & 0x0f, $block->getZ() + $place->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() + $place->getX() & 0x0f, $block->getY() + $place->getY() & 0x0f, $block->getZ() + $place->getZ() & 0x0f));
 				$iterator->currentSubChunk->setBlock(($block->getX() + $place->getX()) & 0x0f, ($block->getY() + $place->getY()) & 0x0f, ($block->getZ() + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
+				$changed++;
 
 				if (isset($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())])) {
 					$toUndo->addTile($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())]);

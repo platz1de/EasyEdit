@@ -32,8 +32,9 @@ class SetTask extends EditTask
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo
 	 * @param SubChunkIteratorManager $origin
+	 * @param int                     $changed
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
 	{
 		foreach ($selection->getAffectedBlocks($place) as $block) {
 			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ(), $origin);
@@ -41,6 +42,7 @@ class SetTask extends EditTask
 				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
 				$toUndo->addBlock($block->getX(), $block->getY(), $block->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
 				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $b->getId(), $b->getDamage());
+				$changed++;
 
 				if (isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])) {
 					$toUndo->addTile($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);

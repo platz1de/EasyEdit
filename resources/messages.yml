@@ -12,3 +12,7 @@ history-full: "Your History is full, it will not be possible to undo your oldest
 no-history: "Nothing to undo"
 no-future: "Nothing to redo"
 
+#Args: {time} {changed}
+blocks-set: "{changed} blocks were set in {time}s"
+blocks-copied: "{changed} blocks were copied in {time}s"
+blocks-pasted: "{changed} blocks were pasted in {time}s"

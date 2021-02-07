@@ -42,13 +42,15 @@ class CopyTask extends EditTask
 	 * @param Vector3                 $place
 	 * @param BlockListSelection      $toUndo
 	 * @param SubChunkIteratorManager $origin
+	 * @param int                     $changed
 	 * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
 	{
 		foreach ($selection->getAffectedBlocks($place) as $block) {
 			$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
 			$toUndo->addBlock($block->getX() - $selection->getPos1()->getX(), $block->getY() - $selection->getPos1()->getY(), $block->getZ() - $selection->getPos1()->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
+			$changed++;
 
 			if (isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])) {
 				$toUndo->addTile(TileUtils::offsetCompound($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())], $selection->getPos1()->multiply(-1)));
