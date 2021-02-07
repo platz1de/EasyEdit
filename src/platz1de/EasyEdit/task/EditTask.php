@@ -148,6 +148,8 @@ abstract class EditTask extends Threaded
 				return $chunk->fastSerialize();
 			}, $manager->getChunks());
 			$result[] = $tiles;
+			$result[] = $start;
+			$result[] = $changed;
 			$this->result = igbinary_serialize($result);
 			$this->toUndo = igbinary_serialize($toUndo);
 		} catch (Throwable $exception) {
@@ -217,6 +219,7 @@ abstract class EditTask extends Threaded
 				HistoryManager::addToFuture($selection->getPlayer(), igbinary_unserialize($this->toUndo));
 			} elseif ($this instanceof CopyTask) {
 				ClipBoardManager::setForPlayer($selection->getPlayer(), igbinary_unserialize($this->toUndo));
+				$this->notifyUser($selection, round(microtime(true) - $result[2], 3), $result[3]);
 				return null;
 			} else {
 				HistoryManager::addToHistory($selection->getPlayer(), igbinary_unserialize($this->toUndo));
@@ -241,11 +244,19 @@ abstract class EditTask extends Threaded
 			foreach ($result[1] as $data) {
 				Tile::createTile($data->getString(Tile::TAG_ID), $manager->getLevel(), $data);
 			}
+			$this->notifyUser($selection, round(microtime(true) - $result[2], 3), $result[3]);
 			return $manager;
 		}
 
 		return null;
 	}
+
+	/**
+	 * @param Selection $selection
+	 * @param float     $time
+	 * @param int       $changed
+	 */
+	abstract protected function notifyUser(Selection $selection, float $time, int $changed) : void;
 
 	/**
 	 * @param Selection $selection

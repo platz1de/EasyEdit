@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Cube;
@@ -64,5 +65,15 @@ class SetTask extends EditTask
 		/** @var Cube $selection */
 		Selection::validate($selection, Cube::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1(), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
+	}
+
+	/**
+	 * @param Selection $selection
+	 * @param float     $time
+	 * @param int       $changed
+	 */
+	protected function notifyUser(Selection $selection, float $time, int $changed): void
+	{
+		Messages::send($selection->getPlayer(), "blocks-set", ["{time}" => $time, "{changed}" => $changed]);
 	}
 }

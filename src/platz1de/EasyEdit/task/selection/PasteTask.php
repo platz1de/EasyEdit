@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -84,5 +85,15 @@ class PasteTask extends EditTask
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->subtract($selection->getPoint()), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
+	}
+
+	/**
+	 * @param Selection $selection
+	 * @param float     $time
+	 * @param int       $changed
+	 */
+	protected function notifyUser(Selection $selection, float $time, int $changed): void
+	{
+		Messages::send($selection->getPlayer(), "blocks-pasted", ["{time}" => $time, "{changed}" => $changed]);
 	}
 }
