@@ -43,7 +43,7 @@ abstract class Selection implements Serializable
 	/**
 	 * Selection constructor.
 	 * @param string       $player
-	 * @param string|null  $level
+	 * @param string       $level
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
 	 */
