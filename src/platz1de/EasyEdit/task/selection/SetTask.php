@@ -35,8 +35,7 @@ class SetTask extends EditTask
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
-		/** @var Cube $selection */
-		foreach ($selection->getAffectedBlocks() as $block) {
+		foreach ($selection->getAffectedBlocks($place) as $block) {
 			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ(), $origin);
 			if ($b instanceof Block) {
 				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
@@ -59,6 +58,7 @@ class SetTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
+		//TODO: Non-cubic selections
 		/** @var Cube $selection */
 		Selection::validate($selection, Cube::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1(), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());

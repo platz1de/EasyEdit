@@ -85,10 +85,10 @@ class EasyEdit extends PluginBase
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			if (!$selection instanceof Cube) {
 				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevel());
+				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
 			}
 		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevel());
+			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
 		}
 
 		$selection->setPos1($position->floor());
@@ -108,10 +108,10 @@ class EasyEdit extends PluginBase
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			if (!$selection instanceof Cube) {
 				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevel());
+				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
 			}
 		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevel());
+			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
 		}
 
 		$selection->setPos2($position->floor());

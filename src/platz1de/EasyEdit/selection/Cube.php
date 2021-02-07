@@ -25,28 +25,6 @@ use RuntimeException;
 class Cube extends Selection
 {
 	/**
-	 * @var Level|string
-	 */
-	private $level;
-
-	/**
-	 * @var Vector3
-	 */
-	private $pos1;
-	/**
-	 * @var Vector3
-	 */
-	private $pos2;
-
-	/**
-	 * @var Vector3
-	 */
-	private $selected1;
-	/**
-	 * @var Vector3
-	 */
-	private $selected2;
-	/**
 	 * @var Vector3
 	 */
 	private $structure;
@@ -54,32 +32,22 @@ class Cube extends Selection
 	/**
 	 * Cube constructor.
 	 * @param string       $player
-	 * @param Level        $level
+	 * @param string       $level
 	 * @param null|Vector3 $pos1
 	 * @param null|Vector3 $pos2
 	 */
-	public function __construct(string $player, Level $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
+	public function __construct(string $player, string $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
 	{
-		parent::__construct($player);
-
-		$this->level = $level;
-
-		$this->update();
-
-		if ($pos1 !== null) {
-			$this->pos1 = clone($this->selected1 = $pos1);
-		}
-		if ($pos2 !== null) {
-			$this->pos2 = clone($this->selected2 = $pos2);
-		}
+		parent::__construct($player, $level, $pos1, $pos2);
 
 		$this->structure = new Vector3(0, 0, 0);
 	}
 
 	/**
+	 * @param Position $place
 	 * @return Vector3[]
 	 */
-	public function getAffectedBlocks(): array
+	public function getAffectedBlocks(Vector3 $place): array
 	{
 		$blocks = [];
 		for ($x = $this->pos1->getX(); $x <= $this->pos2->getX(); $x++) {
@@ -94,7 +62,7 @@ class Cube extends Selection
 
 	public function update(): void
 	{
-		if ($this->pos1 instanceof Vector3 && $this->pos2 instanceof Vector3) {
+		if (isset($this->pos1, $this->pos2)) {
 			$minX = min($this->pos1->getX(), $this->pos2->getX());
 			$maxX = max($this->pos1->getX(), $this->pos2->getX());
 			$minY = min($this->pos1->getY(), $this->pos2->getY());
@@ -193,63 +161,13 @@ class Cube extends Selection
 		$data = igbinary_unserialize($serialized);
 		$this->player = $data["player"];
 		try {
-			$this->level = Server::getInstance()->getLevelByName($data["level"]);
+			$this->level = Server::getInstance()->getLevelByName($data["level"]) ?? $data["level"];
 		} catch (RuntimeException $exception) {
 			$this->level = $data["level"];
 		}
 		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
 		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
 		$this->structure = new Vector3($data["structureX"], $data["structureY"], $data["structureZ"]);
-	}
-
-	/**
-	 * @param Vector3 $pos1
-	 */
-	public function setPos1(Vector3 $pos1): void
-	{
-		$this->pos1 = clone($this->selected1 = $pos1);
-		if ($this->selected2 !== null) {
-			$this->pos2 = clone($this->selected2);
-		}
-
-		$this->update();
-	}
-
-	/**
-	 * @param Vector3 $pos2
-	 */
-	public function setPos2(Vector3 $pos2): void
-	{
-		if ($this->selected1 !== null) {
-			$this->pos1 = clone($this->selected1);
-		}
-		$this->pos2 = clone($this->selected2 = $pos2);
-
-		$this->update();
-	}
-
-	/**
-	 * @return Level|string
-	 */
-	private function getLevel()
-	{
-		return $this->level;
-	}
-
-	/**
-	 * @return Vector3
-	 */
-	public function getPos1(): Vector3
-	{
-		return $this->pos1;
-	}
-
-	/**
-	 * @return Vector3
-	 */
-	public function getPos2(): Vector3
-	{
-		return $this->pos2;
 	}
 
 	public function close(): void

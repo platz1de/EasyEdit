@@ -7,8 +7,11 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\Server;
 use pocketmine\tile\Tile;
+use RuntimeException;
 
 abstract class BlockListSelection extends Selection
 {
@@ -21,38 +24,25 @@ abstract class BlockListSelection extends Selection
 	 */
 	private $iterator;
 	/**
-	 * @var int
-	 */
-	private $xSize;
-	/**
-	 * @var int
-	 */
-	private $zSize;
-	/**
-	 * @var int
-	 */
-	private $ySize;
-	/**
 	 * @var CompoundTag[]
 	 */
 	private $tiles = [];
 
 	/**
 	 * BlockListSelection constructor.
-	 * @param string                 $player
-	 * @param ReferencedChunkManager $manager
-	 * @param int                    $xSize
-	 * @param int                    $ySize
-	 * @param int                    $zSize
+	 * @param string  $player
+	 * @param string  $level
+	 * @param Vector3 $start
+	 * @param int     $xSize
+	 * @param int     $ySize
+	 * @param int     $zSize
 	 */
-	public function __construct(string $player, ReferencedChunkManager $manager, int $xSize, int $ySize, int $zSize)
+	public function __construct(string $player, string $level, Vector3 $start, int $xSize, int $ySize, int $zSize)
 	{
-		parent::__construct($player);
-		$this->manager = $manager;
-		$this->iterator = new SubChunkIteratorManager($manager);
-		$this->xSize = $xSize;
-		$this->ySize = $ySize;
-		$this->zSize = $zSize;
+		parent::__construct($player, $level, $start, new Vector3($start->getX() + $xSize, $start->getY() + $ySize, $start->getZ() + $zSize));
+		$this->manager = new ReferencedChunkManager($level);
+		$this->getManager()->load($start, $xSize, $zSize);
+		$this->iterator = new SubChunkIteratorManager($this->manager);
 	}
 
 	/**
@@ -70,13 +60,30 @@ abstract class BlockListSelection extends Selection
 	public function getNeededChunks(Position $place): array
 	{
 		$chunks = [];
-		for ($x = $place->getX() >> 4; $x <= ($place->getX() + $this->xSize) >> 4; $x++) {
-			for ($z = $place->getZ() >> 4; $z <= ($place->getZ() + $this->zSize) >> 4; $z++) {
+		for ($x = ($place->getX() + $this->pos1->getX()) >> 4; $x <= ($place->getX() + $this->pos2->getX()) >> 4; $x++) {
+			for ($z = ($place->getZ() + $this->pos1->getZ()) >> 4; $z <= ($place->getZ() + $this->pos2->getZ()) >> 4; $z++) {
 				$place->getLevelNonNull()->loadChunk($x, $z);
 				$chunks[] = $place->getLevelNonNull()->getChunk($x, $z);
 			}
 		}
 		return $chunks;
+	}
+
+	/**
+	 * @param Position $place
+	 * @return Vector3[]
+	 */
+	public function getAffectedBlocks(Vector3 $place): array
+	{
+		$blocks = [];
+		for ($x = $place->getX() + $this->pos1->getX(); $x <= $place->getX() + $this->pos2->getX(); $x++) {
+			for ($z = $place->getZ() + $this->pos1->getZ(); $z <= $place->getZ() + $this->pos2->getZ(); $z++) {
+				for ($y = $place->getY() + $this->pos1->getY(); $y <= $place->getY() + $this->pos2->getY(); $y++) {
+					$blocks[] = new Vector3($x, $y, $z);
+				}
+			}
+		}
+		return $blocks;
 	}
 
 	/**
@@ -93,30 +100,6 @@ abstract class BlockListSelection extends Selection
 		}
 		$this->iterator->moveTo($x, $y, $z);
 		$this->iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getXSize(): int
-	{
-		return $this->xSize;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getYSize(): int
-	{
-		return $this->ySize;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getZSize(): int
-	{
-		return $this->zSize;
 	}
 
 	/**
@@ -150,13 +133,16 @@ abstract class BlockListSelection extends Selection
 	{
 		return igbinary_serialize([
 			"player" => $this->player,
-			"xSize" => $this->xSize,
-			"ySize" => $this->ySize,
-			"zSize" => $this->zSize,
 			"chunks" => array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
 			}, $this->getManager()->getChunks()),
-			"level" => $this->getManager()->getLevelName(),
+			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"minX" => $this->pos1->getX(),
+			"minY" => $this->pos1->getY(),
+			"minZ" => $this->pos1->getZ(),
+			"maxX" => $this->pos2->getX(),
+			"maxY" => $this->pos2->getY(),
+			"maxZ" => $this->pos2->getZ(),
 			"tiles" => $this->getTiles()
 		]);
 	}
@@ -168,10 +154,17 @@ abstract class BlockListSelection extends Selection
 	public function unserialize($serialized): void
 	{
 		$data = igbinary_unserialize($serialized);
+
+		try {
+			$this->level = Server::getInstance()->getLevelByName($data["level"]) ?? $data["level"];
+		} catch (RuntimeException $exception) {
+			$this->level = $data["level"];
+		}
+
+		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
+		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+
 		$this->player = $data["player"];
-		$this->xSize = $data["xSize"];
-		$this->ySize = $data["ySize"];
-		$this->zSize = $data["zSize"];
 		$this->manager = new ReferencedChunkManager($data["level"]);
 		foreach ($data["chunks"] as $chunk) {
 			/** @var Chunk $chunk */

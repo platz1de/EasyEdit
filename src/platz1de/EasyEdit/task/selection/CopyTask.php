@@ -46,8 +46,7 @@ class CopyTask extends EditTask
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
-		/** @var Cube $selection */
-		foreach ($selection->getAffectedBlocks() as $block) {
+		foreach ($selection->getAffectedBlocks($place) as $block) {
 			$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
 			$toUndo->addBlock($block->getX() - $selection->getPos1()->getX(), $block->getY() - $selection->getPos1()->getY(), $block->getZ() - $selection->getPos1()->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
 
@@ -65,6 +64,7 @@ class CopyTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
+		//TODO: Non-cubic selections
 		/** @var Cube $selection */
 		Selection::validate($selection, Cube::class);
 		return new DynamicBlockListSelection($selection->getPlayer(), $place->subtract($selection->getPos1()), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());

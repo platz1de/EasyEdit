@@ -49,21 +49,17 @@ class PasteTask extends EditTask
 	{
 		/** @var DynamicBlockListSelection $selection */
 		$place = $place->subtract($selection->getPoint());
-		for ($x = 0; $x <= $selection->getXSize(); $x++) {
-			for ($z = 0; $z <= $selection->getZSize(); $z++) {
-				for ($y = 0; $y <= $selection->getYSize(); $y++) {
-					$selection->getIterator()->moveTo($x, $y, $z);
-					$blockId = $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
-					if (Selection::processBlock($blockId)) {
-						$iterator->moveTo($x + $place->getX(), $y + $place->getY(), $z + $place->getZ());
-						$toUndo->addBlock($x + $place->getX(), $y + $place->getY(), $z + $place->getZ(), $iterator->currentSubChunk->getBlockId($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f));
-						$iterator->currentSubChunk->setBlock(($x + $place->getX()) & 0x0f, ($y + $place->getY()) & 0x0f, ($z + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+		foreach ($selection->getAffectedBlocks($place) as $block) {
+			$selection->getIterator()->moveTo($block->getX(), $block->getY(), $block->getZ());
+			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f);
+			if (Selection::processBlock($blockId)) {
+				$iterator->moveTo($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ());
+				$toUndo->addBlock($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() + $place->getX() & 0x0f, $block->getY() + $place->getY() & 0x0f, $block->getZ() + $place->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() + $place->getX() & 0x0f, $block->getY() + $place->getY() & 0x0f, $block->getZ() + $place->getZ() & 0x0f));
+				$iterator->currentSubChunk->setBlock(($block->getX() + $place->getX()) & 0x0f, ($block->getY() + $place->getY()) & 0x0f, ($block->getZ() + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
 
-						if (isset($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())])) {
-							$toUndo->addTile($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())]);
-							unset($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())]);
-						}
-					}
+				if (isset($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())])) {
+					$toUndo->addTile($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())]);
+					unset($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())]);
 				}
 			}
 		}
@@ -84,6 +80,6 @@ class PasteTask extends EditTask
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->subtract($selection->getPoint()), $selection->getXSize(), $selection->getYSize(), $selection->getZSize());
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->subtract($selection->getPoint()), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
 	}
 }

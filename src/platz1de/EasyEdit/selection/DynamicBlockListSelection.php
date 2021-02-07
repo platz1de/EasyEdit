@@ -6,6 +6,7 @@ use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\Server;
 
 class DynamicBlockListSelection extends BlockListSelection
 {
@@ -24,8 +25,7 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	public function __construct(string $player, Vector3 $relativePlace, int $xSize, int $ySize, int $zSize)
 	{
-		parent::__construct($player, new ReferencedChunkManager(""), $xSize, $ySize, $zSize);
-		$this->getManager()->load(new Vector3(), $xSize, $zSize);
+		parent::__construct($player, "", new Vector3(), $xSize, $ySize, $zSize);
 		$this->point = $relativePlace;
 	}
 
@@ -36,6 +36,15 @@ class DynamicBlockListSelection extends BlockListSelection
 	public function getNeededChunks(Position $place): array
 	{
 		return parent::getNeededChunks(Position::fromObject($place->subtract($this->getPoint()), $place->getLevel()));
+	}
+
+	/**
+	 * @param Vector3 $place
+	 * @return Vector3[]
+	 */
+	public function getAffectedBlocks(Vector3 $place): array
+	{
+		return parent::getAffectedBlocks(new Vector3());
 	}
 
 	/**
@@ -53,16 +62,19 @@ class DynamicBlockListSelection extends BlockListSelection
 	{
 		return igbinary_serialize([
 			"player" => $this->player,
-			"x" => $this->point->getX(),
-			"y" => $this->point->getY(),
-			"z" => $this->point->getZ(),
-			"xSize" => $this->getXSize(),
-			"ySize" => $this->getYSize(),
-			"zSize" => $this->getZSize(),
 			"chunks" => array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
 			}, $this->getManager()->getChunks()),
-			"level" => $this->getManager()->getLevelName(),
+			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"minX" => $this->pos1->getX(),
+			"minY" => $this->pos1->getY(),
+			"minZ" => $this->pos1->getZ(),
+			"maxX" => $this->pos2->getX(),
+			"maxY" => $this->pos2->getY(),
+			"maxZ" => $this->pos2->getZ(),
+			"x" => $this->point->getX(),
+			"y" => $this->point->getY(),
+			"z" => $this->point->getZ(),
 			"tiles" => $this->getTiles()
 		]);
 	}
