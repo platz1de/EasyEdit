@@ -44,6 +44,7 @@ class UndoTask extends PasteTask
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
 		/** @var StaticBlockListSelection $selection */
+		Selection::validate($selection, StaticBlockListSelection::class);
 		foreach ($selection->getAffectedBlocks($place) as $block) {
 			$selection->getIterator()->moveTo($block->getX(), $block->getY(), $block->getZ());
 			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f);

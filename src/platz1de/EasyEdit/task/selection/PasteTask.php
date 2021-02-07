@@ -48,6 +48,7 @@ class PasteTask extends EditTask
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin): void
 	{
 		/** @var DynamicBlockListSelection $selection */
+		Selection::validate($selection, DynamicBlockListSelection::class);
 		$place = $place->subtract($selection->getPoint());
 		foreach ($selection->getAffectedBlocks($place) as $block) {
 			$selection->getIterator()->moveTo($block->getX(), $block->getY(), $block->getZ());
