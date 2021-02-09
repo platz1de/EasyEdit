@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -11,6 +12,7 @@ use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
+use pocketmine\utils\Utils;
 use RuntimeException;
 
 abstract class BlockListSelection extends Selection
@@ -70,20 +72,20 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @param Position $place
-	 * @return Vector3[]
+	 * @param Vector3 $place
+	 * @param Closure $closure
+	 * @return void
 	 */
-	public function getAffectedBlocks(Vector3 $place): array
+	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		$blocks = [];
+		Utils::validateCallableSignature(function (int $x, int $y, int $z) : void{}, $closure);
 		for ($x = $place->getX() + $this->pos1->getX(); $x <= $place->getX() + $this->pos2->getX(); $x++) {
 			for ($z = $place->getZ() + $this->pos1->getZ(); $z <= $place->getZ() + $this->pos2->getZ(); $z++) {
 				for ($y = $place->getY() + $this->pos1->getY(); $y <= $place->getY() + $this->pos2->getY(); $y++) {
-					$blocks[] = new Vector3($x, $y, $z);
+					$closure($x, $y, $z);
 				}
 			}
 		}
-		return $blocks;
 	}
 
 	/**

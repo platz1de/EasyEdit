@@ -37,20 +37,20 @@ class SetTask extends EditTask
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
 	{
-		foreach ($selection->getAffectedBlocks($place) as $block) {
-			$b = $pattern->getFor($block->getX(), $block->getY(), $block->getZ(), $origin);
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $pattern, $place, $toUndo, $origin, &$changed):void{
+			$b = $pattern->getFor($x, $y, $z, $origin);
 			if ($b instanceof Block) {
-				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
-				$toUndo->addBlock($block->getX(), $block->getY(), $block->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
-				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $b->getId(), $b->getDamage());
+				$iterator->moveTo($x, $y, $z);
+				$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $b->getId(), $b->getDamage());
 				$changed++;
 
-				if (isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])) {
-					$toUndo->addTile($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
-					unset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
+				if (isset($tiles[Level::blockHash($x, $y, $z)])) {
+					$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
+					unset($tiles[Level::blockHash($x, $y, $z)]);
 				}
 			}
-		}
+		});
 	}
 
 	/**

@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\format\Chunk;
@@ -19,6 +20,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
+use pocketmine\utils\Utils;
 use RuntimeException;
 
 class Cube extends Selection
@@ -43,20 +45,20 @@ class Cube extends Selection
 	}
 
 	/**
-	 * @param Position $place
-	 * @return Vector3[]
+	 * @param Vector3 $place
+	 * @param Closure $closure
+	 * @return void
 	 */
-	public function getAffectedBlocks(Vector3 $place): array
+	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		$blocks = [];
+		Utils::validateCallableSignature(function (int $x, int $y, int $z) : void{}, $closure);
 		for ($x = $this->pos1->getX(); $x <= $this->pos2->getX(); $x++) {
 			for ($z = $this->pos1->getZ(); $z <= $this->pos2->getZ(); $z++) {
 				for ($y = $this->pos1->getY(); $y <= $this->pos2->getY(); $y++) {
-					$blocks[] = new Vector3($x, $y, $z);
+					$closure($x, $y, $z);
 				}
 			}
 		}
-		return $blocks;
 	}
 
 	public function update(): void

@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -38,11 +39,12 @@ class DynamicBlockListSelection extends BlockListSelection
 
 	/**
 	 * @param Vector3 $place
-	 * @return Vector3[]
+	 * @param Closure $closure
+	 * @return void
 	 */
-	public function getAffectedBlocks(Vector3 $place): array
+	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		return parent::getAffectedBlocks(new Vector3());
+		parent::useOnBlocks(new Vector3(), $closure);
 	}
 
 	/**

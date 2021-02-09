@@ -52,21 +52,21 @@ class PasteTask extends EditTask
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
 		$place = $place->subtract($selection->getPoint());
-		foreach ($selection->getAffectedBlocks($place) as $block) {
-			$selection->getIterator()->moveTo($block->getX(), $block->getY(), $block->getZ());
-			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f);
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $pattern, $place, $toUndo, $origin, &$changed): void {
+			$selection->getIterator()->moveTo($x, $y, $z);
+			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
 			if (Selection::processBlock($blockId)) {
-				$iterator->moveTo($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ());
-				$toUndo->addBlock($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() + $place->getX() & 0x0f, $block->getY() + $place->getY() & 0x0f, $block->getZ() + $place->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() + $place->getX() & 0x0f, $block->getY() + $place->getY() & 0x0f, $block->getZ() + $place->getZ() & 0x0f));
-				$iterator->currentSubChunk->setBlock(($block->getX() + $place->getX()) & 0x0f, ($block->getY() + $place->getY()) & 0x0f, ($block->getZ() + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
+				$iterator->moveTo($x + $place->getX(), $y + $place->getY(), $z + $place->getZ());
+				$toUndo->addBlock($x + $place->getX(), $y + $place->getY(), $z + $place->getZ(), $iterator->currentSubChunk->getBlockId($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f));
+				$iterator->currentSubChunk->setBlock(($x + $place->getX()) & 0x0f, ($y + $place->getY()) & 0x0f, ($z + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 				$changed++;
 
-				if (isset($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())])) {
-					$toUndo->addTile($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())]);
-					unset($tiles[Level::blockHash($block->getX() + $place->getX(), $block->getY() + $place->getY(), $block->getZ() + $place->getZ())]);
+				if (isset($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())])) {
+					$toUndo->addTile($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())]);
+					unset($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())]);
 				}
 			}
-		}
+		});
 
 		foreach ($selection->getTiles() as $tile) {
 			$compoundTag = TileUtils::offsetCompound($tile, $place);

@@ -46,21 +46,21 @@ class RedoTask extends PasteTask
 	{
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);
-		foreach ($selection->getAffectedBlocks($place) as $block) {
-			$selection->getIterator()->moveTo($block->getX(), $block->getY(), $block->getZ());
-			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f);
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $pattern, $place, $toUndo, $origin, &$changed): void {
+			$selection->getIterator()->moveTo($x, $y, $z);
+			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
 			if (Selection::processBlock($blockId)) {
-				$iterator->moveTo($block->getX(), $block->getY(), $block->getZ());
-				$toUndo->addBlock($block->getX(), $block->getY(), $block->getZ(), $iterator->currentSubChunk->getBlockId($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
-				$iterator->currentSubChunk->setBlock($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($block->getX() & 0x0f, $block->getY() & 0x0f, $block->getZ() & 0x0f));
+				$iterator->moveTo($x, $y, $z);
+				$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 				$changed++;
 
-				if (isset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())])) {
-					$toUndo->addTile($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
-					unset($tiles[Level::blockHash($block->getX(), $block->getY(), $block->getZ())]);
+				if (isset($tiles[Level::blockHash($x, $y, $z)])) {
+					$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
+					unset($tiles[Level::blockHash($x, $y, $z)]);
 				}
 			}
-		}
+		});
 
 		foreach ($selection->getTiles() as $tile) {
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;

@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -78,9 +79,10 @@ abstract class Selection implements Serializable
 
 	/**
 	 * @param Vector3 $place
-	 * @return Vector3[]
+	 * @param Closure $closure
+	 * @return void
 	 */
-	abstract public function getAffectedBlocks(Vector3 $place): array;
+	abstract public function useOnBlocks(Vector3 $place, Closure $closure): void;
 
 	/**
 	 * calculating the "real" positions (selected ones don't have to be the smallest and biggest
