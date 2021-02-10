@@ -48,6 +48,7 @@ class Cube extends Selection
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void
+	 * @noinspection StaticClosureCanBeUsedInspection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
