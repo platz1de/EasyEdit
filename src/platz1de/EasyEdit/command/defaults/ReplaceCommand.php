@@ -8,6 +8,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Block;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -42,6 +43,7 @@ class ReplaceCommand extends EasyEditCommand
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
+			Selection::validate($selection);
 		} catch (Exception $exception) {
 			Messages::send($player, "no-selection");
 			return;

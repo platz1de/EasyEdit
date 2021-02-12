@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use UnexpectedValueException;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -85,12 +86,20 @@ abstract class Selection implements Serializable
 	abstract public function useOnBlocks(Vector3 $place, Closure $closure): void;
 
 	/**
+	 * @return bool
+	 */
+	public function isValid(): bool
+	{
+		return isset($this->pos1, $this->pos2);
+	}
+
+	/**
 	 * calculating the "real" positions (selected ones don't have to be the smallest and biggest
 	 * they could be mixed)
 	 */
 	protected function update(): void
 	{
-		if (isset($this->pos1, $this->pos2)) {
+		if ($this->isValid()) {
 			$minX = min($this->pos1->getX(), $this->pos2->getX());
 			$maxX = max($this->pos1->getX(), $this->pos2->getX());
 			$minY = min($this->pos1->getY(), $this->pos2->getY());
@@ -166,14 +175,16 @@ abstract class Selection implements Serializable
 	}
 
 	/**
-	 * @param Selection $selection
-	 * @param string    $expected
-	 * @throws WrongSelectionTypeError
+	 * @param Selection   $selection
+	 * @param string|null $expected
 	 */
-	public static function validate(Selection $selection, string $expected): void
+	public static function validate(Selection $selection, ?string $expected = null): void
 	{
-		if (get_class($selection) !== $expected) {
+		if(($expected !== null) && get_class($selection) !== $expected) {
 			throw new WrongSelectionTypeError(get_class($selection), $expected);
+		}
+		if(!$selection->isValid()){
+			throw new UnexpectedValueException("Selection is not valid");
 		}
 	}
 

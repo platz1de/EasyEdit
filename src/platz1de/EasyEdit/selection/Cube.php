@@ -64,7 +64,7 @@ class Cube extends Selection
 
 	public function update(): void
 	{
-		if (isset($this->pos1, $this->pos2)) {
+		if ($this->isValid()) {
 			$minX = min($this->pos1->getX(), $this->pos2->getX());
 			$maxX = max($this->pos1->getX(), $this->pos2->getX());
 			$minY = min($this->pos1->getY(), $this->pos2->getY());
