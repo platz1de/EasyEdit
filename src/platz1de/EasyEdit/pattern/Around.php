@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\pattern;
 
+use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 
@@ -18,9 +19,11 @@ class Around extends Pattern
 	{
 		for ($i = 0; $i <= 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);
-			$iterator->moveTo($check->getX(), $check->getY(), $check->getZ());
-			if (($iterator->currentSubChunk->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($iterator->currentSubChunk->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
-				return true;
+			if ($y >= 0 && $y < Level::Y_MAX) {
+				$iterator->moveTo($check->getX(), $check->getY(), $check->getZ());
+				if (($iterator->currentSubChunk->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($iterator->currentSubChunk->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
+					return true;
+				}
 			}
 		}
 

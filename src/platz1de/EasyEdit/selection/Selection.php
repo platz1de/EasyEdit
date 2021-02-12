@@ -102,8 +102,8 @@ abstract class Selection implements Serializable
 		if ($this->isValid()) {
 			$minX = min($this->pos1->getX(), $this->pos2->getX());
 			$maxX = max($this->pos1->getX(), $this->pos2->getX());
-			$minY = min($this->pos1->getY(), $this->pos2->getY());
-			$maxY = max($this->pos1->getY(), $this->pos2->getY());
+			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), 0);
+			$maxY = min(max($this->pos1->getY(), $this->pos2->getY()), Level::Y_MAX - 1);
 			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
 			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
 

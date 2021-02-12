@@ -16,8 +16,11 @@ class Above extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
 	{
 		$y--;
-		$iterator->moveTo($x, $y, $z);
-		return ($iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getId()) && ($iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getDamage());
+		if ($y >= 0) {
+			$iterator->moveTo($x, $y, $z);
+			return ($iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getId()) && ($iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getDamage());
+		}
+		return false;
 	}
 
 	public function check(): void
