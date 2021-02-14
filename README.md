@@ -25,3 +25,4 @@ Command | Description | Permission | Aliases
 //copy | Copy the selected Area | easyedit.command.copy
 //paste | Paste the Clipboard | easyedit.command.paste
 //insert | Insert the Clipboard | easyedit.command.paste
+//center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle

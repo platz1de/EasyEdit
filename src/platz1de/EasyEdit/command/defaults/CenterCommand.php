@@ -1,0 +1,61 @@
+<?php
+
+namespace platz1de\EasyEdit\command\defaults;
+
+use Exception;
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\pattern\ParseError;
+use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\worker\WorkerAdapter;
+use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockIds;
+use pocketmine\math\Vector3;
+use pocketmine\Player;
+
+class CenterCommand extends EasyEditCommand
+{
+	public function __construct()
+	{
+		parent::__construct("/center", "Set the center Blocks (1-8)", "easyedit.command.set", "//center [block]", ["/middle"]);
+	}
+
+	/**
+	 * @param Player $player
+	 * @param array  $args
+	 * @param array  $flags
+	 */
+	public function process(Player $player, array $args, array $flags): void
+	{
+		try {
+			$block = Pattern::getBlock($args[0]);
+		} catch (Exception $exception) {
+			$block = BlockFactory::get(BlockIds::BEDROCK);
+		}
+
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+			Selection::validate($selection, Cube::class);
+		} catch (Exception $exception) {
+			Messages::send($player, "no-selection");
+			return;
+		}
+
+		//Move this somewhere else?
+		$xPos = ($selection->getPos1()->getX() + $selection->getPos2()->getX()) / 2;
+		$yPos = ($selection->getPos1()->getY() + $selection->getPos2()->getY()) / 2;
+		$zPos = ($selection->getPos1()->getZ() + $selection->getPos2()->getZ()) / 2;
+
+		for ($x = floor($xPos); $x <= ceil($xPos); $x++) {
+			for ($y = floor($yPos); $y <= ceil($yPos); $y++) {
+				for ($z = floor($zPos); $z <= ceil($zPos); $z++) {
+					$selection->getLevel()->setBlock(new Vector3($x, $y, $z), $block, true, false);
+				}
+			}
+		}
+	}
+}
