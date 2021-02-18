@@ -130,8 +130,8 @@ class Cube extends Selection
 	public function getNeededChunks(Position $place): array
 	{
 		$chunks = [];
-		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {
-			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z++) {
+		for ($x = ($this->pos1->getX() - 1) >> 4; $x <= ($this->pos2->getX() + 1) >> 4; $x++) {
+			for ($z = ($this->pos1->getZ() - 1) >> 4; $z <= ($this->pos2->getZ() + 1) >> 4; $z++) {
 				$this->getLevel()->loadChunk($x, $z);
 				$chunks[] = $this->getLevel()->getChunk($x, $z);
 			}
