@@ -53,7 +53,7 @@ abstract class Selection implements Serializable
 	{
 		try {
 			$this->level = Server::getInstance()->getLevelByName($level);
-			if($this->level === null){
+			if ($this->level === null) {
 				$this->level = $level;
 			}
 		} catch (RuntimeException $exception) {
@@ -180,10 +180,10 @@ abstract class Selection implements Serializable
 	 */
 	public static function validate(Selection $selection, ?string $expected = null): void
 	{
-		if(($expected !== null) && get_class($selection) !== $expected) {
+		if (($expected !== null) && get_class($selection) !== $expected) {
 			throw new WrongSelectionTypeError(get_class($selection), $expected);
 		}
-		if(!$selection->isValid()){
+		if (!$selection->isValid()) {
 			throw new UnexpectedValueException("Selection is not valid");
 		}
 	}
