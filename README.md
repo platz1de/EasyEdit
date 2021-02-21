@@ -1,13 +1,15 @@
 # EasyEdit
+
 Feature-rich WorldEditor for PocketMine-MP
 
 ## Features
 
 - async Editing prevents server lag
+- split big areas, so the server doesn't get overloaded
 - lots of different Commands
 - support for unique Patterns
 - Wooden Axe as Wand
-- undo & redo 
+- undo & redo
 
 ## Commands
 
