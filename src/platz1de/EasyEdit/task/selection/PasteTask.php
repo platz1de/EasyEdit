@@ -9,7 +9,9 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\utils\TileUtils;
+use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
@@ -20,13 +22,12 @@ use pocketmine\tile\Tile;
 class PasteTask extends EditTask
 {
 	/**
-	 * PasteTask constructor.
 	 * @param BlockListSelection $selection
 	 * @param Position           $place
 	 */
-	public function __construct(BlockListSelection $selection, Position $place)
+	public static function queue(BlockListSelection $selection, Position $place): void
 	{
-		parent::__construct($selection, new Pattern([], []), $place);
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class));
 	}
 
 	/**

@@ -73,7 +73,7 @@ class HistoryManager
 		if (self::canUndo($player)) {
 			$undo = array_pop(self::$past[$player]);
 
-			WorkerAdapter::submit(new UndoTask($undo));
+			UndoTask::queue($undo);
 		}
 	}
 
@@ -85,7 +85,7 @@ class HistoryManager
 		if (self::canRedo($player)) {
 			$redo = array_pop(self::$future[$player]);
 
-			WorkerAdapter::submit(new RedoTask($redo));
+			RedoTask::queue($redo);
 		}
 	}
 }

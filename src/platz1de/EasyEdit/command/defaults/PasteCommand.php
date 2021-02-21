@@ -31,6 +31,6 @@ class PasteCommand extends EasyEditCommand
 			return;
 		}
 
-		WorkerAdapter::submit(new PasteTask($selection, $player));
+		PasteTask::queue($selection, $player);
 	}
 }

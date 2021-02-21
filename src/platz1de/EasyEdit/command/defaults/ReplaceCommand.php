@@ -49,6 +49,6 @@ class ReplaceCommand extends EasyEditCommand
 			return;
 		}
 
-		WorkerAdapter::submit(new SetTask($selection, new Pattern([new Block($pattern, [$block])], []), $player));
+		SetTask::queue($selection, new Pattern([new Block($pattern, [$block])], []), $player);
 	}
 }

@@ -35,6 +35,6 @@ class CopyCommand extends EasyEditCommand
 			return;
 		}
 
-		WorkerAdapter::submit(new CopyTask($selection, $player));
+		CopyTask::queue($selection, $player);
 	}
 }

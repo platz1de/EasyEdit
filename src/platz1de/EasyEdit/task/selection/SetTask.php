@@ -9,14 +9,27 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\Block;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 
 class SetTask extends EditTask
 {
+	/**
+	 * @param Selection $selection
+	 * @param Pattern   $pattern
+	 * @param Position  $place
+	 */
+	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
+	{
+		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class));
+	}
+
 	/**
 	 * @return string
 	 */

@@ -43,13 +43,19 @@ abstract class Selection implements Serializable
 	protected $player;
 
 	/**
+	 * @var bool
+	 */
+	protected $piece;
+
+	/**
 	 * Selection constructor.
 	 * @param string       $player
 	 * @param string       $level
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
+	 * @param bool         $piece
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
+	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
 		try {
 			$this->level = Server::getInstance()->getLevelByName($level);
@@ -67,9 +73,10 @@ abstract class Selection implements Serializable
 			$this->pos2 = clone($this->selected2 = $pos2);
 		}
 
-		$this->update();
-
 		$this->player = $player;
+		$this->piece = $piece;
+
+		$this->update();
 	}
 
 	/**
@@ -201,5 +208,15 @@ abstract class Selection implements Serializable
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Splits the selection into smaller parts
+	 * lower the impact of Chunk loading
+	 * @return Selection[]
+	 */
+	public function split(): array
+	{
+		return [$this];
 	}
 }

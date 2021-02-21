@@ -47,6 +47,6 @@ class SetCommand extends EasyEditCommand
 			return;
 		}
 
-		WorkerAdapter::submit(new SetTask($selection, $pattern, $player));
+		SetTask::queue($selection, $pattern, $player);
 	}
 }

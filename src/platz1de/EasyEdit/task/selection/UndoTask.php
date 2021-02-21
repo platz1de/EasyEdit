@@ -6,6 +6,8 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
@@ -16,12 +18,13 @@ use pocketmine\tile\Tile;
 class UndoTask extends PasteTask
 {
 	/**
-	 * UndoTask constructor.
-	 * @param StaticBlockListSelection $selection
+	 * @param BlockListSelection $selection
+	 * @param Position|null      $place This argument ... just exists
 	 */
-	public function __construct(StaticBlockListSelection $selection)
+	public static function queue(BlockListSelection $selection, ?Position $place = null): void
 	{
-		parent::__construct($selection, new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()));
+		Selection::validate($selection, StaticBlockListSelection::class);
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class));
 	}
 
 	/**

@@ -31,6 +31,6 @@ class InsertCommand extends EasyEditCommand
 			return;
 		}
 
-		WorkerAdapter::submit(new InsertTask($selection, $player));
+		InsertTask::queue($selection, $player);
 	}
 }

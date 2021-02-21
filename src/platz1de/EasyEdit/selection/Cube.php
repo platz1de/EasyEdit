@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use http\Exception\UnexpectedValueException;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\format\Chunk;
@@ -37,10 +38,11 @@ class Cube extends Selection
 	 * @param string       $level
 	 * @param null|Vector3 $pos1
 	 * @param null|Vector3 $pos2
+	 * @param bool         $piece
 	 */
-	public function __construct(string $player, string $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null)
+	public function __construct(string $player, string $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		parent::__construct($player, $level, $pos1, $pos2);
+		parent::__construct($player, $level, $pos1, $pos2, $piece);
 
 		$this->structure = new Vector3(0, 0, 0);
 	}
@@ -53,7 +55,7 @@ class Cube extends Selection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z) : void{}, $closure);
+		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
 		for ($x = $this->pos1->getX(); $x <= $this->pos2->getX(); $x++) {
 			for ($z = $this->pos1->getZ(); $z <= $this->pos2->getZ(); $z++) {
 				for ($y = $this->pos1->getY(); $y <= $this->pos2->getY(); $y++) {
@@ -76,7 +78,7 @@ class Cube extends Selection
 			$this->pos1->setComponents($minX, $minY, $minZ);
 			$this->pos2->setComponents($maxX, $maxY, $maxZ);
 
-			if (($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
+			if (!$this->piece && ($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
 				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
@@ -175,11 +177,34 @@ class Cube extends Selection
 
 	public function close(): void
 	{
-		if (($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
+		if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
 			//this happens when whole Chunks get sent
 			$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
 			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure->floor())]);
 		}
+	}
+
+	/**
+	 * splits into 3x3 Chunk pieces
+	 * @return array
+	 */
+	public function split(): array
+	{
+		if ($this->piece) {
+			throw new UnexpectedValueException("Pieces are not split able");
+		}
+
+		$level = $this->getLevel();
+		if ($level instanceof Level) {
+			$level = $level->getName();
+		}
+		$pieces = [];
+		for ($x = ($this->pos1->getX() - 1) >> 4; $x <= ($this->pos2->getX() + 1) >> 4; $x += 3) {
+			for ($z = ($this->pos1->getZ() - 1) >> 4; $z <= ($this->pos2->getZ() + 1) >> 4; $z += 3) {
+				$pieces[] = new Cube($this->getPlayer(), $level, new Vector3(max($x << 4, $this->pos1->getX()), $this->pos1->getY(), max($z << 4, $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())), true);
+			}
+		}
+		return $pieces;
 	}
 }

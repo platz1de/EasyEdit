@@ -4,15 +4,21 @@ namespace platz1de\EasyEdit\worker;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\PieceManager;
+use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\scheduler\Task;
 
 class WorkerAdapter extends Task
 {
 	/**
-	 * @var EditTask[]
+	 * @var PieceManager
 	 */
-	private static $tasks = [];
+	private static $task;
+	/**
+	 * @var QueuedTask[]
+	 */
+	private static $queue = [];
 
 	/**
 	 * @var int
@@ -24,16 +30,13 @@ class WorkerAdapter extends Task
 	 */
 	public function onRun(int $currentTick): void
 	{
-		foreach (self::$tasks as $task) {
-			if ($task->isFinished()) {
-				$result = $task->getResult();
-				if ($result instanceof ReferencedChunkManager) {
-					foreach ($result->getChunks() as $chunk) {
-						$result->getLevel()->setChunk($chunk->getX(), $chunk->getZ(), $chunk, false);
-					}
-				}
-				unset(self::$tasks[$task->getId()]);
-			}
+		if (self::$task !== null && self::$task->continue()) {
+			self::$task = null;
+		}
+
+		if(count(self::$queue) > 0){
+			self::$task = new PieceManager(array_shift(self::$queue));
+			self::$task->start();
 		}
 	}
 
@@ -46,11 +49,10 @@ class WorkerAdapter extends Task
 	}
 
 	/**
-	 * @param EditTask $task
+	 * @param QueuedTask $task
 	 */
-	public static function submit(EditTask $task): void
+	public static function queue(QueuedTask $task): void
 	{
-		self::$tasks[$task->getId()] = $task;
-		EasyEdit::getWorker()->stack($task);
+		self::$queue[] = $task;
 	}
 }

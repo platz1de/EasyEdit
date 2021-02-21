@@ -9,7 +9,9 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\utils\TileUtils;
+use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
@@ -18,13 +20,12 @@ use pocketmine\math\Vector3;
 class CopyTask extends EditTask
 {
 	/**
-	 * CopyTask constructor.
 	 * @param Selection $selection
 	 * @param Position  $place
 	 */
-	public function __construct(Selection $selection, Position $place)
+	public static function queue(Selection $selection, Position $place): void
 	{
-		parent::__construct($selection, new Pattern([], []), $place);
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class));
 	}
 
 	/**
