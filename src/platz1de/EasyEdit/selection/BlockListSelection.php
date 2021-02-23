@@ -41,7 +41,7 @@ abstract class BlockListSelection extends Selection
 	 */
 	public function __construct(string $player, string $level, Vector3 $start, int $xSize, int $ySize, int $zSize)
 	{
-		parent::__construct($player, $level, $start, new Vector3($start->getX() + $xSize, $start->getY() + $ySize, $start->getZ() + $zSize));
+		parent::__construct($player, $level, $start, new Vector3($start->getX() + $xSize, $start->getY() + $ySize, $start->getZ() + $zSize), false);
 		$this->manager = new ReferencedChunkManager($level);
 		$this->getManager()->load($start, $xSize, $zSize);
 		$this->iterator = new SubChunkIteratorManager($this->manager);
@@ -79,7 +79,7 @@ abstract class BlockListSelection extends Selection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z) : void{}, $closure);
+		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
 		for ($x = $place->getX() + $this->pos1->getX(); $x <= $place->getX() + $this->pos2->getX(); $x++) {
 			for ($z = $place->getZ() + $this->pos1->getZ(); $z <= $place->getZ() + $this->pos2->getZ(); $z++) {
 				for ($y = $place->getY() + $this->pos1->getY(); $y <= $place->getY() + $this->pos2->getY(); $y++) {
