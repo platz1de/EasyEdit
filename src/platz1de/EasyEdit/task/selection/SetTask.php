@@ -85,7 +85,7 @@ class SetTask extends EditTask
 	 * @param float     $time
 	 * @param int       $changed
 	 */
-	protected function notifyUser(Selection $selection, float $time, int $changed): void
+	public function notifyUser(Selection $selection, float $time, int $changed): void
 	{
 		Messages::send($selection->getPlayer(), "blocks-set", ["{time}" => $time, "{changed}" => $changed]);
 	}

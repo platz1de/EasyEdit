@@ -70,18 +70,15 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $result;
-	/**
-	 * @var string
-	 */
-	private $toUndo;
 
 	/**
 	 * EditTask constructor.
-	 * @param Selection $selection
-	 * @param Pattern   $pattern
-	 * @param Position  $place
+	 * @param Selection                     $selection
+	 * @param Pattern                       $pattern
+	 * @param Position                      $place
+	 * @param EditTaskResult|Selection|null $previous
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, $previous = null)
 	{
 		$this->id = WorkerAdapter::getId();
 		$chunkData = [];
@@ -98,6 +95,9 @@ abstract class EditTask extends Threaded
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
 		$this->level = $place->getLevelNonNull()->getName();
+		if ($previous !== null) {
+			$this->result = igbinary_serialize($previous);
+		}
 	}
 
 	public function run(): void
@@ -131,7 +131,9 @@ abstract class EditTask extends Threaded
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
-		$toUndo = $this->getUndoBlockList($selection, $place, $this->level);
+		$previous = igbinary_unserialize($this->result ?? null);
+
+		$toUndo = $previous instanceof EditTaskResult ? $previous->getUndo() : $this->getUndoBlockList($previous instanceof Selection ? $previous : $selection, $place, $this->level);
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
 
@@ -143,17 +145,19 @@ abstract class EditTask extends Threaded
 			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
 
-			$result = [];
-			$result[] = array_map(static function (Chunk $chunk) {
-				return $chunk->fastSerialize();
-			}, $manager->getChunks());
-			$result[] = $tiles;
-			$result[] = $start;
-			$result[] = $changed;
+			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
+
+			foreach ($manager->getChunks() as $chunk) {
+				$result->addChunk($chunk);
+			}
+
+			if ($previous instanceof EditTaskResult) {
+				$result->merge($previous);
+			}
+
 			$this->result = igbinary_serialize($result);
-			$this->toUndo = igbinary_serialize($toUndo);
 		} catch (Throwable $exception) {
-			$this->result = igbinary_serialize($exception);
+			$this->getLogger()->logException($exception);
 		}
 		$this->finished = true;
 	}
@@ -200,52 +204,12 @@ abstract class EditTask extends Threaded
 	}
 
 	/**
-	 * @return null|ReferencedChunkManager
+	 * @return null|EditTaskResult
 	 */
-	public function getResult(): ?ReferencedChunkManager
+	public function getResult(): ?EditTaskResult
 	{
 		if (isset($this->result)) {
-			$result = igbinary_unserialize($this->result);
-
-			if ($result instanceof Throwable) {
-				Server::getInstance()->getLogger()->logException($result);
-				return null;
-			}
-
-			/** @var Selection $selection */
-			$selection = igbinary_unserialize($this->selection);
-
-			if ($this instanceof UndoTask) {
-				HistoryManager::addToFuture($selection->getPlayer(), igbinary_unserialize($this->toUndo));
-			} elseif ($this instanceof CopyTask) {
-				ClipBoardManager::setForPlayer($selection->getPlayer(), igbinary_unserialize($this->toUndo));
-				$this->notifyUser($selection, round(microtime(true) - $result[2], 3), $result[3]);
-				return null;
-			} else {
-				HistoryManager::addToHistory($selection->getPlayer(), igbinary_unserialize($this->toUndo));
-			}
-
-			$manager = new ReferencedChunkManager($this->level);
-			foreach (array_map(static function (string $chunk) {
-				return Chunk::fastDeserialize($chunk);
-			}, $result[0]) as $chunk) {
-				$manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
-			}
-			foreach ($manager->getChunks() as $chunk) {
-				$c = $manager->getLevel()->getChunk($chunk->getX(), $chunk->getZ());
-				if ($c === null) {
-					continue;
-				}
-				foreach ($c->getTiles() as $tile) {
-					$tile->close();
-				}
-			}
-			/** @var CompoundTag $data */
-			foreach ($result[1] as $data) {
-				Tile::createTile($data->getString(Tile::TAG_ID), $manager->getLevel(), $data);
-			}
-			$this->notifyUser($selection, round(microtime(true) - $result[2], 3), $result[3]);
-			return $manager;
+			return igbinary_unserialize($this->result);
 		}
 
 		return null;
@@ -256,7 +220,7 @@ abstract class EditTask extends Threaded
 	 * @param float     $time
 	 * @param int       $changed
 	 */
-	abstract protected function notifyUser(Selection $selection, float $time, int $changed): void;
+	abstract public function notifyUser(Selection $selection, float $time, int $changed): void;
 
 	/**
 	 * @param Selection $selection
