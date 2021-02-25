@@ -12,7 +12,7 @@ use pocketmine\scheduler\Task;
 class WorkerAdapter extends Task
 {
 	/**
-	 * @var PieceManager
+	 * @var PieceManager|null
 	 */
 	private static $task;
 	/**
