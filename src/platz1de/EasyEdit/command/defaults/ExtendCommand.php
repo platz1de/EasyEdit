@@ -16,7 +16,7 @@ class ExtendCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", "//extend [count|vertical]", ["expand"]);
+		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", "//extend [count|vertical]", ["/expand"]);
 	}
 
 	/**
