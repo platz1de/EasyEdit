@@ -2,13 +2,9 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\task\selection\CopyTask;
-use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
@@ -17,7 +13,6 @@ use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\Server;
 use pocketmine\tile\Tile;
 use Threaded;
 use ThreadedLogger;

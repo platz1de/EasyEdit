@@ -7,7 +7,6 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\selection\InsertTask;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\Player;
 
 class InsertCommand extends EasyEditCommand

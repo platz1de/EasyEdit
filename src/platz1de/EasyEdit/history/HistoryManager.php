@@ -6,7 +6,6 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\selection\RedoTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 
 class HistoryManager
 {

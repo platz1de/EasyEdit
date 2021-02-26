@@ -2,11 +2,8 @@
 
 namespace platz1de\EasyEdit\worker;
 
-use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\PieceManager;
 use platz1de\EasyEdit\task\QueuedTask;
-use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\scheduler\Task;
 
 class WorkerAdapter extends Task

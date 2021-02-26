@@ -29,7 +29,6 @@ class EditWorker extends Worker
 
 		$this->registerClassLoader();
 
-		//set this after the autoloader is registered
 		set_error_handler([Utils::class, 'errorExceptionHandler']);
 
 		gc_enable();

@@ -4,9 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use pocketmine\level\format\Chunk;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\Server;
 use Serializable;
 
 class EditTaskResult implements Serializable

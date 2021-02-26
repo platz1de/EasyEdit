@@ -10,7 +10,6 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\Player;
 
 class SetCommand extends EasyEditCommand

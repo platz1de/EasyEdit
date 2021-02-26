@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\tile\Tile;
 
 class PieceManager
