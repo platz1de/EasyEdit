@@ -9,6 +9,7 @@ use platz1de\EasyEdit\command\defaults\CopyCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
 use platz1de\EasyEdit\command\defaults\InsertCommand;
+use platz1de\EasyEdit\command\defaults\MoveCommand;
 use platz1de\EasyEdit\command\defaults\PasteCommand;
 use platz1de\EasyEdit\command\defaults\RedoCommand;
 use platz1de\EasyEdit\command\defaults\ReplaceCommand;
@@ -59,7 +60,8 @@ class EasyEdit extends PluginBase
 			new ReplaceCommand(),
 			new InsertCommand(),
 			new CenterCommand(),
-			new ExtendCommand()
+			new ExtendCommand(),
+			new MoveCommand()
 		]);
 	}
 
