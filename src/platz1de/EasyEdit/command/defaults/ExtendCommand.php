@@ -8,6 +8,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
+use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
@@ -15,7 +16,7 @@ class ExtendCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", "//extend <count>", ["expand"]);
+		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", "//extend [count|vertical]", ["expand"]);
 	}
 
 	/**
@@ -25,7 +26,7 @@ class ExtendCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args, array $flags): void
 	{
-		$count = (int) ($args[0] ?? 1);
+		$count = $args[0] ?? 1;
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
@@ -39,18 +40,21 @@ class ExtendCommand extends EasyEditCommand
 		$pos1 = $selection->getPos1();
 		$pos2 = $selection->getPos2();
 
-		if ($player->getPitch() >= 45) {
-			$pos1 = $pos1->getSide(Vector3::SIDE_DOWN, $count);
+		if ($count === "vert" || $count === "vertical") {
+			$pos1 = new Vector3($pos1->getX(), 0, $pos1->getZ());
+			$pos2 = new Vector3($pos2->getX(), Level::Y_MAX, $pos2->getZ());
+		} elseif ($player->getPitch() >= 45) {
+			$pos1 = $pos1->getSide(Vector3::SIDE_DOWN, (int) $count);
 		} elseif ($player->getPitch() <= -45) {
-			$pos2 = $pos2->getSide(Vector3::SIDE_UP, $count);
+			$pos2 = $pos2->getSide(Vector3::SIDE_UP, (int) $count);
 		} elseif ($player->getYaw() >= 315 || $player->getYaw() < 45) {
-			$pos2 = $pos2->getSide(Vector3::SIDE_SOUTH, $count);
+			$pos2 = $pos2->getSide(Vector3::SIDE_SOUTH, (int) $count);
 		} elseif ($player->getYaw() >= 45 && $player->getYaw() < 135) {
-			$pos1 = $pos1->getSide(Vector3::SIDE_WEST, $count);
+			$pos1 = $pos1->getSide(Vector3::SIDE_WEST, (int) $count);
 		} elseif ($player->getYaw() >= 135 && $player->getYaw() < 225) {
-			$pos1 = $pos1->getSide(Vector3::SIDE_NORTH, $count);
+			$pos1 = $pos1->getSide(Vector3::SIDE_NORTH, (int) $count);
 		} else {
-			$pos2 = $pos2->getSide(Vector3::SIDE_EAST, $count);
+			$pos2 = $pos2->getSide(Vector3::SIDE_EAST, (int) $count);
 		}
 
 		$selection->setPos1($pos1);
