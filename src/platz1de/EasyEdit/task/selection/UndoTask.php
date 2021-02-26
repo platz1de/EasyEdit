@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -24,7 +25,9 @@ class UndoTask extends PasteTask
 	public static function queue(BlockListSelection $selection, ?Position $place = null): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class));
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class, static function (Selection $selection, Position $place, StaticBlockListSelection $redo) {
+			HistoryManager::addToFuture($selection->getPlayer(), $redo);
+		}));
 	}
 
 	/**

@@ -2,9 +2,11 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use Closure;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -20,12 +22,18 @@ use pocketmine\math\Vector3;
 class CopyTask extends EditTask
 {
 	/**
-	 * @param Selection $selection
-	 * @param Position  $place
+	 * @param Selection    $selection
+	 * @param Position     $place
+	 * @param Closure|null $finish
 	 */
-	public static function queue(Selection $selection, Position $place): void
+	public static function queue(Selection $selection, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class));
+		if ($finish === null) {
+			$finish = static function (Selection $selection, Position $place, DynamicBlockListSelection $copy) {
+				ClipBoardManager::setForPlayer($selection->getPlayer(), $copy);
+			};
+		}
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, $finish));
 	}
 
 	/**

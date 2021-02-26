@@ -69,20 +69,7 @@ class PieceManager
 					return false; //more to go
 				}
 
-				$toUndo = $result->getUndo();
-
-				if ($this->currentPiece instanceof UndoTask) {
-					/** @var StaticBlockListSelection $toUndo */
-					HistoryManager::addToFuture($this->task->getSelection()->getPlayer(), $toUndo);
-				} elseif ($this->currentPiece instanceof CopyTask) {
-					/** @var DynamicBlockListSelection $toUndo */
-					ClipBoardManager::setForPlayer($this->task->getSelection()->getPlayer(), $toUndo);
-					$this->currentPiece->notifyUser($this->task->getSelection(), round($result->getTime(), 3), $result->getChanged());
-					return true;
-				} else {
-					/** @var StaticBlockListSelection $toUndo */
-					HistoryManager::addToHistory($this->task->getSelection()->getPlayer(), $toUndo);
-				}
+				$this->task->finishWith($result->getUndo());
 
 				$this->currentPiece->notifyUser($this->task->getSelection(), round($result->getTime(), 3), $result->getChanged());
 			}

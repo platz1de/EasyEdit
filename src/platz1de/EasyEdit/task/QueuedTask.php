@@ -2,8 +2,12 @@
 
 namespace platz1de\EasyEdit\task;
 
+use Closure;
+use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use pocketmine\level\Position;
 
 class QueuedTask
@@ -24,20 +28,31 @@ class QueuedTask
 	 * @var string
 	 */
 	private $task;
+	/**
+	 * @var Closure
+	 */
+	private $finish;
 
 	/**
 	 * QueuedTask constructor.
-	 * @param Selection $selection
-	 * @param Pattern   $pattern
-	 * @param Position  $place
-	 * @param string    $task
+	 * @param Selection    $selection
+	 * @param Pattern      $pattern
+	 * @param Position     $place
+	 * @param string       $task
+	 * @param Closure|null $finish
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, ?Closure $finish = null)
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
 		$this->place = $place;
 		$this->task = $task;
+		if ($finish === null) {
+			$finish = static function (Selection $selection, Position $place, StaticBlockListSelection $undo) {
+				HistoryManager::addToHistory($selection->getPlayer(), $undo);
+			};
+		}
+		$this->finish = $finish;
 	}
 
 	/**
@@ -70,5 +85,15 @@ class QueuedTask
 	public function getTask(): string
 	{
 		return $this->task;
+	}
+
+	/**
+	 * @param BlockListSelection $result
+	 * @return void
+	 */
+	public function finishWith(BlockListSelection $result): void
+	{
+		$finish = $this->finish;
+		$finish($this->getSelection(), $this->getPlace(), $result);
 	}
 }
