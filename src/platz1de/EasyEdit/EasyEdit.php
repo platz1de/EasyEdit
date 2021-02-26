@@ -6,6 +6,7 @@ use Exception;
 use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\defaults\CenterCommand;
 use platz1de\EasyEdit\command\defaults\CopyCommand;
+use platz1de\EasyEdit\command\defaults\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
 use platz1de\EasyEdit\command\defaults\InsertCommand;
 use platz1de\EasyEdit\command\defaults\PasteCommand;
@@ -57,7 +58,8 @@ class EasyEdit extends PluginBase
 			new PasteCommand(),
 			new ReplaceCommand(),
 			new InsertCommand(),
-			new CenterCommand()
+			new CenterCommand(),
+			new ExtendCommand()
 		]);
 	}
 

@@ -16,7 +16,7 @@ Feature-rich WorldEditor for PocketMine-MP
 \<argument> - required Argument<br>
 [argument] - optional Argument
 
-Command | Description | Permission | Aliases
+Command | Description | Permission | Aliases/Notice
 ---|---|---|---
 //pos1 | Set the first Position | easyedit.position | //1<br>left click a block in creative with a wooden axe
 //pos2 | Set the first Position | easyedit.position | //2<br>break a block in creative with a wooden axe
@@ -28,3 +28,4 @@ Command | Description | Permission | Aliases
 //paste | Paste the Clipboard | easyedit.command.paste
 //insert | Insert the Clipboard | easyedit.command.paste
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
+//extend [count] | Extend the selected Area | easyedit.position | Look into the direction you want to extend to
