@@ -28,4 +28,4 @@ Command | Description | Permission | Aliases/Notice
 //paste | Paste the Clipboard | easyedit.command.paste
 //insert | Insert the Clipboard | easyedit.command.paste
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
-//extend [count] | Extend the selected Area | easyedit.position | Look into the direction you want to extend to
+//extend [count] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
