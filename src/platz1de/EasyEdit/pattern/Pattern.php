@@ -220,6 +220,9 @@ class Pattern
 				return new Below($children, $args);
 			case "around":
 				return new Around($children, $args);
+			case "rand":
+			case "random":
+				return new Random($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
