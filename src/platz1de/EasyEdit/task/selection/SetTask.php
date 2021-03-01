@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use Closure;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
@@ -21,13 +22,14 @@ use pocketmine\nbt\tag\CompoundTag;
 class SetTask extends EditTask
 {
 	/**
-	 * @param Selection $selection
-	 * @param Pattern   $pattern
-	 * @param Position  $place
+	 * @param Selection    $selection
+	 * @param Pattern      $pattern
+	 * @param Position     $place
+	 * @param Closure|null $finish
 	 */
-	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
+	public static function queue(Selection $selection, Pattern $pattern, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class));
+		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class, $finish));
 	}
 
 	/**

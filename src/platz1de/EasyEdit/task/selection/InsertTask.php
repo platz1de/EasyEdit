@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use Closure;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -21,10 +22,11 @@ class InsertTask extends PasteTask
 	/**
 	 * @param BlockListSelection $selection
 	 * @param Position           $place
+	 * @param Closure|null       $finish
 	 */
-	public static function queue(BlockListSelection $selection, Position $place): void
+	public static function queue(BlockListSelection $selection, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class));
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, $finish));
 	}
 
 	/**

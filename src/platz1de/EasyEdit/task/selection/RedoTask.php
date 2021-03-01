@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
+use Closure;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -19,9 +20,10 @@ class RedoTask extends PasteTask
 {
 	/**
 	 * @param BlockListSelection $selection
-	 * @param Position|null      $place This argument ... just exists
+	 * @param Position|null      $place  This argument ... just exists
+	 * @param Closure|null       $finish This argument ... just exists
 	 */
-	public static function queue(BlockListSelection $selection, ?Position $place = null): void
+	public static function queue(BlockListSelection $selection, ?Position $place = null, ?Closure $finish = null): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
 		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class));
