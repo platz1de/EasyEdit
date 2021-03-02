@@ -29,3 +29,4 @@ Command | Description | Permission | Aliases/Notice
 //insert | Insert the Clipboard | easyedit.command.paste
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
 //extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
+//sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set

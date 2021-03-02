@@ -15,6 +15,7 @@ use platz1de\EasyEdit\command\defaults\RedoCommand;
 use platz1de\EasyEdit\command\defaults\ReplaceCommand;
 use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\SetCommand;
+use platz1de\EasyEdit\command\defaults\SphereCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
@@ -61,7 +62,8 @@ class EasyEdit extends PluginBase
 			new InsertCommand(),
 			new CenterCommand(),
 			new ExtendCommand(),
-			new MoveCommand()
+			new MoveCommand(),
+			new SphereCommand()
 		]);
 	}
 
