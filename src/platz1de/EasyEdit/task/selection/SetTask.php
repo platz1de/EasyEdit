@@ -76,10 +76,8 @@ class SetTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
 	{
-		//TODO: Non-cubic selections
-		/** @var Cube $selection */
-		Selection::validate($selection, Cube::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1(), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
+		$size = $selection->getRealSize();
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $size->getX(), $size->getY(), $size->getZ());
 	}
 
 	/**

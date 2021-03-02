@@ -86,6 +86,22 @@ abstract class Selection implements Serializable
 	abstract public function getNeededChunks(Position $place): array;
 
 	/**
+	 * @return Vector3
+	 */
+	public function getRealSize(): Vector3
+	{
+		return $this->pos2->subtract($this->pos1);
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getCubicStart(): Vector3
+	{
+		return $this->getPos1();
+	}
+
+	/**
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void
