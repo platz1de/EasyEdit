@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 class Messages
 {
@@ -53,6 +54,6 @@ class Messages
 	 */
 	public static function translate(string $id): string
 	{
-		return self::$messages[$id] ?? $id;
+		return self::$messages[$id] ?? TextFormat::RED . "The message " . $id . " was not found, please try deleting your messages.yml";
 	}
 }
