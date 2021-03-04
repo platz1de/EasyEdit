@@ -3,13 +3,7 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\history\HistoryManager;
-use platz1de\EasyEdit\selection\ClipBoardManager;
-use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\task\selection\CopyTask;
-use platz1de\EasyEdit\task\selection\UndoTask;
 use pocketmine\tile\Tile;
 
 class PieceManager
