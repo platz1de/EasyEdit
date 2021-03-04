@@ -30,3 +30,4 @@ Command | Description | Permission | Aliases/Notice
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
 //extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
 //sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set
+//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | /hollowsphere

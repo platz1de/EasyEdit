@@ -8,6 +8,7 @@ use platz1de\EasyEdit\command\defaults\CenterCommand;
 use platz1de\EasyEdit\command\defaults\CopyCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
+use platz1de\EasyEdit\command\defaults\HollowSphereCommand;
 use platz1de\EasyEdit\command\defaults\InsertCommand;
 use platz1de\EasyEdit\command\defaults\MoveCommand;
 use platz1de\EasyEdit\command\defaults\PasteCommand;
@@ -63,7 +64,8 @@ class EasyEdit extends PluginBase
 			new CenterCommand(),
 			new ExtendCommand(),
 			new MoveCommand(),
-			new SphereCommand()
+			new SphereCommand(),
+			new HollowSphereCommand()
 		]);
 	}
 
