@@ -17,10 +17,10 @@ class Sphere extends Selection
 	 * @param string       $player
 	 * @param string       $level
 	 * @param Vector3|null $pos1
-	 * @param int|null     $radius
+	 * @param int    $radius
 	 * @param bool         $piece
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?int $radius = 0, bool $piece = false)
+	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, bool $piece = false)
 	{
 		$pos2 = new Vector3($radius); //This is not optimal, but currently needed...
 		parent::__construct($player, $level, $pos1, $pos2, $piece);

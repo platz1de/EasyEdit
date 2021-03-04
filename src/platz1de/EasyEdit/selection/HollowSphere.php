@@ -13,8 +13,8 @@ class HollowSphere extends Sphere
 	 * @param string       $player
 	 * @param string       $level
 	 * @param Vector3|null $pos1
-	 * @param int|null     $radius
-	 * @param int|null     $thickness
+	 * @param int          $radius
+	 * @param int          $thickness
 	 * @param bool         $piece
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
