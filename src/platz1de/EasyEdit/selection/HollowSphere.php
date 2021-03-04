@@ -16,6 +16,7 @@ class HollowSphere extends Sphere
 	 * @param int|null     $radius
 	 * @param int|null     $thickness
 	 * @param bool         $piece
+	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, int $thickness = 1, bool $piece = false)
 	{

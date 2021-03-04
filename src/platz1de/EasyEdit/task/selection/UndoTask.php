@@ -23,6 +23,7 @@ class UndoTask extends PasteTask
 	 * @param BlockListSelection $selection
 	 * @param Position|null      $place  This argument ... just exists
 	 * @param Closure|null       $finish This argument ... just exists
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function queue(BlockListSelection $selection, ?Position $place = null, ?Closure $finish = null): void
 	{

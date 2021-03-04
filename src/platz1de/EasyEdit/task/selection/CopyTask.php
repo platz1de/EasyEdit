@@ -25,6 +25,7 @@ class CopyTask extends EditTask
 	 * @param Selection    $selection
 	 * @param Position     $place
 	 * @param Closure|null $finish
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function queue(Selection $selection, Position $place, ?Closure $finish = null): void
 	{
