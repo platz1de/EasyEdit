@@ -39,7 +39,7 @@ class HollowSphere extends Sphere
 		for ($x = -$radius; $x <= $radius; $x++) {
 			for ($z = -$radius; $z <= $radius; $z++) {
 				for ($y = -$radius; $y <= $radius; $y++) {
-					if(($x ** 2) + ($y ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($y ** 2) + ($z ** 2) >= $thicknessSquared){
+					if (($x ** 2) + ($y ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($y ** 2) + ($z ** 2) > $thicknessSquared) {
 						$closure($this->pos1->getX() + $x, $this->pos1->getY() + $y, $this->pos1->getZ() + $z);
 					}
 				}
