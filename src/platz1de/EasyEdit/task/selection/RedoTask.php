@@ -2,11 +2,12 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
-use Closure;
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
@@ -16,14 +17,12 @@ use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
 
-class RedoTask extends PasteTask
+class RedoTask extends EditTask
 {
 	/**
 	 * @param BlockListSelection $selection
-	 * @param Position|null      $place  This argument ... just exists
-	 * @param Closure|null       $finish This argument ... just exists
 	 */
-	public static function queue(BlockListSelection $selection, ?Position $place = null, ?Closure $finish = null): void
+	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
 		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class));
@@ -83,5 +82,15 @@ class RedoTask extends PasteTask
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->add($selection->getPos1()), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
+	}
+
+	/**
+	 * @param Selection $selection
+	 * @param float     $time
+	 * @param int       $changed
+	 */
+	public function notifyUser(Selection $selection, float $time, int $changed): void
+	{
+		Messages::send($selection->getPlayer(), "blocks-pasted", ["{time}" => $time, "{changed}" => $changed]);
 	}
 }
