@@ -13,6 +13,7 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\task\selection\PasteTask;
 use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\utils\PositionUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\Position;
@@ -46,24 +47,8 @@ class StackCommand extends EasyEditCommand
 
 		$location = $player->getLocation();
 		CopyTask::queue($selection, Position::fromObject($selection->getPos1(), $player->getLevelNonNull()), function (Selection $selection, Position $place, DynamicBlockListSelection $copy) use ($count, $location) {
-			$pos = $selection->getPos1();
-
 			for ($i = 1; $i <= $count; $i++) {
-				if ($location->getPitch() >= 45) {
-					$p = $pos->getSide(Vector3::SIDE_DOWN, $i);
-				} elseif ($location->getPitch() <= -45) {
-					$p = $pos->getSide(Vector3::SIDE_UP, $i);
-				} elseif ($location->getYaw() >= 315 || $location->getYaw() < 45) {
-					$p = $pos->getSide(Vector3::SIDE_SOUTH, $i);
-				} elseif ($location->getYaw() >= 45 && $location->getYaw() < 135) {
-					$p = $pos->getSide(Vector3::SIDE_WEST, $i);
-				} elseif ($location->getYaw() >= 135 && $location->getYaw() < 225) {
-					$p = $pos->getSide(Vector3::SIDE_NORTH, $i);
-				} else {
-					$p = $pos->getSide(Vector3::SIDE_EAST, $i);
-				}
-
-				PasteTask::queue($copy, Position::fromObject($p, $place->getLevelNonNull()));
+				PasteTask::queue($copy, Position::fromObject(PositionUtils::moveVectorInSight($location, $selection->getPos1(), $i), $place->getLevelNonNull()));
 			}
 		});
 	}

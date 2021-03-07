@@ -13,10 +13,10 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\task\selection\PasteTask;
 use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\utils\PositionUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\Position;
-use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class MoveCommand extends EasyEditCommand
@@ -46,24 +46,9 @@ class MoveCommand extends EasyEditCommand
 
 		$location = $player->getLocation();
 		CopyTask::queue($selection, Position::fromObject($selection->getPos1(), $player->getLevelNonNull()), function (Selection $selection, Position $place, DynamicBlockListSelection $copy) use ($count, $location) {
-			$pos = $selection->getPos1();
-
-			if ($location->getPitch() >= 45) {
-				$pos = $pos->getSide(Vector3::SIDE_DOWN, (int)$count);
-			} elseif ($location->getPitch() <= -45) {
-				$pos = $pos->getSide(Vector3::SIDE_UP, (int)$count);
-			} elseif ($location->getYaw() >= 315 || $location->getYaw() < 45) {
-				$pos = $pos->getSide(Vector3::SIDE_SOUTH, (int)$count);
-			} elseif ($location->getYaw() >= 45 && $location->getYaw() < 135) {
-				$pos = $pos->getSide(Vector3::SIDE_WEST, (int)$count);
-			} elseif ($location->getYaw() >= 135 && $location->getYaw() < 225) {
-				$pos = $pos->getSide(Vector3::SIDE_NORTH, (int)$count);
-			} else {
-				$pos = $pos->getSide(Vector3::SIDE_EAST, (int)$count);
-			}
 
 			SetTask::queue($selection, new BlockPattern(BlockFactory::get(BlockIds::AIR)), $place);
-			PasteTask::queue($copy, Position::fromObject($pos, $place->getLevelNonNull()));
+			PasteTask::queue($copy, Position::fromObject(PositionUtils::moveVectorInSight($location, $selection->getPos1(), $count), $place->getLevelNonNull()));
 		});
 	}
 }
