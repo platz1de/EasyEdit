@@ -29,7 +29,7 @@ class PasteTask extends EditTask
 	 */
 	public static function queue(BlockListSelection $selection, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, $finish));
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, [], $finish));
 	}
 
 	/**

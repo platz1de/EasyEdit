@@ -32,6 +32,10 @@ class QueuedTask
 	 * @var Closure
 	 */
 	private $finish;
+	/**
+	 * @var array
+	 */
+	private $data;
 
 	/**
 	 * QueuedTask constructor.
@@ -39,10 +43,11 @@ class QueuedTask
 	 * @param Pattern      $pattern
 	 * @param Position     $place
 	 * @param string       $task
+	 * @param array        $data
 	 * @param Closure|null $finish
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, ?Closure $finish = null)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, array $data = [], ?Closure $finish = null)
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
@@ -54,6 +59,7 @@ class QueuedTask
 			};
 		}
 		$this->finish = $finish;
+		$this->data = $data;
 	}
 
 	/**
@@ -86,6 +92,15 @@ class QueuedTask
 	public function getTask(): string
 	{
 		return $this->task;
+	}
+
+	/**
+	 * @param string $key
+	 * @return string|null
+	 */
+	public function getDataKeyed(string $key): ?string
+	{
+		return $this->data[$key] ?? null;
 	}
 
 	/**

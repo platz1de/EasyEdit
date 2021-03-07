@@ -28,7 +28,7 @@ class UndoTask extends PasteTask
 	public static function queue(BlockListSelection $selection, ?Position $place = null, ?Closure $finish = null): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class, static function (Selection $selection, Position $place, StaticBlockListSelection $redo) {
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class, [], static function (Selection $selection, Position $place, StaticBlockListSelection $redo) {
 			HistoryManager::addToFuture($selection->getPlayer(), $redo);
 		}));
 	}
