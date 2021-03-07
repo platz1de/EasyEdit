@@ -100,7 +100,7 @@ class Sphere extends Selection
 	 */
 	public function setRadius(int $radius): void
 	{
-		$this->pos2 = new Vector3($radius);
+		$this->pos2->x = $radius;
 	}
 
 	/**
