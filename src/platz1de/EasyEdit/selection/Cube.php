@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use http\Exception\UnexpectedValueException;
+use UnexpectedValueException;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\format\Chunk;
