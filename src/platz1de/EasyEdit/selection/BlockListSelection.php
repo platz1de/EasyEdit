@@ -90,19 +90,22 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
-	 * @param int $id
-	 * @param int $damage
+	 * @param int  $x
+	 * @param int  $y
+	 * @param int  $z
+	 * @param int  $id
+	 * @param int  $damage
+	 * @param bool $overwrite
 	 */
-	public function addBlock(int $x, int $y, int $z, int $id, int $damage): void
+	public function addBlock(int $x, int $y, int $z, int $id, int $damage, bool $overwrite = true): void
 	{
 		if ($id === 0) {
 			$id = 217; //structure_void
 		}
 		$this->iterator->moveTo($x, $y, $z);
-		$this->iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+		if ($overwrite || $this->iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0){
+			$this->iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+		}
 	}
 
 	/**
