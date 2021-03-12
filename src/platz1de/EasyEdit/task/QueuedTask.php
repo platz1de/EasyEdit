@@ -8,6 +8,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\level\Position;
 
 class QueuedTask
@@ -33,21 +34,21 @@ class QueuedTask
 	 */
 	private $finish;
 	/**
-	 * @var array
+	 * @var AdditionalDataManager
 	 */
 	private $data;
 
 	/**
 	 * QueuedTask constructor.
-	 * @param Selection    $selection
-	 * @param Pattern      $pattern
-	 * @param Position     $place
-	 * @param string       $task
-	 * @param array        $data
-	 * @param Closure|null $finish
+	 * @param Selection             $selection
+	 * @param Pattern               $pattern
+	 * @param Position              $place
+	 * @param string                $task
+	 * @param AdditionalDataManager $data
+	 * @param Closure|null          $finish
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, array $data = [], ?Closure $finish = null)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, AdditionalDataManager $data, ?Closure $finish = null)
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
@@ -95,12 +96,11 @@ class QueuedTask
 	}
 
 	/**
-	 * @param string $key
-	 * @return string|null
+	 * @return AdditionalDataManager
 	 */
-	public function getDataKeyed(string $key): ?string
+	public function getData(): AdditionalDataManager
 	{
-		return $this->data[$key] ?? null;
+		return $this->data;
 	}
 
 	/**

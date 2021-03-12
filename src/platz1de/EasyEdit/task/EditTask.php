@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
@@ -65,15 +66,20 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $result;
+	/**
+	 * @var string
+	 */
+	private $data;
 
 	/**
 	 * EditTask constructor.
 	 * @param Selection                     $selection
 	 * @param Pattern                       $pattern
 	 * @param Position                      $place
+	 * @param AdditionalDataManager         $data
 	 * @param EditTaskResult|Selection|null $previous
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, $previous = null)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, $previous = null)
 	{
 		$this->id = WorkerAdapter::getId();
 		$chunkData = [];
@@ -93,6 +99,7 @@ abstract class EditTask extends Threaded
 		if ($previous !== null) {
 			$this->result = igbinary_serialize($previous);
 		}
+		$this->data = igbinary_serialize($data);
 	}
 
 	public function run(): void
@@ -107,6 +114,8 @@ abstract class EditTask extends Threaded
 		$pattern = igbinary_unserialize($this->pattern);
 		/** @var Vector3 $place */
 		$place = igbinary_unserialize($this->place);
+		/** @var AdditionalDataManager $data */
+		$data = igbinary_unserialize($this->data);
 
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);
@@ -128,7 +137,7 @@ abstract class EditTask extends Threaded
 
 		$previous = igbinary_unserialize($this->result ?? null);
 
-		$toUndo = $previous instanceof EditTaskResult ? $previous->getUndo() : $this->getUndoBlockList($previous instanceof Selection ? $previous : $selection, $place, $this->level);
+		$toUndo = $previous instanceof EditTaskResult ? $previous->getUndo() : $this->getUndoBlockList($previous instanceof Selection ? $previous : $selection, $place, $this->level, $data);
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
 
@@ -137,7 +146,7 @@ abstract class EditTask extends Threaded
 		$changed = 0;
 
 		try {
-			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed);
+			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed, $data);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
 
 			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
@@ -180,8 +189,9 @@ abstract class EditTask extends Threaded
 	 * @param BlockListSelection      $toUndo also used as return value of Task for things like copy
 	 * @param SubChunkIteratorManager $origin original World, used for patterns
 	 * @param int                     $changed
+	 * @param AdditionalDataManager   $data
 	 */
-	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void;
+	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void;
 
 	/**
 	 * @return int
@@ -219,10 +229,11 @@ abstract class EditTask extends Threaded
 	abstract public function notifyUser(Selection $selection, float $time, int $changed): void;
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $place
-	 * @param string    $level
+	 * @param Selection             $selection
+	 * @param Vector3               $place
+	 * @param string                $level
+	 * @param AdditionalDataManager $data
 	 * @return BlockListSelection
 	 */
-	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection;
+	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection;
 }

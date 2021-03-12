@@ -10,6 +10,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -26,7 +27,7 @@ class UndoTask extends EditTask
 	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class, [], static function (Selection $selection, Position $place, StaticBlockListSelection $redo) {
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, Server::getInstance()->getDefaultLevel()), self::class, new AdditionalDataManager(), static function (Selection $selection, Position $place, StaticBlockListSelection $redo) {
 			HistoryManager::addToFuture($selection->getPlayer(), $redo);
 		}));
 	}
@@ -48,8 +49,9 @@ class UndoTask extends EditTask
 	 * @param BlockListSelection      $toUndo
 	 * @param SubChunkIteratorManager $origin
 	 * @param int                     $changed
+	 * @param AdditionalDataManager   $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);
@@ -75,12 +77,13 @@ class UndoTask extends EditTask
 	}
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $place
-	 * @param string    $level
+	 * @param Selection             $selection
+	 * @param Vector3               $place
+	 * @param string                $level
+	 * @param AdditionalDataManager $data
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);

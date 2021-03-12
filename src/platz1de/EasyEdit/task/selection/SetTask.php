@@ -10,6 +10,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\Block;
 use pocketmine\level\Level;
@@ -28,7 +29,7 @@ class SetTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class, [], $finish));
+		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class, new AdditionalDataManager(), $finish));
 	}
 
 	/**
@@ -48,8 +49,9 @@ class SetTask extends EditTask
 	 * @param BlockListSelection      $toUndo
 	 * @param SubChunkIteratorManager $origin
 	 * @param int                     $changed
+	 * @param AdditionalDataManager   $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $pattern, $toUndo, $origin, &$changed): void {
 			$b = $pattern->getFor($x, $y, $z, $origin);
@@ -68,12 +70,13 @@ class SetTask extends EditTask
 	}
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $place
-	 * @param string    $level
+	 * @param Selection             $selection
+	 * @param Vector3               $place
+	 * @param string                $level
+	 * @param AdditionalDataManager $data
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
 		$size = $selection->getRealSize();
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $size->getX(), $size->getY(), $size->getZ());

@@ -12,6 +12,7 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
@@ -34,7 +35,7 @@ class CopyTask extends EditTask
 				ClipBoardManager::setForPlayer($selection->getPlayer(), $copy);
 			};
 		}
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, [], $finish));
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), $finish));
 	}
 
 	/**
@@ -54,8 +55,9 @@ class CopyTask extends EditTask
 	 * @param BlockListSelection      $toUndo
 	 * @param SubChunkIteratorManager $origin
 	 * @param int                     $changed
+	 * @param AdditionalDataManager   $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed): void
+	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $toUndo, &$changed): void {
 			$iterator->moveTo($x, $y, $z);
@@ -69,12 +71,13 @@ class CopyTask extends EditTask
 	}
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $place
-	 * @param string    $level
+	 * @param Selection             $selection
+	 * @param Vector3               $place
+	 * @param string                $level
+	 * @param AdditionalDataManager $data
 	 * @return DynamicBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
 		//TODO: Non-cubic selections
 		/** @var Cube $selection */

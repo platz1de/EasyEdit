@@ -58,7 +58,7 @@ class PieceManager
 
 				if (count($this->pieces) > 0) {
 					$task = $this->task->getTask();
-					$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $result);
+					$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $result);
 					EasyEdit::getWorker()->stack($this->currentPiece);
 					return false; //more to go
 				}
@@ -75,7 +75,7 @@ class PieceManager
 	public function start(): void
 	{
 		$task = $this->task->getTask();
-		$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getSelection());
+		$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $this->task->getSelection());
 		EasyEdit::getWorker()->stack($this->currentPiece);
 	}
 }
