@@ -13,7 +13,7 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\task\selection\PasteTask;
 use platz1de\EasyEdit\task\selection\SetTask;
-use platz1de\EasyEdit\utils\PositionUtils;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\Position;
@@ -48,7 +48,7 @@ class MoveCommand extends EasyEditCommand
 		CopyTask::queue($selection, Position::fromObject($selection->getPos1(), $player->getLevelNonNull()), function (Selection $selection, Position $place, DynamicBlockListSelection $copy) use ($count, $location) {
 
 			SetTask::queue($selection, new BlockPattern(BlockFactory::get(BlockIds::AIR)), $place);
-			PasteTask::queue($copy, Position::fromObject(PositionUtils::moveVectorInSight($location, $selection->getPos1(), $count), $place->getLevelNonNull()));
+			PasteTask::queue($copy, Position::fromObject(VectorUtils::moveVectorInSight($location, $selection->getPos1(), $count), $place->getLevelNonNull()));
 		});
 	}
 }

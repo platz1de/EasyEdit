@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\utils;
 use pocketmine\level\Location;
 use pocketmine\math\Vector3;
 
-class PositionUtils
+class VectorUtils
 {
 	/**
 	 * @param Location $from
