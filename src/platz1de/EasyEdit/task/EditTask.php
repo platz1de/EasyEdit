@@ -153,7 +153,7 @@ abstract class EditTask extends Threaded
 			$this->result = igbinary_serialize($result);
 		} catch (Throwable $exception) {
 			$this->getLogger()->logException($exception);
-			$this->result = null;
+			unset($this->result);
 		}
 		$this->finished = true;
 	}
