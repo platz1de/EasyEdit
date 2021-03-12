@@ -47,11 +47,13 @@ class MoveTask extends EditTask
 	 * @param SubChunkIteratorManager $origin
 	 * @param int                     $changed
 	 * @param AdditionalDataManager   $data
+	 * @noinspection OnlyWritesOnParameterInspection
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
-		/** @var MovingCube $selection */
-		$direction = $selection->getDirection();
+		/** @var MovingCube $s */
+		$s = $selection;
+		$direction = $s->getDirection();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $toUndo, &$changed, $direction): void {
 			$iterator->moveTo($x, $y, $z);
 
