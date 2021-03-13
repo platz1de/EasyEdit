@@ -50,4 +50,14 @@ class VectorUtils
 	{
 		return new Vector3(min($a->getX(), $b->getX()), min($a->getY(), $b->getY()), min($a->getZ(), $b->getZ()));
 	}
+
+	/**
+	 * @param Vector3 $a
+	 * @param Vector3 $b
+	 * @return Vector3
+	 */
+	public static function multiply(Vector3 $a, Vector3 $b): Vector3
+	{
+		return new Vector3($a->getX() * $b->getX(), $a->getY() * $b->getY(), $a->getZ() * $b->getZ());
+	}
 }
