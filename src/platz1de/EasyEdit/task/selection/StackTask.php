@@ -12,6 +12,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -73,7 +74,7 @@ class StackTask extends EditTask
 				unset($tiles[Level::blockHash($x, $y, $z)]);
 			}
 			if (isset($tiles[Level::blockHash($originalX, $originalY, $originalZ)])) {
-				$tiles[Level::blockHash($x, $y, $z)] = $tiles[Level::blockHash($originalX, $originalY, $originalZ)];
+				$tiles[Level::blockHash($x, $y, $z)] = TileUtils::offsetCompound($tiles[Level::blockHash($originalX, $originalY, $originalZ)], new Vector3($x - $originalX, $y - $originalY, $z - $originalZ));
 			}
 		});
 	}
