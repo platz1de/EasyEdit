@@ -90,7 +90,7 @@ abstract class Selection implements Serializable
 	 */
 	public function getRealSize(): Vector3
 	{
-		return $this->pos2->subtract($this->pos1);
+		return $this->pos2->subtract($this->pos1)->add(1, 1, 1);
 	}
 
 	/**
