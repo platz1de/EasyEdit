@@ -1,0 +1,139 @@
+<?php
+
+namespace platz1de\EasyEdit\selection;
+
+use Closure;
+use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\level\Position;
+use pocketmine\math\Vector3;
+use pocketmine\Server;
+use pocketmine\utils\Utils;
+use RuntimeException;
+
+class StackedCube extends Cube
+{
+	/**
+	 * @var Vector3
+	 */
+	private $direction;
+
+	public function __construct(Cube $cube, Vector3 $direction)
+	{
+		parent::__construct($cube->getPlayer(), is_string($cube->level) ? $cube->level : $cube->level->getName(), $cube->getPos1(), $cube->getPos2());
+		$this->direction = $direction;
+	}
+
+	public function update(): void
+	{
+		Selection::update();
+	}
+
+	public function close(): void
+	{
+		Selection::close();
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getDirection(): Vector3
+	{
+		return $this->direction;
+	}
+
+	/**
+	 * @param Position $place
+	 * @return array
+	 */
+	public function getNeededChunks(Position $place): array
+	{
+		$chunks = [];
+		$start = $this->getCubicStart();
+		$realSize = $this->getRealSize();
+		for ($x = $start->getX() >> 4; $x <= $start->getX() + $realSize->getX() >> 4; $x++) {
+			for ($z = $start->getZ() >> 4; $z <= $start->getZ() + $realSize->getZ() >> 4; $z++) {
+				$this->getLevel()->loadChunk($x, $z);
+				$chunks[] = $this->getLevel()->getChunk($x, $z);
+			}
+		}
+		return $chunks;
+	}
+
+	/**
+	 * @param Vector3 $place
+	 * @param Closure $closure
+	 * @return void
+	 * @noinspection StaticClosureCanBeUsedInspection
+	 */
+	public function useOnBlocks(Vector3 $place, Closure $closure): void
+	{
+		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
+		$start = $this->getCubicStart();
+		$realSize = $this->getRealSize();
+		for ($x = $start->getX(); $x < $start->getX() + $realSize->getX(); $x++) {
+			for ($z = $start->getZ(); $z < $start->getZ() + $realSize->getZ(); $z++) {
+				for ($y = $start->getY(); $y < $start->getY() + $realSize->getY(); $y++) {
+					$closure($x, $y, $z);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getRealSize(): Vector3
+	{
+		return VectorUtils::multiply($this->direction->abs()->subtract($this->direction->abs()->normalize())->add(1, 1, 1), parent::getRealSize());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function serialize(): string
+	{
+		return igbinary_serialize([
+			"player" => $this->player,
+			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"minX" => $this->pos1->getX(),
+			"minY" => $this->pos1->getY(),
+			"minZ" => $this->pos1->getZ(),
+			"maxX" => $this->pos2->getX(),
+			"maxY" => $this->pos2->getY(),
+			"maxZ" => $this->pos2->getZ(),
+			"directionX" => $this->direction->getX(),
+			"directionY" => $this->direction->getY(),
+			"directionZ" => $this->direction->getZ()
+		]);
+	}
+
+	public function unserialize($serialized): void
+	{
+		$data = igbinary_unserialize($serialized);
+		$this->player = $data["player"];
+		try {
+			$this->level = Server::getInstance()->getLevelByName($data["level"]) ?? $data["level"];
+		} catch (RuntimeException $exception) {
+			$this->level = $data["level"];
+		}
+		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
+		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+		$this->direction = new Vector3($data["directionX"], $data["directionY"], $data["directionZ"]);
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getCubicStart(): Vector3
+	{
+		return VectorUtils::getMin($this->getPos1()->add(VectorUtils::multiply($this->getDirection()->normalize(), parent::getRealSize())), $this->getPos1()->add(VectorUtils::multiply($this->getDirection(), parent::getRealSize())));
+	}
+
+	/**
+	 * @return array
+	 */
+	public function split(): array
+	{
+		return Selection::split();
+	}
+}

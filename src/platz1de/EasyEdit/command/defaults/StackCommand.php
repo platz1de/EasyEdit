@@ -9,10 +9,13 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\selection\CopyTask;
 use platz1de\EasyEdit\task\selection\PasteTask;
+use platz1de\EasyEdit\task\selection\StackTask;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class StackCommand extends EasyEditCommand
@@ -40,11 +43,6 @@ class StackCommand extends EasyEditCommand
 			return;
 		}
 
-		$location = $player->getLocation();
-		CopyTask::queue($selection, Position::fromObject($selection->getPos1(), $player->getLevelNonNull()), function (Selection $selection, Position $place, DynamicBlockListSelection $copy) use ($count, $location) {
-			for ($i = 1; $i <= $count; $i++) {
-				PasteTask::queue($copy, Position::fromObject(VectorUtils::moveVectorInSight($location, $selection->getPos1(), $i), $place->getLevelNonNull()));
-			}
-		});
+		StackTask::queue(new StackedCube($selection, VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), $count)), $player->asPosition());
 	}
 }
