@@ -6,15 +6,11 @@ use Exception;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\selection\StackedCube;
-use platz1de\EasyEdit\task\selection\CopyTask;
-use platz1de\EasyEdit\task\selection\PasteTask;
 use platz1de\EasyEdit\task\selection\StackTask;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
