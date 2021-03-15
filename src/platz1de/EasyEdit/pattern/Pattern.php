@@ -223,6 +223,9 @@ class Pattern
 			case "rand":
 			case "random":
 				return new Random($children, $args);
+			case "nat":
+			case "naturalized":
+				return new Naturalize($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
