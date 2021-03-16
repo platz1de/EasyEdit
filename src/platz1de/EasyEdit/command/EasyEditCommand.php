@@ -2,11 +2,14 @@
 
 namespace platz1de\EasyEdit\command;
 
+use platz1de\EasyEdit\EasyEdit;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\Player;
+use pocketmine\plugin\Plugin;
 
-abstract class EasyEditCommand extends Command
+abstract class EasyEditCommand extends Command implements PluginIdentifiableCommand
 {
 	public function __construct(string $name, string $description, string $permission, string $usage = null, array $aliases = [])
 	{
@@ -33,4 +36,12 @@ abstract class EasyEditCommand extends Command
 	}
 
 	abstract public function process(Player $player, array $args, array $flags);
+
+	/**
+	 * @return EasyEdit
+	 */
+	public function getPlugin(): Plugin
+	{
+		return EasyEdit::getInstance();
+	}
 }
