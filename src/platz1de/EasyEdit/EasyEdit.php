@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit;
 
 use Exception;
 use platz1de\EasyEdit\command\CommandManager;
+use platz1de\EasyEdit\command\defaults\BrushCommand;
 use platz1de\EasyEdit\command\defaults\CenterCommand;
 use platz1de\EasyEdit\command\defaults\CopyCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
@@ -67,7 +68,8 @@ class EasyEdit extends PluginBase
 			new MoveCommand(),
 			new SphereCommand(),
 			new HollowSphereCommand(),
-			new StackCommand()
+			new StackCommand(),
+			new BrushCommand()
 		]);
 	}
 

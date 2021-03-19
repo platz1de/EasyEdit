@@ -20,5 +20,9 @@ permissions:
       default: op
      easyedit.command.paste:
       default: op
+     easyedit.command.brush:
+      default: op
    easyedit.position:
+    default: op
+   easyedit.brush:
     default: op
