@@ -13,6 +13,9 @@ use pocketmine\item\TieredTool;
 
 class EventListener implements Listener
 {
+	//don't spam everything
+	private static $cooldown = 0;
+
 	/**
 	 * @param BlockBreakEvent $event
 	 */
@@ -27,6 +30,12 @@ class EventListener implements Listener
 
 	public function onInteract(PlayerInteractEvent $event): void
 	{
+		if (self::$cooldown < microtime(true)) {
+			self::$cooldown = microtime(true) + 0.5;
+		} else {
+			return;
+		}
+
 		$axe = $event->getItem();
 		if ($axe instanceof Axe && !$event->getBlock() instanceof Air && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
 			$event->setCancelled();
