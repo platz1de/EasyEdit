@@ -17,7 +17,7 @@ class BrushHandler
 	 */
 	public static function handleBrush(CompoundTag $brush, Player $player): void
 	{
-		$target = $player->getTargetBlock(50);
+		$target = $player->getTargetBlock(100);
 		if ($target !== null) {
 			switch ($brush->getShort("brushType", -1, true)) {
 				case 0:
