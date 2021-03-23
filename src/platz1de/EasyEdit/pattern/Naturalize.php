@@ -33,7 +33,7 @@ class Naturalize extends Pattern
 	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator): ?Block
 	{
 		$i = 1;
-		while ($y + $i <= Level::Y_MAX && $iterator->currentSubChunk->getBlockId($x & 0x0f, $y + $i & 0x0f, $z & 0x0f) !== 0){
+		while ($y + $i <= Level::Y_MAX && $iterator->currentChunk->getBlockId($x & 0x0f, $y + $i, $z & 0x0f) !== 0){
 			$i++;
 		}
 		switch ($i){
