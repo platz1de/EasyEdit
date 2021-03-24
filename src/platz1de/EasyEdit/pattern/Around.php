@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\pattern;
 
+use platz1de\EasyEdit\selection\Selection;
 use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
@@ -13,9 +14,10 @@ class Around extends Pattern
 	 * @param int                     $y
 	 * @param int                     $z
 	 * @param SubChunkIteratorManager $iterator
+	 * @param Selection               $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
+	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		for ($i = 0; $i <= 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);

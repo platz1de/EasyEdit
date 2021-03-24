@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\pattern;
 
 use Exception;
 use platz1de\EasyEdit\pattern\Block as IsBlockPattern;
+use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
@@ -35,13 +36,14 @@ class Pattern
 	 * @param int                     $y
 	 * @param int                     $z
 	 * @param SubChunkIteratorManager $iterator
+	 * @param Selection               $selection
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator): ?Block
+	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
 		foreach ($this->pieces as $piece) {
-			if ($piece->isValidAt($x, $y, $z, $iterator)) {
-				return $piece->getFor($x, $y, $z, $iterator);
+			if ($piece->isValidAt($x, $y, $z, $iterator, $selection)) {
+				return $piece->getFor($x, $y, $z, $iterator, $selection);
 			}
 		}
 		return null;
@@ -52,10 +54,11 @@ class Pattern
 	 * @param int                     $y
 	 * @param int                     $z
 	 * @param SubChunkIteratorManager $iterator
+	 * @param Selection               $selection
 	 * @return bool
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator): bool
+	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		return false;
 	}
@@ -226,6 +229,8 @@ class Pattern
 			case "nat":
 			case "naturalized":
 				return new Naturalize($children, $args);
+			case "smooth":
+				return new Smooth($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
