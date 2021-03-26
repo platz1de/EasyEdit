@@ -27,8 +27,12 @@ class WorkerAdapter extends Task
 	 */
 	public function onRun(int $currentTick): void
 	{
-		if (self::$task !== null && self::$task->continue()) {
-			self::$task = null;
+		if (self::$task !== null) {
+			if (self::$task->continue()) {
+				self::$task = null;
+			} else {
+				return;
+			}
 		}
 
 		if (count(self::$queue) > 0) {
