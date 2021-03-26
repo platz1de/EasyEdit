@@ -32,7 +32,7 @@ class BrushHandler
 	 */
 	public static function nameToIdentifier(string $brush): int
 	{
-		switch ($brush){
+		switch ($brush) {
 			case "sphere":
 			case "sph":
 			case "sp":
