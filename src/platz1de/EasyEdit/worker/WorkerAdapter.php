@@ -31,7 +31,7 @@ class WorkerAdapter extends Task
 			self::$task = null;
 		}
 
-		if(count(self::$queue) > 0){
+		if (count(self::$queue) > 0) {
 			self::$task = new PieceManager(array_shift(self::$queue));
 			self::$task->start();
 		}
