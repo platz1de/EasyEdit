@@ -49,7 +49,7 @@ class Sphere extends Selection
 	 */
 	public function getRealSize(): Vector3
 	{
-		return new Vector3($this->getRadius() * 2, $this->getRadius() * 2, $this->getRadius() * 2);
+		return new Vector3($this->getRadius() * 2 + 1, $this->getRadius() * 2 + 1, $this->getRadius() * 2 + 1);
 	}
 
 	/**
