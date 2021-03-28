@@ -6,6 +6,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
@@ -146,6 +147,8 @@ abstract class EditTask extends Threaded
 		$changed = 0;
 
 		try {
+			HeightMapCache::load($origin, $selection);
+
 			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed, $data);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
 
