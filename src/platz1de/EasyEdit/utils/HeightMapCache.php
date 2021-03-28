@@ -60,7 +60,8 @@ class HeightMapCache
 	 * @param int $z
 	 * @return int|null
 	 */
-	public static function getHighest(int $x, int $z) : ?int{
+	public static function getHighest(int $x, int $z): ?int
+	{
 		return self::$highest[$x][$z];
 	}
 
@@ -69,7 +70,8 @@ class HeightMapCache
 	 * @param int $z
 	 * @return int|null
 	 */
-	public static function getLowest(int $x, int $z) : ?int{
+	public static function getLowest(int $x, int $z): ?int
+	{
 		return self::$lowest[$x][$z];
 	}
 
