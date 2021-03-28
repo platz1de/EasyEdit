@@ -62,8 +62,8 @@ abstract class BlockListSelection extends Selection
 	public function getNeededChunks(Position $place): array
 	{
 		$chunks = [];
-		for ($x = ($place->getX() + $this->pos1->getX()) >> 4; $x <= ($place->getX() + $this->pos2->getX()) >> 4; $x++) {
-			for ($z = ($place->getZ() + $this->pos1->getZ()) >> 4; $z <= ($place->getZ() + $this->pos2->getZ()) >> 4; $z++) {
+		for ($x = ($place->getX() + $this->pos1->getX() - 1) >> 4; $x <= ($place->getX() + $this->pos2->getX() + 1) >> 4; $x++) {
+			for ($z = ($place->getZ() + $this->pos1->getZ() - 1) >> 4; $z <= ($place->getZ() + $this->pos2->getZ() + 1) >> 4; $z++) {
 				$place->getLevelNonNull()->loadChunk($x, $z);
 				$chunks[] = $place->getLevelNonNull()->getChunk($x, $z);
 			}
