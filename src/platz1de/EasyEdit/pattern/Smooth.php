@@ -34,6 +34,8 @@ class Smooth extends Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
+		HeightMapCache::load($iterator, $selection);
+
 		$height = 0;
 		$min = 0;
 		$tHeight = 0;

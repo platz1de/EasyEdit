@@ -146,9 +146,9 @@ abstract class EditTask extends Threaded
 
 		$changed = 0;
 
-		try {
-			HeightMapCache::load($origin, $selection);
+		HeightMapCache::prepare();
 
+		try {
 			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed, $data);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
 
