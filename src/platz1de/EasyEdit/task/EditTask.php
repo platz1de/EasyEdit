@@ -142,8 +142,6 @@ abstract class EditTask extends Threaded
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
 
-		$this->getLogger()->debug("Running Task " . $this->getTaskName() . ":" . $this->getId());
-
 		$changed = 0;
 
 		HeightMapCache::prepare();
