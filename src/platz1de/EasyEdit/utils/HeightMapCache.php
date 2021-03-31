@@ -3,10 +3,22 @@
 namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\selection\Selection;
+use pocketmine\block\BlockIds;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
 class HeightMapCache
 {
+	//TODO: don't just delete this Blocks
+	/**
+	 * @var int[] these mess up the height calculation in different ways (this will never be complete, only the most important ones)
+	 */
+	private static $ignore = [BlockIds::AIR,
+		BlockIds::WOOD, BlockIds::WOOD2, BlockIds::LEAVES, BlockIds::LEAVES2, //trees
+		BlockIds::YELLOW_FLOWER, BlockIds::RED_FLOWER, BlockIds::TALLGRASS, //flowers and stuff
+		BlockIds::FLOWING_WATER, BlockIds::STILL_WATER, BlockIds::FLOWING_LAVA, BlockIds::STILL_LAVA, //fluids
+		BlockIds::SNOW_LAYER
+	];
+
 	/**
 	 * @var
 	 */
@@ -33,7 +45,7 @@ class HeightMapCache
 				for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
 					$iterator->moveTo($x, 0, $z);
 					$y = $min->getY();
-					while ($y <= $max->getY() && $iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f) === 0) {
+					while ($y <= $max->getY() && in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
@@ -41,7 +53,8 @@ class HeightMapCache
 					} else {
 						self::$lowest[$x][$z] = null;
 					}
-					while ($y <= $max->getY() && $iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f) !== 0) {
+
+					while ($y <= $max->getY() && !in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
