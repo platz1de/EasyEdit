@@ -36,39 +36,56 @@ class Smooth extends Pattern
 	{
 		HeightMapCache::load($iterator, $selection);
 
-		$height = 0;
+		$max = 0;
+		$tMax = 0;
 		$min = 0;
-		$tHeight = 0;
 		$tMin = 0;
 		for ($kernelX = -1; $kernelX <= 1; $kernelX++) {
 			for ($kernelZ = -1; $kernelZ <= 1; $kernelZ++) {
 				$m = HeightMapCache::getHighest($x + $kernelX, $z + $kernelZ);
-				if($m !== null){
-					$height += $m;
-					$tHeight++;
+				if ($m !== null) {
+					$max += $m;
+					$tMax++;
 				}
 
 				$m = HeightMapCache::getLowest($x + $kernelX, $z + $kernelZ);
-				if($m !== null){
+				if ($m !== null) {
 					$min += $m;
 					$tMin++;
 				}
 			}
 		}
-		if ($tHeight !== 0) {
-			$height /= $tHeight;
+		if ($tMax !== 0) {
+			$max /= $tMax;
 		} elseif ($tMin !== 0) {
-			$height = Level::Y_MAX; //we don't want Problems if a selection is filled with Blocks on top
+			$max = Level::Y_MAX; //we don't want Problems if a selection is filled with Blocks on top
 		}
 		if ($tMin !== 0) {
 			$min /= $tMin;
 		}
-		$height = round($height);
+		$max = round($max);
 		$min = round($min);
-		//TODO: Actually use the right Blocks
-		if ($y <= $height && $y >= $min && $tMin >= 5) {
-			return BlockFactory::get(1);
+		$oMax = HeightMapCache::getHighest($x, $z);
+		$oMin = HeightMapCache::getLowest($x, $z);
+		$oMid = ($oMin + $oMax) / 2;
+		$mid = ($min + $max) / 2;
+
+		if($tMin >= 5) {
+			if ($y >= $mid && $y <= $max) {
+				$k = ($y - $mid) / ($max - $mid);
+				$gy = $oMid + round($k * ($oMax - $oMid));
+				$iterator->moveTo($x, $gy, $z);
+				return BlockFactory::get($iterator->currentSubChunk->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+			}
+
+			if ($y <= $mid && $y >= $min) {
+				$k = ($y - $mid) / ($min - $mid);
+				$gy = $oMid + round($k * ($oMin - $oMid));
+				$iterator->moveTo($x, $gy, $z);
+				return BlockFactory::get($iterator->currentSubChunk->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+			}
 		}
+
 		return BlockFactory::get(0);
 	}
 }
