@@ -20,7 +20,7 @@ class HeightMapCache
 	];
 
 	/**
-	 * @var
+	 * @var bool
 	 */
 	private static $loaded;
 	/**
