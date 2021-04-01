@@ -108,4 +108,4 @@ These Patterns have an own use
 Pattern | Description
 ---|---
 #smooth | makes your terrain smoother
-#naturalize(\[pattern],\[pattern],\[pattern) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3)
+#naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3)
