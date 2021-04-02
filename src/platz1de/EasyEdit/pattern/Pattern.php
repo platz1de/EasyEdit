@@ -116,10 +116,14 @@ class Pattern
 			} elseif ($piece === "") {
 				if ($str === ",") {
 					if ($isPattern) {
-						throw new ParseError("Unexpected delimiter in Pattern", $i + $start);
-					}
-
-					if (self::isBlock($current)) {
+						if (self::isPattern($current)) {
+							$pieces[$current] = [];
+							$current = "";
+							$isPattern = false;
+						} else {
+							throw new ParseError("Unknown Pattern " . $current, $i + $start);
+						}
+					} elseif (self::isBlock($current)) {
 						$pieces[] = self::getBlock($current);
 						$current = "";
 					} else {
@@ -151,7 +155,13 @@ class Pattern
 		}
 
 		if (!$needEnd && $current !== "") {
-			if (self::isBlock($current)) {
+			if ($isPattern) {
+				if (self::isPattern($current)) {
+					$pieces[$current] = [];
+				} else {
+					throw new ParseError("Unknown Pattern " . $current);
+				}
+			} elseif (self::isBlock($current)) {
 				$pieces[] = self::getBlock($current);
 			} else {
 				throw new ParseError("Invalid Block " . $current);
