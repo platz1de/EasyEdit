@@ -60,7 +60,7 @@ class Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
 	{
-		return false;
+		return true;
 	}
 
 	/**
