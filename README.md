@@ -22,6 +22,7 @@ Command | Description | Permission | Aliases/Notice
 //pos2 | Set the first Position | easyedit.position | //2<br>break a block in creative with a wooden axe
 //set \<pattern> | Set the selected Area | easyedit.command.set
 //replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
+//naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
 //undo \<count>| Revert your latest change | easyedit.command.undo
 //redo \<count> | Revert your latest undo | easyedit.command.redo
 //copy | Copy the selected Area | easyedit.command.copy
