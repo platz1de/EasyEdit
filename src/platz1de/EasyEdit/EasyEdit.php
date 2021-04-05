@@ -18,6 +18,7 @@ use platz1de\EasyEdit\command\defaults\RedoCommand;
 use platz1de\EasyEdit\command\defaults\ReplaceCommand;
 use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\SetCommand;
+use platz1de\EasyEdit\command\defaults\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\SphereCommand;
 use platz1de\EasyEdit\command\defaults\StackCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
@@ -71,7 +72,8 @@ class EasyEdit extends PluginBase
 			new HollowSphereCommand(),
 			new StackCommand(),
 			new BrushCommand(),
-			new NaturalizeCommand()
+			new NaturalizeCommand(),
+			new SmoothCommand()
 		]);
 	}
 
