@@ -86,6 +86,7 @@ They can also be nested:
 
 \<argument> - required Argument<br>
 [argument] - optional Argument
+patterns - children patterns, can be separated by a comma
 
 Pattern | Description
 ---|---
@@ -104,6 +105,7 @@ These Patterns have an own use
 
 \<argument> - required Argument<br>
 [argument] - optional Argument
+patterns - children patterns, can be separated by a comma
 
 Pattern | Description
 ---|---
