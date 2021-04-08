@@ -9,6 +9,7 @@ use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\level\utils\SubChunkIteratorManager;
+use UnexpectedValueException;
 
 class Pattern
 {
@@ -70,7 +71,11 @@ class Pattern
 	 */
 	public static function parse(string $pattern): Pattern
 	{
-		return new Pattern(self::processPattern(self::parsePiece($pattern)), []);
+		try {
+			return new Pattern(self::processPattern(self::parsePiece($pattern)), []);
+		}catch (UnexpectedValueException $exception){
+			throw new ParseError($exception->getMessage()); //the difference is purely internally
+		}
 	}
 
 	/**
@@ -203,6 +208,8 @@ class Pattern
 			return true;
 		} catch (ParseError $exception) {
 			return false;
+		} catch (UnexpectedValueException $exception){
+			return true; //This Pattern exists, but is not complete
 		}
 	}
 
@@ -214,11 +221,15 @@ class Pattern
 	private static function getPattern(string $pattern, array $children = []): Pattern
 	{
 		if ($pattern[0] === "!") {
-			return new Not(self::getPattern(substr($pattern, 1), $children));
+			$pa = self::getPattern(substr($pattern, 1), $children);
+			$pa->check();
+			return new Not($pa);
 		}
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
+			case "not":
+				return new Not($children[0] ?? null);
 			case "even":
 				return new Even($children, $args);
 			case "odd":

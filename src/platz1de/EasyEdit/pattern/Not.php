@@ -6,16 +6,21 @@ namespace platz1de\EasyEdit\pattern;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\level\utils\SubChunkIteratorManager;
+use UnexpectedValueException;
 
 class Not extends Pattern
 {
 	/**
 	 * Not constructor.
-	 * @param Pattern $piece
+	 * @param Pattern|null $piece
 	 */
-	public function __construct(Pattern $piece)
+	public function __construct(?Pattern $piece)
 	{
-		parent::__construct([$piece], []);
+		if ($piece instanceof Pattern) {
+			parent::__construct([$piece], []);
+		} else {
+			throw new UnexpectedValueException("Not needs a pattern as first Argument, " . gettype($piece) . " given");
+		}
 	}
 
 	/**
