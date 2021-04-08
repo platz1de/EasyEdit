@@ -58,19 +58,19 @@ class Smooth extends Pattern
 		if ($tMax !== 0) {
 			$max /= $tMax;
 		} elseif ($tMin !== 0) {
-			$max = Level::Y_MAX; //we don't want Problems if a selection is filled with Blocks on top
+			$max = $selection->getCubicStart()->getY() + $selection->getRealSize()->getY();
 		}
 		if ($tMin !== 0) {
 			$min /= $tMin;
 		}
 		$max = round($max);
 		$min = round($min);
-		$oMax = HeightMapCache::getHighest($x, $z);
-		$oMin = HeightMapCache::getLowest($x, $z);
+		$oMax = HeightMapCache::getHighest($x, $z) ?? (int) ($selection->getCubicStart()->getY() + $selection->getRealSize()->getY());
+		$oMin = HeightMapCache::getLowest($x, $z) ?? (int) $selection->getCubicStart()->getY();
 		$oMid = ($oMin + $oMax) / 2;
 		$mid = ($min + $max) / 2;
 
-		if($tMin >= 5) {
+		if($tMin >= 5 && $min !== $max) {
 			if ($y >= $mid && $y <= $max) {
 				$k = ($y - $mid) / ($max - $mid);
 				$gy = $oMid + round($k * ($oMax - $oMid));

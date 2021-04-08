@@ -60,7 +60,7 @@ class HeightMapCache
 					if ($y < $max->getY()) {
 						self::$highest[$x][$z] = $y - 1;
 					} else {
-						self::$highest[$x][$z] = $max->getY();
+						self::$highest[$x][$z] = null;
 					}
 				}
 			}
