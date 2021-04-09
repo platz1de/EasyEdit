@@ -118,19 +118,19 @@ class EditTaskResult implements Serializable
 		]);
 	}
 
-	public function unserialize($serialized): void
+	public function unserialize($data): void
 	{
-		$data = igbinary_unserialize($serialized);
+		$dat = igbinary_unserialize($data);
 
-		$this->manager = new ReferencedChunkManager($data["level"]);
-		foreach ($data["chunks"] as $chunk) {
+		$this->manager = new ReferencedChunkManager($dat["level"]);
+		foreach ($dat["chunks"] as $chunk) {
 			$chunk = Chunk::fastDeserialize($chunk);
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
-		$this->toUndo = $data["toUndo"];
-		$this->tiles = $data["tiles"];
-		$this->time = $data["time"];
-		$this->changed = $data["changed"];
+		$this->toUndo = $dat["toUndo"];
+		$this->tiles = $dat["tiles"];
+		$this->time = $dat["time"];
+		$this->changed = $dat["changed"];
 	}
 }

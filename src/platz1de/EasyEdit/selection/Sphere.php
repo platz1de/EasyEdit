@@ -128,16 +128,19 @@ class Sphere extends Selection
 		]);
 	}
 
-	public function unserialize($serialized): void
+	/**
+	 * @param string $data
+	 */
+	public function unserialize($data): void
 	{
-		$data = igbinary_unserialize($serialized);
-		$this->player = $data["player"];
+		$dat = igbinary_unserialize($data);
+		$this->player = $dat["player"];
 		try {
-			$this->level = Server::getInstance()->getLevelByName($data["level"]) ?? $data["level"];
+			$this->level = Server::getInstance()->getLevelByName($dat["level"]) ?? $dat["level"];
 		} catch (RuntimeException $exception) {
-			$this->level = $data["level"];
+			$this->level = $dat["level"];
 		}
-		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
-		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+		$this->pos1 = new Vector3($dat["minX"], $dat["minY"], $dat["minZ"]);
+		$this->pos2 = new Vector3($dat["maxX"], $dat["maxY"], $dat["maxZ"]);
 	}
 }

@@ -80,13 +80,12 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @param string $serialized
-	 * @noinspection PhpMissingParamTypeInspection
+	 * @param string $data
 	 */
-	public function unserialize($serialized): void
+	public function unserialize($data): void
 	{
-		$data = igbinary_unserialize($serialized);
-		$this->point = new Vector3($data["x"], $data["y"], $data["z"]);
-		parent::unserialize($serialized);
+		$dat = igbinary_unserialize($data);
+		$this->point = new Vector3($dat["x"], $dat["y"], $dat["z"]);
+		parent::unserialize($data);
 	}
 }
