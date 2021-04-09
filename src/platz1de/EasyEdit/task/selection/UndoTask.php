@@ -23,7 +23,6 @@ class UndoTask extends EditTask
 {
 	/**
 	 * @param BlockListSelection $selection
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function queue(BlockListSelection $selection): void
 	{

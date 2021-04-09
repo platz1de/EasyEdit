@@ -46,7 +46,6 @@ class QueuedTask
 	 * @param string                $task
 	 * @param AdditionalDataManager $data
 	 * @param Closure|null          $finish
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, AdditionalDataManager $data, ?Closure $finish = null)
 	{

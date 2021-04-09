@@ -57,7 +57,6 @@ class Pattern
 	 * @param SubChunkIteratorManager $iterator
 	 * @param Selection               $selection
 	 * @return bool
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
 	{
