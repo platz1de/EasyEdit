@@ -29,17 +29,4 @@ class BlockPattern extends Pattern
 	{
 		return $this->args[0];
 	}
-
-	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
-	 * @return bool
-	 */
-	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
-	{
-		return true;
-	}
 }
