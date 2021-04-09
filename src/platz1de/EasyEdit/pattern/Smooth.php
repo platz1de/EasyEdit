@@ -6,7 +6,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
-use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
 class Smooth extends Pattern
