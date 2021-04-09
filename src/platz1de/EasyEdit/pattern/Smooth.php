@@ -64,12 +64,12 @@ class Smooth extends Pattern
 		}
 		$max = round($max);
 		$min = round($min);
-		$oMax = HeightMapCache::getHighest($x, $z) ?? (int) ($selection->getCubicStart()->getY() + $selection->getRealSize()->getY());
-		$oMin = HeightMapCache::getLowest($x, $z) ?? (int) $selection->getCubicStart()->getY();
+		$oMax = HeightMapCache::getHighest($x, $z) ?? (int)($selection->getCubicStart()->getY() + $selection->getRealSize()->getY());
+		$oMin = HeightMapCache::getLowest($x, $z) ?? (int)$selection->getCubicStart()->getY();
 		$oMid = ($oMin + $oMax) / 2;
 		$mid = ($min + $max) / 2;
 
-		if($tMin >= 5 && $min !== $max) {
+		if ($tMin >= 5 && $min !== $max) {
 			if ($y >= $mid && $y <= $max) {
 				$k = ($y - $mid) / ($max - $mid);
 				$gy = $oMid + round($k * ($oMax - $oMid));
