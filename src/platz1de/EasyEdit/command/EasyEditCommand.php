@@ -24,9 +24,9 @@ abstract class EasyEditCommand extends Command implements PluginIdentifiableComm
 	 * @param CommandSender $sender
 	 * @param string        $commandLabel
 	 * @param array         $args
-	 * @return mixed|void
+	 * @return void
 	 */
-	public function execute(CommandSender $sender, string $commandLabel, array $args)
+	public function execute(CommandSender $sender, string $commandLabel, array $args) : void
 	{
 		if (!$sender instanceof Player || !$this->testPermission($sender)) {
 			return;
