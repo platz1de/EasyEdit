@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\brush;
 
+use platz1de\EasyEdit\pattern\Naturalize;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\Smooth;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\nbt\tag\CompoundTag;
@@ -19,7 +21,7 @@ class BrushHandler
 	{
 		$target = $player->getTargetBlock(100);
 		if ($target !== null) {
-			switch ($brush->getShort("brushType", -1, true)) {
+			switch (self::nameToIdentifier($brush->getString("brushType", -1, true))) {
 				case 0:
 					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getName(), $target, $brush->getShort("brushSize", 0, true)), Pattern::parse($brush->getString("brushPattern", "stone", true)), $player->asPosition());
 			}
@@ -32,7 +34,7 @@ class BrushHandler
 	 */
 	public static function nameToIdentifier(string $brush): int
 	{
-		switch ($brush) {
+		switch (strtolower($brush)) {
 			case "sphere":
 			case "sph":
 			case "sp":

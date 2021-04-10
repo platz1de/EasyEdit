@@ -18,7 +18,7 @@ class BrushCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/brush", "Create a new Brush", "easyedit.command.brush", "//brush sphere [radius] [pattern]", ["/br"]);
+		parent::__construct("/brush", "Create a new Brush", "easyedit.command.brush", "//brush sphere [radius] [pattern]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]", ["/br"]);
 	}
 
 	/**
@@ -31,9 +31,9 @@ class BrushCommand extends EasyEditCommand
 		$type = BrushHandler::nameToIdentifier($args[0] ?? "");
 
 		$item = ItemFactory::get(ItemIds::WOODEN_SHOVEL);
-		$item->setNamedTagEntry(new ShortTag("brushType", $type));
 		switch ($type) {
 			case 0:
+				$item->setNamedTagEntry(new StringTag("brushType", "sphere"));
 				try {
 					Pattern::parse($args[2] ?? "stone");
 				} catch (ParseError $exception) {
