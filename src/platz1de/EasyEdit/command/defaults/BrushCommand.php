@@ -40,8 +40,28 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 2));
+				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 3));
 				$item->setNamedTagEntry(new StringTag("brushPattern", $args[2] ?? "stone"));
+				break;
+			case 1:
+				$item->setNamedTagEntry(new StringTag("brushType", "smooth"));
+				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 5));
+				break;
+			case 2:
+				$item->setNamedTagEntry(new StringTag("brushType", "naturalize"));
+				try {
+					Pattern::parse($args[2] ?? "grass");
+					Pattern::parse($args[3] ?? "dirt");
+					Pattern::parse($args[4] ?? "stone");
+				} catch (ParseError $exception) {
+					$player->sendMessage($exception->getMessage());
+					return;
+				}
+				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 4));
+				$item->setNamedTagEntry(new StringTag("topBlock", $args[2] ?? "grass"));
+				$item->setNamedTagEntry(new StringTag("middleBlock", $args[3] ?? "dirt"));
+				$item->setNamedTagEntry(new StringTag("bottomBlock", $args[4] ?? "stone"));
+				break;
 		}
 		$item->setLore(array_map(static function (NamedTag $tag) {
 			return $tag->getName() . ": " . $tag->getValue();
