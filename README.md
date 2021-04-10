@@ -10,6 +10,7 @@ Feature-rich WorldEditor for PocketMine-MP
 - support for unique Patterns
 - Wooden Axe as Wand
 - undo & redo
+- various Brushes
 
 ## Commands
 
@@ -24,6 +25,7 @@ Command | Description | Permission | Aliases/Notice
 //replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
 //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
 //smooth | Smooth the selected Area | easyedit.command.set
+//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock] | Create a new Brush | easyedit.command.brush
 //undo \<count>| Revert your latest change | easyedit.command.undo
 //redo \<count> | Revert your latest undo | easyedit.command.redo
 //copy | Copy the selected Area | easyedit.command.copy
