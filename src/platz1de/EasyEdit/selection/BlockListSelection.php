@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
+use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -64,8 +65,7 @@ abstract class BlockListSelection extends Selection
 		$chunks = [];
 		for ($x = ($place->getX() + $this->pos1->getX() - 1) >> 4; $x <= ($place->getX() + $this->pos2->getX() + 1) >> 4; $x++) {
 			for ($z = ($place->getZ() + $this->pos1->getZ() - 1) >> 4; $z <= ($place->getZ() + $this->pos2->getZ() + 1) >> 4; $z++) {
-				$place->getLevelNonNull()->loadChunk($x, $z);
-				$chunks[] = $place->getLevelNonNull()->getChunk($x, $z);
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
 		return $chunks;

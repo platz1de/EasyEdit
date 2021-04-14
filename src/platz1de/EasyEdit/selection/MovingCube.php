@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -51,14 +52,12 @@ class MovingCube extends Cube
 		//TODO: Remove duplicates
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z++) {
-				$this->getLevel()->loadChunk($x, $z);
-				$chunks[] = $this->getLevel()->getChunk($x, $z);
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
 		for ($x = ($this->pos1->getX() + $this->direction->getX()) >> 4; $x <= ($this->pos2->getX() + $this->direction->getX()) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() + $this->direction->getZ()) >> 4; $z <= ($this->pos2->getZ() + $this->direction->getZ()) >> 4; $z++) {
-				$this->getLevel()->loadChunk($x, $z);
-				$chunks[] = $this->getLevel()->getChunk($x, $z);
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
 		return $chunks;

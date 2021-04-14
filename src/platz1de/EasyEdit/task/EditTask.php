@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
@@ -89,6 +90,9 @@ abstract class EditTask extends Threaded
 			$chunkData[] = $chunk->fastSerialize();
 			foreach ($chunk->getTiles() as $tile) {
 				$tiles[] = $tile->saveNBT();
+			}
+			foreach (TileUtils::loadFrom($chunk) as $tile) {
+				$tiles[] = $tile;
 			}
 		}
 		$this->chunkData = igbinary_serialize($chunkData);

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\utils\LoaderManager;
 use UnexpectedValueException;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
@@ -134,8 +135,7 @@ class Cube extends Selection
 		$chunks = [];
 		for ($x = ($this->pos1->getX() - 1) >> 4; $x <= ($this->pos2->getX() + 1) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() - 1) >> 4; $z <= ($this->pos2->getZ() + 1) >> 4; $z++) {
-				$this->getLevel()->loadChunk($x, $z);
-				$chunks[] = $this->getLevel()->getChunk($x, $z);
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
 		return $chunks;

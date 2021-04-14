@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -52,8 +53,7 @@ class StackedCube extends Cube
 		$realSize = $this->getRealSize();
 		for ($x = $start->getX() >> 4; $x <= $start->getX() + $realSize->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $start->getZ() + $realSize->getZ() >> 4; $z++) {
-				$this->getLevel()->loadChunk($x, $z);
-				$chunks[] = $this->getLevel()->getChunk($x, $z);
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
 		return $chunks;

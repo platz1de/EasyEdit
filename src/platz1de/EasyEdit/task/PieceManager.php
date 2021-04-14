@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\tile\Tile;
 
 class PieceManager
@@ -40,21 +41,9 @@ class PieceManager
 			$result = $this->currentPiece->getResult();
 
 			if ($result instanceof EditTaskResult) {
-				foreach ($result->getManager()->getChunks() as $chunk) {
-					$c = $result->getManager()->getLevel()->getChunk($chunk->getX(), $chunk->getZ());
-					if ($c !== null) {
-						foreach ($c->getTiles() as $tile) {
-							$tile->close();
-						}
-					}
+				LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
 
-					$result->getManager()->getLevel()->setChunk($chunk->getX(), $chunk->getZ(), $chunk, false);
-				}
-
-				foreach ($result->getTiles() as $tile) {
-					Tile::createTile($tile->getString(Tile::TAG_ID), $result->getManager()->getLevel(), $tile);
-				}
-
+				$result->free();
 
 				if (count($this->pieces) > 0) {
 					$task = $this->task->getTask();

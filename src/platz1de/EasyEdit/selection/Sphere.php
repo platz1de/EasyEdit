@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -37,8 +38,7 @@ class Sphere extends Selection
 		//TODO: yea this is a square (change this)
 		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z++) {
-				$this->getLevel()->loadChunk($x, $z);
-				$chunks[] = $this->getLevel()->getChunk($x, $z);
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
 		return $chunks;

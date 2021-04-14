@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use pocketmine\level\format\Chunk;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
@@ -20,5 +21,16 @@ class TileUtils
 		$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $offset->getY());
 		$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $offset->getZ());
 		return $compoundTag;
+	}
+
+	/**
+	 * @param Chunk $chunk
+	 * @return CompoundTag[]
+	 */
+	public static function loadFrom(Chunk $chunk): array
+	{
+		return (function () {
+			return $this->NBTtiles;
+		})->call($chunk);
 	}
 }

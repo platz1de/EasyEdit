@@ -133,4 +133,10 @@ class EditTaskResult implements Serializable
 		$this->time = $dat["time"];
 		$this->changed = $dat["changed"];
 	}
+
+	public function free(): void
+	{
+		$this->manager->cleanChunks();
+		$this->tiles = [];
+	}
 }
