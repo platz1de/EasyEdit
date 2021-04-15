@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\LoaderManager;
-use pocketmine\tile\Tile;
 
 class PieceManager
 {
