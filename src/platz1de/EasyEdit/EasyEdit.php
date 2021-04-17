@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit;
 
-use Exception;
 use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\defaults\BrushCommand;
 use platz1de\EasyEdit\command\defaults\CenterCommand;
@@ -22,12 +21,8 @@ use platz1de\EasyEdit\command\defaults\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\SphereCommand;
 use platz1de\EasyEdit\command\defaults\StackCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
-use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\math\Vector3;
-use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 
@@ -91,51 +86,5 @@ class EasyEdit extends PluginBase
 	public static function getWorker(): EditWorker
 	{
 		return self::$worker;
-	}
-
-	/**
-	 * @param Player  $player
-	 * @param Vector3 $position
-	 */
-	public static function selectPos1(Player $player, Vector3 $position): void
-	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof Cube) {
-				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
-			}
-		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
-		}
-
-		$selection->setPos1($position->floor());
-
-		SelectionManager::setForPlayer($player->getName(), $selection);
-
-		Messages::send($player, "selected-pos1");
-	}
-
-	/**
-	 * @param Player  $player
-	 * @param Vector3 $position
-	 */
-	public static function selectPos2(Player $player, Vector3 $position): void
-	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof Cube) {
-				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
-			}
-		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
-		}
-
-		$selection->setPos2($position->floor());
-
-		SelectionManager::setForPlayer($player->getName(), $selection);
-
-		Messages::send($player, "selected-pos2");
 	}
 }

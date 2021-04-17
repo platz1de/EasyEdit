@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\brush\BrushHandler;
+use platz1de\EasyEdit\selection\Cube;
 use pocketmine\block\Air;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
@@ -24,7 +25,7 @@ class EventListener implements Listener
 		$axe = $event->getItem();
 		if ($axe instanceof Axe && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
 			$event->setCancelled();
-			EasyEdit::selectPos1($event->getPlayer(), $event->getBlock()->asVector3());
+			Cube::selectPos1($event->getPlayer(), $event->getBlock()->asVector3());
 		}
 	}
 
@@ -39,7 +40,7 @@ class EventListener implements Listener
 		$axe = $event->getItem();
 		if ($axe instanceof Axe && !$event->getBlock() instanceof Air && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
 			$event->setCancelled();
-			EasyEdit::selectPos2($event->getPlayer(), $event->getBlock()->asVector3());
+			Cube::selectPos2($event->getPlayer(), $event->getBlock()->asVector3());
 		} elseif ($axe instanceof Shovel && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.brush")) {
 			$event->setCancelled();
 			BrushHandler::handleBrush($axe->getNamedTag(), $event->getPlayer());

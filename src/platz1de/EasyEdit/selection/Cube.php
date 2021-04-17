@@ -3,6 +3,8 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use Exception;
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\utils\LoaderManager;
 use UnexpectedValueException;
 use pocketmine\block\BlockFactory;
@@ -206,5 +208,51 @@ class Cube extends Selection
 			}
 		}
 		return $pieces;
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param Vector3 $position
+	 */
+	public static function selectPos1(Player $player, Vector3 $position): void
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+			if (!$selection instanceof self) {
+				$selection->close();
+				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+			}
+		} catch (Exception $exception) {
+			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+		}
+
+		$selection->setPos1($position->floor());
+
+		SelectionManager::setForPlayer($player->getName(), $selection);
+
+		Messages::send($player, "selected-pos1");
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param Vector3 $position
+	 */
+	public static function selectPos2(Player $player, Vector3 $position): void
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+			if (!$selection instanceof self) {
+				$selection->close();
+				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+			}
+		} catch (Exception $exception) {
+			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+		}
+
+		$selection->setPos2($position->floor());
+
+		SelectionManager::setForPlayer($player->getName(), $selection);
+
+		Messages::send($player, "selected-pos2");
 	}
 }

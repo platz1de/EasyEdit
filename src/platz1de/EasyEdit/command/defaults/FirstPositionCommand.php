@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\selection\Cube;
 use pocketmine\Player;
 
 class FirstPositionCommand extends EasyEditCommand
@@ -20,6 +20,6 @@ class FirstPositionCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args, array $flags): void
 	{
-		EasyEdit::selectPos1($player, $player->floor());
+		Cube::selectPos1($player, $player->floor());
 	}
 }
