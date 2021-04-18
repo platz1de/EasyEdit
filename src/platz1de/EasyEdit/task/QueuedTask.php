@@ -51,7 +51,7 @@ class QueuedTask
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
-		$this->place = clone $place;
+		$this->place = $place->asPosition();
 		$this->task = $task;
 		if ($finish === null) {
 			$finish = static function (Selection $selection, Position $place, StaticBlockListSelection $undo) {
