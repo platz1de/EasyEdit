@@ -215,6 +215,14 @@ abstract class EditTask extends Threaded
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isGarbage(): bool
+	{
+		return $this->isFinished();
+	}
+
+	/**
 	 * @return null|EditTaskResult
 	 */
 	public function getResult(): ?EditTaskResult
