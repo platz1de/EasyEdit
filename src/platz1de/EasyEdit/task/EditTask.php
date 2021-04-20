@@ -157,6 +157,9 @@ abstract class EditTask extends Threaded
 			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
 
 			foreach ($manager->getChunks() as $chunk) {
+				$chunk->setGenerated();
+				$chunk->setPopulated();
+
 				$result->addChunk($chunk);
 			}
 
