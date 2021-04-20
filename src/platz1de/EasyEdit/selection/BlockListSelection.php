@@ -65,7 +65,7 @@ abstract class BlockListSelection extends Selection
 		$chunks = [];
 		for ($x = ($place->getX() + $this->pos1->getX() - 1) >> 4; $x <= ($place->getX() + $this->pos2->getX() + 1) >> 4; $x++) {
 			for ($z = ($place->getZ() + $this->pos1->getZ() - 1) >> 4; $z <= ($place->getZ() + $this->pos2->getZ() + 1) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($place->getLevelNonNull(), $x, $z);
 			}
 		}
 		return $chunks;
