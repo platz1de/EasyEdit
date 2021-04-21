@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\selection\Cube;
-use pocketmine\block\Air;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
