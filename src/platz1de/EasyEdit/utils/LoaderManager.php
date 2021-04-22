@@ -53,7 +53,6 @@ class LoaderManager
 				}
 			}
 
-			//TODO: this can result in empty Chunks when setting near unloaded chunk borders
 			$chunk->setPopulated();
 			$chunk->setGenerated();
 

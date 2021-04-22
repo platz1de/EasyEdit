@@ -11,12 +11,15 @@ use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\generator\Generator;
+use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
+use pocketmine\utils\Random;
 use Threaded;
 use ThreadedLogger;
 use Throwable;
@@ -72,6 +75,18 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $data;
+	/**
+	 * @var int
+	 */
+	private $seed;
+	/**
+	 * @var string
+	 */
+	private $generatorClass;
+	/**
+	 * @var string
+	 */
+	private $settings;
 
 	/**
 	 * EditTask constructor.
@@ -105,12 +120,15 @@ abstract class EditTask extends Threaded
 			$this->result = igbinary_serialize($previous);
 		}
 		$this->data = igbinary_serialize($data);
+		$this->generatorClass = GeneratorManager::getGenerator($place->getLevelNonNull()->getProvider()->getGenerator());
+		$this->settings = igbinary_serialize($place->getLevelNonNull()->getProvider()->getGeneratorOptions());
+		$this->seed = $place->getLevelNonNull()->getSeed();
 	}
 
 	public function run(): void
 	{
 		$start = microtime(true);
-		$manager = new ReferencedChunkManager($this->level);
+		$manager = new ReferencedChunkManager($this->level, $this->seed);
 		$iterator = new SubChunkIteratorManager($manager);
 		$origin = new SubChunkIteratorManager(clone $manager);
 		/** @var Selection $selection */
@@ -122,10 +140,25 @@ abstract class EditTask extends Threaded
 		/** @var AdditionalDataManager $data */
 		$data = igbinary_unserialize($this->data);
 
+		//TODO: Maybe actually only plant full trees or sth?
+		/**
+		 * @var $generator Generator
+		 */
+		$generator = new $this->generatorClass(igbinary_unserialize($this->settings));
+		$generator->init($manager, new Random($this->seed));
+
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);
 		}, igbinary_unserialize($this->chunkData)) as $chunk) {
 			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+
+			if (!$chunk->isGenerated()) {
+				$generator->generateChunk($chunk->getX(), $chunk->getZ());
+			}
+
+			if (!$chunk->isPopulated()) {
+				$generator->populateChunk($chunk->getX(), $chunk->getZ());
+			}
 		}
 
 		foreach (array_map(static function (string $chunk) {

@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\worker;
 
+use pocketmine\block\BlockFactory;
+use pocketmine\level\biome\Biome;
 use pocketmine\utils\Utils;
 use pocketmine\Worker;
 use ThreadedLogger;
@@ -34,6 +36,9 @@ class EditWorker extends Worker
 		gc_enable();
 
 		$this->getLogger()->debug("Started EditWorker");
+
+		Biome::init();
+		BlockFactory::init();
 	}
 
 	/**
