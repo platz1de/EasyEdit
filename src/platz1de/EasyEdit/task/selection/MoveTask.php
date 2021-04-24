@@ -63,18 +63,19 @@ class MoveTask extends EditTask
 			$toUndo->addBlock($x, $y, $z, $id, $data);
 			$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0, 0);
 
-			$iterator->moveTo($x + $direction->getX(), $y + $direction->getY(), $z + $direction->getZ());
-			$toUndo->addBlock($x + $direction->getX(), $y + $direction->getY(), $z + $direction->getZ(), $iterator->currentSubChunk->getBlockId($x + $direction->getX() & 0x0f, $y + $direction->getY() & 0x0f, $z + $direction->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($x + $direction->getX() & 0x0f, $y + $direction->getY() & 0x0f, $z + $direction->getZ() & 0x0f), false);
-			$iterator->currentSubChunk->setBlock(($x + $direction->getX()) & 0x0f, ($y + $direction->getY()) & 0x0f, ($z + $direction->getZ()) & 0x0f, $id, $data);
+			$my = min(Level::Y_MASK, max(0, $y + $direction->getY()));
+			$iterator->moveTo($x + $direction->getX(), $my, $z + $direction->getZ());
+			$toUndo->addBlock($x + $direction->getX(), $my, $z + $direction->getZ(), $iterator->currentSubChunk->getBlockId($x + $direction->getX() & 0x0f, $my & 0x0f, $z + $direction->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($x + $direction->getX() & 0x0f, $my & 0x0f, $z + $direction->getZ() & 0x0f), false);
+			$iterator->currentSubChunk->setBlock(($x + $direction->getX()) & 0x0f, $my & 0x0f, ($z + $direction->getZ()) & 0x0f, $id, $data);
 			$changed++;
 
-			if(isset($tiles[Level::blockHash($x + $direction->getX(), $y + $direction->getY(), $z + $direction->getZ())])){
-				$toUndo->addTile($tiles[Level::blockHash($x + $direction->getX(), $y + $direction->getY(), $z + $direction->getZ())]);
-				unset($tiles[Level::blockHash($x + $direction->getX(), $y + $direction->getY(), $z + $direction->getZ())]);
+			if(isset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())])){
+				$toUndo->addTile($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())]);
+				unset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())]);
 			}
 			if (isset($tiles[Level::blockHash($x, $y, $z)])) {
 				$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
-				$tiles[Level::blockHash($x + $direction->getX(), $y + $direction->getY(), $z + $direction->getZ())] = TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $direction);
+				$tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())] = TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $direction);
 				unset($tiles[Level::blockHash($x, $y, $z)]);
 			}
 		});
