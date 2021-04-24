@@ -142,7 +142,7 @@ abstract class EditTask extends Threaded
 
 		//TODO: Maybe actually only plant full trees or sth?
 		/**
-		 * @var $generator Generator
+		 * @var Generator $generator
 		 */
 		$generator = new $this->generatorClass(igbinary_unserialize($this->settings));
 		$generator->init($manager, new Random($this->seed));
