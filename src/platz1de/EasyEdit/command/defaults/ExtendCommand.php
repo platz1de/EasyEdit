@@ -42,7 +42,7 @@ class ExtendCommand extends EasyEditCommand
 
 		if ($count === "vert" || $count === "vertical") {
 			$pos1 = new Vector3($pos1->getX(), 0, $pos1->getZ());
-			$pos2 = new Vector3($pos2->getX(), Level::Y_MAX, $pos2->getZ());
+			$pos2 = new Vector3($pos2->getX(), Level::Y_MASK, $pos2->getZ());
 		} elseif ($player->getPitch() >= 45) {
 			$pos1 = $pos1->getSide(Vector3::SIDE_DOWN, (int) $count);
 		} elseif ($player->getPitch() <= -45) {
