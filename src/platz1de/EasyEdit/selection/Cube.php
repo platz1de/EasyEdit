@@ -61,7 +61,7 @@ class Cube extends Selection
 		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
 		for ($x = $this->pos1->getX(); $x <= $this->pos2->getX(); $x++) {
 			for ($z = $this->pos1->getZ(); $z <= $this->pos2->getZ(); $z++) {
-				for ($y = $this->pos1->getY(); $y <= $this->pos2->getY(); $y++) {
+				for ($y = max(0, $this->pos1->getY()); $y <= min(Level::Y_MASK, $this->pos2->getY()); $y++) {
 					$closure($x, $y, $z);
 				}
 			}
