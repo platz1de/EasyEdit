@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 
@@ -36,9 +37,12 @@ class HollowSphere extends Sphere
 		$radius = $this->pos2->getX();
 		$radiusSquared = $radius ** 2;
 		$thicknessSquared = ($radius - $this->getThickness()) ** 2;
+		$minY = max(-$radius, -$this->pos1->getY());
+		$maxY = min($radius, Level::Y_MASK - $this->pos1->getY());
 		for ($x = -$radius; $x <= $radius; $x++) {
 			for ($z = -$radius; $z <= $radius; $z++) {
-				for ($y = -$radius; $y <= $radius; $y++) {
+				for ($y = $minY; $y <= $maxY; $y++) {
+					//TODO: round to height limit to not leave holes
 					if (($x ** 2) + ($y ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($y ** 2) + ($z ** 2) > $thicknessSquared) {
 						$closure($this->pos1->getX() + $x, $this->pos1->getY() + $y, $this->pos1->getZ() + $z);
 					}

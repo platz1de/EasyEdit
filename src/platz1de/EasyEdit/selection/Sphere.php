@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
@@ -18,7 +19,7 @@ class Sphere extends Selection
 	 * @param string       $player
 	 * @param string       $level
 	 * @param Vector3|null $pos1
-	 * @param int    $radius
+	 * @param int          $radius
 	 * @param bool         $piece
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, bool $piece = false)
@@ -71,10 +72,12 @@ class Sphere extends Selection
 		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
 		$radius = $this->pos2->getX();
 		$radiusSquared = $radius ** 2;
+		$minY = max(-$radius, -$this->pos1->getY());
+		$maxY = min($radius, Level::Y_MASK - $this->pos1->getY());
 		for ($x = -$radius; $x <= $radius; $x++) {
 			for ($z = -$radius; $z <= $radius; $z++) {
-				for ($y = -$radius; $y <= $radius; $y++) {
-					if(($x ** 2) + ($y ** 2) + ($z ** 2) <= $radiusSquared){
+				for ($y = $minY; $y <= $maxY; $y++) {
+					if (($x ** 2) + ($y ** 2) + ($z ** 2) <= $radiusSquared) {
 						$closure($this->pos1->getX() + $x, $this->pos1->getY() + $y, $this->pos1->getZ() + $z);
 					}
 				}
