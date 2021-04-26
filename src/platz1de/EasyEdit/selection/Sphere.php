@@ -121,7 +121,7 @@ class Sphere extends Selection
 	{
 		return igbinary_serialize([
 			"player" => $this->player,
-			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
 			"minX" => $this->pos1->getX(),
 			"minY" => $this->pos1->getY(),
 			"minZ" => $this->pos1->getZ(),

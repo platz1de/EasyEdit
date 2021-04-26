@@ -153,7 +153,7 @@ class Cube extends Selection
 	{
 		return igbinary_serialize([
 			"player" => $this->player,
-			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
 			"minX" => $this->pos1->getX(),
 			"minY" => $this->pos1->getY(),
 			"minZ" => $this->pos1->getZ(),
@@ -202,7 +202,7 @@ class Cube extends Selection
 
 		$level = $this->getLevel();
 		if ($level instanceof Level) {
-			$level = $level->getName();
+			$level = $level->getFolderName();
 		}
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - 1) >> 4; $x <= ($this->pos2->getX() + 1) >> 4; $x += 3) {
@@ -223,10 +223,10 @@ class Cube extends Selection
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			if (!$selection instanceof self) {
 				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 			}
 		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 		}
 
 		$selection->setPos1($position->floor());
@@ -246,10 +246,10 @@ class Cube extends Selection
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			if (!$selection instanceof self) {
 				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 			}
 		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getName());
+			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 		}
 
 		$selection->setPos2($position->floor());

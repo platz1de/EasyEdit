@@ -115,7 +115,7 @@ abstract class EditTask extends Threaded
 		$this->selection = igbinary_serialize($selection);
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
-		$this->level = $place->getLevelNonNull()->getName();
+		$this->level = $place->getLevelNonNull()->getFolderName();
 		if ($previous !== null) {
 			$this->result = igbinary_serialize($previous);
 		}

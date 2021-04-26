@@ -145,7 +145,7 @@ abstract class BlockListSelection extends Selection
 			"chunks" => array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
 			}, $this->getManager()->getChunks()),
-			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
 			"minX" => $this->pos1->getX(),
 			"minY" => $this->pos1->getY(),
 			"minZ" => $this->pos1->getZ(),

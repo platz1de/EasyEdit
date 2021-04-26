@@ -21,7 +21,7 @@ class StackedCube extends Cube
 
 	public function __construct(Cube $cube, Vector3 $direction)
 	{
-		parent::__construct($cube->getPlayer(), is_string($cube->level) ? $cube->level : $cube->level->getName(), $cube->getPos1(), $cube->getPos2());
+		parent::__construct($cube->getPlayer(), is_string($cube->level) ? $cube->level : $cube->level->getFolderName(), $cube->getPos1(), $cube->getPos2());
 		$this->direction = $direction;
 	}
 
@@ -95,7 +95,7 @@ class StackedCube extends Cube
 	{
 		return igbinary_serialize([
 			"player" => $this->player,
-			"level" => is_string($this->level) ? $this->level : $this->level->getName(),
+			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
 			"minX" => $this->pos1->getX(),
 			"minY" => $this->pos1->getY(),
 			"minZ" => $this->pos1->getZ(),

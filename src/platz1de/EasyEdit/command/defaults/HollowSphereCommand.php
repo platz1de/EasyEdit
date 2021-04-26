@@ -35,6 +35,6 @@ class HollowSphereCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue(new HollowSphere($player->getName(), $player->getLevelNonNull()->getName(), $player->asVector3()->floor(), (int) $args[0], (int) ($args[2] ?? 1)), $pattern, $player);
+		SetTask::queue(new HollowSphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $player->asVector3()->floor(), (int) $args[0], (int) ($args[2] ?? 1)), $pattern, $player);
 	}
 }
