@@ -38,16 +38,6 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 * @return void
-	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
-	{
-		parent::useOnBlocks(new Vector3(), $closure);
-	}
-
-	/**
 	 * @return Vector3
 	 */
 	public function getPoint(): Vector3

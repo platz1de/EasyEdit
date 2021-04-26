@@ -58,18 +58,21 @@ class InsertTask extends EditTask
 		Selection::validate($selection, DynamicBlockListSelection::class);
 		$place = $place->subtract($selection->getPoint());
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $place, $toUndo, &$changed): void {
-			$selection->getIterator()->moveTo($x, $y, $z);
-			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$ox = $x - $place->getX();
+			$oy = $y - $place->getY();
+			$oz = $z - $place->getZ();
+			$selection->getIterator()->moveTo($ox, $oy, $oz);
+			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
 			if (Selection::processBlock($blockId)) {
-				$iterator->moveTo($x + $place->getX(), $y + $place->getY(), $z + $place->getZ());
-				if ($iterator->currentSubChunk->getBlockId($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f) === 0) {
-					$toUndo->addBlock($x + $place->getX(), $y + $place->getY(), $z + $place->getZ(), $iterator->currentSubChunk->getBlockId($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($x + $place->getX() & 0x0f, $y + $place->getY() & 0x0f, $z + $place->getZ() & 0x0f));
-					$iterator->currentSubChunk->setBlock(($x + $place->getX()) & 0x0f, ($y + $place->getY()) & 0x0f, ($z + $place->getZ()) & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$iterator->moveTo($x, $y, $z);
+				if ($iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
+					$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($ox & 0x0f, $oy & 0x0f, $oz & 0x0f));
 					$changed++;
 
-					if (isset($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())])) {
-						$toUndo->addTile($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())]);
-						unset($tiles[Level::blockHash($x + $place->getX(), $y + $place->getY(), $z + $place->getZ())]);
+					if (isset($tiles[Level::blockHash($x, $y, $z)])) {
+						$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
+						unset($tiles[Level::blockHash($x, $y, $z)]);
 					}
 				}
 			}
