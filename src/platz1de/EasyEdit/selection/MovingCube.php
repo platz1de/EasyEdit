@@ -73,9 +73,11 @@ class MovingCube extends Cube
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
 		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
-		for ($this->direction->getX() > 0 ? $x = $this->pos2->getX() : $x = $this->pos1->getX(); $this->direction->getX() > 0 ? $x >= $this->pos1->getX() : $x <= $this->pos2->getX(); $this->direction->getX() > 0 ? $x-- : $x++) {
-			for ($this->direction->getZ() > 0 ? $z = $this->pos2->getZ() : $z = $this->pos1->getZ(); $this->direction->getZ() > 0 ? $z >= $this->pos1->getZ() : $z <= $this->pos2->getZ(); $this->direction->getZ() > 0 ? $z-- : $z++) {
-				for ($this->direction->getY() > 0 ? $y = min(Level::Y_MASK, $this->pos2->getY()) : $y = max(0, $this->pos1->getY()); $this->direction->getY() > 0 ? $y >= max(0, $this->pos1->getY()) : $y <= min(Level::Y_MASK, $this->pos2->getY()); $this->direction->getY() > 0 ? $y-- : $y++) {
+		$min = VectorUtils::enforceHeight($this->pos1);
+		$max = VectorUtils::enforceHeight($this->pos2);
+		for ($this->direction->getX() > 0 ? $x = $max->getX() : $x = $min->getX(); $this->direction->getX() > 0 ? $x >= $min->getX() : $x <= $max->getX(); $this->direction->getX() > 0 ? $x-- : $x++) {
+			for ($this->direction->getZ() > 0 ? $z = $max->getZ() : $z = $min->getZ(); $this->direction->getZ() > 0 ? $z >= $min->getZ() : $z <= $max->getZ(); $this->direction->getZ() > 0 ? $z-- : $z++) {
+				for ($this->direction->getY() > 0 ? $y = $max->getY() : $y = $min->getY(); $this->direction->getY() > 0 ? $y >= $min->getY() : $y <= $max->getY(); $this->direction->getY() > 0 ? $y-- : $y++) {
 					$closure($x, $y, $z);
 				}
 			}

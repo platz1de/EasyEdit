@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\utils\VectorUtils;
 use UnexpectedValueException;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
@@ -59,9 +60,11 @@ class Cube extends Selection
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
 		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
-		for ($x = $this->pos1->getX(); $x <= $this->pos2->getX(); $x++) {
-			for ($z = $this->pos1->getZ(); $z <= $this->pos2->getZ(); $z++) {
-				for ($y = max(0, $this->pos1->getY()); $y <= min(Level::Y_MASK, $this->pos2->getY()); $y++) {
+		$min = VectorUtils::enforceHeight($this->pos1);
+		$max = VectorUtils::enforceHeight($this->pos2);
+		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
+			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
+				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
 					$closure($x, $y, $z);
 				}
 			}

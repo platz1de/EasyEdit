@@ -69,11 +69,11 @@ class StackedCube extends Cube
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
 		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
-		$start = $this->getCubicStart();
-		$realSize = $this->getRealSize();
-		for ($x = $start->getX(); $x < $start->getX() + $realSize->getX(); $x++) {
-			for ($z = $start->getZ(); $z < $start->getZ() + $realSize->getZ(); $z++) {
-				for ($y = max(0, $start->getY()); $y < min(Level::Y_MAX, $start->getY() + $realSize->getY()); $y++) {
+		$start = VectorUtils::enforceHeight($this->getCubicStart());
+		$end = VectorUtils::enforceHeight($this->getCubicStart()->add($this->getRealSize())->subtract(1, 1, 1));
+		for ($x = $start->getX(); $x <= $end->getX(); $x++) {
+			for ($z = $start->getZ(); $z <= $end->getZ(); $z++) {
+				for ($y = $start->getY(); $y <= $end->getY(); $y++) {
 					$closure($x, $y, $z);
 				}
 			}

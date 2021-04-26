@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\math\Vector3;
 
@@ -59,5 +60,14 @@ class VectorUtils
 	public static function multiply(Vector3 $a, Vector3 $b): Vector3
 	{
 		return new Vector3($a->getX() * $b->getX(), $a->getY() * $b->getY(), $a->getZ() * $b->getZ());
+	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @return Vector3
+	 */
+	public static function enforceHeight(Vector3 $vector): Vector3
+	{
+		return new Vector3($vector->getX(), min(Level::Y_MASK, max(0, $vector->getY())), $vector->getZ());
 	}
 }

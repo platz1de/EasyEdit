@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -80,9 +81,11 @@ abstract class BlockListSelection extends Selection
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
 		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
-		for ($x = $place->getX() + $this->pos1->getX(); $x <= $place->getX() + $this->pos2->getX(); $x++) {
-			for ($z = $place->getZ() + $this->pos1->getZ(); $z <= $place->getZ() + $this->pos2->getZ(); $z++) {
-				for ($y = $place->getY() + $this->pos1->getY(); $y <= $place->getY() + $this->pos2->getY(); $y++) {
+		$min = VectorUtils::enforceHeight($this->pos1->add($place));
+		$max = VectorUtils::enforceHeight($this->pos2->add($place));
+		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
+			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
+				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
 					$closure($x, $y, $z);
 				}
 			}
