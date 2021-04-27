@@ -1,5 +1,7 @@
 # EasyEdit
 
+[![](https://poggit.pmmp.io/shield.state/EasyEdit)](https://poggit.pmmp.io/p/EasyEdit)
+
 Feature-rich WorldEditor for PocketMine-MP
 
 ## Features
