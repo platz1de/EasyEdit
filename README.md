@@ -32,7 +32,7 @@ Command | Description | Permission | Aliases/Notice
 //redo \<count> | Revert your latest undo | easyedit.command.redo
 //copy | Copy the selected Area | easyedit.command.copy
 //paste | Paste the Clipboard | easyedit.command.paste
-//insert | Insert the Clipboard | easyedit.command.paste
+//insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
 //move <count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
 //stack <count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
