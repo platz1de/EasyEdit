@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
