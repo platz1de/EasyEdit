@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Closure;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
