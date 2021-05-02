@@ -65,7 +65,7 @@ Example:
 #random(dirt,stone,air)
 ```
 
-It can also be used with Logic Patterns, note that it only selects once if the pattern is not valid, nothing is changed
+It can also be used with Logic Patterns, note that it only selects once, if the pattern is not valid nothing is changed
 
 It also works nested:
 ```
