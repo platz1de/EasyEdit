@@ -44,7 +44,7 @@ Command | Description | Permission | Aliases/Notice
 
 Patterns allow the creation of complex editing rules.
 
-Usage of Patterns: #patternName;arg1;arg2...(block1, block2...)
+Usage of Patterns: #patternName;arg1;arg2...(block1,block2...)
 
 ### Block Patterns
 
