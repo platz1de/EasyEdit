@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use UnexpectedValueException;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -12,6 +11,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Server;
 use RuntimeException;
 use Serializable;
+use UnexpectedValueException;
 
 abstract class Selection implements Serializable
 {
