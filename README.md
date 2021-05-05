@@ -91,7 +91,7 @@ They can also be nested:
 -> stone blocks which also have dirt blocks next to them get replaced with grass, other stone blocks stay as they are, non-stone blocks are set to air
 
 \<argument> - required Argument<br>
-[argument] - optional Argument
+[argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
 Pattern | Description
@@ -110,7 +110,7 @@ Pattern | Description
 These Patterns have an own use
 
 \<argument> - required Argument<br>
-[argument] - optional Argument
+[argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
 Pattern | Description
