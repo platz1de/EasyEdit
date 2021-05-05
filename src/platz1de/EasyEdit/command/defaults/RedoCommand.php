@@ -25,7 +25,7 @@ class RedoCommand extends EasyEditCommand
 			Messages::send($player, "no-future");
 		}
 
-		$count = min(100, (int)($args[0] ?? 1));
+		$count = min(100, (int) ($args[0] ?? 1));
 
 		for ($i = 0; $i < $count; $i++) {
 			HistoryManager::redoStep($player->getName());
