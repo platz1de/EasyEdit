@@ -69,7 +69,7 @@ class MoveTask extends EditTask
 			$iterator->currentSubChunk->setBlock(($x + $direction->getX()) & 0x0f, $my & 0x0f, ($z + $direction->getZ()) & 0x0f, $id, $data);
 			$changed++;
 
-			if(isset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())])){
+			if (isset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())])) {
 				$toUndo->addTile($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())]);
 				unset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())]);
 			}
