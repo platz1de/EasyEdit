@@ -106,7 +106,7 @@ abstract class BlockListSelection extends Selection
 			$id = 217; //structure_void
 		}
 		$this->iterator->moveTo($x, $y, $z);
-		if ($overwrite || $this->iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0){
+		if ($overwrite || $this->iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
 			$this->iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
 		}
 	}
