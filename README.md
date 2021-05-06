@@ -74,7 +74,7 @@ It also works nested:
 
 ### Logic Patterns
 
-These Patterns allow control over when which Block is used
+These Patterns allow control over the usage of Blocks
 
 If one Pattern is not valid, the next one is being used (separated by a comma)
 
