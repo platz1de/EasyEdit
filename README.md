@@ -39,7 +39,7 @@ Command | Description | Permission | Aliases/Notice
 //extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
 //sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set
 //hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hollowsphere
-//cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy //cyl
+//cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
 
 ## Patterns
 

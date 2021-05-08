@@ -14,7 +14,7 @@ class CylinderCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/cylinder", "Set a cylinder", "easyedit.command.set", "//cylinder <radius> <height> <pattern>", ["/cy", "/cyl"]);
+		parent::__construct("/cylinder", "Set a cylinder", "easyedit.command.set", "//cylinder <radius> <height> <pattern>", ["/cy"]);
 	}
 
 	/**
