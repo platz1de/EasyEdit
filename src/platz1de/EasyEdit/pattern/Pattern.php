@@ -72,7 +72,7 @@ class Pattern
 	{
 		try {
 			return new Pattern(self::processPattern(self::parsePiece($pattern)), []);
-		}catch (UnexpectedValueException $exception){
+		} catch (UnexpectedValueException $exception) {
 			throw new ParseError($exception->getMessage()); //the difference is purely internally
 		}
 	}
@@ -207,7 +207,7 @@ class Pattern
 			return true;
 		} catch (ParseError $exception) {
 			return false;
-		} catch (UnexpectedValueException $exception){
+		} catch (UnexpectedValueException $exception) {
 			return true; //This Pattern exists, but is not complete
 		}
 	}

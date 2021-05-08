@@ -7,7 +7,6 @@ use Exception;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use UnexpectedValueException;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\format\Chunk;
@@ -28,6 +27,7 @@ use pocketmine\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Utils;
 use RuntimeException;
+use UnexpectedValueException;
 
 class Cube extends Selection
 {

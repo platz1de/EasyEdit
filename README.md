@@ -45,7 +45,7 @@ Command | Description | Permission | Aliases/Notice
 
 Patterns allow the creation of complex editing rules.
 
-Usage of Patterns: #patternName;arg1;arg2...(block1, block2...)
+Usage of Patterns: #patternName;arg1;arg2...(block1,block2...)
 
 ### Block Patterns
 
@@ -66,7 +66,7 @@ Example:
 #random(dirt,stone,air)
 ```
 
-It can also be used with Logic Patterns, note that it only selects once if the pattern is not valid, nothing is changed
+It can also be used with Logic Patterns, note that it only selects once, if the pattern is not valid nothing is changed
 
 It also works nested:
 ```
@@ -92,7 +92,7 @@ They can also be nested:
 -> stone blocks which also have dirt blocks next to them get replaced with grass, other stone blocks stay as they are, non-stone blocks are set to air
 
 \<argument> - required Argument<br>
-[argument] - optional Argument
+[argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
 Pattern | Description
@@ -111,7 +111,7 @@ Pattern | Description
 These Patterns have an own use
 
 \<argument> - required Argument<br>
-[argument] - optional Argument
+[argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
 Pattern | Description

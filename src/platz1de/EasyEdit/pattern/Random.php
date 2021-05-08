@@ -19,7 +19,7 @@ class Random extends Pattern
 	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
 		$selected = $this->pieces[array_rand($this->pieces)];
-		if($selected->isValidAt($x, $y, $z, $iterator, $selection)){
+		if ($selected->isValidAt($x, $y, $z, $iterator, $selection)) {
 			return $selected->getFor($x, $y, $z, $iterator, $selection);
 		}
 		return null;
