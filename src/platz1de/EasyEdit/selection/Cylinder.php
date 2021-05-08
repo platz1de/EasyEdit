@@ -60,7 +60,7 @@ class Cylinder extends Selection
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return $this->getPos1()->subtract($this->getRadius(), $this->getRadius(), $this->getRadius());
+		return $this->getPos1()->subtract($this->getRadius(), 0, $this->getRadius());
 	}
 
 	/**
