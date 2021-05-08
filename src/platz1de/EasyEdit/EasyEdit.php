@@ -9,6 +9,7 @@ use platz1de\EasyEdit\command\defaults\CopyCommand;
 use platz1de\EasyEdit\command\defaults\CylinderCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
+use platz1de\EasyEdit\command\defaults\HollowCylinderCommand;
 use platz1de\EasyEdit\command\defaults\HollowSphereCommand;
 use platz1de\EasyEdit\command\defaults\InsertCommand;
 use platz1de\EasyEdit\command\defaults\MoveCommand;
@@ -70,7 +71,8 @@ class EasyEdit extends PluginBase
 			new BrushCommand(),
 			new NaturalizeCommand(),
 			new SmoothCommand(),
-			new CylinderCommand()
+			new CylinderCommand(),
+			new HollowCylinderCommand()
 		]);
 	}
 
