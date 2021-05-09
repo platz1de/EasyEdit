@@ -107,6 +107,7 @@ Pattern | Description
 #even;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at even coordinates (see odd for more info)
 #divisible;\<number>;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at coordinates which are divisible by the given number (see odd for more info)
 #walls(patterns) | Executes Patterns if the block is one of the walls of the selections
+#sides(patterns) | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)
 
 ### Functional Patterns
 
