@@ -251,6 +251,9 @@ class Pattern
 				return new Naturalize($children, $args);
 			case "smooth":
 				return new Smooth($children, $args);
+			case "walls":
+			case "wall":
+				return new Wall($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
