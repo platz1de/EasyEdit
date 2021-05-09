@@ -7,7 +7,7 @@ use platz1de\EasyEdit\selection\Selection;
 class TaskCache
 {
 	/**
-	 * @var Selection
+	 * @var Selection|null
 	 */
 	private static $selection;
 

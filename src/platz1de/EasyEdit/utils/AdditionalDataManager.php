@@ -23,7 +23,7 @@ class AdditionalDataManager
 
 	/**
 	 * @param string $key
-	 * @param null   $default
+	 * @param mixed  $default
 	 * @return mixed
 	 */
 	public function getDataKeyed(string $key, $default = null)
