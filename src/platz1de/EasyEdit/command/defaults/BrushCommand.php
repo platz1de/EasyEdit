@@ -32,7 +32,7 @@ class BrushCommand extends EasyEditCommand
 
 		$item = ItemFactory::get(ItemIds::WOODEN_SHOVEL);
 		switch ($type) {
-			case 0:
+			case BrushHandler::BRUSH_SPHERE:
 				$item->setNamedTagEntry(new StringTag("brushType", "sphere"));
 				try {
 					Pattern::parse($args[2] ?? "stone");
@@ -43,11 +43,11 @@ class BrushCommand extends EasyEditCommand
 				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 3));
 				$item->setNamedTagEntry(new StringTag("brushPattern", $args[2] ?? "stone"));
 				break;
-			case 1:
+			case BrushHandler::BRUSH_SMOOTH:
 				$item->setNamedTagEntry(new StringTag("brushType", "smooth"));
 				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 5));
 				break;
-			case 2:
+			case BrushHandler::BRUSH_NATURALIZE:
 				$item->setNamedTagEntry(new StringTag("brushType", "naturalize"));
 				try {
 					Pattern::parse($args[2] ?? "grass");
@@ -62,7 +62,7 @@ class BrushCommand extends EasyEditCommand
 				$item->setNamedTagEntry(new StringTag("middleBlock", $args[3] ?? "dirt"));
 				$item->setNamedTagEntry(new StringTag("bottomBlock", $args[4] ?? "stone"));
 				break;
-			case 3:
+			case BrushHandler::BRUSH_CYLINDER:
 				$item->setNamedTagEntry(new StringTag("brushType", "cylinder"));
 				try {
 					Pattern::parse($args[3] ?? "stone");
