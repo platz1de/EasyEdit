@@ -254,6 +254,9 @@ class Pattern
 			case "walls":
 			case "wall":
 				return new Wall($children, $args);
+			case "sides":
+			case "side":
+				return new Sides($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
