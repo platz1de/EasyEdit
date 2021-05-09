@@ -4,9 +4,7 @@ namespace platz1de\EasyEdit\pattern;
 
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\TaskCache;
-use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
-use pocketmine\math\Vector3;
 
 class Wall extends Pattern
 {

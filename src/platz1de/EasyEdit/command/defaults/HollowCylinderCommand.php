@@ -5,9 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\HollowCylinder;
-use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\Player;
 
