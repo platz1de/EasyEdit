@@ -27,7 +27,7 @@ Command | Description | Permission | Aliases/Notice
 //replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
 //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
 //smooth | Smooth the selected Area | easyedit.command.set
-//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock] | Create a new Brush | easyedit.command.brush | //br
+//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.command.brush | //br
 //undo \<count>| Revert your latest change | easyedit.command.undo
 //redo \<count> | Revert your latest undo | easyedit.command.redo
 //copy | Copy the selected Area | easyedit.command.copy

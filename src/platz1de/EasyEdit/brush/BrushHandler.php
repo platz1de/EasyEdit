@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\brush;
 use platz1de\EasyEdit\pattern\Naturalize;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\Smooth;
+use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\nbt\tag\CompoundTag;
@@ -30,6 +31,9 @@ class BrushHandler
 					break;
 				case 2:
 					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true)), new Pattern([new Naturalize([Pattern::parse($brush->getString("topBlock", "grass", true)), Pattern::parse($brush->getString("middleBlock", "dirt", true)), Pattern::parse($brush->getString("bottomBlock", "stone", true))], [])], []), $player->asPosition());
+					break;
+				case 3:
+					SetTask::queue(new Cylinder($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true), $brush->getShort("brushHeight", 0, true)), Pattern::parse($brush->getString("brushPattern", "stone", true)), $player->asPosition());
 			}
 		}
 	}
@@ -52,6 +56,10 @@ class BrushHandler
 			case "nat":
 			case "naturalized":
 				return 2;
+			case "cylinder":
+			case "cyl":
+			case "cy":
+				return 3;
 		}
 		return 0;
 	}
