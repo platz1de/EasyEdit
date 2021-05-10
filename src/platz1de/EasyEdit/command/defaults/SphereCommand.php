@@ -13,7 +13,7 @@ class SphereCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/sphere", "Set a sphere", "easyedit.command.set", "//sphere <radius> <pattern>");
+		parent::__construct("/sphere", "Set a sphere", "easyedit.command.set", "//sphere <radius> <pattern>", ["/sph"]);
 	}
 
 	/**

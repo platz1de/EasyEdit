@@ -37,8 +37,8 @@ Command | Description | Permission | Aliases/Notice
 //move <count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
 //stack <count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
 //extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
-//sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set
-//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hollowsphere
+//sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set | //sph
+//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hsph //hollowsphere
 //cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
 //hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcylinder
 
