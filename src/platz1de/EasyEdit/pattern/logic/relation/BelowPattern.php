@@ -1,11 +1,14 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\logic\relation;
 
+use platz1de\EasyEdit\pattern\ParseError;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class Above extends Pattern
+class BelowPattern extends Pattern
 {
 	/**
 	 * @param int                     $x
@@ -17,8 +20,8 @@ class Above extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
 	{
-		$y--;
-		if ($y >= 0) {
+		$y++;
+		if ($y < Level::Y_MAX) {
 			$iterator->moveTo($x, $y, $z);
 			return ($iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getId()) && ($iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getDamage());
 		}
@@ -30,7 +33,7 @@ class Above extends Pattern
 		try {
 			$this->args[0] = Pattern::getBlock($this->args[0] ?? "");
 		} catch (ParseError $error) {
-			throw new ParseError("Above needs a block as first Argument, " . ($this->args[0] ?? "") . " given");
+			throw new ParseError("Below needs a block as first Argument, " . ($this->args[0] ?? "") . " given");
 		}
 	}
 }

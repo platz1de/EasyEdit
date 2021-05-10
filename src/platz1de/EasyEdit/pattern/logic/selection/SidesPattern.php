@@ -1,12 +1,13 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\logic\selection;
 
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\TaskCache;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class Wall extends Pattern
+class SidesPattern extends Pattern
 {
 	/**
 	 * @param int                     $x
@@ -21,6 +22,6 @@ class Wall extends Pattern
 		$min = TaskCache::getFullSelection()->getCubicStart();
 		$max = $min->add(TaskCache::getFullSelection()->getRealSize())->subtract(1, 1, 1);
 		//TODO: Non-Cubic Selections need unique checks
-		return $x === $min->getX() || $x === $max->getX() || $z === $min->getZ() || $z === $max->getZ();
+		return $x === $min->getX() || $x === $max->getX() || $y === $min->getY() || $y === $max->getY() || $z === $min->getZ() || $z === $max->getZ();
 	}
 }

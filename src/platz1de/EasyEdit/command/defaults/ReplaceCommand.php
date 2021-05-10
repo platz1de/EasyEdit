@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use Exception;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\pattern\Block;
+use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
@@ -48,6 +48,6 @@ class ReplaceCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new Block($pattern, [$block])], []), $player);
+		SetTask::queue($selection, new Pattern([new BlockPattern($pattern, [$block])], []), $player);
 	}
 }

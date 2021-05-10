@@ -1,11 +1,13 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\logic\math;
 
+use platz1de\EasyEdit\pattern\ParseError;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class Divisible extends Pattern
+class DivisiblePattern extends Pattern
 {
 	/**
 	 * @param int                     $x

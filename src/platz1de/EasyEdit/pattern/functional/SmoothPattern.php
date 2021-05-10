@@ -1,14 +1,15 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\functional;
 
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class Smooth extends Pattern
+class SmoothPattern extends Pattern
 {
 	/**
 	 * @param int                     $x

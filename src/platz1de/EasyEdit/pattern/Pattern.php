@@ -3,7 +3,20 @@
 namespace platz1de\EasyEdit\pattern;
 
 use Exception;
-use platz1de\EasyEdit\pattern\Block as IsBlockPattern;
+use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
+use platz1de\EasyEdit\pattern\functional\SmoothPattern;
+use platz1de\EasyEdit\pattern\logic\math\DivisiblePattern;
+use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
+use platz1de\EasyEdit\pattern\logic\math\OddPattern;
+use platz1de\EasyEdit\pattern\logic\NotPattern;
+use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
+use platz1de\EasyEdit\pattern\logic\relation\AroundPattern;
+use platz1de\EasyEdit\pattern\logic\relation\BelowPattern;
+use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
+use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
+use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
+use platz1de\EasyEdit\pattern\random\RandomPattern;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
@@ -186,7 +199,7 @@ class Pattern
 		$pieces = [];
 		foreach ($pattern as $name => $p) {
 			if ($p instanceof Block) {
-				$pieces[] = new BlockPattern($p);
+				$pieces[] = new StaticBlock($p);
 			} else {
 				$pa = self::getPattern($name, self::processPattern($p));
 				$pa->check();
@@ -222,41 +235,41 @@ class Pattern
 		if ($pattern[0] === "!") {
 			$pa = self::getPattern(substr($pattern, 1), $children);
 			$pa->check();
-			return new Not($pa);
+			return new NotPattern($pa);
 		}
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
 			case "not":
-				return new Not($children[0] ?? null);
+				return new NotPattern($children[0] ?? null);
 			case "even":
-				return new Even($children, $args);
+				return new EvenPattern($children, $args);
 			case "odd":
-				return new Odd($children, $args);
+				return new OddPattern($children, $args);
 			case "divisible":
-				return new Divisible($children, $args);
+				return new DivisiblePattern($children, $args);
 			case "block":
-				return new IsBlockPattern($children, $args);
+				return new BlockPattern($children, $args);
 			case "above":
-				return new Above($children, $args);
+				return new AbovePattern($children, $args);
 			case "below":
-				return new Below($children, $args);
+				return new BelowPattern($children, $args);
 			case "around":
-				return new Around($children, $args);
+				return new AroundPattern($children, $args);
 			case "rand":
 			case "random":
-				return new Random($children, $args);
+				return new RandomPattern($children, $args);
 			case "nat":
 			case "naturalized":
-				return new Naturalize($children, $args);
+				return new NaturalizePattern($children, $args);
 			case "smooth":
-				return new Smooth($children, $args);
+				return new SmoothPattern($children, $args);
 			case "walls":
 			case "wall":
-				return new Wall($children, $args);
+				return new WallPattern($children, $args);
 			case "sides":
 			case "side":
-				return new Sides($children, $args);
+				return new SidesPattern($children, $args);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
