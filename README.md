@@ -40,7 +40,7 @@ Command | Description | Permission | Aliases/Notice
 //sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set
 //hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hollowsphere
 //cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
-//hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcy //hollowcylinder
+//hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcylinder
 
 ## Patterns
 
