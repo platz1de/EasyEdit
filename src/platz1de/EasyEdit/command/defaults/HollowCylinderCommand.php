@@ -13,7 +13,7 @@ class HollowCylinderCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/hcylinder", "Set a hollow cylinder", "easyedit.command.set", "//hollowcylinder <radius> <height> <pattern> [thickness]", ["/hcy", "/hollowcylinder"]);
+		parent::__construct("/hcylinder", "Set a hollow cylinder", "easyedit.command.set", "//hcylinder <radius> <height> <pattern> [thickness]", ["/hcy", "/hollowcylinder"]);
 	}
 
 	/**
