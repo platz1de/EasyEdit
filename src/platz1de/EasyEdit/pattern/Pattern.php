@@ -179,7 +179,7 @@ class Pattern
 
 	/**
 	 * @param array $pattern
-	 * @return Pattern[]|Block[]
+	 * @return Pattern[]
 	 */
 	public static function processPattern(array $pattern): array
 	{
