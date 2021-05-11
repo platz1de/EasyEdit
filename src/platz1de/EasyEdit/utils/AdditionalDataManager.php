@@ -31,7 +31,7 @@ class AdditionalDataManager
 		try {
 			return $this->data[$key];
 		} catch (Exception $e) {
-			if($default !== null){
+			if ($default !== null) {
 				return $default;
 			}
 			throw new UnexpectedValueException("Additional data with key " . $key . " does not exist");
@@ -39,8 +39,8 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @param string $key
-	 * @param mixed|null   $data
+	 * @param string     $key
+	 * @param mixed|null $data
 	 */
 	public function setDataKeyed(string $key, $data = null): void
 	{
