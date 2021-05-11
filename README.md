@@ -34,6 +34,8 @@ Command | Description | Permission | Aliases/Notice
 //paste | Paste the Clipboard | easyedit.command.paste
 //insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
+//walls [pattern] | Set walls of the selected area | easyedit.command.set | //wall
+//sides [pattern] | Set sides of the selected area | easyedit.command.set | //side
 //move <count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
 //stack <count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
 //extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to

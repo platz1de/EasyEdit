@@ -19,10 +19,12 @@ use platz1de\EasyEdit\command\defaults\RedoCommand;
 use platz1de\EasyEdit\command\defaults\ReplaceCommand;
 use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\SetCommand;
+use platz1de\EasyEdit\command\defaults\SidesCommand;
 use platz1de\EasyEdit\command\defaults\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\SphereCommand;
 use platz1de\EasyEdit\command\defaults\StackCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
+use platz1de\EasyEdit\command\defaults\WallCommand;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\plugin\PluginBase;
@@ -72,7 +74,9 @@ class EasyEdit extends PluginBase
 			new NaturalizeCommand(),
 			new SmoothCommand(),
 			new CylinderCommand(),
-			new HollowCylinderCommand()
+			new HollowCylinderCommand(),
+			new WallCommand(),
+			new SidesCommand()
 		]);
 	}
 
