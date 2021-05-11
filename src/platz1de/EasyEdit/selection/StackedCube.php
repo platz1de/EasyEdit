@@ -49,10 +49,10 @@ class StackedCube extends Cube
 	public function getNeededChunks(Position $place): array
 	{
 		$chunks = [];
-		$start = $this->getCubicStart();
-		$realSize = $this->getRealSize();
-		for ($x = $start->getX() >> 4; $x <= $start->getX() + $realSize->getX() >> 4; $x++) {
-			for ($z = $start->getZ() >> 4; $z <= $start->getZ() + $realSize->getZ() >> 4; $z++) {
+		$start = VectorUtils::getMin($this->getCubicStart(), $this->pos1);
+		$size = $this->getRealSize()->add(parent::getRealSize());
+		for ($x = $start->getX() >> 4; $x <= $start->getX() + $size->getX() >> 4; $x++) {
+			for ($z = $start->getZ() >> 4; $z <= $start->getZ() + $size->getZ() >> 4; $z++) {
 				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
 			}
 		}
