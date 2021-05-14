@@ -1,7 +1,9 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\functional;
 
+use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
@@ -9,7 +11,7 @@ use pocketmine\block\BlockIds;
 use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class Naturalize extends Pattern
+class NaturalizePattern extends Pattern
 {
 	/**
 	 * @param int                     $x
@@ -54,13 +56,13 @@ class Naturalize extends Pattern
 	public function check(): void
 	{
 		if (!isset($this->pieces[0])) {
-			$this->pieces[0] = new BlockPattern(BlockFactory::get(BlockIds::GRASS));
+			$this->pieces[0] = new StaticBlock(BlockFactory::get(BlockIds::GRASS));
 		}
 		if (!isset($this->pieces[1])) {
-			$this->pieces[1] = new BlockPattern(BlockFactory::get(BlockIds::DIRT));
+			$this->pieces[1] = new StaticBlock(BlockFactory::get(BlockIds::DIRT));
 		}
 		if (!isset($this->pieces[2])) {
-			$this->pieces[2] = new BlockPattern(BlockFactory::get(BlockIds::STONE));
+			$this->pieces[2] = new StaticBlock(BlockFactory::get(BlockIds::STONE));
 		}
 	}
 }

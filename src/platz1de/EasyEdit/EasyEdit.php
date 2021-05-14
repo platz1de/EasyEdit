@@ -6,8 +6,10 @@ use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\defaults\BrushCommand;
 use platz1de\EasyEdit\command\defaults\CenterCommand;
 use platz1de\EasyEdit\command\defaults\CopyCommand;
+use platz1de\EasyEdit\command\defaults\CylinderCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
+use platz1de\EasyEdit\command\defaults\HollowCylinderCommand;
 use platz1de\EasyEdit\command\defaults\HollowSphereCommand;
 use platz1de\EasyEdit\command\defaults\InsertCommand;
 use platz1de\EasyEdit\command\defaults\MoveCommand;
@@ -17,10 +19,12 @@ use platz1de\EasyEdit\command\defaults\RedoCommand;
 use platz1de\EasyEdit\command\defaults\ReplaceCommand;
 use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\SetCommand;
+use platz1de\EasyEdit\command\defaults\SidesCommand;
 use platz1de\EasyEdit\command\defaults\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\SphereCommand;
 use platz1de\EasyEdit\command\defaults\StackCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
+use platz1de\EasyEdit\command\defaults\WallCommand;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\plugin\PluginBase;
@@ -68,7 +72,11 @@ class EasyEdit extends PluginBase
 			new StackCommand(),
 			new BrushCommand(),
 			new NaturalizeCommand(),
-			new SmoothCommand()
+			new SmoothCommand(),
+			new CylinderCommand(),
+			new HollowCylinderCommand(),
+			new WallCommand(),
+			new SidesCommand()
 		]);
 	}
 

@@ -1,22 +1,14 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\random;
 
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\level\utils\SubChunkIteratorManager;
 
-class BlockPattern extends Pattern
+class RandomPattern extends Pattern
 {
-	/**
-	 * BlockPattern constructor.
-	 * @param Block $block
-	 */
-	public function __construct(Block $block)
-	{
-		parent::__construct([], [$block]);
-	}
-
 	/**
 	 * @param int                     $x
 	 * @param int                     $y
@@ -27,6 +19,10 @@ class BlockPattern extends Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
-		return $this->args[0];
+		$selected = $this->pieces[array_rand($this->pieces)];
+		if ($selected->isValidAt($x, $y, $z, $iterator, $selection)) {
+			return $selected->getFor($x, $y, $z, $iterator, $selection);
+		}
+		return null;
 	}
 }

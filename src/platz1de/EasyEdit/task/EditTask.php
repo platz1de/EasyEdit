@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -23,6 +24,7 @@ use pocketmine\utils\Random;
 use Threaded;
 use ThreadedLogger;
 use Throwable;
+use UnexpectedValueException;
 
 abstract class EditTask extends Threaded
 {
@@ -94,7 +96,7 @@ abstract class EditTask extends Threaded
 	 * @param Pattern                       $pattern
 	 * @param Position                      $place
 	 * @param AdditionalDataManager         $data
-	 * @param EditTaskResult|Selection|null $previous
+	 * @param EditTaskResult|Selection|null $previous Initially Selection, for later pieces EditTaskResult
 	 */
 	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, $previous = null)
 	{
@@ -175,6 +177,14 @@ abstract class EditTask extends Threaded
 
 		$previous = igbinary_unserialize($this->result ?? null);
 
+		if($data->getDataKeyed("firstPiece")) {
+			if ($previous instanceof Selection) {
+				TaskCache::init($previous);
+			}else{
+				throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
+			}
+		}
+
 		$toUndo = $previous instanceof EditTaskResult ? $previous->getUndo() : $this->getUndoBlockList($previous instanceof Selection ? $previous : $selection, $place, $this->level, $data);
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
@@ -206,6 +216,10 @@ abstract class EditTask extends Threaded
 			unset($this->result);
 		}
 		$this->finished = true;
+
+		if($data->getDataKeyed("finalPiece", false)){
+			TaskCache::clear();
+		}
 	}
 
 	/**

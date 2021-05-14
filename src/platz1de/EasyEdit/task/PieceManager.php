@@ -45,6 +45,10 @@ class PieceManager
 				$result->free();
 
 				if (count($this->pieces) > 0) {
+					$this->task->getData()->setDataKeyed("firstPiece", false);
+					if (count($this->pieces) === 1) {
+						$this->task->getData()->setDataKeyed("finalPiece", true);
+					}
 					$task = $this->task->getTask();
 					$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $result);
 					EasyEdit::getWorker()->stack($this->currentPiece);
@@ -62,6 +66,10 @@ class PieceManager
 
 	public function start(): void
 	{
+		$this->task->getData()->setDataKeyed("firstPiece", true);
+		if (count($this->pieces) === 1) {
+			$this->task->getData()->setDataKeyed("finalPiece", true);
+		}
 		$task = $this->task->getTask();
 		$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $this->task->getSelection());
 		EasyEdit::getWorker()->stack($this->currentPiece);

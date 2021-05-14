@@ -27,18 +27,22 @@ Command | Description | Permission | Aliases/Notice
 //replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
 //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
 //smooth | Smooth the selected Area | easyedit.command.set
-//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock] | Create a new Brush | easyedit.command.brush | //br
+//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.command.brush | //br
 //undo \<count>| Revert your latest change | easyedit.command.undo
 //redo \<count> | Revert your latest undo | easyedit.command.redo
 //copy | Copy the selected Area | easyedit.command.copy
 //paste | Paste the Clipboard | easyedit.command.paste
-//insert | Insert the Clipboard | easyedit.command.paste
+//insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
+//walls [pattern] | Set walls of the selected area | easyedit.command.set | //wall
+//sides [pattern] | Set sides of the selected area | easyedit.command.set | //side
 //move <count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
 //stack <count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
 //extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
-//sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set
-//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hollowsphere
+//sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set | //sph
+//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hsph //hollowsphere
+//cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
+//hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcylinder
 
 ## Patterns
 
@@ -104,6 +108,8 @@ Pattern | Description
 #odd;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at odd coordinates at x, y and z Axis, the x, y and z can be left out (only given ones will be checked)
 #even;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at even coordinates (see odd for more info)
 #divisible;\<number>;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at coordinates which are divisible by the given number (see odd for more info)
+#walls(patterns) | Executes Patterns if the block is one of the walls of the selections
+#sides(patterns) | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)
 
 ### Functional Patterns
 

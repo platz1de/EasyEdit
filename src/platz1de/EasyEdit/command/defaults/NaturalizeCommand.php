@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use Exception;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\pattern\Naturalize;
+use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
@@ -44,6 +44,6 @@ class NaturalizeCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new Naturalize([$top, $middle, $bottom], [])], []), $player);
+		SetTask::queue($selection, new Pattern([new NaturalizePattern([$top, $middle, $bottom], [])], []), $player);
 	}
 }

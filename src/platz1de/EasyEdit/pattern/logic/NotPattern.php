@@ -1,14 +1,15 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\logic;
 
 
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use UnexpectedValueException;
 
-class Not extends Pattern
+class NotPattern extends Pattern
 {
 	/**
 	 * Not constructor.

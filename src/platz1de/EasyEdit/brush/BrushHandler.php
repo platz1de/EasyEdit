@@ -2,9 +2,10 @@
 
 namespace platz1de\EasyEdit\brush;
 
-use platz1de\EasyEdit\pattern\Naturalize;
+use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\pattern\Smooth;
+use platz1de\EasyEdit\pattern\functional\SmoothPattern;
+use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\nbt\tag\CompoundTag;
@@ -13,6 +14,11 @@ use pocketmine\Player;
 
 class BrushHandler
 {
+	public const BRUSH_SPHERE = 0;
+	public const BRUSH_SMOOTH = 1;
+	public const BRUSH_NATURALIZE = 2;
+	public const BRUSH_CYLINDER = 3;
+
 	/**
 	 * @param CompoundTag $brush
 	 * @param Player      $player
@@ -22,14 +28,17 @@ class BrushHandler
 		$target = $player->getTargetBlock(100);
 		if ($target !== null) {
 			switch (self::nameToIdentifier($brush->getString("brushType", -1, true))) {
-				case 0:
+				case self::BRUSH_SPHERE:
 					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true)), Pattern::parse($brush->getString("brushPattern", "stone", true)), $player->asPosition());
 					break;
-				case 1:
-					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true)), new Smooth([], []), $player->asPosition());
+				case self::BRUSH_SMOOTH:
+					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true)), new SmoothPattern([], []), $player->asPosition());
 					break;
-				case 2:
-					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true)), new Pattern([new Naturalize([Pattern::parse($brush->getString("topBlock", "grass", true)), Pattern::parse($brush->getString("middleBlock", "dirt", true)), Pattern::parse($brush->getString("bottomBlock", "stone", true))], [])], []), $player->asPosition());
+				case self::BRUSH_NATURALIZE:
+					SetTask::queue(new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true)), new Pattern([new NaturalizePattern([Pattern::parse($brush->getString("topBlock", "grass", true)), Pattern::parse($brush->getString("middleBlock", "dirt", true)), Pattern::parse($brush->getString("bottomBlock", "stone", true))], [])], []), $player->asPosition());
+					break;
+				case self::BRUSH_CYLINDER:
+					SetTask::queue(new Cylinder($player->getName(), $player->getLevelNonNull()->getFolderName(), $target, $brush->getShort("brushSize", 0, true), $brush->getShort("brushHeight", 0, true)), Pattern::parse($brush->getString("brushPattern", "stone", true)), $player->asPosition());
 			}
 		}
 	}
@@ -44,15 +53,19 @@ class BrushHandler
 			case "sphere":
 			case "sph":
 			case "sp":
-				return 0;
+				return self::BRUSH_SPHERE;
 			case "smooth":
 			case "smoothing":
-				return 1;
+				return self::BRUSH_SMOOTH;
 			case "naturalize":
 			case "nat":
 			case "naturalized":
-				return 2;
+				return self::BRUSH_NATURALIZE;
+			case "cylinder":
+			case "cyl":
+			case "cy":
+				return self::BRUSH_CYLINDER;
 		}
-		return 0;
+		return self::BRUSH_SPHERE;
 	}
 }
