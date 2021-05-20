@@ -29,4 +29,15 @@ class SelectionManager
 	{
 		self::$selections[$player] = $selection;
 	}
+
+	/**
+	 * @param string $player
+	 */
+	public static function clearForPlayer(string $player): void
+	{
+		if(isset(self::$selections[$player])){
+			self::$selections[$player]->close();
+		}
+		unset(self::$selections[$player]);
+	}
 }

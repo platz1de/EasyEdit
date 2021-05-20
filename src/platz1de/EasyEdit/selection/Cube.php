@@ -221,7 +221,7 @@ class Cube extends Selection
 	{
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self) {
+			if (!$selection instanceof self || $selection->getLevel() !== $player->getLevel()) {
 				$selection->close();
 				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 			}
@@ -244,7 +244,7 @@ class Cube extends Selection
 	{
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self) {
+			if (!$selection instanceof self || $selection->getLevel() !== $player->getLevel()) {
 				$selection->close();
 				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 			}

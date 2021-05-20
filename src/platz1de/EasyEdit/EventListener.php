@@ -4,12 +4,15 @@ namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\selection\SelectionManager;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
 use pocketmine\item\TieredTool;
+use pocketmine\Player;
 
 class EventListener implements Listener
 {
@@ -43,6 +46,14 @@ class EventListener implements Listener
 		} elseif ($axe instanceof Shovel && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.brush")) {
 			$event->setCancelled();
 			BrushHandler::handleBrush($axe->getNamedTag(), $event->getPlayer());
+		}
+	}
+
+	public function onLevelChange(EntityLevelChangeEvent $event): void
+	{
+		//TODO: Replace this with proper differentiation of player and selection level
+		if ($event->getEntity() instanceof Player) {
+			SelectionManager::clearForPlayer($event->getEntity()->getName());
 		}
 	}
 }
