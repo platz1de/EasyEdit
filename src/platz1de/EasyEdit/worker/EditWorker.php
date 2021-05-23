@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\worker;
 
 use pocketmine\block\BlockFactory;
+use pocketmine\item\ItemFactory;
 use pocketmine\level\biome\Biome;
 use pocketmine\utils\Utils;
 use pocketmine\Worker;
@@ -39,6 +40,7 @@ class EditWorker extends Worker
 
 		Biome::init();
 		BlockFactory::init();
+		ItemFactory::init();
 	}
 
 	/**
