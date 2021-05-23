@@ -285,11 +285,12 @@ abstract class EditTask extends Threaded
 	}
 
 	/**
-	 * @param Selection $selection
-	 * @param float     $time
-	 * @param int       $changed
+	 * @param Selection             $selection
+	 * @param float                 $time
+	 * @param int                   $changed
+	 * @param AdditionalDataManager $data
 	 */
-	abstract public function notifyUser(Selection $selection, float $time, int $changed): void;
+	abstract public function notifyUser(Selection $selection, float $time, int $changed, AdditionalDataManager $data): void;
 
 	/**
 	 * @param Selection             $selection

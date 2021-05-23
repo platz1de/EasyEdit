@@ -99,11 +99,12 @@ class InsertTask extends EditTask
 	}
 
 	/**
-	 * @param Selection $selection
-	 * @param float     $time
-	 * @param int       $changed
+	 * @param Selection             $selection
+	 * @param float                 $time
+	 * @param int                   $changed
+	 * @param AdditionalDataManager $data
 	 */
-	public function notifyUser(Selection $selection, float $time, int $changed): void
+	public function notifyUser(Selection $selection, float $time, int $changed, AdditionalDataManager $data): void
 	{
 		Messages::send($selection->getPlayer(), "blocks-pasted", ["{time}" => $time, "{changed}" => $changed]);
 	}
