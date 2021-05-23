@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\LoaderManager;
 
 class PieceManager
@@ -38,28 +39,29 @@ class PieceManager
 	{
 		if ($this->currentPiece->isFinished()) {
 			$result = $this->currentPiece->getResult();
+			$data = $this->currentPiece->getAdditionalData();
 
-			if ($result instanceof EditTaskResult) {
-				if($this->task->getData()->getDataKeyed("edit", false)){
+			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
+				if($data->getDataKeyed("edit", false)){
 					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
 				$result->free();
 
 				if (count($this->pieces) > 0) {
-					$this->task->getData()->setDataKeyed("firstPiece", false);
+					$data->setDataKeyed("firstPiece", false);
 					if (count($this->pieces) === 1) {
-						$this->task->getData()->setDataKeyed("finalPiece", true);
+						$data->setDataKeyed("finalPiece", true);
 					}
 					$task = $this->task->getTask();
-					$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $result);
+					$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data, $result);
 					EasyEdit::getWorker()->stack($this->currentPiece);
 					return false; //more to go
 				}
 
 				$this->task->finishWith($result->getUndo());
 
-				$this->currentPiece->notifyUser($this->task->getSelection(), round($result->getTime(), 3), $result->getChanged(), $this->task->getData());
+				$this->currentPiece->notifyUser($this->task->getSelection(), round($result->getTime(), 3), $result->getChanged(), $data);
 			}
 			return true;
 		}

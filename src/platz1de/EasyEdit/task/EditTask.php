@@ -211,6 +211,8 @@ abstract class EditTask extends Threaded
 			}
 
 			$this->result = igbinary_serialize($result);
+
+			$this->data = igbinary_serialize($data);
 		} catch (Throwable $exception) {
 			$this->getLogger()->logException($exception);
 			unset($this->result);
@@ -279,6 +281,18 @@ abstract class EditTask extends Threaded
 	{
 		if (isset($this->result)) {
 			return igbinary_unserialize($this->result);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return null|AdditionalDataManager
+	 */
+	public function getAdditionalData(): ?AdditionalDataManager
+	{
+		if (isset($this->data)) {
+			return igbinary_unserialize($this->data);
 		}
 
 		return null;
