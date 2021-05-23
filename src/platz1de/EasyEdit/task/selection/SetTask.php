@@ -29,7 +29,7 @@ class SetTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class, new AdditionalDataManager(), $finish));
+		WorkerAdapter::queue(new QueuedTask($selection, $pattern, $place, self::class, new AdditionalDataManager(["edit" => true]), $finish));
 	}
 
 	/**

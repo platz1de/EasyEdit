@@ -27,7 +27,7 @@ class MoveTask extends EditTask
 	 */
 	public static function queue(MovingCube $selection, Position $place): void
 	{
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager()));
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(["edit" => true])));
 	}
 
 	/**

@@ -40,7 +40,9 @@ class PieceManager
 			$result = $this->currentPiece->getResult();
 
 			if ($result instanceof EditTaskResult) {
-				LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
+				if($this->task->getData()->getDataKeyed("edit", false)){
+					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
+				}
 
 				$result->free();
 
