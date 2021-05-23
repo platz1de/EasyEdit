@@ -21,13 +21,15 @@ class Messages
 	 * @param string|string[]|Player|Player[] $players
 	 * @param string                          $id
 	 * @param string|string[]                 $replace
+	 * @param bool                            $isId
+	 * @param bool                            $usePrefix
 	 */
-	public static function send($players, string $id, $replace = []): void
+	public static function send($players, string $id, $replace = [], bool $isId = true, bool $usePrefix = true): void
 	{
 		if (is_array($players)) {
 			foreach ($players as $player) {
 				if ($player instanceof Player || ($player = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
-					$player->sendMessage(self::translate("prefix") . self::replace($id, $replace));
+					$player->sendMessage(($usePrefix ? self::translate("prefix") : "") . self::replace($id, $replace, $isId));
 				}
 			}
 		} else {
@@ -38,14 +40,15 @@ class Messages
 	/**
 	 * @param string          $id
 	 * @param string|string[] $replace
+	 * @param bool            $isId
 	 * @return string
 	 */
-	public static function replace(string $id, $replace = []): string
+	public static function replace(string $id, $replace = [], bool $isId = true): string
 	{
 		if (is_array($replace)) {
-			return str_replace(array_keys($replace), array_values($replace), self::translate($id));
+			return str_replace(array_keys($replace), array_values($replace), $isId ? self::translate($id) : $id);
 		}
-		return str_replace("{player}", $replace, self::translate($id));
+		return str_replace("{player}", $replace, $isId ? self::translate($id) : $id);
 	}
 
 	/**
