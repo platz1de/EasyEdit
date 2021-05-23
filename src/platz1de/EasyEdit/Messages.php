@@ -33,7 +33,7 @@ class Messages
 				}
 			}
 		} else {
-			self::send([$players], $id, $replace);
+			self::send([$players], $id, $replace, $isId, $usePrefix);
 		}
 	}
 
