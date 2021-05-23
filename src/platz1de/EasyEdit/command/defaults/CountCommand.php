@@ -28,13 +28,13 @@ class CountCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args, array $flags): void
 	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			Selection::validate($selection);
-		} catch (Exception $exception) {
-			if(isset($args[0])){
-				$selection = new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $player->asVector3()->floor(), (int) $args[0]);
-			}else{
+		if (isset($args[0])) {
+			$selection = new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $player->asVector3()->floor(), (int) $args[0]);
+		} else {
+			try {
+				$selection = SelectionManager::getFromPlayer($player->getName());
+				Selection::validate($selection);
+			} catch (Exception $exception) {
 				Messages::send($player, "no-selection");
 				return;
 			}
