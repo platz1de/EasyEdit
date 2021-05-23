@@ -77,7 +77,7 @@ class CountTask extends EditTask
 	 * @param Vector3               $place
 	 * @param string                $level
 	 * @param AdditionalDataManager $data
-	 * @return DynamicBlockListSelection
+	 * @return StaticBlockListSelection
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
