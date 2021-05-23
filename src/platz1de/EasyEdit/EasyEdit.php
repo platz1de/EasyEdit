@@ -6,6 +6,7 @@ use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\defaults\BrushCommand;
 use platz1de\EasyEdit\command\defaults\CenterCommand;
 use platz1de\EasyEdit\command\defaults\CopyCommand;
+use platz1de\EasyEdit\command\defaults\CountCommand;
 use platz1de\EasyEdit\command\defaults\CylinderCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
@@ -76,7 +77,8 @@ class EasyEdit extends PluginBase
 			new CylinderCommand(),
 			new HollowCylinderCommand(),
 			new WallCommand(),
-			new SidesCommand()
+			new SidesCommand(),
+			new CountCommand()
 		]);
 	}
 
