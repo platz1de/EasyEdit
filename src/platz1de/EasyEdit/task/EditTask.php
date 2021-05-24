@@ -21,6 +21,7 @@ use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Random;
+use Thread;
 use Threaded;
 use ThreadedLogger;
 use Throwable;
@@ -130,6 +131,9 @@ abstract class EditTask extends Threaded
 	public function run(): void
 	{
 		$start = microtime(true);
+		/** @var EditWorker $thread */
+		$thread = Thread::getCurrentThread();
+		$thread->setRunning();
 		$manager = new ReferencedChunkManager($this->level, $this->seed);
 		$iterator = new SubChunkIteratorManager($manager);
 		$origin = new SubChunkIteratorManager(clone $manager);
@@ -218,6 +222,7 @@ abstract class EditTask extends Threaded
 			unset($this->result);
 		}
 		$this->finished = true;
+		$thread->setRunning(false);
 
 		if($data->getDataKeyed("finalPiece", false)){
 			TaskCache::clear();

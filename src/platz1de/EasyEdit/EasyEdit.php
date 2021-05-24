@@ -24,6 +24,7 @@ use platz1de\EasyEdit\command\defaults\SidesCommand;
 use platz1de\EasyEdit\command\defaults\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\SphereCommand;
 use platz1de\EasyEdit\command\defaults\StackCommand;
+use platz1de\EasyEdit\command\defaults\StatusCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\command\defaults\WallCommand;
 use platz1de\EasyEdit\worker\EditWorker;
@@ -78,7 +79,8 @@ class EasyEdit extends PluginBase
 			new HollowCylinderCommand(),
 			new WallCommand(),
 			new SidesCommand(),
-			new CountCommand()
+			new CountCommand(),
+			new StatusCommand()
 		]);
 	}
 

@@ -24,6 +24,8 @@ permissions:
       default: op
      easyedit.command.count:
       default: op
+     easyedit.command.thread:
+      default: op
    easyedit.position:
     default: op
    easyedit.brush:

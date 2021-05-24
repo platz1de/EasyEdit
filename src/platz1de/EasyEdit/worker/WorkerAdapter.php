@@ -56,4 +56,20 @@ class WorkerAdapter extends Task
 	{
 		self::$queue[] = $task;
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function getCurrentTask(): string
+	{
+		return self::$task === null ? "none" : self::$task->getCurrentTask();
+	}
+
+	/**
+	 * @return int
+	 */
+	public static function getQueueLength(): int
+	{
+		return count(self::$queue);
+	}
 }

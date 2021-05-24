@@ -6,11 +6,14 @@ class MixedUtils
 {
 	/**
 	 * @param string $int
+	 * @param bool   $data
 	 * @return string
 	 */
-	public static function humanReadable(string $int): string
+	public static function humanReadable(string $int, bool $data = false): string
 	{
-		$factor = floor((strlen($int) - 1) / 3);
-		return substr($n = number_format($int), 0, strpos($n, ",") < 3 ? 4 : 3) . ["", "k", "M", "G", "T"][$factor];
+		$factor = $data ? floor(log($int, 1024)) : floor((strlen($int) - 1) / 3);
+		$string = $data ? number_format($int / 1024 ** $factor) : number_format($int);
+		$unit = $data ? ["B", "KB", "MB", "GB", "TB"] : ["", "K", "M", "G", "T"];
+		return substr($string, 0, strpos($string, ",") < 3 ? 4 : 3) . $unit[$factor];
 	}
 }

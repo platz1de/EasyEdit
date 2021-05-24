@@ -78,4 +78,12 @@ class PieceManager
 		$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $this->task->getSelection());
 		EasyEdit::getWorker()->stack($this->currentPiece);
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getCurrentTask(): string
+	{
+		return $this->currentPiece->getTaskName() . ":" . $this->currentPiece->getId();
+	}
 }

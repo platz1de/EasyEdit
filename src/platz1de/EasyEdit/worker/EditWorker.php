@@ -15,6 +15,14 @@ class EditWorker extends Worker
 	 * @var ThreadedLogger
 	 */
 	private $logger;
+	/**
+	 * @var bool
+	 */
+	private $running = false;
+	/**
+	 * @var float currently just last start/end of a task
+	 */
+	private $lastResponse;
 
 	/**
 	 * EditWorker constructor.
@@ -41,6 +49,8 @@ class EditWorker extends Worker
 		Biome::init();
 		BlockFactory::init();
 		ItemFactory::init();
+
+		$this->lastResponse = microtime(true);
 	}
 
 	/**
@@ -57,5 +67,31 @@ class EditWorker extends Worker
 	public function getThreadName(): string
 	{
 		return "EditWorker";
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isRunning(): bool
+	{
+		return $this->running;
+	}
+
+	/**
+	 * @param bool $running
+	 */
+	public function setRunning(bool $running = true): void
+	{
+		$this->running = $running;
+		$this->lastResponse = microtime(true);
+	}
+
+	//TODO: Implement proper callbacks
+	/**
+	 * @return float
+	 */
+	public function getLastResponse(): float
+	{
+		return $this->isRunning() ? $this->lastResponse : microtime(true);
 	}
 }
