@@ -2,26 +2,20 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
-use Closure;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\BlockFactory;
-use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
-use pocketmine\utils\Utils;
 
 class CountTask extends EditTask
 {

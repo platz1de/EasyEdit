@@ -5,9 +5,7 @@ namespace platz1de\EasyEdit\pattern\logic\selection;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\TaskCache;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\utils\SubChunkIteratorManager;
-use pocketmine\math\Vector3;
 
 class CenterPattern extends Pattern
 {

@@ -15,7 +15,6 @@ use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\tile\Tile;
 
 class RedoTask extends EditTask
