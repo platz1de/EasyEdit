@@ -51,7 +51,7 @@ class CountTask extends EditTask
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
-		$blocks = [];
+		$blocks = $data->getDataKeyed("blocks", []);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$blocks, &$changed): void {
 			$iterator->moveTo($x, $y, $z);
 			$id = $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
