@@ -17,11 +17,11 @@ class SpherePiece extends Sphere
 	/**
 	 * @var Vector3
 	 */
-	private $min;
+	protected $min;
 	/**
 	 * @var Vector3
 	 */
-	private $max;
+	protected $max;
 
 	/**
 	 * SpherePiece constructor.
