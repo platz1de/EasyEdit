@@ -3,14 +3,9 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\task\EditTask;
-use platz1de\EasyEdit\task\PieceManager;
-use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat;
 
 class CancelCommand extends EasyEditCommand
 {

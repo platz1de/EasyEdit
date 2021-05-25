@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\selection\piece\HollowSpherePiece;
-use platz1de\EasyEdit\selection\piece\SpherePiece;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;

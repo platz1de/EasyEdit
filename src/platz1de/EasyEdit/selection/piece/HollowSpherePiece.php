@@ -4,15 +4,8 @@ namespace platz1de\EasyEdit\selection\piece;
 
 use Closure;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\utils\LoaderManager;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\utils\Utils;
-use RuntimeException;
 
 class HollowSpherePiece extends SpherePiece
 {
