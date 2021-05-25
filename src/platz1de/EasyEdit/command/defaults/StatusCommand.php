@@ -44,8 +44,7 @@ class StatusCommand extends EasyEditCommand
 		Messages::send($player, "worker-status", [
 			"{task}" => WorkerAdapter::getCurrentTask(),
 			"{queue}" => WorkerAdapter::getQueueLength(),
-			"{status}" => $status,
-			"{stack}" => EasyEdit::getWorker()->getStacked()
+			"{status}" => $status
 		]);
 	}
 }
