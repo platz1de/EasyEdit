@@ -29,7 +29,7 @@ class StatusCommand extends EasyEditCommand
 		} elseif (EasyEdit::getWorker()->isShutdown()) {
 			$status = TextFormat::RED . "STOPPED" . TextFormat::RESET;
 		} elseif (EasyEdit::getWorker()->isRunning()) {
-			$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ":";
+			$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": ";
 			$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
 			if ($last < 1) {
 				$status .= TextFormat::GREEN . round($last * 1000) . "ms" . TextFormat::RESET;
