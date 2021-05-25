@@ -58,11 +58,11 @@ class WorkerAdapter extends Task
 	}
 
 	/**
-	 * @return string
+	 * @return PieceManager|null
 	 */
-	public static function getCurrentTask(): string
+	public static function getCurrentTask(): ?PieceManager
 	{
-		return self::$task === null ? "none" : self::$task->getCurrentTask();
+		return self::$task ?? null;
 	}
 
 	/**

@@ -18,5 +18,5 @@ blocks-copied: "{changed} blocks were copied in {time}s"
 blocks-pasted: "{changed} blocks were pasted in {time}s"
 blocks-counted: "{changed} blocks were counted in {time}s"
 
-#Args: {task} {queue} {status}
-worker-status: "Status of EditWorker:\nStatus: {status}\nCurrent Task: {task}\nQueued tasks: {queue}"
+#Args: {task} {queue} {status} {progress}
+worker-status: "Status of EditWorker:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}"

@@ -5,6 +5,9 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\PieceManager;
+use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
@@ -24,6 +27,15 @@ class StatusCommand extends EasyEditCommand
 	public function process(Player $player, array $args, array $flags): void
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
+		$manager = WorkerAdapter::getCurrentTask();
+		if ($manager instanceof PieceManager) {
+			$task = $manager->getCurrent()->getTaskName() . ":" . $manager->getCurrent()->getId() . " by " . $manager->getQueued()->getSelection()->getPlayer();
+			$progress = ($manager->getTotalLength() - $manager->getLength()) . "/" . $manager->getTotalLength() . " (" . round(($manager->getTotalLength() - $manager->getLength()) / $manager->getTotalLength() * 100, 1) . "%)";
+		} else {
+			$task = "none";
+			$progress = "-";
+		}
+
 		if (EasyEdit::getWorker()->isTerminated()) {
 			$status = TextFormat::RED . "CRASHED" . TextFormat::RESET;
 		} elseif (EasyEdit::getWorker()->isShutdown()) {
@@ -41,10 +53,12 @@ class StatusCommand extends EasyEditCommand
 		} else {
 			$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
 		}
+
 		Messages::send($player, "worker-status", [
-			"{task}" => WorkerAdapter::getCurrentTask(),
+			"{task}" => $task,
 			"{queue}" => WorkerAdapter::getQueueLength(),
-			"{status}" => $status
+			"{status}" => $status,
+			"{progress}" => $progress
 		]);
 	}
 }

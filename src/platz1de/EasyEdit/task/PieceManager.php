@@ -21,6 +21,10 @@ class PieceManager
 	 * @var EditTask
 	 */
 	private $currentPiece;
+	/**
+	 * @var int
+	 */
+	private $totalLength;
 
 	/**
 	 * PieceManager constructor.
@@ -30,6 +34,7 @@ class PieceManager
 	{
 		$this->task = $task;
 		$this->pieces = $task->getSelection()->split();
+		$this->totalLength = count($this->pieces);
 	}
 
 	/**
@@ -80,10 +85,34 @@ class PieceManager
 	}
 
 	/**
-	 * @return string
+	 * @return EditTask
 	 */
-	public function getCurrentTask(): string
+	public function getCurrent(): EditTask
 	{
-		return $this->currentPiece->getTaskName() . ":" . $this->currentPiece->getId();
+		return $this->currentPiece;
+	}
+
+	/**
+	 * @return QueuedTask
+	 */
+	public function getQueued(): QueuedTask
+	{
+		return $this->task;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTotalLength(): int
+	{
+		return $this->totalLength;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLength(): int
+	{
+		return count($this->pieces) + 1;
 	}
 }
