@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\selection\piece\SpherePiece;
 use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -11,6 +12,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use RuntimeException;
+use UnexpectedValueException;
 
 class Sphere extends Selection
 {
@@ -145,5 +147,29 @@ class Sphere extends Selection
 		}
 		$this->pos1 = new Vector3($dat["minX"], $dat["minY"], $dat["minZ"]);
 		$this->pos2 = new Vector3($dat["maxX"], $dat["maxY"], $dat["maxZ"]);
+	}
+
+	/**
+	 * splits into 3x3 Chunk pieces
+	 * @return array
+	 */
+	public function split(): array
+	{
+		if ($this->piece) {
+			throw new UnexpectedValueException("Pieces are not split able");
+		}
+
+		$level = $this->getLevel();
+		if ($level instanceof Level) {
+			$level = $level->getFolderName();
+		}
+		$radius = $this->pos2->getX();
+		$pieces = [];
+		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x += 3) {
+			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z += 3) {
+				$pieces[] = new SpherePiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getX() - $radius), max($this->pos1->getY() - $radius, 0), max($z << 4, $this->pos1->getZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getX() + $radius), min($this->pos1->getY() + $radius, Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getZ() + $radius)), $radius);
+			}
+		}
+		return $pieces;
 	}
 }
