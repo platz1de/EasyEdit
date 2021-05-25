@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\defaults\BrushCommand;
+use platz1de\EasyEdit\command\defaults\CancelCommand;
 use platz1de\EasyEdit\command\defaults\CenterCommand;
 use platz1de\EasyEdit\command\defaults\CopyCommand;
 use platz1de\EasyEdit\command\defaults\CountCommand;
@@ -80,7 +81,8 @@ class EasyEdit extends PluginBase
 			new WallCommand(),
 			new SidesCommand(),
 			new CountCommand(),
-			new StatusCommand()
+			new StatusCommand(),
+			new CancelCommand()
 		]);
 	}
 

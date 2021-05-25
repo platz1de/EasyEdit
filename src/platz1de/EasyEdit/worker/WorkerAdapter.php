@@ -58,6 +58,17 @@ class WorkerAdapter extends Task
 	}
 
 	/**
+	 * @return bool
+	 */
+	public static function cancel(): bool
+	{
+		//This only cancels future piece executions NOT the current one
+		$existed = self::$task !== null;
+		self::$task = null;
+		return $existed;
+	}
+
+	/**
 	 * @return PieceManager|null
 	 */
 	public static function getCurrentTask(): ?PieceManager

@@ -12,6 +12,9 @@ history-full: "Your History is full, it will not be possible to undo your oldest
 no-history: "Nothing to undo"
 no-future: "Nothing to redo"
 
+no-task: "No task is currently running"
+task-cancelled: "Current task was cancelled"
+
 #Args: {time} {changed}
 blocks-set: "{changed} blocks were set in {time}s"
 blocks-copied: "{changed} blocks were copied in {time}s"
