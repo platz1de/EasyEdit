@@ -10,7 +10,7 @@ use pocketmine\utils\Utils;
 class HollowSpherePiece extends SpherePiece
 {
 	/**
-	 * SpherePiece constructor.
+	 * HollowSpherePiece constructor.
 	 * @param string       $player
 	 * @param string       $level
 	 * @param Vector3|null $pos1
