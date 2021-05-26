@@ -3,10 +3,13 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\selection\piece\CylinderPiece;
+use platz1de\EasyEdit\selection\piece\HollowCylinderPiece;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
+use UnexpectedValueException;
 
 class HollowCylinder extends Cylinder
 {
@@ -67,5 +70,29 @@ class HollowCylinder extends Cylinder
 	public function setThickness(int $thickness): void
 	{
 		$this->pos2->z = $thickness;
+	}
+
+	/**
+	 * splits into 3x3 Chunk pieces
+	 * @return array
+	 */
+	public function split(): array
+	{
+		if ($this->piece) {
+			throw new UnexpectedValueException("Pieces are not split able");
+		}
+
+		$level = $this->getLevel();
+		if ($level instanceof Level) {
+			$level = $level->getFolderName();
+		}
+		$radius = $this->pos2->getX();
+		$pieces = [];
+		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x += 3) {
+			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z += 3) {
+				$pieces[] = new HollowCylinderPiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getX() - $radius), max($this->pos1->getY(), 0), max($z << 4, $this->pos1->getZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getX() + $radius), min($this->pos1->getY() + $this->pos2->getY(), Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getZ() + $radius)), $radius, $this->pos2->getY(), $this->pos2->getZ());
+			}
+		}
+		return $pieces;
 	}
 }
