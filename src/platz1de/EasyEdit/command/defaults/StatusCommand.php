@@ -34,11 +34,7 @@ class StatusCommand extends EasyEditCommand
 			$progress = "-";
 		}
 
-		if (EasyEdit::getWorker()->isTerminated()) {
-			$status = TextFormat::RED . "CRASHED" . TextFormat::RESET;
-		} elseif (EasyEdit::getWorker()->isShutdown()) {
-			$status = TextFormat::RED . "STOPPED" . TextFormat::RESET;
-		} elseif (EasyEdit::getWorker()->isRunning()) {
+		if (EasyEdit::getWorker()->isRunning()) {
 			$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": ";
 			$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
 			if ($last < 1) {
