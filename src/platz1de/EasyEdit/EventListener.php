@@ -52,8 +52,9 @@ class EventListener implements Listener
 	public function onLevelChange(EntityLevelChangeEvent $event): void
 	{
 		//TODO: Replace this with proper differentiation of player and selection level
-		if ($event->getEntity() instanceof Player) {
-			SelectionManager::clearForPlayer($event->getEntity()->getName());
+		$player = $event->getEntity();
+		if ($player instanceof Player) {
+			SelectionManager::clearForPlayer($player->getName());
 		}
 	}
 }
