@@ -45,14 +45,14 @@ class SmoothPattern extends Pattern
 		if ($tMax !== 0) {
 			$max /= $tMax;
 		} elseif ($tMin !== 0) {
-			$max = $selection->getCubicStart()->getY() + $selection->getRealSize()->getY();
+			$max = $selection->getCubicEnd()->getY();
 		}
 		if ($tMin !== 0) {
 			$min /= $tMin;
 		}
 		$max = round($max);
 		$min = round($min);
-		$oMax = HeightMapCache::getHighest($x, $z) ?? (int) ($selection->getCubicStart()->getY() + $selection->getRealSize()->getY());
+		$oMax = HeightMapCache::getHighest($x, $z) ?? (int) $selection->getCubicEnd()->getY();
 		$oMin = HeightMapCache::getLowest($x, $z) ?? (int) $selection->getCubicStart()->getY();
 		$oMid = ($oMin + $oMax) / 2;
 		$mid = ($min + $max) / 2;
