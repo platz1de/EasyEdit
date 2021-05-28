@@ -59,17 +59,17 @@ class CylinderPiece extends Cylinder
 	/**
 	 * @return Vector3
 	 */
-	public function getRealSize(): Vector3
+	public function getCubicStart(): Vector3
 	{
-		return $this->max->subtract($this->min)->add(1, 1, 1);
+		return $this->min;
 	}
 
 	/**
 	 * @return Vector3
 	 */
-	public function getCubicStart(): Vector3
+	public function getCubicEnd(): Vector3
 	{
-		return $this->min;
+		return $this->max;
 	}
 
 	/**

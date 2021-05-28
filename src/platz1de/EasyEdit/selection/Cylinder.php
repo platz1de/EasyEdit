@@ -52,17 +52,16 @@ class Cylinder extends Selection
 	/**
 	 * @return Vector3
 	 */
-	public function getRealSize(): Vector3
-	{
-		return new Vector3($this->getRadius() * 2 + 1, $this->getHeight(), $this->getRadius() * 2 + 1);
-	}
-
-	/**
-	 * @return Vector3
-	 */
 	public function getCubicStart(): Vector3
 	{
 		return $this->getPos1()->subtract($this->getRadius(), 0, $this->getRadius());
+	}
+	/**
+	 * @return Vector3
+	 */
+	public function getCubicEnd(): Vector3
+	{
+		return $this->getPos1()->add($this->getRadius(), $this->getHeight() - 1, $this->getRadius());
 	}
 
 	/**

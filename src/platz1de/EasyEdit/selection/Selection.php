@@ -90,7 +90,7 @@ abstract class Selection implements Serializable
 	 */
 	public function getRealSize(): Vector3
 	{
-		return $this->pos2->subtract($this->pos1)->add(1, 1, 1);
+		return $this->getCubicEnd()->subtract($this->getCubicStart())->add(1, 1, 1);
 	}
 
 	/**
@@ -99,6 +99,22 @@ abstract class Selection implements Serializable
 	public function getCubicStart(): Vector3
 	{
 		return $this->getPos1();
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getCubicEnd(): Vector3
+	{
+		return $this->getPos2();
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getSize(): Vector3
+	{
+		return $this->getPos2()->subtract($this->getPos1())->add(1, 1, 1);
 	}
 
 	/**

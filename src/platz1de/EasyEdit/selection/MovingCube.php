@@ -86,10 +86,10 @@ class MovingCube extends Cube
 	/**
 	 * @return Vector3
 	 */
-	public function getRealSize(): Vector3
+	public function getCubicEnd(): Vector3
 	{
 		//TODO: don't add all blocks in between the positions
-		return parent::getRealSize()->add($this->direction->abs());
+		return $this->getPos2()->add($this->direction->abs());
 	}
 
 	/**

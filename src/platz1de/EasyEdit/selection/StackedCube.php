@@ -80,14 +80,6 @@ class StackedCube extends Cube
 	}
 
 	/**
-	 * @return Vector3
-	 */
-	public function getRealSize(): Vector3
-	{
-		return VectorUtils::multiply($this->direction->abs()->subtract($this->direction->abs()->normalize())->add(1, 1, 1), parent::getRealSize());
-	}
-
-	/**
 	 * @return string
 	 */
 	public function serialize(): string
@@ -129,7 +121,15 @@ class StackedCube extends Cube
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return VectorUtils::getMin($this->getPos1()->add(VectorUtils::multiply($this->getDirection()->normalize(), parent::getRealSize())), $this->getPos1()->add(VectorUtils::multiply($this->getDirection(), parent::getRealSize())));
+		return VectorUtils::getMin($this->getPos1()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getCubicEnd(): Vector3
+	{
+		return VectorUtils::getMax($this->getPos2()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**

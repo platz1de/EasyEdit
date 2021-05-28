@@ -50,17 +50,17 @@ class Sphere extends Selection
 	/**
 	 * @return Vector3
 	 */
-	public function getRealSize(): Vector3
+	public function getCubicStart(): Vector3
 	{
-		return new Vector3($this->getRadius() * 2 + 1, $this->getRadius() * 2 + 1, $this->getRadius() * 2 + 1);
+		return $this->getPos1()->subtract($this->getRadius(), $this->getRadius(), $this->getRadius());
 	}
 
 	/**
 	 * @return Vector3
 	 */
-	public function getCubicStart(): Vector3
+	public function getCubicEnd(): Vector3
 	{
-		return $this->getPos1()->subtract($this->getRadius(), $this->getRadius(), $this->getRadius());
+		return $this->getPos2()->add($this->getRadius(), $this->getRadius(), $this->getRadius());
 	}
 
 	/**
