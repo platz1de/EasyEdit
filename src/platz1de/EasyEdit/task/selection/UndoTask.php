@@ -86,7 +86,7 @@ class UndoTask extends EditTask
 	{
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->add($selection->getPos1()), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1(), $selection->getPos2()->getX() - $selection->getPos1()->getX() + 1, $selection->getPos2()->getY() - $selection->getPos1()->getY() + 1, $selection->getPos2()->getZ() - $selection->getPos1()->getZ() + 1);
 	}
 
 	/**
