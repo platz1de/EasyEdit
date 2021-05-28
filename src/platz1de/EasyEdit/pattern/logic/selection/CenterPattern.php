@@ -20,7 +20,7 @@ class CenterPattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		$min = TaskCache::getFullSelection()->getCubicStart();
-		$max = $min->add(TaskCache::getFullSelection()->getRealSize())->subtract(1, 1, 1);
+		$max = TaskCache::getFullSelection()->getCubicEnd();
 
 		$xPos = ($min->getX() + $max->getX()) / 2;
 		$yPos = ($min->getY() + $max->getY()) / 2;
