@@ -46,9 +46,9 @@ class Cube extends Selection
 	 */
 	public function __construct(string $player, string $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		parent::__construct($player, $level, $pos1, $pos2, $piece);
-
 		$this->structure = new Vector3(0, 0, 0);
+
+		parent::__construct($player, $level, $pos1, $pos2, $piece);
 	}
 
 	/**
