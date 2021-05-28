@@ -3,19 +3,19 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\piece\SpherePiece;
-use platz1de\EasyEdit\utils\LoaderManager;
-use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use RuntimeException;
 use UnexpectedValueException;
 
-class Sphere extends Selection
+class Sphere extends Selection implements Patterned
 {
+	use CubicChunkLoader;
+
 	/**
 	 * Sphere constructor.
 	 * @param string       $player
@@ -28,23 +28,6 @@ class Sphere extends Selection
 	{
 		$pos2 = new Vector3($radius); //This is not optimal, but currently needed...
 		parent::__construct($player, $level, $pos1, $pos2, $piece);
-	}
-
-	/**
-	 * @param Position $place
-	 * @return Chunk[]
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		$radius = $this->pos2->getX();
-		$chunks = [];
-		//TODO: yea this is a square (change this)
-		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x++) {
-			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
-			}
-		}
-		return $chunks;
 	}
 
 	/**

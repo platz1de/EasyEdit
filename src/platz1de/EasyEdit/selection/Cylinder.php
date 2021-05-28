@@ -3,20 +3,20 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\piece\CylinderPiece;
-use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use RuntimeException;
 use UnexpectedValueException;
 
-class Cylinder extends Selection
+class Cylinder extends Selection implements Patterned
 {
+	use CubicChunkLoader;
+
 	/**
 	 * Cylinder constructor.
 	 * @param string       $player
@@ -33,29 +33,13 @@ class Cylinder extends Selection
 	}
 
 	/**
-	 * @param Position $place
-	 * @return Chunk[]
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		$radius = $this->pos2->getX();
-		$chunks = [];
-		//TODO: yea this is a square (change this)
-		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x++) {
-			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
-			}
-		}
-		return $chunks;
-	}
-
-	/**
 	 * @return Vector3
 	 */
 	public function getCubicStart(): Vector3
 	{
 		return $this->getPos1()->subtract($this->getRadius(), 0, $this->getRadius());
 	}
+
 	/**
 	 * @return Vector3
 	 */

@@ -4,9 +4,6 @@ namespace platz1de\EasyEdit\selection\piece;
 
 use Closure;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\utils\LoaderManager;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
@@ -37,21 +34,6 @@ class SpherePiece extends Sphere
 		$this->min = $min;
 		$this->max = $max;
 		parent::__construct($player, $level, $pos1, $radius, true);
-	}
-
-	/**
-	 * @param Position $place
-	 * @return Chunk[]
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		$chunks = [];
-		for ($x = ($this->min->getX() - 1) >> 4; $x <= ($this->max->getX() + 1) >> 4; $x++) {
-			for ($z = ($this->min->getZ() - 1) >> 4; $z <= ($this->max->getZ() + 1) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
-			}
-		}
-		return $chunks;
 	}
 
 	/**

@@ -2,14 +2,12 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Closure;
 use Exception;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\utils\VectorUtils;
+use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
+use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
-use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -25,12 +23,14 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
-use pocketmine\utils\Utils;
 use RuntimeException;
 use UnexpectedValueException;
 
-class Cube extends Selection
+class Cube extends Selection implements Patterned
 {
+	use CubicIterator;
+	use CubicChunkLoader;
+
 	/**
 	 * @var Vector3
 	 */
@@ -49,26 +49,6 @@ class Cube extends Selection
 		$this->structure = new Vector3(0, 0, 0);
 
 		parent::__construct($player, $level, $pos1, $pos2, $piece);
-	}
-
-	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 * @return void
-	 * @noinspection StaticClosureCanBeUsedInspection
-	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
-	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
-		$min = VectorUtils::enforceHeight($this->pos1);
-		$max = VectorUtils::enforceHeight($this->pos2);
-		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
-			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
-				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
-					$closure($x, $y, $z);
-				}
-			}
-		}
 	}
 
 	public function update(): void
@@ -129,21 +109,6 @@ class Cube extends Selection
 				$player->dataPacket($pk);
 			}
 		}
-	}
-
-	/**
-	 * @param Position $place
-	 * @return Chunk[]
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		$chunks = [];
-		for ($x = ($this->pos1->getX() - 1) >> 4; $x <= ($this->pos2->getX() + 1) >> 4; $x++) {
-			for ($z = ($this->pos1->getZ() - 1) >> 4; $z <= ($this->pos2->getZ() + 1) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
-			}
-		}
-		return $chunks;
 	}
 
 	/**

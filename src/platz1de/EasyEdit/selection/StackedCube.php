@@ -2,17 +2,16 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Closure;
-use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
-use pocketmine\utils\Utils;
 use RuntimeException;
 
 class StackedCube extends Cube
 {
+	use CubicChunkLoader;
+
 	/**
 	 * @var Vector3
 	 */
@@ -40,43 +39,6 @@ class StackedCube extends Cube
 	public function getDirection(): Vector3
 	{
 		return $this->direction;
-	}
-
-	/**
-	 * @param Position $place
-	 * @return array
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		$chunks = [];
-		$start = VectorUtils::getMin($this->getCubicStart(), $this->pos1);
-		$size = $this->getRealSize()->add(parent::getRealSize());
-		for ($x = $start->getX() >> 4; $x <= $start->getX() + $size->getX() >> 4; $x++) {
-			for ($z = $start->getZ() >> 4; $z <= $start->getZ() + $size->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
-			}
-		}
-		return $chunks;
-	}
-
-	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 * @return void
-	 * @noinspection StaticClosureCanBeUsedInspection
-	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
-	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
-		$start = VectorUtils::enforceHeight($this->getCubicStart());
-		$end = VectorUtils::enforceHeight($this->getCubicStart()->add($this->getRealSize())->subtract(1, 1, 1));
-		for ($x = $start->getX(); $x <= $end->getX(); $x++) {
-			for ($z = $start->getZ(); $z <= $end->getZ(); $z++) {
-				for ($y = $start->getY(); $y <= $end->getY(); $y++) {
-					$closure($x, $y, $z);
-				}
-			}
-		}
 	}
 
 	/**
