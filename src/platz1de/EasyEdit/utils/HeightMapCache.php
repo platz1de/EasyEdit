@@ -40,7 +40,7 @@ class HeightMapCache
 	{
 		if (!self::$loaded) {
 			$min = $selection->getCubicStart()->subtract(1, 1, 1);
-			$max = $selection->getCubicStart()->add($selection->getRealSize());
+			$max = $selection->getCubicEnd()->add(1, 1, 1);
 			for ($x = $min->getX(); $x <= $max->getX(); $x++) {
 				for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
 					$iterator->moveTo($x, 0, $z);
