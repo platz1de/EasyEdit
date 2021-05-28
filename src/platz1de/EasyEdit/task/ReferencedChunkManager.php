@@ -57,8 +57,8 @@ class ReferencedChunkManager extends SimpleChunkManager
 	 */
 	public function load(Vector3 $pos, int $xSize, int $zSize): void
 	{
-		for ($x = $pos->getX() >> 4; $x <= ($pos->getX() + $xSize) >> 4; $x++) {
-			for ($z = $pos->getZ() >> 4; $z <= ($pos->getZ() + $zSize) >> 4; $z++) {
+		for ($x = $pos->getX() >> 4; $x <= ($pos->getX() + $xSize - 1) >> 4; $x++) {
+			for ($z = $pos->getZ() >> 4; $z <= ($pos->getZ() + $zSize - 1) >> 4; $z++) {
 				$this->setChunk($x, $z, ($chunk = new Chunk($x, $z)));
 				$chunk->setGenerated();
 			}

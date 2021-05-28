@@ -40,10 +40,11 @@ abstract class BlockListSelection extends Selection
 	 * @param int     $xSize
 	 * @param int     $ySize
 	 * @param int     $zSize
+	 * @param bool    $piece
 	 */
-	public function __construct(string $player, string $level, Vector3 $start, int $xSize, int $ySize, int $zSize)
+	public function __construct(string $player, string $level, Vector3 $start, int $xSize, int $ySize, int $zSize, bool $piece = false)
 	{
-		parent::__construct($player, $level, $start, new Vector3($start->getX() + $xSize, $start->getY() + $ySize, $start->getZ() + $zSize));
+		parent::__construct($player, $level, $start, new Vector3($start->getX() + $xSize - 1, $start->getY() + $ySize - 1, $start->getZ() + $zSize - 1), $piece);
 		$this->manager = new ReferencedChunkManager($level);
 		$this->getManager()->load($start, $xSize, $zSize);
 		$this->iterator = new SubChunkIteratorManager($this->manager);
