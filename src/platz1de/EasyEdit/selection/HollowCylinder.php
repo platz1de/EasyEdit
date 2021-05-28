@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use platz1de\EasyEdit\selection\piece\CylinderPiece;
 use platz1de\EasyEdit\selection\piece\HollowCylinderPiece;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Level;
