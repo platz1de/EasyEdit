@@ -86,10 +86,18 @@ class MovingCube extends Cube
 	/**
 	 * @return Vector3
 	 */
+	public function getCubicStart(): Vector3
+	{
+		return VectorUtils::getMin($this->getPos1(), $this->getPos1()->add($this->direction));
+	}
+
+	/**
+	 * @return Vector3
+	 */
 	public function getCubicEnd(): Vector3
 	{
 		//TODO: don't add all blocks in between the positions
-		return $this->getPos2()->add($this->direction->abs());
+		return VectorUtils::getMax($this->getPos2(), $this->getPos2()->add($this->direction));
 	}
 
 	/**
@@ -127,14 +135,6 @@ class MovingCube extends Cube
 		$this->pos1 = new Vector3($dat["minX"], $dat["minY"], $dat["minZ"]);
 		$this->pos2 = new Vector3($dat["maxX"], $dat["maxY"], $dat["maxZ"]);
 		$this->direction = new Vector3($dat["directionX"], $dat["directionY"], $dat["directionZ"]);
-	}
-
-	/**
-	 * @return Vector3
-	 */
-	public function getCubicStart(): Vector3
-	{
-		return VectorUtils::getMin($this->getPos1(), $this->getPos1()->add($this->direction));
 	}
 
 	/**
