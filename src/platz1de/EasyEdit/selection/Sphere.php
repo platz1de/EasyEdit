@@ -60,7 +60,7 @@ class Sphere extends Selection
 	 */
 	public function getCubicEnd(): Vector3
 	{
-		return $this->getPos2()->add($this->getRadius(), $this->getRadius(), $this->getRadius());
+		return $this->getPos1()->add($this->getRadius(), $this->getRadius(), $this->getRadius());
 	}
 
 	/**
