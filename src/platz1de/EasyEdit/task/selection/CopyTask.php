@@ -81,7 +81,7 @@ class CopyTask extends EditTask
 		//TODO: Non-cubic selections
 		/** @var Cube $selection */
 		Selection::validate($selection, Cube::class);
-		return new DynamicBlockListSelection($selection->getPlayer(), $place->subtract($selection->getPos1()), $selection->getPos2()->getX() - $selection->getPos1()->getX() + 1, $selection->getPos2()->getY() - $selection->getPos1()->getY() + 1, $selection->getPos2()->getZ() - $selection->getPos1()->getZ() + 1);
+		return new DynamicBlockListSelection($selection->getPlayer(), $place->subtract($selection->getPos1()), $selection->getPos2()->getX() - $selection->getPos1()->getX(), $selection->getPos2()->getY() - $selection->getPos1()->getY(), $selection->getPos2()->getZ() - $selection->getPos1()->getZ());
 	}
 
 	/**
