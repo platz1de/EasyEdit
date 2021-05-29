@@ -51,7 +51,7 @@ class QueuedTask
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
-		$this->place = $place->asPosition();
+		$this->place = Position::fromObject($place->floor(), $place->getLevelNonNull());
 		$this->task = $task;
 		if ($finish === null) {
 			$finish = static function (Selection $selection, Position $place, StaticBlockListSelection $undo) {
