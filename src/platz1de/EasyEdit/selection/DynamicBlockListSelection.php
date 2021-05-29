@@ -23,7 +23,7 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	public function __construct(string $player, Vector3 $relativePlace, int $xSize, int $ySize, int $zSize)
 	{
-		parent::__construct($player, "", new Vector3(), $xSize, $ySize, $zSize);
+		parent::__construct($player, "", new Vector3(), new Vector3($xSize, $ySize, $zSize));
 		$this->point = $relativePlace;
 	}
 

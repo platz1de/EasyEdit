@@ -81,9 +81,7 @@ class RedoTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
-		/** @var StaticBlockListSelection $selection */
-		Selection::validate($selection, StaticBlockListSelection::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1(), $selection->getPos2()->getX() - $selection->getPos1()->getX() + 1, $selection->getPos2()->getY() - $selection->getPos1()->getY() + 1, $selection->getPos2()->getZ() - $selection->getPos1()->getZ() + 1);
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $selection->getCubicEnd());
 	}
 
 	/**

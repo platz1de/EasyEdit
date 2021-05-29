@@ -87,8 +87,7 @@ class StackTask extends EditTask
 	 */
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
-		$size = $selection->getRealSize();
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $size->getX(), $size->getY(), $size->getZ());
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $selection->getCubicEnd());
 	}
 
 	/**
