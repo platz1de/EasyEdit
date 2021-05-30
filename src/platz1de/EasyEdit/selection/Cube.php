@@ -112,37 +112,24 @@ class Cube extends Selection implements Patterned
 	}
 
 	/**
-	 * @return string
+	 * @return array
 	 */
-	public function serialize(): string
+	public function getData(): array
 	{
-		return igbinary_serialize([
-			"player" => $this->player,
-			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
-			"minX" => $this->pos1->getX(),
-			"minY" => $this->pos1->getY(),
-			"minZ" => $this->pos1->getZ(),
-			"maxX" => $this->pos2->getX(),
-			"maxY" => $this->pos2->getY(),
-			"maxZ" => $this->pos2->getZ(),
+		return array_merge([
 			"structureX" => $this->structure->getX(),
 			"structureY" => $this->structure->getY(),
 			"structureZ" => $this->structure->getZ()
-		]);
+		], parent::getData());
 	}
 
-	public function unserialize($data): void
+	/**
+	 * @param array $data
+	 */
+	public function setData(array $data): void
 	{
-		$dat = igbinary_unserialize($data);
-		$this->player = $dat["player"];
-		try {
-			$this->level = Server::getInstance()->getLevelByName($dat["level"]) ?? $dat["level"];
-		} catch (RuntimeException $exception) {
-			$this->level = $dat["level"];
-		}
-		$this->pos1 = new Vector3($dat["minX"], $dat["minY"], $dat["minZ"]);
-		$this->pos2 = new Vector3($dat["maxX"], $dat["maxY"], $dat["maxZ"]);
-		$this->structure = new Vector3($dat["structureX"], $dat["structureY"], $dat["structureZ"]);
+		$this->structure = new Vector3($data["structureX"], $data["structureY"], $data["structureZ"]);
+		parent::setData($data);
 	}
 
 	public function close(): void

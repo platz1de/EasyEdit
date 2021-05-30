@@ -119,39 +119,6 @@ class Cylinder extends Selection implements Patterned
 	}
 
 	/**
-	 * @return string
-	 */
-	public function serialize(): string
-	{
-		return igbinary_serialize([
-			"player" => $this->player,
-			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
-			"minX" => $this->pos1->getX(),
-			"minY" => $this->pos1->getY(),
-			"minZ" => $this->pos1->getZ(),
-			"maxX" => $this->pos2->getX(),
-			"maxY" => $this->pos2->getY(),
-			"maxZ" => $this->pos2->getZ()
-		]);
-	}
-
-	/**
-	 * @param string $data
-	 */
-	public function unserialize($data): void
-	{
-		$dat = igbinary_unserialize($data);
-		$this->player = $dat["player"];
-		try {
-			$this->level = Server::getInstance()->getLevelByName($dat["level"]) ?? $dat["level"];
-		} catch (RuntimeException $exception) {
-			$this->level = $dat["level"];
-		}
-		$this->pos1 = new Vector3($dat["minX"], $dat["minY"], $dat["minZ"]);
-		$this->pos2 = new Vector3($dat["maxX"], $dat["maxY"], $dat["maxZ"]);
-	}
-
-	/**
 	 * splits into 3x3 Chunk pieces
 	 * @return array
 	 */

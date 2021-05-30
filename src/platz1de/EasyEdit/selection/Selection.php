@@ -251,4 +251,52 @@ abstract class Selection implements Serializable
 	{
 		return [$this];
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getData(): array
+	{
+		return [
+			"player" => $this->player,
+			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
+			"minX" => $this->pos1->getX(),
+			"minY" => $this->pos1->getY(),
+			"minZ" => $this->pos1->getZ(),
+			"maxX" => $this->pos2->getX(),
+			"maxY" => $this->pos2->getY(),
+			"maxZ" => $this->pos2->getZ()
+		];
+	}
+
+	/**
+	 * @param array $data
+	 */
+	public function setData(array $data): void
+	{
+		$this->player = $data["player"];
+		try {
+			$this->level = Server::getInstance()->getLevelByName($data["level"]) ?? $data["level"];
+		} catch (RuntimeException $exception) {
+			$this->level = $data["level"];
+		}
+		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
+		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function serialize(): string
+	{
+		return igbinary_serialize($this->getData());
+	}
+
+	/**
+	 * @param string $data
+	 */
+	public function unserialize($data): void
+	{
+		$this->setData(igbinary_unserialize($data));
+	}
 }

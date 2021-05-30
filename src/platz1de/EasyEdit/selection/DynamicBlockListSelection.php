@@ -45,36 +45,23 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @return string
+	 * @return array
 	 */
-	public function serialize(): string
+	public function getData(): array
 	{
-		return igbinary_serialize([
-			"player" => $this->player,
-			"chunks" => array_map(static function (Chunk $chunk) {
-				return $chunk->fastSerialize();
-			}, $this->getManager()->getChunks()),
-			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
-			"minX" => $this->pos1->getX(),
-			"minY" => $this->pos1->getY(),
-			"minZ" => $this->pos1->getZ(),
-			"maxX" => $this->pos2->getX(),
-			"maxY" => $this->pos2->getY(),
-			"maxZ" => $this->pos2->getZ(),
+		return array_merge([
 			"x" => $this->point->getX(),
 			"y" => $this->point->getY(),
-			"z" => $this->point->getZ(),
-			"tiles" => $this->getTiles()
-		]);
+			"z" => $this->point->getZ()
+		], parent::getData());
 	}
 
 	/**
-	 * @param string $data
+	 * @param array $data
 	 */
-	public function unserialize($data): void
+	public function setData(array $data): void
 	{
-		$dat = igbinary_unserialize($data);
-		$this->point = new Vector3($dat["x"], $dat["y"], $dat["z"]);
-		parent::unserialize($data);
+		$this->point = new Vector3($data["x"], $data["y"], $data["z"]);
+		parent::setData($data);
 	}
 }

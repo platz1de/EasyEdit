@@ -135,49 +135,30 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @return string
+	 * @return array
 	 */
-	public function serialize(): string
+	public function getData(): array
 	{
-		return igbinary_serialize([
-			"player" => $this->player,
+		return array_merge([
 			"chunks" => array_map(static function (Chunk $chunk) {
 				return $chunk->fastSerialize();
 			}, $this->getManager()->getChunks()),
-			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
-			"minX" => $this->pos1->getX(),
-			"minY" => $this->pos1->getY(),
-			"minZ" => $this->pos1->getZ(),
-			"maxX" => $this->pos2->getX(),
-			"maxY" => $this->pos2->getY(),
-			"maxZ" => $this->pos2->getZ(),
 			"tiles" => $this->getTiles()
-		]);
+		], parent::getData());
 	}
 
 	/**
-	 * @param string $data
+	 * @param array $data
 	 */
-	public function unserialize($data): void
+	public function setData(array $data): void
 	{
-		$dat = igbinary_unserialize($data);
-
-		try {
-			$this->level = Server::getInstance()->getLevelByName($dat["level"]) ?? $dat["level"];
-		} catch (RuntimeException $exception) {
-			$this->level = $dat["level"];
-		}
-
-		$this->pos1 = new Vector3($dat["minX"], $dat["minY"], $dat["minZ"]);
-		$this->pos2 = new Vector3($dat["maxX"], $dat["maxY"], $dat["maxZ"]);
-
-		$this->player = $dat["player"];
-		$this->manager = new ReferencedChunkManager($dat["level"]);
-		foreach ($dat["chunks"] as $chunk) {
+		$this->manager = new ReferencedChunkManager($data["level"]);
+		foreach ($data["chunks"] as $chunk) {
 			$chunk = Chunk::fastDeserialize($chunk);
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 		$this->iterator = new SubChunkIteratorManager($this->manager);
-		$this->tiles = $dat["tiles"];
+		$this->tiles = $data["tiles"];
+		parent::setData($data);
 	}
 }
