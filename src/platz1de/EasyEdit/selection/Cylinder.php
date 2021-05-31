@@ -8,9 +8,7 @@ use platz1de\EasyEdit\selection\piece\CylinderPiece;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\utils\Utils;
-use RuntimeException;
 use UnexpectedValueException;
 
 class Cylinder extends Selection implements Patterned

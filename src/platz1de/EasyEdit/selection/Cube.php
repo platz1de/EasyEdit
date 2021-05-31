@@ -23,7 +23,6 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
-use RuntimeException;
 use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned

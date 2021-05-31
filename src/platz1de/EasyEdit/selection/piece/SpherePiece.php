@@ -5,9 +5,7 @@ namespace platz1de\EasyEdit\selection\piece;
 use Closure;
 use platz1de\EasyEdit\selection\Sphere;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\utils\Utils;
-use RuntimeException;
 
 class SpherePiece extends Sphere
 {

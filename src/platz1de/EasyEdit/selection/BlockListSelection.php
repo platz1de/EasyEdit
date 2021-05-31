@@ -12,10 +12,8 @@ use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\Server;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Utils;
-use RuntimeException;
 
 abstract class BlockListSelection extends Selection
 {

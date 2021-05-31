@@ -7,9 +7,7 @@ use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\utils\Utils;
-use RuntimeException;
 
 class MovingCube extends Cube
 {

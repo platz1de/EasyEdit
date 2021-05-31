@@ -5,8 +5,6 @@ namespace platz1de\EasyEdit\selection;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
-use RuntimeException;
 
 class StackedCube extends Cube
 {
