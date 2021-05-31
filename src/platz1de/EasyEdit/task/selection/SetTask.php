@@ -7,9 +7,9 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\Block;
@@ -21,6 +21,8 @@ use pocketmine\nbt\tag\CompoundTag;
 
 class SetTask extends EditTask
 {
+	use CubicStaticUndo;
+
 	/**
 	 * @param Selection    $selection
 	 * @param Pattern      $pattern
@@ -67,18 +69,6 @@ class SetTask extends EditTask
 				}
 			}
 		});
-	}
-
-	/**
-	 * @param Selection             $selection
-	 * @param Vector3               $place
-	 * @param string                $level
-	 * @param AdditionalDataManager $data
-	 * @return StaticBlockListSelection
-	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
-	{
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $selection->getCubicEnd());
 	}
 
 	/**

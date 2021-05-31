@@ -7,9 +7,9 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StackedCube;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -21,6 +21,8 @@ use pocketmine\nbt\tag\CompoundTag;
 
 class StackTask extends EditTask
 {
+	use CubicStaticUndo;
+
 	/**
 	 * @param StackedCube $selection
 	 * @param Position    $place
@@ -76,18 +78,6 @@ class StackTask extends EditTask
 				$tiles[Level::blockHash($x, $y, $z)] = TileUtils::offsetCompound($tiles[Level::blockHash($originalX, $originalY, $originalZ)], new Vector3($x - $originalX, $y - $originalY, $z - $originalZ));
 			}
 		});
-	}
-
-	/**
-	 * @param Selection             $selection
-	 * @param Vector3               $place
-	 * @param string                $level
-	 * @param AdditionalDataManager $data
-	 * @return StaticBlockListSelection
-	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
-	{
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $selection->getCubicEnd());
 	}
 
 	/**
