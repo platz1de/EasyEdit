@@ -13,6 +13,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
@@ -58,13 +59,14 @@ class CopyTask extends EditTask
 	 */
 	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
-		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $toUndo, &$changed): void {
+		$full = TaskCache::getFullSelection();
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $full): void {
 			$iterator->moveTo($x, $y, $z);
-			$toUndo->addBlock($x - $selection->getPos1()->getX(), $y - $selection->getPos1()->getY(), $z - $selection->getPos1()->getZ(), $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+			$toUndo->addBlock($x - $full->getPos1()->getX(), $y - $full->getPos1()->getY(), $z - $full->getPos1()->getZ(), $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 			$changed++;
 
 			if (isset($tiles[Level::blockHash($x, $y, $z)])) {
-				$toUndo->addTile(TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $selection->getPos1()->multiply(-1)));
+				$toUndo->addTile(TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $full->getPos1()->multiply(-1)));
 			}
 		});
 	}
