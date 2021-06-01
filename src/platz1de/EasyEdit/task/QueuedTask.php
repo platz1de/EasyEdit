@@ -53,6 +53,8 @@ class QueuedTask
 		$this->pattern = $pattern;
 		$this->place = Position::fromObject($place->floor(), $place->getLevelNonNull());
 		$this->task = $task;
+		$this->data = $data;
+
 		if ($finish === null) {
 			$finish = static function (EditTaskResult $result) {
 				/** @var StaticBlockListSelection $undo */
@@ -61,7 +63,6 @@ class QueuedTask
 			};
 		}
 		$this->finish = $finish;
-		$this->data = $data;
 	}
 
 	/**
