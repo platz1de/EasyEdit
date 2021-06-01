@@ -64,7 +64,7 @@ class PieceManager
 					return false; //more to go
 				}
 
-				$this->task->finishWith($result->getUndo());
+				$this->task->finishWith($result);
 
 				$this->currentPiece->notifyUser($this->task->getSelection(), round($result->getTime(), 3), $result->getChanged(), $data);
 			}

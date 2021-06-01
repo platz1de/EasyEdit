@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
@@ -29,8 +30,10 @@ class UndoTask extends EditTask
 	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getLevel()), self::class, new AdditionalDataManager(["edit" => true]), static function (Selection $selection, Position $place, StaticBlockListSelection $redo) {
-			HistoryManager::addToFuture($selection->getPlayer(), $redo);
+		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getLevel()), self::class, new AdditionalDataManager(["edit" => true]), static function (EditTaskResult $result) {
+			/** @var StaticBlockListSelection $redo */
+			$redo = $result->getUndo();
+			HistoryManager::addToFuture($redo->getPlayer(), $redo);
 		}));
 	}
 

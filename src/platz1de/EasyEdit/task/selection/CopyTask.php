@@ -10,6 +10,7 @@ use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\QueuedTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TaskCache;
@@ -30,8 +31,10 @@ class CopyTask extends EditTask
 	public static function queue(Selection $selection, Position $place, ?Closure $finish = null): void
 	{
 		if ($finish === null) {
-			$finish = static function (Selection $selection, Position $place, DynamicBlockListSelection $copy) {
-				ClipBoardManager::setForPlayer($selection->getPlayer(), $copy);
+			$finish = static function (EditTaskResult $result) {
+				/** @var DynamicBlockListSelection $copied */
+				$copied = $result->getUndo();
+				ClipBoardManager::setForPlayer($copied->getPlayer(), $copied);
 			};
 		}
 		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), $finish));

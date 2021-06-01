@@ -54,8 +54,10 @@ class QueuedTask
 		$this->place = Position::fromObject($place->floor(), $place->getLevelNonNull());
 		$this->task = $task;
 		if ($finish === null) {
-			$finish = static function (Selection $selection, Position $place, StaticBlockListSelection $undo) {
-				HistoryManager::addToHistory($selection->getPlayer(), $undo);
+			$finish = static function (EditTaskResult $result) {
+				/** @var StaticBlockListSelection $undo */
+				$undo = $result->getUndo();
+				HistoryManager::addToHistory($undo->getPlayer(), $undo);
 			};
 		}
 		$this->finish = $finish;
@@ -103,12 +105,12 @@ class QueuedTask
 	}
 
 	/**
-	 * @param BlockListSelection $result
+	 * @param EditTaskResult $result
 	 * @return void
 	 */
-	public function finishWith(BlockListSelection $result): void
+	public function finishWith(EditTaskResult $result): void
 	{
 		$finish = $this->finish;
-		$finish($this->getSelection(), $this->getPlace(), $result);
+		$finish($result);
 	}
 }
