@@ -16,4 +16,20 @@ class MixedUtils
 		$unit = $data ? ["B", "KB", "MB", "GB", "TB"] : ["", "K", "M", "G", "T"];
 		return substr($string, 0, strpos($string, ",") < 3 ? 4 : 3) . $unit[$factor];
 	}
+
+	/**
+	 * @param string $dir
+	 */
+	public static function deleteDir(string $dir): void
+	{
+		if (!is_dir($dir)) {
+			return;
+		}
+
+		$files = array_diff(scandir($dir), ['.', '..']);
+		foreach ($files as $file) {
+			is_dir($dir . DIRECTORY_SEPARATOR . $file) ? self::deleteDir($dir . DIRECTORY_SEPARATOR . $file) : unlink($dir . DIRECTORY_SEPARATOR . $file);
+		}
+		rmdir($dir);
+	}
 }
