@@ -93,11 +93,11 @@ abstract class EditTask extends Threaded
 
 	/**
 	 * EditTask constructor.
-	 * @param Selection                     $selection
-	 * @param Pattern                       $pattern
-	 * @param Position                      $place
-	 * @param AdditionalDataManager         $data
-	 * @param EditTaskResult|Selection|null $previous Initially Selection, for later pieces EditTaskResult
+	 * @param Selection             $selection
+	 * @param Pattern               $pattern
+	 * @param Position              $place
+	 * @param AdditionalDataManager $data
+	 * @param Selection|null        $total Initial Selection
 	 */
 	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, $previous = null)
 	{
@@ -189,7 +189,7 @@ abstract class EditTask extends Threaded
 			}
 		}
 
-		$toUndo = $previous instanceof EditTaskResult ? $previous->getUndo() : $this->getUndoBlockList($previous instanceof Selection ? $previous : $selection, $place, $this->level, $data);
+		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->level, $data);
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
 
@@ -208,10 +208,6 @@ abstract class EditTask extends Threaded
 				$chunk->setPopulated();
 
 				$result->addChunk($chunk);
-			}
-
-			if ($previous instanceof EditTaskResult) {
-				$result->merge($previous);
 			}
 
 			$this->result = igbinary_serialize($result);

@@ -26,6 +26,10 @@ class PieceManager
 	 * @var int
 	 */
 	private $totalLength;
+	/**
+	 * @var EditTaskResult
+	 */
+	private $result;
 
 	/**
 	 * PieceManager constructor.
@@ -52,6 +56,12 @@ class PieceManager
 					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
+				if($this->result === null){
+					$this->result = $result;
+				}else{
+					$this->result->merge($result);
+				}
+
 				$result->free();
 
 				if (count($this->pieces) > 0) {
@@ -62,16 +72,16 @@ class PieceManager
 					$task = $this->task->getTask();
 
 					//reduce load by not setting and loading on the same tick
-					WorkerAdapter::priority(new CallbackTask(function () use ($data, $result, $task): void {
-						$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data, $result);
+					WorkerAdapter::priority(new CallbackTask(function () use ($data, $task): void {
+						$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data);
 						EasyEdit::getWorker()->stack($this->currentPiece);
 					}));
 					return false; //more to go
 				}
 
-				$this->task->finishWith($result);
+				$this->task->finishWith($this->result);
 
-				$this->currentPiece->notifyUser($this->task->getSelection(), round($result->getTime(), 3), $result->getChanged(), $data);
+				$this->currentPiece->notifyUser($this->task->getSelection(), round($this->result->getTime(), 3), $this->result->getChanged(), $data);
 			}
 			return true;
 		}
@@ -119,5 +129,13 @@ class PieceManager
 	public function getLength(): int
 	{
 		return count($this->pieces) + 1;
+	}
+
+	/**
+	 * @return EditTaskResult Current result of task, may not be finished yet
+	 */
+	public function getResult(): ?EditTaskResult
+	{
+		return $this->result ?? null;
 	}
 }
