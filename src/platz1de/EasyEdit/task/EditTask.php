@@ -99,7 +99,7 @@ abstract class EditTask extends Threaded
 	 * @param AdditionalDataManager $data
 	 * @param Selection|null        $total Initial Selection
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, $previous = null)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, ?Selection $total = null)
 	{
 		$this->id = WorkerAdapter::getId();
 		$chunkData = [];
@@ -119,8 +119,8 @@ abstract class EditTask extends Threaded
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
 		$this->level = $place->getLevelNonNull()->getFolderName();
-		if ($previous !== null) {
-			$this->result = igbinary_serialize($previous);
+		if ($total !== null) {
+			$this->result = igbinary_serialize($total);
 		}
 		$this->data = igbinary_serialize($data);
 		$this->generatorClass = GeneratorManager::getGenerator($place->getLevelNonNull()->getProvider()->getGenerator());
