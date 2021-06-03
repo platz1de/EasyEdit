@@ -60,7 +60,9 @@ class EditTaskResult implements Serializable
 		$this->time += $result->getTime();
 		$this->changed += $result->getChanged();
 		foreach ($result->getUndo()->getManager()->getChunks() as $chunk) {
-			$this->getUndo()->getManager()->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+			if ($chunk->getHighestSubChunkIndex() !== -1) {
+				$this->getUndo()->getManager()->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+			}
 		}
 		foreach ($result->getUndo()->getTiles() as $tile){
 			$this->getUndo()->addTile($tile);
