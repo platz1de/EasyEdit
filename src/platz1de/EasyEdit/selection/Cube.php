@@ -156,8 +156,8 @@ class Cube extends Selection implements Patterned
 			$level = $level->getFolderName();
 		}
 		$pieces = [];
-		for ($x = ($this->pos1->getX() - 1) >> 4; $x <= ($this->pos2->getX() + 1) >> 4; $x += 3) {
-			for ($z = ($this->pos1->getZ() - 1) >> 4; $z <= ($this->pos2->getZ() + 1) >> 4; $z += 3) {
+		for ($x = ($this->pos1->getX()) >> 4; $x <= ($this->pos2->getX()) >> 4; $x += 3) {
+			for ($z = ($this->pos1->getZ()) >> 4; $z <= ($this->pos2->getZ()) >> 4; $z += 3) {
 				$pieces[] = new Cube($this->getPlayer(), $level, new Vector3(max($x << 4, $this->pos1->getX()), $this->pos1->getY(), max($z << 4, $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())), true);
 			}
 		}
