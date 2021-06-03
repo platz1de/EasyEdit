@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\worker;
 
+use platz1de\EasyEdit\task\CallbackTask;
 use platz1de\EasyEdit\task\PieceManager;
 use platz1de\EasyEdit\task\QueuedTask;
 use pocketmine\scheduler\Task;
@@ -36,8 +37,13 @@ class WorkerAdapter extends Task
 		}
 
 		if (count(self::$queue) > 0) {
-			self::$task = new PieceManager(array_shift(self::$queue));
-			self::$task->start();
+			$task = array_shift(self::$queue);
+			if ($task instanceof CallbackTask) {
+				$task->callback();
+			} else {
+				self::$task = new PieceManager($task);
+				self::$task->start();
+			}
 		}
 	}
 
