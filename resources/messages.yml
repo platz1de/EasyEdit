@@ -23,3 +23,11 @@ blocks-counted: "{changed} blocks were counted in {time}s"
 
 #Args: {task} {queue} {status} {progress}
 worker-status: "Status of EditWorker:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}"
+
+benchmark-start: "Started benchmark, this can take up to a minute, please don't cancel the task"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}%)\nMinimal TPS: {tps_min} ({load_max}%)\nExecuted {tasks} tasks in {time}s:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} in {time}s"
