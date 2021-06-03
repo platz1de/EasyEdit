@@ -17,6 +17,10 @@ class WorkerAdapter extends Task
 	 * @var QueuedTask[]
 	 */
 	private static $queue = [];
+	/**
+	 * @var QueuedTask[]
+	 */
+	private static $priority = [];
 
 	/**
 	 * @var int
@@ -28,6 +32,17 @@ class WorkerAdapter extends Task
 	 */
 	public function onRun(int $currentTick): void
 	{
+		if (count(self::$priority) > 0) {
+			$task = array_shift(self::$priority);
+			if ($task instanceof CallbackTask) {
+				$task->callback();
+			} else {
+				array_unshift(self::$queue, self::$task);
+				self::$task = new PieceManager($task);
+				self::$task->start(); //This can create a stack greater than 1 on worker
+			}
+		}
+
 		if (self::$task !== null) {
 			if (self::$task->continue()) {
 				self::$task = null;
@@ -53,6 +68,15 @@ class WorkerAdapter extends Task
 	public static function getId(): int
 	{
 		return ++self::$id;
+	}
+
+	/**
+	 * Skip queue
+	 * @param QueuedTask $task
+	 */
+	public static function priority(QueuedTask $task): void
+	{
+		self::$priority[] = $task;
 	}
 
 	/**
