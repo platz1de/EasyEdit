@@ -45,7 +45,7 @@ class Cube extends Selection implements Patterned
 	 */
 	public function __construct(string $player, string $level, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		$this->structure = new Vector3(0, 0, 0);
+		$this->structure = new Vector3();
 
 		parent::__construct($player, $level, $pos1, $pos2, $piece);
 	}

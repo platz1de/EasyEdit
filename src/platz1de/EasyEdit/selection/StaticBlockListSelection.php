@@ -16,7 +16,7 @@ class StaticBlockListSelection extends BlockListSelection
 	 */
 	public function getNeededChunks(Position $place): array
 	{
-		return parent::getNeededChunks(Position::fromObject(new Vector3(0, 0, 0), $this->getLevel()));
+		return parent::getNeededChunks(Position::fromObject(new Vector3(), $this->getLevel()));
 	}
 
 	/**
