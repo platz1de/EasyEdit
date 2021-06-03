@@ -6,7 +6,7 @@ use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\LoaderManager;
-use pocketmine\scheduler\ClosureTask;
+use platz1de\EasyEdit\worker\WorkerAdapter;
 
 class PieceManager
 {
@@ -62,7 +62,7 @@ class PieceManager
 					$task = $this->task->getTask();
 
 					//reduce load by not setting and loading on the same tick
-					EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function (int $currentTick) use ($data, $result, $task): void {
+					WorkerAdapter::priority(new CallbackTask(function () use ($data, $result, $task): void {
 						$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data, $result);
 						EasyEdit::getWorker()->stack($this->currentPiece);
 					}));
