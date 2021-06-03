@@ -12,6 +12,7 @@ class CallbackTask extends QueuedTask
 	 */
 	private $callback;
 
+	/** @noinspection MagicMethodsValidityInspection */
 	public function __construct(Closure $callback)
 	{
 		$this->callback = $callback;
