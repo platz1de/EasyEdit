@@ -165,6 +165,11 @@ abstract class EditTask extends Threaded
 			if (!$chunk->isPopulated()) {
 				$generator->populateChunk($chunk->getX(), $chunk->getZ());
 			}
+
+			//separate chunks which are only loaded for patterns
+			if($selection->isChunkOfSelection($chunk->getX(), $chunk->getZ(), $place)){
+				$chunk->setChanged(); //TODO: add a proper separation of core and data chunks
+			}
 		}
 
 		foreach (array_map(static function (string $chunk) {
@@ -204,10 +209,12 @@ abstract class EditTask extends Threaded
 			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
 
 			foreach ($manager->getChunks() as $chunk) {
-				$chunk->setGenerated();
-				$chunk->setPopulated();
+				if($chunk->hasChanged()) {
+					$chunk->setGenerated();
+					$chunk->setPopulated();
 
-				$result->addChunk($chunk);
+					$result->addChunk($chunk);
+				}
 			}
 
 			$this->result = igbinary_serialize($result);

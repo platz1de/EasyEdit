@@ -62,6 +62,23 @@ class MovingCube extends Cube
 	}
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	{
+		$start = $this->getCubicStart();
+		$end = $this->getCubicEnd();
+
+		$start2 = $start->add($this->direction);
+		$end2 = $end->add($this->direction);
+
+		return ($start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4) || ($start2->getX() >> 4 <= $x && $x <= $end2->getX() >> 4 && $start2->getZ() >> 4 <= $z && $z <= $end2->getZ() >> 4);
+	}
+
+	/**
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void

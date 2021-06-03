@@ -70,6 +70,20 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	{
+		$start = $this->getCubicStart()->add($place);
+		$end = $this->getCubicEnd()->add($place);
+
+		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
+	}
+
+	/**
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void

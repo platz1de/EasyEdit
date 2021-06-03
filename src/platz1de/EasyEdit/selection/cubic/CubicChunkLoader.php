@@ -6,6 +6,7 @@ use platz1de\EasyEdit\selection\Patterned;
 use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
+use pocketmine\math\Vector3;
 
 trait CubicChunkLoader
 {
@@ -32,5 +33,19 @@ trait CubicChunkLoader
 			}
 		}
 		return $chunks;
+	}
+
+	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	{
+		$start = $this->getCubicStart();
+		$end = $this->getCubicEnd();
+
+		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
 	}
 }

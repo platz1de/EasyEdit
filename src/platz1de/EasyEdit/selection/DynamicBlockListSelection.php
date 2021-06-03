@@ -39,6 +39,17 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	{
+		return parent::isChunkOfSelection($x, $z, $place->subtract($this->getPoint()));
+	}
+
+	/**
 	 * @return Vector3
 	 */
 	public function getPoint(): Vector3

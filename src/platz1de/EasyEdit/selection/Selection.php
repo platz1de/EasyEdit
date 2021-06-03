@@ -86,6 +86,14 @@ abstract class Selection implements Serializable
 	abstract public function getNeededChunks(Position $place): array;
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool whether the chunk is in part of selected area (this doesn't check if it is actually affected)
+	 */
+	abstract public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool;
+
+	/**
 	 * @return Vector3
 	 */
 	public function getRealSize(): Vector3
