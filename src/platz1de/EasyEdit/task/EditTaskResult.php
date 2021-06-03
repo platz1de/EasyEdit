@@ -144,6 +144,5 @@ class EditTaskResult implements Serializable
 	{
 		$this->manager->cleanChunks();
 		$this->tiles = [];
-		$this->getUndo()->free();
 	}
 }
