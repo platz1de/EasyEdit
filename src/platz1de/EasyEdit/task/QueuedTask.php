@@ -10,6 +10,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\level\Position;
+use pocketmine\utils\Utils;
 
 class QueuedTask
 {
@@ -62,6 +63,9 @@ class QueuedTask
 				HistoryManager::addToHistory($undo->getPlayer(), $undo);
 			};
 		}
+
+		Utils::validateCallableSignature(function (EditTaskResult $result) { }, $finish);
+
 		$this->finish = $finish;
 	}
 
