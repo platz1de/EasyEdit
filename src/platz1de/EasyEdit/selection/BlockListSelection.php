@@ -159,4 +159,10 @@ abstract class BlockListSelection extends Selection
 		$this->tiles = $data["tiles"];
 		parent::setData($data);
 	}
+
+	public function free(): void
+	{
+		$this->manager->cleanChunks();
+		$this->tiles = [];
+	}
 }
