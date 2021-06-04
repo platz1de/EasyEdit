@@ -56,9 +56,9 @@ class PieceManager
 					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
-				if($this->result === null){
+				if ($this->result === null) {
 					$this->result = $result;
-				}else{
+				} else {
 					$this->result->merge($result);
 					$result->getUndo()->free();
 				}
