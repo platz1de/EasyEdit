@@ -52,7 +52,7 @@ class BenchmarkManager
 		$pos = new Position(0, 0, 0, $level);
 
 		//4x 3x3 Chunk cubes
-		$testCube = new Cube($name, $name, new Vector3(), new Vector3(96, Level::Y_MASK, 96));
+		$testCube = new Cube($name, $name, new Vector3(), new Vector3(95, Level::Y_MASK, 95));
 
 		//Task #1 - set static
 		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results) {
