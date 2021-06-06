@@ -39,6 +39,7 @@ class BenchmarkManager
 		Utils::validateCallableSignature(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) { }, $closure);
 
 		self::$running = true;
+		$autoSave = MixedUtils::pauseAutoSave(); //AutoSaving produces wrong results
 		$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->generateLevel($name);
@@ -59,7 +60,7 @@ class BenchmarkManager
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 
-		WorkerAdapter::queue(new CallbackTask(function () use ($level, $task, $closure, &$results, $deleteLevelAfter) {
+		WorkerAdapter::queue(new CallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter) {
 			$task->cancel();
 			/** @var BenchmarkTask $benchmark */
 			$benchmark = $task->getTask();
@@ -75,6 +76,10 @@ class BenchmarkManager
 			}
 
 			BenchmarkManager::$running = false;
+
+			if($autoSave) {
+				MixedUtils::continueAutoSave();
+			}
 		}));
 	}
 
