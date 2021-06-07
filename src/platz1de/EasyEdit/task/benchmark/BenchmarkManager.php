@@ -57,6 +57,11 @@ class BenchmarkManager
 
 		//Task #1 - set static
 		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results) {
+			$results[] = ["set static generate", $result->getTime(), $result->getChanged()];
+		});
+
+		//Task #2 - set static
+		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results) {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 
@@ -64,12 +69,12 @@ class BenchmarkManager
 			$task->cancel();
 			/** @var BenchmarkTask $benchmark */
 			$benchmark = $task->getTask();
-			$time = array_sum(array_map(static function (array $dat){
+			$time = array_sum(array_map(static function (array $dat) {
 				return $dat[1];
 			}, $results));
 			$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);
 
-			if($deleteLevelAfter){
+			if ($deleteLevelAfter) {
 				$path = $level->getProvider()->getPath();
 				Server::getInstance()->unloadLevel($level);
 				MixedUtils::deleteDir($path);
