@@ -39,11 +39,11 @@ class BenchmarkManager
 		Utils::validateCallableSignature(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) { }, $closure);
 
 		self::$running = true;
-		$autoSave = MixedUtils::pauseAutoSave(); //AutoSaving produces wrong results
 		$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->generateLevel($name);
 		$level = Server::getInstance()->getLevelByName($name);
+		$autoSave = MixedUtils::pauseAutoSave(); //AutoSaving produces wrong results
 		if ($level === null) {
 			return; //This should never happen
 		}
