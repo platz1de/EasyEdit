@@ -47,17 +47,10 @@ class MixedUtils
 			return false;
 		}
 
-		$data = [];
-		foreach (Server::getInstance()->getLevels() as $level) {
-			$data[$level->getFolderName()] = $level->getAutoSave();
-		}
-
-		Server::getInstance()->setAutoSave(false);
-
-		//other plugins could disable auto-saving in set worlds only
-		foreach (Server::getInstance()->getLevels() as $level) {
-			$level->setAutoSave($data[$level->getFolderName()]);
-		}
+		//we still need saving when we forcefully unload Chunks
+		(function () {
+			$this->autoSave = false;
+		})->call(Server::getInstance());
 		return true;
 	}
 
@@ -67,15 +60,9 @@ class MixedUtils
 			EasyEdit::getInstance()->getLogger()->critical("AutoSave was activated by unknown source");
 		}
 
-		$data = [];
-		foreach (Server::getInstance()->getLevels() as $level) {
-			$data[$level->getFolderName()] = $level->getAutoSave();
-		}
-
-		Server::getInstance()->setAutoSave(true);
-
-		foreach (Server::getInstance()->getLevels() as $level) {
-			$level->setAutoSave($data[$level->getFolderName()]);
-		}
+		//other plugins could disable auto-saving in set worlds only so we don't wanna overwrite it
+		(function () {
+			$this->autoSave = true;
+		})->call(Server::getInstance());
 	}
 }
