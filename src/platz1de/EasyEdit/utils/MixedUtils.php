@@ -38,31 +38,15 @@ class MixedUtils
 	}
 
 	/**
-	 * @return bool
+	 * @param int $cooldown
+	 * @return int previous cooldown
 	 */
-	public static function pauseAutoSave(): bool
+	public static function setAutoSave(int $cooldown): int
 	{
-		//only disable server auto saving
-		if (!Server::getInstance()->getAutoSave()) {
-			return false;
-		}
-
-		//we still need saving when we forcefully unload Chunks
-		(function () {
-			$this->autoSave = false;
-		})->call(Server::getInstance());
-		return true;
-	}
-
-	public static function continueAutoSave(): void
-	{
-		if (Server::getInstance()->getAutoSave()) {
-			EasyEdit::getInstance()->getLogger()->critical("AutoSave was activated by unknown source");
-		}
-
-		//other plugins could disable auto-saving in set worlds only so we don't wanna overwrite it
-		(function () {
-			$this->autoSave = true;
+		return (function () use ($cooldown) {
+			$previous = $this->autoSaveTicks;
+			$this->autoSaveTicks = $cooldown;
+			return $previous;
 		})->call(Server::getInstance());
 	}
 }
