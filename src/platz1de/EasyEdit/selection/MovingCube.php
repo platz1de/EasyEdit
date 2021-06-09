@@ -82,11 +82,10 @@ class MovingCube extends Cube
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void
-	 * @noinspection StaticClosureCanBeUsedInspection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$min = VectorUtils::enforceHeight($this->pos1);
 		$max = VectorUtils::enforceHeight($this->pos2);
 		for ($this->direction->getX() > 0 ? $x = $max->getX() : $x = $min->getX(); $this->direction->getX() > 0 ? $x >= $min->getX() : $x <= $max->getX(); $this->direction->getX() > 0 ? $x-- : $x++) {

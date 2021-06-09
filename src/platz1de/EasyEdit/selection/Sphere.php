@@ -48,11 +48,10 @@ class Sphere extends Selection implements Patterned
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void
-	 * @noinspection StaticClosureCanBeUsedInspection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$radius = $this->pos2->getX();
 		$radiusSquared = $radius ** 2;
 		$minY = max(-$radius, -$this->pos1->getY());

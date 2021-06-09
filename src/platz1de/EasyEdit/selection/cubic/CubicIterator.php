@@ -13,11 +13,10 @@ trait CubicIterator
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void
-	 * @noinspection StaticClosureCanBeUsedInspection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$start = VectorUtils::enforceHeight($this->getCubicStart());
 		$end = VectorUtils::enforceHeight($this->getCubicEnd());
 		for ($x = $start->getX(); $x <= $end->getX(); $x++) {

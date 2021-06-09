@@ -87,11 +87,10 @@ abstract class BlockListSelection extends Selection
 	 * @param Vector3 $place
 	 * @param Closure $closure
 	 * @return void
-	 * @noinspection StaticClosureCanBeUsedInspection
 	 */
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
-		Utils::validateCallableSignature(function (int $x, int $y, int $z): void { }, $closure);
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$min = VectorUtils::enforceHeight($this->pos1->add($place));
 		$max = VectorUtils::enforceHeight($this->pos2->add($place));
 		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
