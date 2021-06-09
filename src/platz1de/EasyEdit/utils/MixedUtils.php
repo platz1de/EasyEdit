@@ -2,8 +2,6 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use platz1de\EasyEdit\EasyEdit;
-use pocketmine\level\Level;
 use pocketmine\Server;
 
 class MixedUtils
