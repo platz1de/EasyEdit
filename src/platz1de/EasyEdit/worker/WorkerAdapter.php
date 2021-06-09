@@ -46,8 +46,6 @@ class WorkerAdapter extends Task
 		if (self::$task !== null) {
 			if (self::$task->continue()) {
 				self::$task = null;
-			} else {
-				return;
 			}
 		} elseif (count(self::$queue) > 0) {
 			$task = array_shift(self::$queue);
