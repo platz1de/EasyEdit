@@ -2,15 +2,13 @@
 
 namespace platz1de\EasyEdit\worker;
 
-use platz1de\EasyEdit\task\CallbackTask;
-use platz1de\EasyEdit\task\PieceManager;
-use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\task\queued\QueuedTask;
 use pocketmine\scheduler\Task;
 
 class WorkerAdapter extends Task
 {
 	/**
-	 * @var PieceManager|null
+	 * @var QueuedTask|null
 	 */
 	private static $task;
 	/**
@@ -34,27 +32,23 @@ class WorkerAdapter extends Task
 	{
 		if (count(self::$priority) > 0) {
 			$task = array_shift(self::$priority);
-			if ($task instanceof CallbackTask) {
-				$task->callback();
-			} else {
-				array_unshift(self::$queue, self::$task);
-				self::$task = new PieceManager($task);
-				self::$task->start(); //This can create a stack greater than 1 on worker
+			if (!$task->isInstant()) {
+				if (self::$task !== null) {
+					array_unshift(self::$queue, self::$task);
+				}
+				self::$task = $task;
 			}
-		}
-
-		if (self::$task !== null) {
+			$task->execute(); //This can create a stack greater than 1 on worker
+		} elseif (self::$task !== null) {
 			if (self::$task->continue()) {
 				self::$task = null;
 			}
 		} elseif (count(self::$queue) > 0) {
 			$task = array_shift(self::$queue);
-			if ($task instanceof CallbackTask) {
-				$task->callback();
-			} else {
-				self::$task = new PieceManager($task);
-				self::$task->start();
+			if (!$task->isInstant()) {
+				self::$task = $task;
 			}
+			$task->execute();
 		}
 	}
 
@@ -95,9 +89,9 @@ class WorkerAdapter extends Task
 	}
 
 	/**
-	 * @return PieceManager|null
+	 * @return QueuedTask|null
 	 */
-	public static function getCurrentTask(): ?PieceManager
+	public static function getCurrentTask(): ?QueuedTask
 	{
 		return self::$task ?? null;
 	}

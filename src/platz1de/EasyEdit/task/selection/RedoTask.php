@@ -8,7 +8,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
-use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -28,7 +28,7 @@ class RedoTask extends EditTask
 	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getLevel()), self::class, new AdditionalDataManager(["edit" => true])));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getLevel()), self::class, new AdditionalDataManager(["edit" => true])));
 	}
 
 	/**

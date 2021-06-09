@@ -6,7 +6,7 @@ use Closure;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\task\CallbackTask;
+use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\selection\SetTask;
 use platz1de\EasyEdit\utils\MixedUtils;
@@ -65,7 +65,7 @@ class BenchmarkManager
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 
-		WorkerAdapter::queue(new CallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter) {
+		WorkerAdapter::queue(new QueuedCallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter) {
 			$task->cancel();
 			/** @var BenchmarkTask $benchmark */
 			$benchmark = $task->getTask();

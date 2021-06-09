@@ -1,18 +1,19 @@
 <?php
 
-namespace platz1de\EasyEdit\task;
+namespace platz1de\EasyEdit\task\queued;
 
 use Closure;
 use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\EditTaskResult;
+use platz1de\EasyEdit\task\PieceManager;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\level\Position;
 use pocketmine\utils\Utils;
 
-class QueuedTask
+class QueuedEditTask implements QueuedTask
 {
 	/**
 	 * @var Selection
@@ -38,6 +39,10 @@ class QueuedTask
 	 * @var AdditionalDataManager
 	 */
 	private $data;
+	/**
+	 * @var PieceManager
+	 */
+	private $executor;
 
 	/**
 	 * QueuedTask constructor.
@@ -64,7 +69,7 @@ class QueuedTask
 			};
 		}
 
-		Utils::validateCallableSignature(function (EditTaskResult $result) { }, $finish);
+		Utils::validateCallableSignature(static function (EditTaskResult $result) { }, $finish);
 
 		$this->finish = $finish;
 	}
@@ -117,5 +122,32 @@ class QueuedTask
 	{
 		$finish = $this->finish;
 		$finish($result);
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isInstant(): bool
+	{
+		return false;
+	}
+
+	public function execute(): void
+	{
+		$this->executor = new PieceManager($this);
+		$this->executor->start();
+	}
+
+	public function continue(): bool
+	{
+		return $this->executor->continue();
+	}
+
+	/**
+	 * @return PieceManager
+	 */
+	public function getExecutor(): PieceManager
+	{
+		return $this->executor;
 	}
 }

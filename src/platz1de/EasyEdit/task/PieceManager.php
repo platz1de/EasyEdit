@@ -4,6 +4,8 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
+use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -11,7 +13,7 @@ use platz1de\EasyEdit\worker\WorkerAdapter;
 class PieceManager
 {
 	/**
-	 * @var QueuedTask
+	 * @var QueuedEditTask
 	 */
 	private $task;
 	/**
@@ -33,9 +35,9 @@ class PieceManager
 
 	/**
 	 * PieceManager constructor.
-	 * @param QueuedTask $task
+	 * @param QueuedEditTask $task
 	 */
-	public function __construct(QueuedTask $task)
+	public function __construct(QueuedEditTask $task)
 	{
 		$this->task = $task;
 		$this->pieces = $task->getSelection()->split();
@@ -73,7 +75,7 @@ class PieceManager
 					$task = $this->task->getTask();
 
 					//reduce load by not setting and loading on the same tick
-					WorkerAdapter::priority(new CallbackTask(function () use ($data, $task): void {
+					WorkerAdapter::priority(new QueuedCallbackTask(function () use ($data, $task): void {
 						$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data);
 						EasyEdit::getWorker()->stack($this->currentPiece);
 					}));
@@ -109,9 +111,9 @@ class PieceManager
 	}
 
 	/**
-	 * @return QueuedTask
+	 * @return QueuedEditTask
 	 */
-	public function getQueued(): QueuedTask
+	public function getQueued(): QueuedEditTask
 	{
 		return $this->task;
 	}

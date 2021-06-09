@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\task\PieceManager;
+use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
@@ -26,7 +26,8 @@ class StatusCommand extends EasyEditCommand
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
 		$manager = WorkerAdapter::getCurrentTask();
-		if ($manager instanceof PieceManager) {
+		if ($manager instanceof QueuedEditTask) {
+			$manager = $manager->getExecutor();
 			$task = $manager->getCurrent()->getTaskName() . ":" . $manager->getCurrent()->getId() . " by " . $manager->getQueued()->getSelection()->getPlayer();
 			$progress = ($manager->getTotalLength() - $manager->getLength()) . "/" . $manager->getTotalLength() . " (" . round(($manager->getTotalLength() - $manager->getLength()) / $manager->getTotalLength() * 100, 1) . "%)";
 		} else {

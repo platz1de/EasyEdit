@@ -11,7 +11,7 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskResult;
-use platz1de\EasyEdit\task\QueuedTask;
+use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
@@ -37,7 +37,7 @@ class CopyTask extends EditTask
 				ClipBoardManager::setForPlayer($copied->getPlayer(), $copied);
 			};
 		}
-		WorkerAdapter::queue(new QueuedTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), $finish));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), $finish));
 	}
 
 	/**
