@@ -36,7 +36,7 @@ class BenchmarkManager
 		if (self::$running) {
 			throw new UnexpectedValueException("Benchmark is already running");
 		}
-		Utils::validateCallableSignature(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) { }, $closure);
+		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) { }, $closure);
 
 		self::$running = true;
 		$autoSave = MixedUtils::setAutoSave(PHP_INT_MAX);
