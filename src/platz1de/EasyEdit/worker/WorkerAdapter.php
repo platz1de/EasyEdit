@@ -49,9 +49,7 @@ class WorkerAdapter extends Task
 			} else {
 				return;
 			}
-		}
-
-		if (count(self::$queue) > 0) {
+		} elseif (count(self::$queue) > 0) {
 			$task = array_shift(self::$queue);
 			if ($task instanceof CallbackTask) {
 				$task->callback();
