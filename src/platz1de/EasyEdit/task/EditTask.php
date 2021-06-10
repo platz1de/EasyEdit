@@ -217,7 +217,7 @@ abstract class EditTask extends Threaded
 				}
 			}
 
-			$this->result = igbinary_serialize($result);
+			$this->result = $result->fastSerialize();
 
 			$this->data = igbinary_serialize($data);
 		} catch (Throwable $exception) {
@@ -288,7 +288,7 @@ abstract class EditTask extends Threaded
 	public function getResult(): ?EditTaskResult
 	{
 		if (isset($this->result)) {
-			return igbinary_unserialize($this->result);
+			return EditTaskResult::fastDeserialize($this->result);
 		}
 
 		return null;

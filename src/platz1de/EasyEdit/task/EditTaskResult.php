@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use pocketmine\level\format\Chunk;
 use pocketmine\nbt\tag\CompoundTag;
-use Serializable;
+use pocketmine\utils\BinaryStream;
 
-class EditTaskResult implements Serializable
+class EditTaskResult
 {
 	/**
 	 * @var ReferencedChunkManager
@@ -112,34 +112,71 @@ class EditTaskResult implements Serializable
 	/**
 	 * @return string
 	 */
-	public function serialize(): string
+	public function fastSerialize(): string
 	{
-		return igbinary_serialize([
-			"chunks" => array_map(static function (Chunk $chunk) {
-				return $chunk->fastSerialize();
-			}, $this->manager->getChunks()),
-			"level" => $this->manager->getLevelName(),
-			"toUndo" => $this->toUndo,
-			"tiles" => $this->tiles,
-			"time" => $this->time,
-			"changed" => $this->changed
-		]);
+		$stream = new BinaryStream();
+
+		$stream->putInt(strlen($this->manager->getLevelName()));
+		$stream->put($this->manager->getLevelName());
+
+		$chunks = new BinaryStream();
+		$count = 0;
+		foreach ($this->manager->getChunks() as $chunk) {
+			$c = $chunk->fastSerialize();
+			$chunks->putInt(strlen($c));
+			$chunks->put($c);
+			$count++;
+		}
+		$stream->putInt($count);
+		$stream->put($chunks->getBuffer());
+
+		//TODO: Add fast serialization to block lists
+		$undo = igbinary_serialize($this->toUndo);
+		$stream->putInt(strlen($undo));
+		$stream->put($undo);
+
+		//TODO: Test if this need to be serialized otherwise
+		$tiles = igbinary_serialize($this->tiles);
+		$stream->putInt(strlen($tiles));
+		$stream->put($tiles);
+
+		$stream->putFloat($this->time);
+		$stream->putLInt($this->changed);
+
+		return $stream->getBuffer();
 	}
 
-	public function unserialize($data): void
+	/**
+	 * @param string $data
+	 * @return EditTaskResult
+	 */
+	public static function fastDeserialize(string $data): EditTaskResult
 	{
-		$dat = igbinary_unserialize($data);
+		$stream = new BinaryStream($data);
 
-		$this->manager = new ReferencedChunkManager($dat["level"]);
-		foreach ($dat["chunks"] as $chunk) {
-			$chunk = Chunk::fastDeserialize($chunk);
-			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+		$level = $stream->get($stream->getInt());
+
+		$chunks = [];
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$chunks[] = Chunk::fastDeserialize($stream->get($stream->getInt()));
 		}
 
-		$this->toUndo = $dat["toUndo"];
-		$this->tiles = $dat["tiles"];
-		$this->time = $dat["time"];
-		$this->changed = $dat["changed"];
+		//TODO: Add fast deserialization to block lists
+		$undo = igbinary_unserialize($stream->get($stream->getInt()));
+
+		//TODO: Test if this need to be deserialized otherwise
+		$tiles = igbinary_unserialize($stream->get($stream->getInt()));
+
+		$time = $stream->getFloat();
+		$changed = $stream->getLInt();
+
+		$result = new EditTaskResult($level, $undo, $tiles, $time, $changed);
+		foreach ($chunks as $chunk) {
+			$result->addChunk($chunk);
+		}
+
+		return $result;
 	}
 
 	public function free(): void
