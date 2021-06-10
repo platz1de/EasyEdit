@@ -2,43 +2,12 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Closure;
 use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
 
 class StaticBlockListSelection extends BlockListSelection
 {
-	/**
-	 * @param Position $place
-	 * @return array
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		return parent::getNeededChunks(Position::fromObject(new Vector3(), $this->getLevel()));
-	}
-
-	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
-	 * @return bool
-	 */
-	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
-	{
-		return parent::isChunkOfSelection($x, $z, new Vector3());
-	}
-
-	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
-	{
-		parent::useOnBlocks(new Vector3(), $closure);
-	}
-
 	/**
 	 * splits into 3x3 Chunk pieces
 	 * @return array

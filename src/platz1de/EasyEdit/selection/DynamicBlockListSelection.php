@@ -2,10 +2,14 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
+use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\utils\Utils;
 use UnexpectedValueException;
 
 class DynamicBlockListSelection extends BlockListSelection
@@ -35,7 +39,16 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	public function getNeededChunks(Position $place): array
 	{
-		return parent::getNeededChunks(Position::fromObject($place->subtract($this->getPoint()), $place->getLevel()));
+		$start = $this->getCubicStart()->add($place)->subtract($this->getPoint());
+		$end = $this->getCubicEnd()->add($place)->subtract($this->getPoint());
+
+		$chunks = [];
+		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
+			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
+				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+			}
+		}
+		return $chunks;
 	}
 
 	/**
@@ -46,7 +59,29 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
 	{
-		return parent::isChunkOfSelection($x, $z, $place->subtract($this->getPoint()));
+		$start = $this->getCubicStart()->add($place)->subtract($this->getPoint());
+		$end = $this->getCubicEnd()->add($place)->subtract($this->getPoint());
+
+		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
+	}
+
+	/**
+	 * @param Vector3 $place
+	 * @param Closure $closure
+	 * @return void
+	 */
+	public function useOnBlocks(Vector3 $place, Closure $closure): void
+	{
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
+		$min = VectorUtils::enforceHeight($this->pos1->add($place));
+		$max = VectorUtils::enforceHeight($this->pos2->add($place));
+		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
+			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
+				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
+					$closure($x, $y, $z);
+				}
+			}
+		}
 	}
 
 	/**

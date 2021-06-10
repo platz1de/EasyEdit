@@ -2,21 +2,21 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Closure;
+use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
+use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
-use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
-use pocketmine\utils\Utils;
 
 abstract class BlockListSelection extends Selection
 {
+	use CubicChunkLoader;
+	use CubicIterator;
+
 	/**
 	 * @var ReferencedChunkManager
 	 */
@@ -52,54 +52,6 @@ abstract class BlockListSelection extends Selection
 	public function getManager(): ReferencedChunkManager
 	{
 		return $this->manager;
-	}
-
-	/**
-	 * @param Position $place
-	 * @return Chunk[]
-	 */
-	public function getNeededChunks(Position $place): array
-	{
-		$chunks = [];
-		for ($x = ($place->getX() + $this->pos1->getX()) >> 4; $x <= ($place->getX() + $this->pos2->getX()) >> 4; $x++) {
-			for ($z = ($place->getZ() + $this->pos1->getZ()) >> 4; $z <= ($place->getZ() + $this->pos2->getZ()) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($place->getLevelNonNull(), $x, $z);
-			}
-		}
-		return $chunks;
-	}
-
-	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
-	 * @return bool
-	 */
-	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
-	{
-		$start = $this->getCubicStart()->add($place);
-		$end = $this->getCubicEnd()->add($place);
-
-		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
-	}
-
-	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 * @return void
-	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
-	{
-		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
-		$min = VectorUtils::enforceHeight($this->pos1->add($place));
-		$max = VectorUtils::enforceHeight($this->pos2->add($place));
-		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
-			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
-				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
-					$closure($x, $y, $z);
-				}
-			}
-		}
 	}
 
 	/**
