@@ -64,7 +64,7 @@ class EditTaskResult
 				$this->getUndo()->getManager()->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 			}
 		}
-		foreach ($result->getUndo()->getTiles() as $tile){
+		foreach ($result->getUndo()->getTiles() as $tile) {
 			$this->getUndo()->addTile($tile);
 		}
 	}
