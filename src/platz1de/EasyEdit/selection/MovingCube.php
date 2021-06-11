@@ -16,10 +16,18 @@ class MovingCube extends Cube
 	 */
 	private $direction;
 
-	public function __construct(Cube $cube, Vector3 $direction)
+	/**
+	 * MovingCube constructor.
+	 * @param string       $player
+	 * @param string       $level
+	 * @param Vector3|null $pos1
+	 * @param Vector3|null $pos2
+	 * @param Vector3|null $direction
+	 */
+	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null)
 	{
-		parent::__construct($cube->getPlayer(), is_string($cube->level) ? $cube->level : $cube->level->getFolderName(), $cube->getPos1(), $cube->getPos2());
-		$this->direction = $direction;
+		parent::__construct($player, $level, $pos1, $pos2);
+		$this->direction = $direction ?? new Vector3(0, 0, 0);
 	}
 
 	public function update(): void

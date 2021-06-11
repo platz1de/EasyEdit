@@ -40,6 +40,6 @@ class MoveCommand extends EasyEditCommand
 			return;
 		}
 
-		MoveTask::queue(new MovingCube($selection, VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), (int) $amount)), Position::fromObject($selection->getPos1(), $player->getLevelNonNull()));
+		MoveTask::queue(new MovingCube($selection->getPlayer(), is_string($selection->getLevel()) ? $selection->getLevel() : $selection->getLevel()->getFolderName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), (int) $amount)), Position::fromObject($selection->getPos1(), $player->getLevelNonNull()));
 	}
 }
