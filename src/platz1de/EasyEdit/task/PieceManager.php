@@ -8,6 +8,7 @@ use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 
 class PieceManager
@@ -84,7 +85,7 @@ class PieceManager
 
 				$this->task->finishWith($this->result);
 
-				$this->currentPiece->notifyUser($this->task->getSelection(), round($this->result->getTime(), 3), $this->result->getChanged(), $data);
+				$this->currentPiece->notifyUser($this->task->getSelection(), round($this->result->getTime(), 2), MixedUtils::humanReadable($this->result->getChanged()), $data);
 			}
 			return true;
 		}

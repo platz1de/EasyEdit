@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
+use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\Player;
 
 class BenchmarkCommand extends EasyEditCommand
@@ -35,7 +36,7 @@ class BenchmarkCommand extends EasyEditCommand
 					"{task}" => ++$i,
 					"{name}" => $data[0],
 					"{time}" => round($data[1], 2),
-					"{blocks}" => $data[2]
+					"{blocks}" => MixedUtils::humanReadable($data[2])
 				]);
 			}, $results);
 			Messages::send($player, "benchmark-finished", [
