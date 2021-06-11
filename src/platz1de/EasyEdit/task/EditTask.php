@@ -167,7 +167,7 @@ abstract class EditTask extends Threaded
 			}
 
 			//separate chunks which are only loaded for patterns
-			if($selection->isChunkOfSelection($chunk->getX(), $chunk->getZ(), $place)){
+			if ($selection->isChunkOfSelection($chunk->getX(), $chunk->getZ(), $place)) {
 				$chunk->setChanged(); //TODO: add a proper separation of core and data chunks
 			}
 		}
@@ -209,7 +209,7 @@ abstract class EditTask extends Threaded
 			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
 
 			foreach ($manager->getChunks() as $chunk) {
-				if($chunk->hasChanged()) {
+				if ($chunk->hasChanged()) {
 					$chunk->setGenerated();
 					$chunk->setPopulated();
 
