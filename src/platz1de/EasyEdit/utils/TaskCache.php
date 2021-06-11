@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use BadMethodCallException;
 use platz1de\EasyEdit\selection\Selection;
 
 class TaskCache
@@ -16,6 +17,9 @@ class TaskCache
 	 */
 	public static function init(Selection $selection): void
 	{
+		if(self::$selection !== null){
+			throw new BadMethodCallException("Tried to overwrite cached selection");
+		}
 		self::$selection = $selection;
 	}
 
