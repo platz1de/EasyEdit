@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
+use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
@@ -63,8 +65,11 @@ class LoaderManager
 			Tile::createTile($tile->getString(Tile::TAG_ID), $level, $tile);
 		}
 
-		foreach ($chunks as $chunk) {
-			$level->unloadChunk($chunk->getX(), $chunk->getZ());
-		}
+		//reduce load by not setting and unloading on the same tick
+		WorkerAdapter::priority(new QueuedCallbackTask(function () use ($chunks, $level): void {
+			foreach ($chunks as $chunk) {
+				$level->unloadChunk($chunk->getX(), $chunk->getZ());
+			}
+		}));
 	}
 }
