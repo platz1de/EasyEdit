@@ -23,6 +23,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
+use pocketmine\utils\BinaryStream;
 use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned
@@ -111,24 +112,25 @@ class Cube extends Selection implements Patterned
 	}
 
 	/**
-	 * @return array
+	 * @param BinaryStream $stream
 	 */
-	public function getData(): array
+	public function putData(BinaryStream $stream): void
 	{
-		return array_merge([
-			"structureX" => $this->structure->getX(),
-			"structureY" => $this->structure->getY(),
-			"structureZ" => $this->structure->getZ()
-		], parent::getData());
+		parent::putData($stream);
+
+		$stream->putInt($this->structure->getX());
+		$stream->putInt($this->structure->getY());
+		$stream->putInt($this->structure->getZ());
 	}
 
 	/**
-	 * @param array $data
+	 * @param BinaryStream $stream
 	 */
-	public function setData(array $data): void
+	public function parseData(BinaryStream $stream): void
 	{
-		$this->structure = new Vector3($data["structureX"], $data["structureY"], $data["structureZ"]);
-		parent::setData($data);
+		parent::parseData($stream);
+
+		$this->structure = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
 	}
 
 	public function close(): void

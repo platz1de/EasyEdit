@@ -9,11 +9,12 @@ use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
+use pocketmine\utils\BinaryStream;
 use RuntimeException;
 use Serializable;
 use UnexpectedValueException;
 
-abstract class Selection implements Serializable
+abstract class Selection
 {
 	/**
 	 * @var Level|string
@@ -261,50 +262,63 @@ abstract class Selection implements Serializable
 	}
 
 	/**
-	 * @return array
+	 * @param BinaryStream $stream
 	 */
-	public function getData(): array
+	public function putData(BinaryStream $stream): void
 	{
-		return [
-			"player" => $this->player,
-			"level" => is_string($this->level) ? $this->level : $this->level->getFolderName(),
-			"minX" => $this->pos1->getX(),
-			"minY" => $this->pos1->getY(),
-			"minZ" => $this->pos1->getZ(),
-			"maxX" => $this->pos2->getX(),
-			"maxY" => $this->pos2->getY(),
-			"maxZ" => $this->pos2->getZ()
-		];
+		$level = is_string($this->level) ? $this->level : $this->level->getFolderName();
+		$stream->putInt(strlen($level));
+		$stream->put($level);
+
+		$stream->putInt($this->pos1->getX());
+		$stream->putInt($this->pos1->getY());
+		$stream->putInt($this->pos1->getZ());
+		$stream->putInt($this->pos2->getX());
+		$stream->putInt($this->pos2->getY());
+		$stream->putInt($this->pos2->getZ());
 	}
 
 	/**
-	 * @param array $data
+	 * @param BinaryStream $stream
 	 */
-	public function setData(array $data): void
+	public function parseData(BinaryStream $stream): void
 	{
-		$this->player = $data["player"];
+		$level = $stream->get($stream->getInt());
 		try {
-			$this->level = Server::getInstance()->getLevelByName($data["level"]) ?? $data["level"];
+			$this->level = Server::getInstance()->getLevelByName($level) ?? $level;
 		} catch (RuntimeException $exception) {
-			$this->level = $data["level"];
+			$this->level = $level;
 		}
-		$this->pos1 = new Vector3($data["minX"], $data["minY"], $data["minZ"]);
-		$this->pos2 = new Vector3($data["maxX"], $data["maxY"], $data["maxZ"]);
+
+		$this->pos1 = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->pos2 = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
 	}
 
 	/**
 	 * @return string
 	 */
-	public function serialize(): string
+	public function fastSerialize(): string
 	{
-		return igbinary_serialize($this->getData());
+		$stream = new BinaryStream();
+		$stream->putInt(strlen(static::class));
+		$stream->put(static::class);
+		$stream->putInt(strlen($this->player));
+		$stream->put($this->player);
+		$this->putData($stream);
+		return $stream->getBuffer();
 	}
 
 	/**
 	 * @param string $data
+	 * @return Selection
 	 */
-	public function unserialize($data): void
+	public static function fastDeserialize(string $data): Selection
 	{
-		$this->setData(igbinary_unserialize($data));
+		$stream = new BinaryStream($data);
+		/** @var Selection $type */
+		$type = $stream->get($stream->getInt());
+		$selection = new $type($stream->get($stream->getInt()));
+		$selection->parseData($stream);
+		return $selection;
 	}
 }

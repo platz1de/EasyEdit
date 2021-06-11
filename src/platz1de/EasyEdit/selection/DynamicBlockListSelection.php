@@ -9,6 +9,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;
 
@@ -98,24 +99,25 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @return array
+	 * @param BinaryStream $stream
 	 */
-	public function getData(): array
+	public function putData(BinaryStream $stream): void
 	{
-		return array_merge([
-			"x" => $this->point->getX(),
-			"y" => $this->point->getY(),
-			"z" => $this->point->getZ()
-		], parent::getData());
+		parent::putData($stream);
+
+		$stream->putInt($this->point->getX());
+		$stream->putInt($this->point->getY());
+		$stream->putInt($this->point->getZ());
 	}
 
 	/**
-	 * @param array $data
+	 * @param BinaryStream $stream
 	 */
-	public function setData(array $data): void
+	public function parseData(BinaryStream $stream): void
 	{
-		$this->point = new Vector3($data["x"], $data["y"], $data["z"]);
-		parent::setData($data);
+		parent::parseData($stream);
+
+		$this->point = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
 	}
 
 	/**

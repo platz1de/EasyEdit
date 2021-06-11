@@ -115,12 +115,12 @@ abstract class EditTask extends Threaded
 		}
 		$this->chunkData = igbinary_serialize($chunkData);
 		$this->tiles = igbinary_serialize($tiles);
-		$this->selection = igbinary_serialize($selection);
+		$this->selection = $selection->fastSerialize();
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
 		$this->level = $place->getLevelNonNull()->getFolderName();
-		if ($total !== null) {
-			$this->result = igbinary_serialize($total);
+		if ($total instanceof Selection) {
+			$this->total = $total->fastSerialize();
 		}
 		$this->data = igbinary_serialize($data);
 		$this->generatorClass = GeneratorManager::getGenerator($place->getLevelNonNull()->getProvider()->getGenerator());
@@ -145,6 +145,11 @@ abstract class EditTask extends Threaded
 		$place = igbinary_unserialize($this->place);
 		/** @var AdditionalDataManager $data */
 		$data = igbinary_unserialize($this->data);
+		if (isset($this->total)) {
+			TaskCache::init(Selection::fastDeserialize($this->total));
+		} elseif ($data->getDataKeyed("firstPiece")) {
+			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
+		}
 
 		//TODO: Maybe actually only plant full trees or sth?
 		/**
@@ -182,16 +187,6 @@ abstract class EditTask extends Threaded
 		/** @var CompoundTag $tile */
 		foreach (igbinary_unserialize($this->tiles) as $tile) {
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
-		}
-
-		$previous = igbinary_unserialize($this->result ?? null);
-
-		if ($data->getDataKeyed("firstPiece")) {
-			if ($previous instanceof Selection) {
-				TaskCache::init($previous);
-			} else {
-				throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
-			}
 		}
 
 		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->level, $data);

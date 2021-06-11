@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\Selection;
 use pocketmine\level\format\Chunk;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\BinaryStream;
@@ -130,8 +131,7 @@ class EditTaskResult
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
-		//TODO: Add fast serialization to block lists
-		$undo = igbinary_serialize($this->toUndo);
+		$undo = $this->toUndo->fastSerialize();
 		$stream->putInt(strlen($undo));
 		$stream->put($undo);
 
@@ -162,8 +162,8 @@ class EditTaskResult
 			$chunks[] = Chunk::fastDeserialize($stream->get($stream->getInt()));
 		}
 
-		//TODO: Add fast deserialization to block lists
-		$undo = igbinary_unserialize($stream->get($stream->getInt()));
+		/** @var BlockListSelection $undo */
+		$undo = Selection::fastDeserialize($stream->get($stream->getInt()));
 
 		//TODO: Test if this need to be deserialized otherwise
 		$tiles = igbinary_unserialize($stream->get($stream->getInt()));

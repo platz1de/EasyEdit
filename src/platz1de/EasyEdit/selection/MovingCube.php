@@ -7,6 +7,7 @@ use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 
 class MovingCube extends Cube
@@ -123,24 +124,25 @@ class MovingCube extends Cube
 	}
 
 	/**
-	 * @return array
+	 * @param BinaryStream $stream
 	 */
-	public function getData(): array
+	public function putData(BinaryStream $stream): void
 	{
-		return array_merge([
-			"directionX" => $this->direction->getX(),
-			"directionY" => $this->direction->getY(),
-			"directionZ" => $this->direction->getZ()
-		], parent::getData());
+		parent::putData($stream);
+
+		$stream->putInt($this->direction->getX());
+		$stream->putInt($this->direction->getY());
+		$stream->putInt($this->direction->getZ());
 	}
 
 	/**
-	 * @param array $data
+	 * @param BinaryStream $stream
 	 */
-	public function setData(array $data): void
+	public function parseData(BinaryStream $stream): void
 	{
-		$this->direction = new Vector3($data["directionX"], $data["directionY"], $data["directionZ"]);
-		parent::setData($data);
+		parent::parseData($stream);
+
+		$this->direction = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
 	}
 
 	/**

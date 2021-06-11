@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\selection\piece;
 use Closure;
 use platz1de\EasyEdit\selection\Cylinder;
 use pocketmine\math\Vector3;
+use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 
 class CylinderPiece extends Cylinder
@@ -79,27 +80,28 @@ class CylinderPiece extends Cylinder
 	}
 
 	/**
-	 * @return array
+	 * @param BinaryStream $stream
 	 */
-	public function getData(): array
+	public function putData(BinaryStream $stream): void
 	{
-		return array_merge([
-			"miniX" => $this->min->getX(),
-			"miniY" => $this->min->getY(),
-			"miniZ" => $this->min->getZ(),
-			"maxiX" => $this->max->getX(),
-			"maxiY" => $this->max->getY(),
-			"maxiZ" => $this->max->getZ()
-		], parent::getData());
+		parent::putData($stream);
+
+		$stream->putInt($this->min->getX());
+		$stream->putInt($this->min->getY());
+		$stream->putInt($this->min->getZ());
+		$stream->putInt($this->max->getX());
+		$stream->putInt($this->max->getY());
+		$stream->putInt($this->max->getZ());
 	}
 
 	/**
-	 * @param array $data
+	 * @param BinaryStream $stream
 	 */
-	public function setData(array $data): void
+	public function parseData(BinaryStream $stream): void
 	{
-		$this->min = new Vector3($data["miniX"], $data["miniY"], $data["miniZ"]);
-		$this->max = new Vector3($data["maxiX"], $data["maxiY"], $data["maxiZ"]);
-		parent::setData($data);
+		parent::parseData($stream);
+
+		$this->min = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->max = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
 	}
 }

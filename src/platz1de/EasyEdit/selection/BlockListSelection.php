@@ -11,6 +11,7 @@ use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
+use pocketmine\utils\BinaryStream;
 
 abstract class BlockListSelection extends Selection
 {
@@ -100,31 +101,48 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @return array
+	 * @param BinaryStream $stream
 	 */
-	public function getData(): array
+	public function putData(BinaryStream $stream): void
 	{
-		return array_merge([
-			"chunks" => array_map(static function (Chunk $chunk) {
-				return $chunk->fastSerialize();
-			}, $this->getManager()->getChunks()),
-			"tiles" => $this->getTiles()
-		], parent::getData());
+		parent::putData($stream);
+
+		$chunks = new BinaryStream();
+		$count = 0;
+		foreach ($this->manager->getChunks() as $chunk) {
+			$c = $chunk->fastSerialize();
+			$chunks->putInt(strlen($c));
+			$chunks->put($c);
+			$count++;
+		}
+		$stream->putInt($count);
+		$stream->put($chunks->getBuffer());
+
+		//TODO: Test if this need to be serialized otherwise
+		$tiles = igbinary_serialize($this->tiles);
+		$stream->putInt(strlen($tiles));
+		$stream->put($tiles);
 	}
 
 	/**
-	 * @param array $data
+	 * @param BinaryStream $stream
 	 */
-	public function setData(array $data): void
+	public function parseData(BinaryStream $stream): void
 	{
-		$this->manager = new ReferencedChunkManager($data["level"]);
-		foreach ($data["chunks"] as $chunk) {
-			$chunk = Chunk::fastDeserialize($chunk);
+		parent::parseData($stream);
+
+		$this->manager = new ReferencedChunkManager(is_string($this->level) ? $this->level : $this->level->getFolderName());
+
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$chunk = Chunk::fastDeserialize($stream->get($stream->getInt()));
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
+
 		$this->iterator = new SubChunkIteratorManager($this->manager);
-		$this->tiles = $data["tiles"];
-		parent::setData($data);
+
+		//TODO: Test if this need to be deserialized otherwise
+		$this->tiles = igbinary_unserialize($stream->get($stream->getInt()));
 	}
 
 	public function free(): void
