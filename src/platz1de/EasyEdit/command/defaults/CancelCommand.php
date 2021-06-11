@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\Player;
 
@@ -21,7 +22,9 @@ class CancelCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args, array $flags): void
 	{
-		if (WorkerAdapter::cancel()) {
+		if (BenchmarkManager::isRunning()) {
+			Messages::send($player, "benchmark-cancel");
+		} elseif (WorkerAdapter::cancel()) {
 			Messages::send($player, "task-cancelled");
 		} else {
 			Messages::send($player, "no-task");
