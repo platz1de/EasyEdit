@@ -79,6 +79,10 @@ abstract class EditTask extends Threaded
 	 */
 	private $data;
 	/**
+	 * @var string
+	 */
+	private $total;
+	/**
 	 * @var int
 	 */
 	private $seed;
