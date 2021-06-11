@@ -29,17 +29,17 @@ class BenchmarkCommand extends EasyEditCommand
 				return Messages::replace("benchmark-result", [
 					"{task}" => ++$i,
 					"{name}" => $data[0],
-					"{time}" => $data[1],
+					"{time}" => round($data[1], 2),
 					"{blocks}" => $data[2]
 				]);
 			}, $results);
 			Messages::send($player, "benchmark-finished", [
-				"{tps_avg}" => $tpsAvg,
+				"{tps_avg}" => round($tpsAvg, 2),
 				"{tps_min}" => $tpsMin,
-				"{load_avg}" => $loadAvg,
+				"{load_avg}" => round($loadAvg, 2),
 				"{load_max}" => $loadMax,
 				"{tasks}" => $tasks,
-				"{time}" => $time,
+				"{time}" => round($time, 2),
 				"{results}" => implode("\n", $resultMsgs)
 			]);
 		});
