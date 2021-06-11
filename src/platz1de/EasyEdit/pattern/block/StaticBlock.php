@@ -30,4 +30,20 @@ class StaticBlock extends Pattern
 	{
 		return $this->args[0];
 	}
+
+	/**
+	 * @return int
+	 */
+	public function getId(): int
+	{
+		return $this->args[0]->getId();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDamage(): int
+	{
+		return $this->args[0]->getDamage();
+	}
 }

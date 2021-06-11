@@ -25,7 +25,7 @@ class AroundPattern extends Pattern
 			$check = (new Vector3($x, $y, $z))->getSide($i);
 			if ($y >= 0 && $y < Level::Y_MAX) {
 				$iterator->moveTo($check->getX(), $check->getY(), $check->getZ());
-				if (($iterator->currentSubChunk->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($iterator->currentSubChunk->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
+				if (($iterator->currentSubChunk->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->currentSubChunk->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
 					return true;
 				}
 			}
@@ -37,7 +37,7 @@ class AroundPattern extends Pattern
 	public function check(): void
 	{
 		try {
-			$this->args[0] = Pattern::getBlock($this->args[0] ?? "");
+			$this->args[0] = Pattern::getBlockType($this->args[0] ?? "");
 		} catch (ParseError $error) {
 			throw new ParseError("Around needs a block as first Argument, " . ($this->args[0] ?? "") . " given");
 		}

@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\pattern;
 
 use Exception;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\functional\SmoothPattern;
 use platz1de\EasyEdit\pattern\logic\math\DivisiblePattern;
@@ -321,5 +322,18 @@ class Pattern
 		}
 
 		return $block;
+	}
+
+	/**
+	 * @param string $string
+	 * @return StaticBlock
+	 */
+	public static function getBlockType(string $string): StaticBlock
+	{
+		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
+			return new StaticBlock(self::getBlock($string));
+		}
+
+		return new DynamicBlock(self::getBlock($string));
 	}
 }
