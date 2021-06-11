@@ -11,6 +11,7 @@ use platz1de\EasyEdit\command\defaults\CopyCommand;
 use platz1de\EasyEdit\command\defaults\CountCommand;
 use platz1de\EasyEdit\command\defaults\CylinderCommand;
 use platz1de\EasyEdit\command\defaults\ExtendCommand;
+use platz1de\EasyEdit\command\defaults\ExtinguishCommand;
 use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
 use platz1de\EasyEdit\command\defaults\HollowCylinderCommand;
 use platz1de\EasyEdit\command\defaults\HollowSphereCommand;
@@ -84,7 +85,8 @@ class EasyEdit extends PluginBase
 			new CountCommand(),
 			new StatusCommand(),
 			new CancelCommand(),
-			new BenchmarkCommand()
+			new BenchmarkCommand(),
+			new ExtinguishCommand()
 		]);
 	}
 
