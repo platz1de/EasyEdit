@@ -41,24 +41,7 @@ class LoaderManager
 	public static function setChunks(Level $level, array $chunks, array $tiles): void
 	{
 		foreach ($chunks as $chunk) {
-			if ($level->isChunkLoaded($chunk->getX(), $chunk->getZ())) {
-				$old = $level->getChunk($chunk->getX(), $chunk->getZ(), false);
-				if ($old !== null) {
-					foreach ($old->getTiles() as $tile) {
-						$tile->close();
-					}
-					foreach ($old->getEntities() as $entity) {
-						$chunk->addEntity($entity);
-						$old->removeEntity($entity);
-						$entity->chunk = $chunk;
-					}
-				}
-			}
-
-			$chunk->setPopulated();
-			$chunk->setGenerated();
-
-			$level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+			self::injectChunk($level, $chunk);
 		}
 
 		foreach ($tiles as $tile) {
@@ -71,5 +54,52 @@ class LoaderManager
 				$level->unloadChunk($chunk->getX(), $chunk->getZ());
 			}
 		}));
+	}
+
+	/**
+	 * Implementation of Level::setChunk without loading unnecessary Chunks which get overwritten anyways
+	 * @param Level $level
+	 * @param Chunk $chunk
+	 * @see Level::setChunk()
+	 */
+	public static function injectChunk(Level $level, Chunk $chunk): void
+	{
+		$chunkHash = Level::chunkHash($chunk->getX(), $chunk->getZ());
+
+		if ($level->isChunkLoaded($chunk->getX(), $chunk->getZ())) {
+			$old = $level->getChunk($chunk->getX(), $chunk->getZ(), false);
+			if ($old !== null) {
+				foreach ($old->getTiles() as $tile) {
+					$tile->close();
+				}
+				foreach ($old->getEntities() as $entity) {
+					$chunk->addEntity($entity);
+					$old->removeEntity($entity);
+					$entity->chunk = $chunk;
+				}
+			}
+		}
+
+		$chunk->setPopulated();
+		$chunk->setGenerated();
+
+		(function () use ($chunkHash, $chunk) {
+			$this->chunks[$chunkHash] = $chunk;
+
+			unset($this->blockCache[$chunkHash]);
+			unset($this->chunkCache[$chunkHash]);
+			unset($this->changedBlocks[$chunkHash]);
+
+			if (isset($this->chunkSendTasks[$chunkHash])) { //invalidate pending caches
+				$this->chunkSendTasks[$chunkHash]->cancelRun();
+				unset($this->chunkSendTasks[$chunkHash]);
+			}
+
+			foreach ($this->getChunkLoaders($chunk->getX(), $chunk->getZ()) as $loader) {
+				$loader->onChunkChanged($chunk);
+			}
+		})->call($level);
+
+		$chunk->setChanged();
 	}
 }
