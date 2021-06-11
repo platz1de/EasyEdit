@@ -25,7 +25,7 @@ class BenchmarkManager
 	/**
 	 * @var bool
 	 */
-	private static $running;
+	private static $running = false;
 
 	/**
 	 * @param Closure $closure
