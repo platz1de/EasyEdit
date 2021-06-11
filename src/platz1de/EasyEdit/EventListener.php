@@ -39,13 +39,15 @@ class EventListener implements Listener
 			return;
 		}
 
-		$axe = $event->getItem();
-		if ($axe instanceof Axe && $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
-			$event->setCancelled();
-			Cube::selectPos2($event->getPlayer(), $event->getBlock()->asVector3());
-		} elseif ($axe instanceof Shovel && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.brush")) {
-			$event->setCancelled();
-			BrushHandler::handleBrush($axe->getNamedTag(), $event->getPlayer());
+		$item = $event->getItem();
+		if ($item instanceof TieredTool && $item->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative()) {
+			if ($item instanceof Axe && $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK && $event->getPlayer()->hasPermission("easyedit.position")) {
+				$event->setCancelled();
+				Cube::selectPos2($event->getPlayer(), $event->getBlock()->asVector3());
+			} elseif ($item instanceof Shovel && ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK || $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_AIR) && $event->getPlayer()->hasPermission("easyedit.brush")) {
+				$event->setCancelled();
+				BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
+			}
 		}
 	}
 
