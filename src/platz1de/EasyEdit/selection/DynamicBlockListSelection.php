@@ -21,16 +21,21 @@ class DynamicBlockListSelection extends BlockListSelection
 
 	/**
 	 * DynamicBlockListSelection constructor.
-	 * @param string  $player
-	 * @param Vector3 $place
-	 * @param Vector3 $pos1
-	 * @param Vector3 $pos2
-	 * @param bool    $piece
+	 * @param string       $player
+	 * @param Vector3|null $place
+	 * @param Vector3|null $pos1
+	 * @param Vector3|null $pos2
+	 * @param bool         $piece
 	 */
-	public function __construct(string $player, Vector3 $place, Vector3 $pos1, Vector3 $pos2, bool $piece = false)
+	public function __construct(string $player, ?Vector3 $place = null, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		parent::__construct($player, "", new Vector3(), $pos2->subtract($pos1), $piece);
-		$this->point = $place->subtract($pos1);
+		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
+			$pos2 = $pos2->subtract($pos1);
+		}
+		parent::__construct($player, "", new Vector3(), $pos2 ?? null, $piece);
+		if ($pos1 instanceof Vector3 && $place instanceof Vector3) {
+			$this->point = $place->subtract($pos1);
+		}
 	}
 
 	/**
