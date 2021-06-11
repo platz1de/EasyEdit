@@ -42,7 +42,7 @@ class LoaderManager
 	{
 		foreach ($chunks as $chunk) {
 			if ($level->isChunkLoaded($chunk->getX(), $chunk->getZ())) {
-				$old = $level->getChunk($chunk->getX(), $chunk->getZ());
+				$old = $level->getChunk($chunk->getX(), $chunk->getZ(), false);
 				if ($old !== null) {
 					foreach ($old->getTiles() as $tile) {
 						$tile->close();
