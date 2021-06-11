@@ -141,8 +141,7 @@ abstract class EditTask extends Threaded
 		$manager = new ReferencedChunkManager($this->level, $this->seed);
 		$iterator = new SubChunkIteratorManager($manager);
 		$origin = new SubChunkIteratorManager(clone $manager);
-		/** @var Selection $selection */
-		$selection = igbinary_unserialize($this->selection);
+		$selection = Selection::fastDeserialize($this->selection);
 		/** @var Pattern $pattern */
 		$pattern = igbinary_unserialize($this->pattern);
 		/** @var Vector3 $place */
