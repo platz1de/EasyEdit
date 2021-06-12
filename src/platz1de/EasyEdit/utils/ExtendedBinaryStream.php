@@ -43,4 +43,33 @@ class ExtendedBinaryStream extends BinaryStream
 	{
 		return new Vector3($this->getInt(), $this->getInt(), $this->getInt());
 	}
+
+	/**
+	 * @param string[] $array
+	 * @return string
+	 */
+	public static function fastArraySerialize(array $array): string
+	{
+		$stream = new ExtendedBinaryStream();
+		$stream->putInt(count($array));
+		foreach ($array as $str) {
+			$stream->putString($str);
+		}
+		return $stream->getBuffer();
+	}
+
+	/**
+	 * @param string $str
+	 * @return string[] $array
+	 */
+	public static function fastArrayDeserialize(string $str): array
+	{
+		$array = [];
+		$stream = new ExtendedBinaryStream($str);
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$array[] = $stream->getString();
+		}
+		return $array;
+	}
 }

@@ -6,6 +6,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
@@ -117,8 +118,8 @@ abstract class EditTask extends Threaded
 				$tiles[] = $tile;
 			}
 		}
-		$this->chunkData = igbinary_serialize($chunkData);
-		$this->tiles = igbinary_serialize($tiles);
+		$this->chunkData = ExtendedBinaryStream::fastArraySerialize($chunkData);
+		$this->tiles = ExtendedBinaryStream::fastArraySerialize($tiles);
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
@@ -163,7 +164,7 @@ abstract class EditTask extends Threaded
 
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);
-		}, igbinary_unserialize($this->chunkData)) as $chunk) {
+		}, ExtendedBinaryStream::fastArrayDeserialize($this->chunkData)) as $chunk) {
 			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 
 			if (!$chunk->isGenerated()) {
@@ -182,13 +183,13 @@ abstract class EditTask extends Threaded
 
 		foreach (array_map(static function (string $chunk) {
 			return Chunk::fastDeserialize($chunk);
-		}, igbinary_unserialize($this->chunkData)) as $chunk) {
+		}, ExtendedBinaryStream::fastArrayDeserialize($this->chunkData)) as $chunk) {
 			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
 		$tiles = [];
 		/** @var CompoundTag $tile */
-		foreach (igbinary_unserialize($this->tiles) as $tile) {
+		foreach (ExtendedBinaryStream::fastArrayDeserialize($this->tiles) as $tile) {
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
