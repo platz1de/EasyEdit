@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
@@ -49,10 +50,6 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $chunkData;
-	/**
-	 * @var string
-	 */
-	private $tiles;
 
 	/**
 	 * @var string
@@ -107,19 +104,21 @@ abstract class EditTask extends Threaded
 	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, ?Selection $total = null)
 	{
 		$this->id = WorkerAdapter::getId();
-		$chunkData = [];
-		$tiles = [];
+		$chunkData = new ExtendedBinaryStream();
 		foreach ($selection->getNeededChunks($place) as $chunk) {
-			$chunkData[] = $chunk->fastSerialize();
-			foreach ($chunk->getTiles() as $tile) {
-				$tiles[] = $tile->saveNBT();
+			$chunkData->putString($chunk->fastSerialize());
+			/*$tiles = $chunk->getTiles();
+			$chunkData->putInt(count($tiles));
+			foreach ($tiles as $tile) {
+				$chunkData->putString($tile->saveNBT());
 			}
-			foreach (TileUtils::loadFrom($chunk) as $tile) {
-				$tiles[] = $tile;
-			}
+			$NBTtiles = TileUtils::loadFrom($chunk);
+			$chunkData->putInt(count($NBTtiles));
+			foreach ($NBTtiles as $tile) {
+				$chunkData->putString($tile);
+			}*/
 		}
-		$this->chunkData = ExtendedBinaryStream::fastArraySerialize($chunkData);
-		$this->tiles = ExtendedBinaryStream::fastArraySerialize($tiles);
+		$this->chunkData = $chunkData->getBuffer();
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
@@ -162,9 +161,11 @@ abstract class EditTask extends Threaded
 		$generator = new $this->generatorClass(igbinary_unserialize($this->settings));
 		$generator->init($manager, new Random($this->seed));
 
-		foreach (array_map(static function (string $chunk) {
-			return Chunk::fastDeserialize($chunk);
-		}, ExtendedBinaryStream::fastArrayDeserialize($this->chunkData)) as $chunk) {
+		$tiles = [];
+		$chunkData = new ExtendedBinaryStream($this->chunkData);
+		while (!$chunkData->feof()) {
+			$chunk = Chunk::fastDeserialize($chunkData->getString());
+
 			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 
 			if (!$chunk->isGenerated()) {
@@ -179,18 +180,10 @@ abstract class EditTask extends Threaded
 			if ($selection->isChunkOfSelection($chunk->getX(), $chunk->getZ(), $place)) {
 				$chunk->setChanged(); //TODO: add a proper separation of core and data chunks
 			}
-		}
 
-		foreach (array_map(static function (string $chunk) {
-			return Chunk::fastDeserialize($chunk);
-		}, ExtendedBinaryStream::fastArrayDeserialize($this->chunkData)) as $chunk) {
-			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
-		}
+			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), LoaderManager::cloneChunk($chunk));
 
-		$tiles = [];
-		/** @var CompoundTag $tile */
-		foreach (ExtendedBinaryStream::fastArrayDeserialize($this->tiles) as $tile) {
-			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+			//TODO: I broke tiles...
 		}
 
 		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->level, $data);
