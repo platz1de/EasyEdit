@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\utils;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\format\SubChunkInterface;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
@@ -102,5 +103,19 @@ class LoaderManager
 		})->call($level);
 
 		$chunk->setChanged();
+	}
+
+	/**
+	 * @param Chunk $chunk
+	 * @return Chunk
+	 */
+	public static function cloneChunk(Chunk $chunk): Chunk
+	{
+		$new = new Chunk($chunk->getX(), $chunk->getZ(), array_map(static function (SubChunkInterface $subchunk) { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
+		$new->setGenerated($chunk->isGenerated());
+		$new->setPopulated($chunk->isPopulated());
+		$new->setLightPopulated($chunk->isLightPopulated());
+		$new->setChanged(false);
+		return $new;
 	}
 }
