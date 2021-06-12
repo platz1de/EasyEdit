@@ -4,9 +4,9 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\level\format\Chunk;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\utils\BinaryStream;
 
 class EditTaskResult
 {
@@ -115,30 +115,23 @@ class EditTaskResult
 	 */
 	public function fastSerialize(): string
 	{
-		$stream = new BinaryStream();
+		$stream = new ExtendedBinaryStream();
 
-		$stream->putInt(strlen($this->manager->getLevelName()));
-		$stream->put($this->manager->getLevelName());
+		$stream->putString($this->manager->getLevelName());
 
-		$chunks = new BinaryStream();
+		$chunks = new ExtendedBinaryStream();
 		$count = 0;
 		foreach ($this->manager->getChunks() as $chunk) {
-			$c = $chunk->fastSerialize();
-			$chunks->putInt(strlen($c));
-			$chunks->put($c);
+			$chunks->putString($chunk->fastSerialize());
 			$count++;
 		}
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
-		$undo = $this->toUndo->fastSerialize();
-		$stream->putInt(strlen($undo));
-		$stream->put($undo);
+		$stream->putString($this->toUndo->fastSerialize());
 
 		//TODO: Test if this need to be serialized otherwise
-		$tiles = igbinary_serialize($this->tiles);
-		$stream->putInt(strlen($tiles));
-		$stream->put($tiles);
+		$stream->putString(igbinary_serialize($this->tiles));
 
 		$stream->putFloat($this->time);
 		$stream->putLInt($this->changed);
@@ -152,21 +145,21 @@ class EditTaskResult
 	 */
 	public static function fastDeserialize(string $data): EditTaskResult
 	{
-		$stream = new BinaryStream($data);
+		$stream = new ExtendedBinaryStream($data);
 
-		$level = $stream->get($stream->getInt());
+		$level = $stream->getString();
 
 		$chunks = [];
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunks[] = Chunk::fastDeserialize($stream->get($stream->getInt()));
+			$chunks[] = Chunk::fastDeserialize($stream->getString());
 		}
 
 		/** @var BlockListSelection $undo */
-		$undo = Selection::fastDeserialize($stream->get($stream->getInt()));
+		$undo = Selection::fastDeserialize($stream->getString());
 
 		//TODO: Test if this need to be deserialized otherwise
-		$tiles = igbinary_unserialize($stream->get($stream->getInt()));
+		$tiles = igbinary_unserialize($stream->getString());
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();

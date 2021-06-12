@@ -6,6 +6,7 @@ use Exception;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\Level;
@@ -23,7 +24,6 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
-use pocketmine\utils\BinaryStream;
 use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned
@@ -112,25 +112,23 @@ class Cube extends Selection implements Patterned
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function putData(BinaryStream $stream): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 
-		$stream->putInt($this->structure->getX());
-		$stream->putInt($this->structure->getY());
-		$stream->putInt($this->structure->getZ());
+		$stream->putVector($this->structure);
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function parseData(BinaryStream $stream): void
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 
-		$this->structure = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->structure = $stream->getVector();
 	}
 
 	public function close(): void

@@ -4,14 +4,13 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
-use pocketmine\utils\BinaryStream;
 use RuntimeException;
-use Serializable;
 use UnexpectedValueException;
 
 abstract class Selection
@@ -262,36 +261,31 @@ abstract class Selection
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function putData(BinaryStream $stream): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$level = is_string($this->level) ? $this->level : $this->level->getFolderName();
-		$stream->putInt(strlen($level));
-		$stream->put($level);
+		$stream->putString($level);
 
-		$stream->putInt($this->pos1->getX());
-		$stream->putInt($this->pos1->getY());
-		$stream->putInt($this->pos1->getZ());
-		$stream->putInt($this->pos2->getX());
-		$stream->putInt($this->pos2->getY());
-		$stream->putInt($this->pos2->getZ());
+		$stream->putVector($this->pos1);
+		$stream->putVector($this->pos2);
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function parseData(BinaryStream $stream): void
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$level = $stream->get($stream->getInt());
+		$level = $stream->getString();
 		try {
 			$this->level = Server::getInstance()->getLevelByName($level) ?? $level;
 		} catch (RuntimeException $exception) {
 			$this->level = $level;
 		}
 
-		$this->pos1 = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
-		$this->pos2 = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->pos1 = $stream->getVector();
+		$this->pos2 = $stream->getVector();
 	}
 
 	/**
@@ -299,11 +293,9 @@ abstract class Selection
 	 */
 	public function fastSerialize(): string
 	{
-		$stream = new BinaryStream();
-		$stream->putInt(strlen(static::class));
-		$stream->put(static::class);
-		$stream->putInt(strlen($this->player));
-		$stream->put($this->player);
+		$stream = new ExtendedBinaryStream();
+		$stream->putString(static::class);
+		$stream->putString($this->player);
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -314,10 +306,10 @@ abstract class Selection
 	 */
 	public static function fastDeserialize(string $data): Selection
 	{
-		$stream = new BinaryStream($data);
-		/** @var Selection $type */
-		$type = $stream->get($stream->getInt());
-		$selection = new $type($stream->get($stream->getInt()));
+		$stream = new ExtendedBinaryStream($data);
+		$type = $stream->getString();
+		/** @var Selection $selection */
+		$selection = new $type($stream->getString());
 		$selection->parseData($stream);
 		return $selection;
 	}

@@ -3,11 +3,11 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 
 class MovingCube extends Cube
@@ -124,25 +124,23 @@ class MovingCube extends Cube
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function putData(BinaryStream $stream): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 
-		$stream->putInt($this->direction->getX());
-		$stream->putInt($this->direction->getY());
-		$stream->putInt($this->direction->getZ());
+		$stream->putVector($this->direction);
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function parseData(BinaryStream $stream): void
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 
-		$this->direction = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->direction = $stream->getVector();
 	}
 
 	/**

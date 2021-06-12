@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\selection\piece;
 
 use Closure;
 use platz1de\EasyEdit\selection\Cylinder;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
-use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 
 class CylinderPiece extends Cylinder
@@ -80,28 +80,24 @@ class CylinderPiece extends Cylinder
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function putData(BinaryStream $stream): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 
-		$stream->putInt($this->min->getX());
-		$stream->putInt($this->min->getY());
-		$stream->putInt($this->min->getZ());
-		$stream->putInt($this->max->getX());
-		$stream->putInt($this->max->getY());
-		$stream->putInt($this->max->getZ());
+		$stream->putVector($this->min);
+		$stream->putVector($this->max);
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function parseData(BinaryStream $stream): void
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 
-		$this->min = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
-		$this->max = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->min = $stream->getVector();
+		$this->max = $stream->getVector();
 	}
 }

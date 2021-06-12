@@ -5,13 +5,13 @@ namespace platz1de\EasyEdit\selection;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
-use pocketmine\utils\BinaryStream;
 
 abstract class BlockListSelection extends Selection
 {
@@ -101,33 +101,29 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function putData(BinaryStream $stream): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 
-		$chunks = new BinaryStream();
+		$chunks = new ExtendedBinaryStream();
 		$count = 0;
 		foreach ($this->manager->getChunks() as $chunk) {
-			$c = $chunk->fastSerialize();
-			$chunks->putInt(strlen($c));
-			$chunks->put($c);
+			$chunks->putString($chunk->fastSerialize());
 			$count++;
 		}
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
 		//TODO: Test if this need to be serialized otherwise
-		$tiles = igbinary_serialize($this->tiles);
-		$stream->putInt(strlen($tiles));
-		$stream->put($tiles);
+		$stream->putString(igbinary_serialize($this->tiles));
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function parseData(BinaryStream $stream): void
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 
@@ -135,14 +131,14 @@ abstract class BlockListSelection extends Selection
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunk = Chunk::fastDeserialize($stream->get($stream->getInt()));
+			$chunk = Chunk::fastDeserialize($stream->getString());
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
 		$this->iterator = new SubChunkIteratorManager($this->manager);
 
 		//TODO: Test if this need to be deserialized otherwise
-		$this->tiles = igbinary_unserialize($stream->get($stream->getInt()));
+		$this->tiles = igbinary_unserialize($stream->getString());
 	}
 
 	public function free(): void

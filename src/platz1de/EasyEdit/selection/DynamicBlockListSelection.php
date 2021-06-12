@@ -3,13 +3,13 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;
 
@@ -99,25 +99,23 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function putData(BinaryStream $stream): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 
-		$stream->putInt($this->point->getX());
-		$stream->putInt($this->point->getY());
-		$stream->putInt($this->point->getZ());
+		$stream->putVector($this->point);
 	}
 
 	/**
-	 * @param BinaryStream $stream
+	 * @param ExtendedBinaryStream $stream
 	 */
-	public function parseData(BinaryStream $stream): void
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 
-		$this->point = new Vector3($stream->getInt(), $stream->getInt(), $stream->getInt());
+		$this->point = $stream->getVector();
 	}
 
 	/**
