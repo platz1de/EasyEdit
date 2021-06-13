@@ -20,6 +20,7 @@ use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Random;
@@ -50,6 +51,10 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $chunkData;
+	/**
+	 * @var string
+	 */
+	private $tileData;
 
 	/**
 	 * @var string
@@ -105,20 +110,20 @@ abstract class EditTask extends Threaded
 	{
 		$this->id = WorkerAdapter::getId();
 		$chunkData = new ExtendedBinaryStream();
+		$tileData = new LittleEndianNBTStream();
 		foreach ($selection->getNeededChunks($place) as $chunk) {
 			$chunkData->putString($chunk->fastSerialize());
-			/*$tiles = $chunk->getTiles();
-			$chunkData->putInt(count($tiles));
-			foreach ($tiles as $tile) {
-				$chunkData->putString($tile->saveNBT());
+
+			if (LoaderManager::isChunkInit($chunk)) {
+				foreach ($chunk->getTiles() as $tile) {
+					$tileData->writeTag($tile->saveNBT());
+				}
+			} else {
+				$tileData->write(TileUtils::loadFrom($chunk));
 			}
-			$NBTtiles = TileUtils::loadFrom($chunk);
-			$chunkData->putInt(count($NBTtiles));
-			foreach ($NBTtiles as $tile) {
-				$chunkData->putString($tile);
-			}*/
 		}
 		$this->chunkData = $chunkData->getBuffer();
+		$this->tileData = $tileData->buffer;
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
@@ -161,7 +166,6 @@ abstract class EditTask extends Threaded
 		$generator = new $this->generatorClass(igbinary_unserialize($this->settings));
 		$generator->init($manager, new Random($this->seed));
 
-		$tiles = [];
 		$chunkData = new ExtendedBinaryStream($this->chunkData);
 		while (!$chunkData->feof()) {
 			$chunk = Chunk::fastDeserialize($chunkData->getString());
@@ -182,8 +186,15 @@ abstract class EditTask extends Threaded
 			}
 
 			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), LoaderManager::cloneChunk($chunk));
+		}
 
-			//TODO: I broke tiles...
+		$tiles = [];
+		if ($this->tileData !== "") {
+			$tileData = (new LittleEndianNBTStream())->read($this->tileData, true);
+			/** @var CompoundTag $tile */
+			foreach (is_array($tileData) ? $tileData : [$tileData] as $tile) {
+				$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+			}
 		}
 
 		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->level, $data);

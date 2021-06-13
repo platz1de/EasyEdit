@@ -10,6 +10,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
 
@@ -116,8 +117,7 @@ abstract class BlockListSelection extends Selection
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
-		//TODO: Test if this need to be serialized otherwise
-		$stream->putString(igbinary_serialize($this->tiles));
+		$stream->putString((new LittleEndianNBTStream())->write($this->tiles));
 	}
 
 	/**
@@ -137,8 +137,11 @@ abstract class BlockListSelection extends Selection
 
 		$this->iterator = new SubChunkIteratorManager($this->manager);
 
-		//TODO: Test if this need to be deserialized otherwise
-		$this->tiles = igbinary_unserialize($stream->getString());
+		$tileData = $stream->getString();
+		if($tileData !== "") {
+			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
+			$this->tiles = is_array($tiles) ? $tiles : [$tiles];
+		}
 	}
 
 	public function free(): void

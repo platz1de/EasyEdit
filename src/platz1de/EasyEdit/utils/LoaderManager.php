@@ -118,4 +118,15 @@ class LoaderManager
 		$new->setChanged(false);
 		return $new;
 	}
+
+	/**
+	 * @param Chunk $chunk
+	 * @return bool
+	 */
+	public static function isChunkInit(Chunk $chunk): bool
+	{
+		return (function () {
+			return $this->isInit;
+		})->call($chunk);
+	}
 }

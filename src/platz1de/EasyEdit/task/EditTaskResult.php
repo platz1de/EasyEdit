@@ -6,6 +6,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\level\format\Chunk;
+use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 
 class EditTaskResult
@@ -130,8 +131,7 @@ class EditTaskResult
 
 		$stream->putString($this->toUndo->fastSerialize());
 
-		//TODO: Test if this need to be serialized otherwise
-		$stream->putString(igbinary_serialize($this->tiles));
+		$stream->putString((new LittleEndianNBTStream())->write($this->tiles));
 
 		$stream->putFloat($this->time);
 		$stream->putLInt($this->changed);
@@ -158,13 +158,17 @@ class EditTaskResult
 		/** @var BlockListSelection $undo */
 		$undo = Selection::fastDeserialize($stream->getString());
 
-		//TODO: Test if this need to be deserialized otherwise
-		$tiles = igbinary_unserialize($stream->getString());
+		$tileData = $stream->getString();
+		if($tileData !== "") {
+			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
+		}else{
+			$tiles = [];
+		}
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();
 
-		$result = new EditTaskResult($level, $undo, $tiles, $time, $changed);
+		$result = new EditTaskResult($level, $undo, is_array($tiles) ? $tiles : [$tiles], $time, $changed);
 		foreach ($chunks as $chunk) {
 			$result->addChunk($chunk);
 		}
