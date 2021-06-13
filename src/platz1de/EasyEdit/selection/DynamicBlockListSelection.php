@@ -128,6 +128,7 @@ class DynamicBlockListSelection extends BlockListSelection
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
+		//TODO: split tiles
 		$pieces = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
@@ -138,6 +139,7 @@ class DynamicBlockListSelection extends BlockListSelection
 						if ($chunk !== null) {
 							$chunk->setX($chunkX);
 							$chunk->setZ($chunkZ);
+							$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ);
 						}
 					}
 				}

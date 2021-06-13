@@ -18,6 +18,7 @@ class StaticBlockListSelection extends BlockListSelection
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
+		//TODO: split tiles
 		$level = $this->getLevel();
 		if ($level instanceof Level) {
 			$level = $level->getFolderName();
@@ -29,6 +30,7 @@ class StaticBlockListSelection extends BlockListSelection
 				for ($chunkX = 0; $chunkX < 3; $chunkX++) {
 					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
 						$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ));
+						$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ);
 					}
 				}
 				$pieces[] = $piece;
