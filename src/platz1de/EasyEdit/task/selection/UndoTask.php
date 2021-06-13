@@ -13,6 +13,7 @@ use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -76,7 +77,9 @@ class UndoTask extends EditTask
 			}
 		});
 
-		foreach ($selection->getTiles() as $tile) {
+		/** @var StaticBlockListSelection $total */
+		$total = TaskCache::getFullSelection();
+		foreach ($total->getTiles() as $tile) {
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 	}
