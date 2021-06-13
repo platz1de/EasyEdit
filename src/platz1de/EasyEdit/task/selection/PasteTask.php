@@ -12,6 +12,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
@@ -76,9 +77,10 @@ class PasteTask extends EditTask
 			}
 		});
 
-		foreach ($selection->getTiles() as $tile) {
-			$compoundTag = TileUtils::offsetCompound($tile, $place);
-			$tiles[Level::blockHash($compoundTag->getInt(Tile::TAG_X), $compoundTag->getInt(Tile::TAG_Y), $compoundTag->getInt(Tile::TAG_Z))] = $compoundTag;
+		/** @var DynamicBlockListSelection $total */
+		$total = TaskCache::getFullSelection();
+		foreach ($total->getTiles() as $tile) {
+			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = TileUtils::offsetCompound($tile, $place);
 		}
 	}
 
