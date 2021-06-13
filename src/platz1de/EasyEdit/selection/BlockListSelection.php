@@ -139,6 +139,7 @@ abstract class BlockListSelection extends Selection
 
 		$tileData = $stream->getString();
 		if($tileData !== "") {
+			/** @var CompoundTag[]|CompoundTag $tiles */
 			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
 			$this->tiles = is_array($tiles) ? $tiles : [$tiles];
 		}
