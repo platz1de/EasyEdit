@@ -84,6 +84,7 @@ class LoaderManager
 
 		$chunk->setPopulated();
 		$chunk->setGenerated();
+		$chunk->initChunk($level);
 
 		(function () use ($chunkHash, $chunk) {
 			$this->chunks[$chunkHash] = $chunk;
