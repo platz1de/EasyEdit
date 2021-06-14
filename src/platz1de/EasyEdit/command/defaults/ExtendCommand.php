@@ -43,18 +43,22 @@ class ExtendCommand extends EasyEditCommand
 		if ($count === "vert" || $count === "vertical") {
 			$pos1 = new Vector3($pos1->getX(), 0, $pos1->getZ());
 			$pos2 = new Vector3($pos2->getX(), Level::Y_MASK, $pos2->getZ());
-		} elseif ($player->getPitch() >= 45) {
-			$pos1 = $pos1->getSide(Vector3::SIDE_DOWN, (int) $count);
-		} elseif ($player->getPitch() <= -45) {
-			$pos2 = $pos2->getSide(Vector3::SIDE_UP, (int) $count);
-		} elseif ($player->getYaw() >= 315 || $player->getYaw() < 45) {
-			$pos2 = $pos2->getSide(Vector3::SIDE_SOUTH, (int) $count);
-		} elseif ($player->getYaw() >= 45 && $player->getYaw() < 135) {
-			$pos1 = $pos1->getSide(Vector3::SIDE_WEST, (int) $count);
-		} elseif ($player->getYaw() >= 135 && $player->getYaw() < 225) {
-			$pos1 = $pos1->getSide(Vector3::SIDE_NORTH, (int) $count);
 		} else {
-			$pos2 = $pos2->getSide(Vector3::SIDE_EAST, (int) $count);
+			$yaw = $player->getYaw();
+			$pitch = $player->getPitch();
+			if ($pitch >= 45) {
+				$pos1 = $pos1->getSide(Vector3::SIDE_DOWN, (int) $count);
+			} elseif ($pitch <= -45) {
+				$pos2 = $pos2->getSide(Vector3::SIDE_UP, (int) $count);
+			} elseif ($yaw >= 315 || $yaw < 45) {
+				$pos2 = $pos2->getSide(Vector3::SIDE_SOUTH, (int) $count);
+			} elseif ($yaw >= 45 && $yaw < 135) {
+				$pos1 = $pos1->getSide(Vector3::SIDE_WEST, (int) $count);
+			} elseif ($yaw >= 135 && $yaw < 225) {
+				$pos1 = $pos1->getSide(Vector3::SIDE_NORTH, (int) $count);
+			} else {
+				$pos2 = $pos2->getSide(Vector3::SIDE_EAST, (int) $count);
+			}
 		}
 
 		$selection->setPos1($pos1);
