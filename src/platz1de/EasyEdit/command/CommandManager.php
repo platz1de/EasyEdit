@@ -38,20 +38,7 @@ class CommandManager
 	 */
 	public static function processCommand(EasyEditCommand $command, array $args, Player $player): void
 	{
-		$realArgs = [];
-		$flags = [];
-		$flag = null;
-		foreach ($args as $arg) {
-			if ($flag !== null) {
-				$flags[$flag] = $arg;
-				$flag = null;
-			} elseif (strpos($arg, "-") === 0 && !is_numeric(substr($arg, 1))) {
-				$flag = substr($arg, 1);
-			} else {
-				$realArgs[] = $arg;
-			}
-		}
-
-		$command->process($player, $realArgs, $flags);
+		//TODO: Flags?
+		$command->process($player, $args);
 	}
 }

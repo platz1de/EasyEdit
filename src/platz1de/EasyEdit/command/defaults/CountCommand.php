@@ -21,9 +21,8 @@ class CountCommand extends EasyEditCommand
 	/**
 	 * @param Player $player
 	 * @param array  $args
-	 * @param array  $flags
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		if (isset($args[0])) {
 			$selection = new Sphere($player->getName(), $player->getLevelNonNull()->getFolderName(), $player->asVector3()->floor(), (int) $args[0]);

@@ -18,9 +18,8 @@ class BenchmarkCommand extends EasyEditCommand
 	/**
 	 * @param Player $player
 	 * @param array  $args
-	 * @param array  $flags
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		if (BenchmarkManager::isRunning()) {
 			Messages::send($player, "benchmark-running");

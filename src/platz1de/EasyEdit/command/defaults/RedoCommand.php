@@ -17,9 +17,8 @@ class RedoCommand extends EasyEditCommand
 	/**
 	 * @param Player $player
 	 * @param array  $args
-	 * @param array  $flags
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		if (!HistoryManager::canRedo($player->getName())) {
 			Messages::send($player, "no-future");

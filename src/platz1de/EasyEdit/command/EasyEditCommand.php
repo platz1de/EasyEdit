@@ -35,7 +35,7 @@ abstract class EasyEditCommand extends Command implements PluginIdentifiableComm
 		CommandManager::processCommand($this, $args, $sender);
 	}
 
-	abstract public function process(Player $player, array $args, array $flags);
+	abstract public function process(Player $player, array $args);
 
 	/**
 	 * @return EasyEdit
