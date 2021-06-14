@@ -164,11 +164,13 @@ class EditTaskResult
 		} else {
 			$tiles = [];
 		}
+		/** @var CompoundTag[] $tiles */
+		$tiles = is_array($tiles) ? $tiles : [$tiles];
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();
 
-		$result = new EditTaskResult($level, $undo, is_array($tiles) ? $tiles : [$tiles], $time, $changed);
+		$result = new EditTaskResult($level, $undo, $tiles, $time, $changed);
 		foreach ($chunks as $chunk) {
 			$result->addChunk($chunk);
 		}

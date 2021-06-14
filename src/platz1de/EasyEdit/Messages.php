@@ -20,7 +20,7 @@ class Messages
 	/**
 	 * @param string|string[]|Player|Player[] $players
 	 * @param string                          $id
-	 * @param string|string[]                 $replace
+	 * @param string|array                    $replace
 	 * @param bool                            $isId
 	 * @param bool                            $usePrefix
 	 */
@@ -38,9 +38,9 @@ class Messages
 	}
 
 	/**
-	 * @param string          $id
-	 * @param string|string[] $replace
-	 * @param bool            $isId
+	 * @param string       $id
+	 * @param string|array $replace
+	 * @param bool         $isId
 	 * @return string
 	 */
 	public static function replace(string $id, $replace = [], bool $isId = true): string
