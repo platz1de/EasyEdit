@@ -159,9 +159,9 @@ class EditTaskResult
 		$undo = Selection::fastDeserialize($stream->getString());
 
 		$tileData = $stream->getString();
-		if($tileData !== "") {
+		if ($tileData !== "") {
 			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
-		}else{
+		} else {
 			$tiles = [];
 		}
 

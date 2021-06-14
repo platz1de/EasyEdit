@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\brush;
 
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\functional\SmoothPattern;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
