@@ -41,4 +41,12 @@ class CommandManager
 		//TODO: Flags?
 		$command->process($player, $args);
 	}
+
+	/**
+	 * @return array
+	 */
+	public static function getCommands(): array
+	{
+		return self::$commands;
+	}
 }
