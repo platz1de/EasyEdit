@@ -17,6 +17,7 @@ use pocketmine\block\BlockFactory;
 use pocketmine\level\Position;
 use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\CompoundTag;
 
 class CountTask extends EditTask
 {
@@ -41,7 +42,7 @@ class CountTask extends EditTask
 
 	/**
 	 * @param SubChunkIteratorManager $iterator
-	 * @param array                   $tiles
+	 * @param CompoundTag[]           $tiles
 	 * @param Selection               $selection
 	 * @param Pattern                 $pattern
 	 * @param Vector3                 $place
