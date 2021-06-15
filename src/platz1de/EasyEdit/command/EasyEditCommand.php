@@ -23,7 +23,7 @@ abstract class EasyEditCommand extends Command implements PluginIdentifiableComm
 	/**
 	 * @param CommandSender $sender
 	 * @param string        $commandLabel
-	 * @param array         $args
+	 * @param string[]      $args
 	 * @return void
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args): void
@@ -35,7 +35,11 @@ abstract class EasyEditCommand extends Command implements PluginIdentifiableComm
 		CommandManager::processCommand($this, $args, $sender);
 	}
 
-	abstract public function process(Player $player, array $args);
+	/**
+	 * @param Player   $player
+	 * @param string[] $args
+	 */
+	abstract public function process(Player $player, array $args): void;
 
 	/**
 	 * @return EasyEdit

@@ -20,8 +20,8 @@ class ExtendCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
+	 * @param Player   $player
+	 * @param string[] $args
 	 */
 	public function process(Player $player, array $args): void
 	{

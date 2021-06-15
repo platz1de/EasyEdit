@@ -33,7 +33,7 @@ class CommandManager
 
 	/**
 	 * @param EasyEditCommand $command
-	 * @param array           $args
+	 * @param string[]        $args
 	 * @param Player          $player
 	 */
 	public static function processCommand(EasyEditCommand $command, array $args, Player $player): void
