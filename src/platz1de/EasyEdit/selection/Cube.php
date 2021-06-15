@@ -143,7 +143,7 @@ class Cube extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return Cube[]
 	 */
 	public function split(): array
 	{

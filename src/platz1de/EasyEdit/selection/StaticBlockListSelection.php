@@ -10,7 +10,7 @@ class StaticBlockListSelection extends BlockListSelection
 {
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return StaticBlockListSelection[]
 	 */
 	public function split(): array
 	{

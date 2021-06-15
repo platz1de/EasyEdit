@@ -69,7 +69,7 @@ class HollowSphere extends Sphere
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return HollowSpherePiece[]
 	 */
 	public function split(): array
 	{

@@ -117,7 +117,7 @@ class Cylinder extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return CylinderPiece[]
 	 */
 	public function split(): array
 	{

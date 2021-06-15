@@ -98,7 +98,7 @@ class Sphere extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return SpherePiece[]
 	 */
 	public function split(): array
 	{

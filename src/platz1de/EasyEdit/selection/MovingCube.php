@@ -144,7 +144,7 @@ class MovingCube extends Cube
 	}
 
 	/**
-	 * @return array
+	 * @return Selection[]
 	 */
 	public function split(): array
 	{

@@ -120,7 +120,7 @@ class DynamicBlockListSelection extends BlockListSelection
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return DynamicBlockListSelection[]
 	 */
 	public function split(): array
 	{

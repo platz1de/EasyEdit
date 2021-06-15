@@ -72,7 +72,7 @@ class HollowCylinder extends Cylinder
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @return HollowCylinderPiece[]
 	 */
 	public function split(): array
 	{
