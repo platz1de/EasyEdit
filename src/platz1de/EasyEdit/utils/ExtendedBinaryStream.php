@@ -2,9 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use Generator;
 use pocketmine\math\Vector3;
-use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
 
 class ExtendedBinaryStream extends BinaryStream

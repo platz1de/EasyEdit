@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use BadMethodCallException;
 use platz1de\EasyEdit\selection\Selection;
 
 class TaskCache
