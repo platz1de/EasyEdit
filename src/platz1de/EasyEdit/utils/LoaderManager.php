@@ -89,9 +89,7 @@ class LoaderManager
 		(function () use ($chunkHash, $chunk) {
 			$this->chunks[$chunkHash] = $chunk;
 
-			unset($this->blockCache[$chunkHash]);
-			unset($this->chunkCache[$chunkHash]);
-			unset($this->changedBlocks[$chunkHash]);
+			unset($this->blockCache[$chunkHash], $this->chunkCache[$chunkHash], $this->changedBlocks[$chunkHash]);
 
 			if (isset($this->chunkSendTasks[$chunkHash])) { //invalidate pending caches
 				$this->chunkSendTasks[$chunkHash]->cancelRun();
