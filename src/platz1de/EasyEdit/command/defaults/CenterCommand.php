@@ -45,11 +45,12 @@ class CenterCommand extends EasyEditCommand
 		$xPos = ($selection->getPos1()->getX() + $selection->getPos2()->getX()) / 2;
 		$yPos = ($selection->getPos1()->getY() + $selection->getPos2()->getY()) / 2;
 		$zPos = ($selection->getPos1()->getZ() + $selection->getPos2()->getZ()) / 2;
+		$level = $selection->getLevel();
 
 		for ($x = floor($xPos); $x <= ceil($xPos); $x++) {
 			for ($y = floor($yPos); $y <= ceil($yPos); $y++) {
 				for ($z = floor($zPos); $z <= ceil($zPos); $z++) {
-					$selection->getLevel()->setBlock(new Vector3($x, $y, $z), $block, true, false);
+					$level->setBlock(new Vector3($x, $y, $z), $block, true, false);
 				}
 			}
 		}

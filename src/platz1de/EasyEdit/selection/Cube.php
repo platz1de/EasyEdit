@@ -67,7 +67,7 @@ class Cube extends Selection implements Patterned
 			if (!$this->piece && ($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
-				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
+				$this->getLevel()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getLevel()))]);
 				$nbt = new CompoundTag("", [
 					new StringTag(Tile::TAG_ID, "StructureBlock"),
 					new IntTag(Tile::TAG_X, $this->structure->getFloorX()),
@@ -136,8 +136,8 @@ class Cube extends Selection implements Patterned
 		if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
 			//this happens when whole Chunks get sent
-			$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
-			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure->floor())]);
+			$this->getLevel()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getLevel()))]);
+			$this->getLevel()->sendBlocks([$player], [$this->getLevel()->getBlock($this->structure->floor())]);
 		}
 	}
 
@@ -151,14 +151,10 @@ class Cube extends Selection implements Patterned
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		$level = $this->getLevel();
-		if ($level instanceof Level) {
-			$level = $level->getFolderName();
-		}
 		$pieces = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
-				$pieces[] = new Cube($this->getPlayer(), $level, new Vector3(max($x << 4, $this->pos1->getX()), $this->pos1->getY(), max($z << 4, $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())), true);
+				$pieces[] = new Cube($this->getPlayer(), $this->getLevelName(), new Vector3(max($x << 4, $this->pos1->getX()), $this->pos1->getY(), max($z << 4, $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())), true);
 			}
 		}
 		return $pieces;

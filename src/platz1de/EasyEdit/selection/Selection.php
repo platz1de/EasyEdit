@@ -5,20 +5,16 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\ReferencedLevelHolder;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
-use RuntimeException;
 use UnexpectedValueException;
 
 abstract class Selection
 {
-	/**
-	 * @var Level|string
-	 */
-	protected $level;
+	use ReferencedLevelHolder;
 
 	/**
 	 * @var Vector3
@@ -57,14 +53,7 @@ abstract class Selection
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		try {
-			$this->level = Server::getInstance()->getLevelByName($level);
-			if ($this->level === null) {
-				$this->level = $level;
-			}
-		} catch (RuntimeException $exception) {
-			$this->level = $level;
-		}
+		$this->level = $level;
 
 		if ($pos1 !== null) {
 			$this->pos1 = clone($this->selected1 = $pos1);
@@ -186,14 +175,6 @@ abstract class Selection
 	}
 
 	/**
-	 * @return Level|string
-	 */
-	public function getLevel()
-	{
-		return $this->level;
-	}
-
-	/**
 	 * @return Vector3
 	 */
 	public function getPos1(): Vector3
@@ -265,8 +246,7 @@ abstract class Selection
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$level = is_string($this->level) ? $this->level : $this->level->getFolderName();
-		$stream->putString($level);
+		$stream->putString($this->level);
 
 		$stream->putVector($this->pos1);
 		$stream->putVector($this->pos2);
@@ -277,12 +257,7 @@ abstract class Selection
 	 */
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$level = $stream->getString();
-		try {
-			$this->level = Server::getInstance()->getLevelByName($level) ?? $level;
-		} catch (RuntimeException $exception) {
-			$this->level = $level;
-		}
+		$this->level = $stream->getString();
 
 		$this->pos1 = $stream->getVector();
 		$this->pos2 = $stream->getVector();

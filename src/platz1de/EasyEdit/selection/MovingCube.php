@@ -56,16 +56,17 @@ class MovingCube extends Cube
 	 */
 	public function getNeededChunks(Position $place): array
 	{
+		$level = $this->getLevel();
 		$chunks = [];
 		//TODO: Remove duplicates
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		for ($x = ($this->pos1->getX() + $this->direction->getX()) >> 4; $x <= ($this->pos2->getX() + $this->direction->getX()) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() + $this->direction->getZ()) >> 4; $z <= ($this->pos2->getZ() + $this->direction->getZ()) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		return $chunks;

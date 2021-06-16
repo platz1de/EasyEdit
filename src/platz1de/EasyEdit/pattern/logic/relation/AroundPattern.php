@@ -23,9 +23,12 @@ class AroundPattern extends Pattern
 	{
 		for ($i = 0; $i <= 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);
-			if ($y >= 0 && $y < Level::Y_MAX) {
-				$iterator->moveTo($check->getX(), $check->getY(), $check->getZ());
-				if (($iterator->currentSubChunk->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->currentSubChunk->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
+			$checkX = (int) $check->getX();
+			$checkY = (int) $check->getY();
+			$checkZ = (int) $check->getZ();
+			if ($checkY >= 0 && $checkY < Level::Y_MAX) {
+				$iterator->moveTo($checkX, $checkY, $checkZ);
+				if (($iterator->currentSubChunk->getBlockId($checkX & 0x0f, $checkY & 0x0f, $checkZ & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->currentSubChunk->getBlockData($checkX & 0x0f, $checkY & 0x0f, $checkZ & 0x0f) === $this->args[0]->getDamage())) {
 					return true;
 				}
 			}

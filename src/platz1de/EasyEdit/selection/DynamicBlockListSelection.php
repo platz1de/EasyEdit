@@ -47,11 +47,12 @@ class DynamicBlockListSelection extends BlockListSelection
 	{
 		$start = $this->getCubicStart()->add($place)->subtract($this->getPoint());
 		$end = $this->getCubicEnd()->add($place)->subtract($this->getPoint());
+		$level = $this->getLevel();
 
 		$chunks = [];
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		return $chunks;

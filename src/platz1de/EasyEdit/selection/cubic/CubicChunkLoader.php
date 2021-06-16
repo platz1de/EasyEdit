@@ -19,6 +19,7 @@ trait CubicChunkLoader
 		$chunks = [];
 		$start = $this->getCubicStart();
 		$end = $this->getCubicEnd();
+		$level = $this->getLevel();
 
 		//Children sometimes implement this Interface but don't use Patterns at all
 		//TODO: Fix weird class structure
@@ -29,7 +30,7 @@ trait CubicChunkLoader
 
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		return $chunks;
