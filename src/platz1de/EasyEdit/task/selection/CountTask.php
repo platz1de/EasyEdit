@@ -89,7 +89,7 @@ class CountTask extends EditTask
 	 */
 	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => $time, "{changed}" => $changed]);
+		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => $changed]);
 		$msg = "";
 		foreach ($data->getDataKeyed("blocks") as $block => $count) {
 			$msg .= BlockFactory::get($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";

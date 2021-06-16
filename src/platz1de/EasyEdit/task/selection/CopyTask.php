@@ -94,6 +94,6 @@ class CopyTask extends EditTask
 	 */
 	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-copied", ["{time}" => $time, "{changed}" => $changed]);
+		Messages::send($selection->getPlayer(), "blocks-copied", ["{time}" => (string) $time, "{changed}" => $changed]);
 	}
 }

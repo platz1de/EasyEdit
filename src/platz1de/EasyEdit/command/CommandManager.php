@@ -8,7 +8,7 @@ use pocketmine\Server;
 class CommandManager
 {
 	/**
-	 * @var array
+	 * @var EasyEditCommand[]
 	 */
 	private static $commands = [];
 
@@ -43,7 +43,7 @@ class CommandManager
 	}
 
 	/**
-	 * @return array
+	 * @return EasyEditCommand[]
 	 */
 	public static function getCommands(): array
 	{

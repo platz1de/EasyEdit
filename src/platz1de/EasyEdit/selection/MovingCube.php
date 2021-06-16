@@ -6,6 +6,7 @@ use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
@@ -51,7 +52,7 @@ class MovingCube extends Cube
 
 	/**
 	 * @param Position $place
-	 * @return array
+	 * @return Chunk[]
 	 */
 	public function getNeededChunks(Position $place): array
 	{

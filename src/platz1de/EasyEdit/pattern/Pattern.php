@@ -33,10 +33,15 @@ class Pattern
 	 */
 	protected $pieces;
 	/**
-	 * @var array
+	 * @var array<int, mixed>
 	 */
 	protected $args;
 
+	/**
+	 * Pattern constructor.
+	 * @param Pattern[]         $pieces
+	 * @param array<int, mixed> $args
+	 */
 	public function __construct(array $pieces, array $args)
 	{
 		$this->pieces = $pieces;

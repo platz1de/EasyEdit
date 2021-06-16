@@ -8,13 +8,13 @@ use UnexpectedValueException;
 class AdditionalDataManager
 {
 	/**
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	private $data;
 
 	/**
 	 * AdditionalDataManager constructor.
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 */
 	public function __construct(array $data = [])
 	{

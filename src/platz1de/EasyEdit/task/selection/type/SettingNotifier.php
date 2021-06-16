@@ -16,6 +16,6 @@ trait SettingNotifier
 	 */
 	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-set", ["{time}" => $time, "{changed}" => $changed]);
+		Messages::send($selection->getPlayer(), "blocks-set", ["{time}" => (string) $time, "{changed}" => $changed]);
 	}
 }
