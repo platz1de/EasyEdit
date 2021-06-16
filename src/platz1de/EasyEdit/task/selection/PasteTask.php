@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\selection;
 
 use Closure;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -11,6 +10,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\selection\type\PastingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -23,6 +23,8 @@ use pocketmine\tile\Tile;
 
 class PasteTask extends EditTask
 {
+	use PastingNotifier;
+
 	/**
 	 * @param BlockListSelection $selection
 	 * @param Position           $place
@@ -94,16 +96,5 @@ class PasteTask extends EditTask
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
 		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->subtract($selection->getPoint()), $place->subtract($selection->getPoint())->add($selection->getRealSize()));
-	}
-
-	/**
-	 * @param Selection             $selection
-	 * @param float                 $time
-	 * @param string                $changed
-	 * @param AdditionalDataManager $data
-	 */
-	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
-	{
-		Messages::send($selection->getPlayer(), "blocks-pasted", ["{time}" => $time, "{changed}" => $changed]);
 	}
 }

@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\selection;
 
 use platz1de\EasyEdit\history\HistoryManager;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -12,6 +11,7 @@ use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\selection\type\PastingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -25,6 +25,7 @@ use pocketmine\tile\Tile;
 class UndoTask extends EditTask
 {
 	use CubicStaticUndo;
+	use PastingNotifier;
 
 	/**
 	 * @param BlockListSelection $selection
@@ -83,16 +84,5 @@ class UndoTask extends EditTask
 		foreach ($total->getTiles() as $tile) {
 			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
-	}
-
-	/**
-	 * @param Selection             $selection
-	 * @param float                 $time
-	 * @param string                $changed
-	 * @param AdditionalDataManager $data
-	 */
-	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
-	{
-		Messages::send($selection->getPlayer(), "blocks-pasted", ["{time}" => $time, "{changed}" => $changed]);
 	}
 }

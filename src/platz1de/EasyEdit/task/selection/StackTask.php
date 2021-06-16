@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -10,6 +9,7 @@ use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\selection\type\SettingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -22,6 +22,7 @@ use pocketmine\nbt\tag\CompoundTag;
 class StackTask extends EditTask
 {
 	use CubicStaticUndo;
+	use SettingNotifier;
 
 	/**
 	 * @param StackedCube $selection
@@ -78,16 +79,5 @@ class StackTask extends EditTask
 				$tiles[Level::blockHash($x, $y, $z)] = TileUtils::offsetCompound($tiles[Level::blockHash($originalX, $originalY, $originalZ)], new Vector3($x - $originalX, $y - $originalY, $z - $originalZ));
 			}
 		});
-	}
-
-	/**
-	 * @param Selection             $selection
-	 * @param float                 $time
-	 * @param string                $changed
-	 * @param AdditionalDataManager $data
-	 */
-	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
-	{
-		Messages::send($selection->getPlayer(), "blocks-set", ["{time}" => $time, "{changed}" => $changed]);
 	}
 }
