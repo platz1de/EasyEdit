@@ -95,7 +95,7 @@ class Pattern
 	/**
 	 * @param string $pattern
 	 * @param int    $start
-	 * @return array
+	 * @return array<string, array>
 	 * @throws ParseError
 	 */
 	public static function parsePiece(string $pattern, int $start = 1): array
@@ -143,7 +143,7 @@ class Pattern
 							throw new ParseError("Unknown Pattern " . $current, $i + $start);
 						}
 					} elseif (self::isBlock($current)) {
-						$pieces[] = self::getBlock($current);
+						$pieces["staticBlockInternal;" . $current] = [];
 						$current = "";
 					} else {
 						throw new ParseError("Invalid Block " . $current);
@@ -181,7 +181,7 @@ class Pattern
 					throw new ParseError("Unknown Pattern " . $current);
 				}
 			} elseif (self::isBlock($current)) {
-				$pieces[] = self::getBlock($current);
+				$pieces["staticBlockInternal;" . $current] = [];
 			} else {
 				throw new ParseError("Invalid Block " . $current);
 			}
@@ -193,20 +193,16 @@ class Pattern
 	}
 
 	/**
-	 * @param array $pattern
+	 * @param array<string, array> $pattern
 	 * @return Pattern[]
 	 */
 	public static function processPattern(array $pattern): array
 	{
 		$pieces = [];
 		foreach ($pattern as $name => $p) {
-			if ($p instanceof Block) {
-				$pieces[] = new StaticBlock($p);
-			} else {
-				$pa = self::getPattern($name, self::processPattern($p));
-				$pa->check();
-				$pieces[] = $pa;
-			}
+			$pa = self::getPattern($name, self::processPattern($p));
+			$pa->check();
+			$pieces[] = $pa;
 		}
 		return $pieces;
 	}
@@ -228,8 +224,8 @@ class Pattern
 	}
 
 	/**
-	 * @param string $pattern
-	 * @param array  $children
+	 * @param string    $pattern
+	 * @param Pattern[] $children
 	 * @return Pattern
 	 */
 	private static function getPattern(string $pattern, array $children = []): Pattern
@@ -242,6 +238,8 @@ class Pattern
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
+			case "staticBlockInternal":
+				return new StaticBlock(self::getBlock($args[0]));
 			case "not":
 				return new NotPattern($children[0] ?? null);
 			case "even":
