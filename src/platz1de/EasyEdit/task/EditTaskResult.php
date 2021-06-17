@@ -131,7 +131,7 @@ class EditTaskResult
 
 		$stream->putString($this->toUndo->fastSerialize());
 
-		$stream->putString((new LittleEndianNBTStream())->write($this->tiles));
+		$stream->putString((string) (new LittleEndianNBTStream())->write($this->tiles));
 
 		$stream->putFloat($this->time);
 		$stream->putLInt($this->changed);

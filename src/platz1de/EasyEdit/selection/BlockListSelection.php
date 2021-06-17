@@ -117,7 +117,7 @@ abstract class BlockListSelection extends Selection
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
-		$stream->putString((new LittleEndianNBTStream())->write($this->tiles));
+		$stream->putString((string) (new LittleEndianNBTStream())->write($this->tiles));
 	}
 
 	/**

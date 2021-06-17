@@ -28,8 +28,11 @@ class MixedUtils
 			return;
 		}
 
-		$files = array_diff(scandir($dir), ['.', '..']);
-		foreach ($files as $file) {
+		$files = scandir($dir);
+		if ($files === false) {
+			return;
+		}
+		foreach (array_diff($files, ['.', '..']) as $file) {
 			is_dir($dir . DIRECTORY_SEPARATOR . $file) ? self::deleteDir($dir . DIRECTORY_SEPARATOR . $file) : unlink($dir . DIRECTORY_SEPARATOR . $file);
 		}
 		rmdir($dir);
