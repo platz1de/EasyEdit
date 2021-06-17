@@ -138,7 +138,7 @@ abstract class BlockListSelection extends Selection
 		$this->iterator = new SubChunkIteratorManager($this->manager);
 
 		$tileData = $stream->getString();
-		if($tileData !== "") {
+		if ($tileData !== "") {
 			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
 			/** @var CompoundTag[] $tiles */
 			$tiles = is_array($tiles) ? $tiles : [$tiles];
