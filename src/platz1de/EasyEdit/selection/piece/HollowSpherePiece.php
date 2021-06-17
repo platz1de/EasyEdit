@@ -62,7 +62,7 @@ class HollowSpherePiece extends SpherePiece
 	 */
 	public function getThickness(): int
 	{
-		return $this->pos2->getY();
+		return $this->pos2->getFloorY();
 	}
 
 	/**

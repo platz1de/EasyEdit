@@ -63,7 +63,7 @@ class HollowCylinderPiece extends CylinderPiece
 	 */
 	public function getThickness(): int
 	{
-		return $this->pos2->getZ();
+		return $this->pos2->getFloorZ();
 	}
 
 	/**

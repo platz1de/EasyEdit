@@ -66,19 +66,22 @@ class MoveTask extends EditTask
 			$toUndo->addBlock($x, $y, $z, $id, $data);
 			$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0, 0);
 
-			$my = min(Level::Y_MASK, max(0, $y + $direction->getY()));
-			$iterator->moveTo($x + $direction->getX(), $my, $z + $direction->getZ());
-			$toUndo->addBlock($x + $direction->getX(), $my, $z + $direction->getZ(), $iterator->currentSubChunk->getBlockId($x + $direction->getX() & 0x0f, $my & 0x0f, $z + $direction->getZ() & 0x0f), $iterator->currentSubChunk->getBlockData($x + $direction->getX() & 0x0f, $my & 0x0f, $z + $direction->getZ() & 0x0f), false);
-			$iterator->currentSubChunk->setBlock(($x + $direction->getX()) & 0x0f, $my & 0x0f, ($z + $direction->getZ()) & 0x0f, $id, $data);
+			$newX = $x + $direction->getFloorX();
+			$newY = (int) min(Level::Y_MASK, max(0, $y + $direction->getY()));
+			$newZ = $z + $direction->getFloorZ();
+
+			$iterator->moveTo($newX, $newY, $newZ);
+			$toUndo->addBlock($newX, $newY, $newZ, $iterator->currentSubChunk->getBlockId($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), $iterator->currentSubChunk->getBlockData($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), false);
+			$iterator->currentSubChunk->setBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id, $data);
 			$changed++;
 
-			if (isset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())])) {
-				$toUndo->addTile($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())]);
-				unset($tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())]);
+			if (isset($tiles[Level::blockHash($newX, $newY, $newZ)])) {
+				$toUndo->addTile($tiles[Level::blockHash($newX, $newY, $newZ)]);
+				unset($tiles[Level::blockHash($newX, $newY, $newZ)]);
 			}
 			if (isset($tiles[Level::blockHash($x, $y, $z)])) {
 				$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
-				$tiles[Level::blockHash($x + $direction->getX(), $my, $z + $direction->getZ())] = TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $direction);
+				$tiles[Level::blockHash($newX, $newY, $newZ)] = TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $direction);
 				unset($tiles[Level::blockHash($x, $y, $z)]);
 			}
 		});

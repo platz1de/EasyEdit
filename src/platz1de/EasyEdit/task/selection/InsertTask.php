@@ -60,9 +60,9 @@ class InsertTask extends EditTask
 		Selection::validate($selection, DynamicBlockListSelection::class);
 		$place = $place->subtract($selection->getPoint());
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $place, $toUndo, &$changed): void {
-			$ox = $x - $place->getX();
-			$oy = $y - $place->getY();
-			$oz = $z - $place->getZ();
+			$ox = $x - $place->getFloorX();
+			$oy = $y - $place->getFloorY();
+			$oz = $z - $place->getFloorZ();
 			$selection->getIterator()->moveTo($ox, $oy, $oz);
 			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
 			if (Selection::processBlock($blockId)) {

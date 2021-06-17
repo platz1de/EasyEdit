@@ -41,11 +41,11 @@ class HeightMapCache
 		if (!self::$loaded) {
 			$min = $selection->getCubicStart()->subtract(1, 1, 1);
 			$max = $selection->getCubicEnd()->add(1, 1, 1);
-			for ($x = $min->getX(); $x <= $max->getX(); $x++) {
-				for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
+			for ($x = $min->getFloorX(); $x <= $max->getX(); $x++) {
+				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
 					$iterator->moveTo($x, 0, $z);
-					$y = $min->getY();
-					while ($y <= $max->getY() && in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
+					$y = $min->getFloorY();
+					while ($y <= $max->getFloorY() && in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
@@ -54,7 +54,7 @@ class HeightMapCache
 						self::$lowest[$x][$z] = null;
 					}
 
-					while ($y <= $max->getY() && !in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && !in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {

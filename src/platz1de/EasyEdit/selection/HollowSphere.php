@@ -56,7 +56,7 @@ class HollowSphere extends Sphere
 	 */
 	public function getThickness(): int
 	{
-		return $this->pos2->getY();
+		return $this->pos2->getFloorY();
 	}
 
 	/**
@@ -81,7 +81,7 @@ class HollowSphere extends Sphere
 		if ($level instanceof Level) {
 			$level = $level->getFolderName();
 		}
-		$radius = $this->pos2->getX();
+		$radius = $this->pos2->getFloorX();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius) >> 4; $x <= ($this->pos1->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius) >> 4; $z <= ($this->pos1->getZ() + $radius) >> 4; $z += 3) {

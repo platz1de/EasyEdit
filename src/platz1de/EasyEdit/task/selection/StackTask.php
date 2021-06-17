@@ -57,9 +57,9 @@ class StackTask extends EditTask
 		$originalSize = $selection->getPos2()->subtract($selection->getPos1())->add(1, 1, 1);
 		$start = $selection->getPos1();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $originalSize, $start): void {
-			$originalX = $start->getX() + abs(($x - $start->getX()) % $originalSize->getX());
-			$originalY = $start->getY() + abs(($y - $start->getY()) % $originalSize->getY());
-			$originalZ = $start->getZ() + abs(($z - $start->getZ()) % $originalSize->getZ());
+			$originalX = (int) $start->getX() + abs(($x - $start->getX()) % $originalSize->getX());
+			$originalY = (int) $start->getY() + abs(($y - $start->getY()) % $originalSize->getY());
+			$originalZ = (int) $start->getZ() + abs(($z - $start->getZ()) % $originalSize->getZ());
 
 			$iterator->moveTo($originalX, $originalY, $originalZ);
 

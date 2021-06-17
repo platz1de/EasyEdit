@@ -29,9 +29,9 @@ class ExtendedBinaryStream extends BinaryStream
 	 */
 	public function putVector(Vector3 $vector): void
 	{
-		$this->putInt($vector->getX());
-		$this->putInt($vector->getY());
-		$this->putInt($vector->getZ());
+		$this->putInt($vector->getFloorX());
+		$this->putInt($vector->getFloorY());
+		$this->putInt($vector->getFloorZ());
 	}
 
 	/**

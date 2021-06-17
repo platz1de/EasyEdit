@@ -65,7 +65,7 @@ class CopyTask extends EditTask
 		$full = TaskCache::getFullSelection();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $full): void {
 			$iterator->moveTo($x, $y, $z);
-			$toUndo->addBlock($x - $full->getPos1()->getX(), $y - $full->getPos1()->getY(), $z - $full->getPos1()->getZ(), $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+			$toUndo->addBlock($x - $full->getPos1()->getFloorX(), $y - $full->getPos1()->getFloorY(), $z - $full->getPos1()->getFloorZ(), $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 			$changed++;
 
 			if (isset($tiles[Level::blockHash($x, $y, $z)])) {

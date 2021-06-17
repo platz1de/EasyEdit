@@ -17,9 +17,9 @@ class TileUtils
 	public static function offsetCompound(CompoundTag $compoundTag, Vector3 $offset): CompoundTag
 	{
 		$compoundTag = clone $compoundTag;
-		$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X) + $offset->getX());
-		$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $offset->getY());
-		$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $offset->getZ());
+		$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X) + $offset->getFloorX());
+		$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $offset->getFloorY());
+		$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $offset->getFloorZ());
 		return $compoundTag;
 	}
 

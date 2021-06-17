@@ -93,7 +93,7 @@ class Sphere extends Selection implements Patterned
 	 */
 	public function getRadius(): int
 	{
-		return $this->pos2->getX();
+		return $this->pos2->getFloorX();
 	}
 
 	/**
@@ -110,11 +110,11 @@ class Sphere extends Selection implements Patterned
 		if ($level instanceof Level) {
 			$level = $level->getFolderName();
 		}
-		$radius = $this->pos2->getX();
+		$radius = $this->pos2->getFloorX();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius) >> 4; $x <= ($this->pos1->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius) >> 4; $z <= ($this->pos1->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = new SpherePiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getX() - $radius), max($this->pos1->getY() - $radius, 0), max($z << 4, $this->pos1->getZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getX() + $radius), min($this->pos1->getY() + $radius, Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getZ() + $radius)), $radius);
+				$pieces[] = new SpherePiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY() - $radius, 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $radius, Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), $radius);
 			}
 		}
 		return $pieces;
