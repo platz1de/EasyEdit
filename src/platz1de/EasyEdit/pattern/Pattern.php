@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\pattern;
 
 use Exception;
-use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
+use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\functional\SmoothPattern;
 use platz1de\EasyEdit\pattern\logic\math\DivisiblePattern;
