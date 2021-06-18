@@ -80,15 +80,11 @@ class HollowCylinder extends Cylinder
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		$level = $this->getLevel();
-		if ($level instanceof Level) {
-			$level = $level->getFolderName();
-		}
 		$radius = $this->pos2->getFloorX();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z += 3) {
-				$pieces[] = new HollowCylinderPiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $this->pos2->getFloorY(), Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), $radius, $this->pos2->getFloorY(), $this->pos2->getFloorZ());
+				$pieces[] = new HollowCylinderPiece($this->getPlayer(), $this->getLevelName(), $this->pos1, new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $this->pos2->getFloorY(), Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), $radius, $this->pos2->getFloorY(), $this->pos2->getFloorZ());
 			}
 		}
 		return $pieces;
