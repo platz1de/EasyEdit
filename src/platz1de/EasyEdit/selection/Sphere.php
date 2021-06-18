@@ -24,8 +24,8 @@ class Sphere extends Selection implements Patterned
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, bool $piece = false)
 	{
-		$pos2 = new Vector3($radius); //This is not optimal, but currently needed...
-		parent::__construct($player, $level, $pos1, $pos2, $piece);
+		parent::__construct($player, $level, $pos1, null, $piece);
+		$this->setRadius($radius);
 	}
 
 	/**

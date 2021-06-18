@@ -11,7 +11,7 @@ use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 
-class MovingCube extends Cube
+class MovingCube extends Selection
 {
 	/**
 	 * @var Vector3
@@ -30,16 +30,6 @@ class MovingCube extends Cube
 	{
 		parent::__construct($player, $level, $pos1, $pos2);
 		$this->direction = $direction ?? new Vector3(0, 0, 0);
-	}
-
-	public function update(): void
-	{
-		Selection::update();
-	}
-
-	public function close(): void
-	{
-		Selection::close();
 	}
 
 	/**
@@ -151,6 +141,6 @@ class MovingCube extends Cube
 	public function split(): array
 	{
 		//TODO
-		return Selection::split();
+		return parent::split();
 	}
 }

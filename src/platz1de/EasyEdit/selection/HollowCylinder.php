@@ -21,12 +21,11 @@ class HollowCylinder extends Cylinder
 	 * @param int          $height
 	 * @param int          $thickness
 	 * @param bool         $piece
-	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, int $height = 0, int $thickness = 1, bool $piece = false)
 	{
-		$pos2 = new Vector3($radius, $height, $thickness); //This is not optimal, but currently needed...
-		Selection::__construct($player, $level, $pos1, $pos2, $piece);
+		parent::__construct($player, $level, $pos1, $radius, $height, $piece);
+		$this->setThickness($thickness);
 	}
 
 	/**
