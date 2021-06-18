@@ -29,7 +29,7 @@ class TileUtils
 	 */
 	public static function loadFrom(Chunk $chunk): array
 	{
-		return (function () {
+		return (function (): array {
 			return $this->NBTtiles;
 		})->call($chunk);
 	}

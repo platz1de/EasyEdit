@@ -33,7 +33,7 @@ class UndoTask extends EditTask
 	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getLevel()), self::class, new AdditionalDataManager(["edit" => true]), static function (EditTaskResult $result) {
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getLevel()), self::class, new AdditionalDataManager(["edit" => true]), static function (EditTaskResult $result): void {
 			/** @var StaticBlockListSelection $redo */
 			$redo = $result->getUndo();
 			HistoryManager::addToFuture($redo->getPlayer(), $redo);

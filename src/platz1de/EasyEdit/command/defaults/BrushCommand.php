@@ -73,7 +73,7 @@ class BrushCommand extends EasyEditCommand
 				$item->setNamedTagEntry(new ShortTag("brushHeight", (int) ($args[2] ?? 2)));
 				$item->setNamedTagEntry(new StringTag("brushPattern", $args[3] ?? "stone"));
 		}
-		$item->setLore(array_map(static function (NamedTag $tag) {
+		$item->setLore(array_map(static function (NamedTag $tag): string {
 			return $tag->getName() . ": " . $tag->getValue();
 		}, $item->getNamedTag()->getValue()));
 		$item->setCustomName(TextFormat::GOLD . "Brush");

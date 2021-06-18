@@ -27,7 +27,7 @@ class CountTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), static function (EditTaskResult $result) {
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), static function (EditTaskResult $result): void {
 			//Nothing is edited
 		}));
 	}

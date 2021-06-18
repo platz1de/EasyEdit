@@ -86,7 +86,7 @@ class LoaderManager
 		$chunk->setGenerated();
 		$chunk->initChunk($level);
 
-		(function () use ($chunkHash, $chunk) {
+		(function () use ($chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
 
 			unset($this->blockCache[$chunkHash], $this->chunkCache[$chunkHash], $this->changedBlocks[$chunkHash]);
@@ -110,7 +110,7 @@ class LoaderManager
 	 */
 	public static function cloneChunk(Chunk $chunk): Chunk
 	{
-		$new = new Chunk($chunk->getX(), $chunk->getZ(), array_map(static function (SubChunkInterface $subchunk) { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
+		$new = new Chunk($chunk->getX(), $chunk->getZ(), array_map(static function (SubChunkInterface $subchunk): SubChunkInterface { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
 		$new->setGenerated($chunk->isGenerated());
 		$new->setPopulated($chunk->isPopulated());
 		$new->setLightPopulated($chunk->isLightPopulated());
@@ -124,7 +124,7 @@ class LoaderManager
 	 */
 	public static function isChunkInit(Chunk $chunk): bool
 	{
-		return (function () {
+		return (function (): bool {
 			return $this->isInit;
 		})->call($chunk);
 	}

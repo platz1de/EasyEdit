@@ -44,7 +44,7 @@ class MixedUtils
 	 */
 	public static function setAutoSave(int $cooldown): int
 	{
-		return (function () use ($cooldown) {
+		return (function () use ($cooldown): int {
 			$previous = $this->autoSaveTicks;
 			$this->autoSaveTicks = $cooldown;
 			return $previous;

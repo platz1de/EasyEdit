@@ -28,9 +28,9 @@ class BenchmarkCommand extends EasyEditCommand
 
 		Messages::send($player, "benchmark-start");
 
-		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($player) {
+		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($player): void {
 			$i = 0;
-			$resultMsgs = array_map(static function (array $data) use (&$i) {
+			$resultMsgs = array_map(static function (array $data) use (&$i): string {
 				return Messages::replace("benchmark-result", [
 					"{task}" => (string) ++$i,
 					"{name}" => (string) $data[0],

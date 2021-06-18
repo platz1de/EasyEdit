@@ -32,7 +32,7 @@ class CopyTask extends EditTask
 	public static function queue(Selection $selection, Position $place, ?Closure $finish = null): void
 	{
 		if ($finish === null) {
-			$finish = static function (EditTaskResult $result) {
+			$finish = static function (EditTaskResult $result): void {
 				/** @var DynamicBlockListSelection $copied */
 				$copied = $result->getUndo();
 				ClipBoardManager::setForPlayer($copied->getPlayer(), $copied);

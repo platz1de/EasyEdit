@@ -62,14 +62,14 @@ class QueuedEditTask implements QueuedTask
 		$this->data = $data;
 
 		if ($finish === null) {
-			$finish = static function (EditTaskResult $result) {
+			$finish = static function (EditTaskResult $result): void {
 				/** @var StaticBlockListSelection $undo */
 				$undo = $result->getUndo();
 				HistoryManager::addToHistory($undo->getPlayer(), $undo);
 			};
 		}
 
-		Utils::validateCallableSignature(static function (EditTaskResult $result) { }, $finish);
+		Utils::validateCallableSignature(static function (EditTaskResult $result): void { }, $finish);
 
 		$this->finish = $finish;
 	}
