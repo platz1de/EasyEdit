@@ -320,10 +320,6 @@ class Pattern
 			throw new ParseError("Unknown Block " . $string);
 		}
 
-		if (!$block instanceof Block) {
-			throw new ParseError("Unknown Block " . $string);
-		}
-
 		return $block;
 	}
 
