@@ -4,20 +4,20 @@ namespace platz1de\EasyEdit\pattern\logic\selection;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TaskCache;
-use pocketmine\level\utils\SubChunkIteratorManager;
 
 class WallPattern extends Pattern
 {
 	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param int                         $x
+	 * @param int                         $y
+	 * @param int                         $z
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		$min = TaskCache::getFullSelection()->getCubicStart();
 		$max = TaskCache::getFullSelection()->getCubicEnd();

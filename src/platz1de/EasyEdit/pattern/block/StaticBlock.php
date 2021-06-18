@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\pattern\block;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\Block;
-use pocketmine\level\utils\SubChunkIteratorManager;
 
 class StaticBlock extends Pattern
 {
@@ -19,14 +19,14 @@ class StaticBlock extends Pattern
 	}
 
 	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param int                         $x
+	 * @param int                         $y
+	 * @param int                         $z
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
 		return $this->args[0];
 	}

@@ -11,11 +11,11 @@ use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\selection\type\SettingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -42,17 +42,17 @@ class MoveTask extends EditTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager $iterator
-	 * @param CompoundTag[]           $tiles
-	 * @param Selection               $selection
-	 * @param Pattern                 $pattern
-	 * @param Vector3                 $place
-	 * @param BlockListSelection      $toUndo
-	 * @param SubChunkIteratorManager $origin
-	 * @param int                     $changed
-	 * @param AdditionalDataManager   $data
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param CompoundTag[]               $tiles
+	 * @param Selection                   $selection
+	 * @param Pattern                     $pattern
+	 * @param Vector3                     $place
+	 * @param BlockListSelection          $toUndo
+	 * @param SafeSubChunkIteratorManager $origin
+	 * @param int                         $changed
+	 * @param AdditionalDataManager       $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		/** @var MovingCube $s */
 		$s = $selection;
@@ -60,19 +60,19 @@ class MoveTask extends EditTask
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $direction): void {
 			$iterator->moveTo($x, $y, $z);
 
-			$id = $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
-			$data = $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$id = $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$data = $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f);
 
 			$toUndo->addBlock($x, $y, $z, $id, $data);
-			$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0, 0);
+			$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0, 0);
 
 			$newX = $x + $direction->getFloorX();
 			$newY = (int) min(Level::Y_MASK, max(0, $y + $direction->getY()));
 			$newZ = $z + $direction->getFloorZ();
 
 			$iterator->moveTo($newX, $newY, $newZ);
-			$toUndo->addBlock($newX, $newY, $newZ, $iterator->currentSubChunk->getBlockId($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), $iterator->currentSubChunk->getBlockData($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), false);
-			$iterator->currentSubChunk->setBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id, $data);
+			$toUndo->addBlock($newX, $newY, $newZ, $iterator->getCurrent()->getBlockId($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), $iterator->getCurrent()->getBlockData($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), false);
+			$iterator->getCurrent()->setBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id, $data);
 			$changed++;
 
 			if (isset($tiles[Level::blockHash($newX, $newY, $newZ)])) {

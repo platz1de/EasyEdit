@@ -9,6 +9,7 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
@@ -18,7 +19,6 @@ use pocketmine\level\generator\Generator;
 use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
@@ -144,8 +144,8 @@ abstract class EditTask extends Threaded
 		$thread = Thread::getCurrentThread();
 		$thread->setRunning();
 		$manager = new ReferencedChunkManager($this->level, $this->seed);
-		$iterator = new SubChunkIteratorManager($manager);
-		$origin = new SubChunkIteratorManager(clone $manager);
+		$iterator = new SafeSubChunkIteratorManager($manager);
+		$origin = new SafeSubChunkIteratorManager(clone $manager);
 		$selection = Selection::fastDeserialize($this->selection);
 		/** @var Pattern $pattern */
 		$pattern = igbinary_unserialize($this->pattern);
@@ -249,17 +249,17 @@ abstract class EditTask extends Threaded
 	abstract public function getTaskName(): string;
 
 	/**
-	 * @param SubChunkIteratorManager $iterator
-	 * @param CompoundTag[]           $tiles
-	 * @param Selection               $selection
-	 * @param Pattern                 $pattern
-	 * @param Vector3                 $place
-	 * @param BlockListSelection      $toUndo also used as return value of Task for things like copy
-	 * @param SubChunkIteratorManager $origin original World, used for patterns
-	 * @param int                     $changed
-	 * @param AdditionalDataManager   $data
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param CompoundTag[]               $tiles
+	 * @param Selection                   $selection
+	 * @param Pattern                     $pattern
+	 * @param Vector3                     $place
+	 * @param BlockListSelection          $toUndo also used as return value of Task for things like copy
+	 * @param SafeSubChunkIteratorManager $origin original World, used for patterns
+	 * @param int                         $changed
+	 * @param AdditionalDataManager       $data
 	 */
-	abstract public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void;
+	abstract public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void;
 
 	/**
 	 * @return int

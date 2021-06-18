@@ -11,11 +11,11 @@ use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\selection\type\SettingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -42,17 +42,17 @@ class StackTask extends EditTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager $iterator
-	 * @param CompoundTag[]           $tiles
-	 * @param Selection               $selection
-	 * @param Pattern                 $pattern
-	 * @param Vector3                 $place
-	 * @param BlockListSelection      $toUndo
-	 * @param SubChunkIteratorManager $origin
-	 * @param int                     $changed
-	 * @param AdditionalDataManager   $data
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param CompoundTag[]               $tiles
+	 * @param Selection                   $selection
+	 * @param Pattern                     $pattern
+	 * @param Vector3                     $place
+	 * @param BlockListSelection          $toUndo
+	 * @param SafeSubChunkIteratorManager $origin
+	 * @param int                         $changed
+	 * @param AdditionalDataManager       $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		$originalSize = $selection->getPos2()->subtract($selection->getPos1())->add(1, 1, 1);
 		$start = $selection->getPos1();
@@ -63,12 +63,12 @@ class StackTask extends EditTask
 
 			$iterator->moveTo($originalX, $originalY, $originalZ);
 
-			$id = $iterator->currentSubChunk->getBlockId($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
-			$data = $iterator->currentSubChunk->getBlockData($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
+			$id = $iterator->getCurrent()->getBlockId($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
+			$data = $iterator->getCurrent()->getBlockData($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
 
 			$iterator->moveTo($x, $y, $z);
-			$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f), false);
-			$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $data);
+			$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f), false);
+			$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $data);
 			$changed++;
 
 			if (isset($tiles[Level::blockHash($x, $y, $z)])) {

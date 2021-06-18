@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\BlockIds;
-use pocketmine\level\utils\SubChunkIteratorManager;
 
 class HeightMapCache
 {
@@ -33,10 +32,10 @@ class HeightMapCache
 	private static $lowest = [];
 
 	/**
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 */
-	public static function load(SubChunkIteratorManager $iterator, Selection $selection): void
+	public static function load(SafeSubChunkIteratorManager $iterator, Selection $selection): void
 	{
 		if (!self::$loaded) {
 			$min = $selection->getCubicStart()->subtract(1, 1, 1);
@@ -45,7 +44,7 @@ class HeightMapCache
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
 					$iterator->moveTo($x, 0, $z);
 					$y = $min->getFloorY();
-					while ($y <= $max->getFloorY() && in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && in_array($iterator->getChunk()->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
@@ -54,7 +53,7 @@ class HeightMapCache
 						self::$lowest[$x][$z] = null;
 					}
 
-					while ($y <= $max->getFloorY() && !in_array($iterator->currentChunk->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && !in_array($iterator->getChunk()->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {

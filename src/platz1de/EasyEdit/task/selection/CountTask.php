@@ -12,10 +12,10 @@ use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\BlockFactory;
 use pocketmine\level\Position;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -41,22 +41,22 @@ class CountTask extends EditTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager $iterator
-	 * @param CompoundTag[]           $tiles
-	 * @param Selection               $selection
-	 * @param Pattern                 $pattern
-	 * @param Vector3                 $place
-	 * @param BlockListSelection      $toUndo
-	 * @param SubChunkIteratorManager $origin
-	 * @param int                     $changed
-	 * @param AdditionalDataManager   $data
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param CompoundTag[]               $tiles
+	 * @param Selection                   $selection
+	 * @param Pattern                     $pattern
+	 * @param Vector3                     $place
+	 * @param BlockListSelection          $toUndo
+	 * @param SafeSubChunkIteratorManager $origin
+	 * @param int                         $changed
+	 * @param AdditionalDataManager       $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		$blocks = $data->getDataKeyed("blocks", []);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$blocks, &$changed): void {
 			$iterator->moveTo($x, $y, $z);
-			$id = $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$id = $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
 			if (isset($blocks[$id])) {
 				$blocks[$id]++;
 			} else {

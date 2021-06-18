@@ -12,11 +12,11 @@ use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\type\PastingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
@@ -44,17 +44,17 @@ class PasteTask extends EditTask
 	}
 
 	/**
-	 * @param SubChunkIteratorManager $iterator
-	 * @param CompoundTag[]           $tiles
-	 * @param Selection               $selection
-	 * @param Pattern                 $pattern
-	 * @param Vector3                 $place
-	 * @param BlockListSelection      $toUndo
-	 * @param SubChunkIteratorManager $origin
-	 * @param int                     $changed
-	 * @param AdditionalDataManager   $data
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param CompoundTag[]               $tiles
+	 * @param Selection                   $selection
+	 * @param Pattern                     $pattern
+	 * @param Vector3                     $place
+	 * @param BlockListSelection          $toUndo
+	 * @param SafeSubChunkIteratorManager $origin
+	 * @param int                         $changed
+	 * @param AdditionalDataManager       $data
 	 */
-	public function execute(SubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
@@ -64,11 +64,11 @@ class PasteTask extends EditTask
 			$oy = $y - $place->getFloorY();
 			$oz = $z - $place->getFloorZ();
 			$selection->getIterator()->moveTo($ox, $oy, $oz);
-			$blockId = $selection->getIterator()->currentSubChunk->getBlockId($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
+			$blockId = $selection->getIterator()->getCurrent()->getBlockId($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
 			if (Selection::processBlock($blockId)) {
 				$iterator->moveTo($x, $y, $z);
-				$toUndo->addBlock($x, $y, $z, $iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-				$iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->currentSubChunk->getBlockData($ox & 0x0f, $oy & 0x0f, $oz & 0x0f));
+				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->getCurrent()->getBlockData($ox & 0x0f, $oy & 0x0f, $oz & 0x0f));
 				$changed++;
 
 				if (isset($tiles[Level::blockHash($x, $y, $z)])) {
