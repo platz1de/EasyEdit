@@ -22,8 +22,12 @@ class HollowSpherePiece extends SpherePiece
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $min = null, ?Vector3 $max = null, int $radius = 0, int $thickness = 1)
 	{
-		$this->min = $min;
-		$this->max = $max;
+		if ($min !== null) {
+			$this->min = $min;
+		}
+		if ($max !== null) {
+			$this->max = $max;
+		}
 		$pos2 = new Vector3($radius, $thickness); //This is not optimal, but currently needed...
 		Selection::__construct($player, $level, $pos1, $pos2, true);
 	}

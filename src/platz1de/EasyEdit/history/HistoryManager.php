@@ -70,6 +70,7 @@ class HistoryManager
 	public static function undoStep(string $player): void
 	{
 		if (self::canUndo($player)) {
+			/** @var StaticBlockListSelection $undo */
 			$undo = array_pop(self::$past[$player]);
 
 			UndoTask::queue($undo);
@@ -82,6 +83,7 @@ class HistoryManager
 	public static function redoStep(string $player): void
 	{
 		if (self::canRedo($player)) {
+			/** @var StaticBlockListSelection $redo */
 			$redo = array_pop(self::$future[$player]);
 
 			RedoTask::queue($redo);
