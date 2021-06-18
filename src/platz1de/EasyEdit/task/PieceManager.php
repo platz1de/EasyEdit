@@ -55,7 +55,7 @@ class PieceManager
 			$data = $this->currentPiece->getAdditionalData();
 
 			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
-				if ($data->getDataKeyed("edit", false)) {
+				if ($data->getBoolKeyed("edit")) {
 					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 

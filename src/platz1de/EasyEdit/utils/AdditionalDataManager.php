@@ -39,6 +39,16 @@ class AdditionalDataManager
 	}
 
 	/**
+	 * @param string $key
+	 * @param bool   $default
+	 * @return bool
+	 */
+	public function getBoolKeyed(string $key, bool $default = false): bool
+	{
+		return (bool) $this->getDataKeyed($key, $default);
+	}
+
+	/**
 	 * @param string     $key
 	 * @param mixed|null $data
 	 */
