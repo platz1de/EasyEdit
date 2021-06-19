@@ -26,7 +26,7 @@ class Cylinder extends Selection implements Patterned
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, int $height = 0, bool $piece = false)
 	{
-		parent::__construct($player, $level, $pos1, null, $piece);
+		parent::__construct($player, $level, $pos1, new Vector3(), $piece);
 		$this->setRadius($radius);
 		$this->setHeight($height);
 	}
