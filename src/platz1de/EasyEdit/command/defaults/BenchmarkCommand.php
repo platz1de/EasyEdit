@@ -30,7 +30,7 @@ class BenchmarkCommand extends EasyEditCommand
 
 		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($player): void {
 			$i = 0;
-			$resultMsgs = array_map(static function (array $data) use (&$i): string {
+			$resultMsg = array_map(static function (array $data) use (&$i): string {
 				return Messages::replace("benchmark-result", [
 					"{task}" => (string) ++$i,
 					"{name}" => (string) $data[0],
@@ -45,7 +45,7 @@ class BenchmarkCommand extends EasyEditCommand
 				"{load_max}" => (string) $loadMax,
 				"{tasks}" => (string) $tasks,
 				"{time}" => (string) round($time, 2),
-				"{results}" => implode("\n", $resultMsgs)
+				"{results}" => implode("\n", $resultMsg)
 			]);
 		});
 	}
