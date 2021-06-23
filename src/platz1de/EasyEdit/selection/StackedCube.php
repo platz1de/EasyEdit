@@ -6,6 +6,7 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 
 class StackedCube extends Selection
@@ -77,11 +78,12 @@ class StackedCube extends Selection
 	}
 
 	/**
+	 * @param Position $place
 	 * @return Selection[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		//TODO
-		return parent::split();
+		return parent::split($place);
 	}
 }

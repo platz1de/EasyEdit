@@ -136,11 +136,12 @@ class MovingCube extends Selection
 	}
 
 	/**
+	 * @param Position $place
 	 * @return Selection[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		//TODO
-		return parent::split();
+		return parent::split($place);
 	}
 }

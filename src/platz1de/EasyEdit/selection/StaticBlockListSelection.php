@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
 
@@ -10,9 +11,10 @@ class StaticBlockListSelection extends BlockListSelection
 {
 	/**
 	 * splits into 3x3 Chunk pieces
+	 * @param Position $place
 	 * @return StaticBlockListSelection[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");

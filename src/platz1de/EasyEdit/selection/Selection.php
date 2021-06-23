@@ -234,9 +234,10 @@ abstract class Selection
 	/**
 	 * Splits the selection into smaller parts
 	 * lower the impact of Chunk loading
+	 * @param Position $place
 	 * @return Selection[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		return [$this];
 	}

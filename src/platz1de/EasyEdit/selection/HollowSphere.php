@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\selection\piece\HollowSpherePiece;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;
@@ -68,9 +69,10 @@ class HollowSphere extends Sphere
 
 	/**
 	 * splits into 3x3 Chunk pieces
+	 * @param Position $place
 	 * @return HollowSpherePiece[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");

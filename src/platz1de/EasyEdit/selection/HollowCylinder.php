@@ -6,6 +6,7 @@ use Closure;
 use platz1de\EasyEdit\selection\piece\HollowCylinderPiece;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;
@@ -71,9 +72,10 @@ class HollowCylinder extends Cylinder
 
 	/**
 	 * splits into 3x3 Chunk pieces
+	 * @param Position $place
 	 * @return HollowCylinderPiece[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");

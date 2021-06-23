@@ -6,6 +6,7 @@ use Closure;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\piece\SpherePiece;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;
@@ -98,9 +99,10 @@ class Sphere extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
+	 * @param Position $place
 	 * @return SpherePiece[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");

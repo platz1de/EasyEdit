@@ -143,9 +143,10 @@ class Cube extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
+	 * @param Position $place
 	 * @return Cube[]
 	 */
-	public function split(): array
+	public function split(Position $place): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");
