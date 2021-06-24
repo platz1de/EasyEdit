@@ -99,6 +99,14 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
+	 * @param Vector3 $point
+	 */
+	public function setPoint(Vector3 $point): void
+	{
+		$this->point = $point;
+	}
+
+	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
