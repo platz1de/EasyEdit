@@ -7,6 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\Level;
@@ -152,10 +153,13 @@ class Cube extends Selection implements Patterned
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
+		$min = VectorUtils::enforceHeight($this->pos1->add($offset));
+		$max = VectorUtils::enforceHeight($this->pos2->add($offset));
+
 		$pieces = [];
-		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
-			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
-				$pieces[] = new Cube($this->getPlayer(), $this->getLevelName(), new Vector3(max($x << 4, $this->pos1->getX()), $this->pos1->getY(), max($z << 4, $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())), true);
+		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 3) {
+			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 3) {
+				$pieces[] = new Cube($this->getPlayer(), $this->getLevelName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), true);
 			}
 		}
 		return $pieces;
