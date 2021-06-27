@@ -41,7 +41,7 @@ class PieceManager
 	public function __construct(QueuedEditTask $task)
 	{
 		$this->task = $task;
-		$this->pieces = $task->getSelection()->split($task->getPlace());
+		$this->pieces = $task->getSelection()->split($task->getSplitOffset());
 		$this->totalLength = count($this->pieces);
 	}
 

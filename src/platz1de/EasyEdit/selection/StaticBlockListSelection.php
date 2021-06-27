@@ -11,10 +11,10 @@ class StaticBlockListSelection extends BlockListSelection
 {
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @param Position $place
+	 * @param Vector3 $offset
 	 * @return StaticBlockListSelection[]
 	 */
-	public function split(Position $place): array
+	public function split(Vector3 $offset): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");

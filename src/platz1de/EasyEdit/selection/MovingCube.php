@@ -136,12 +136,12 @@ class MovingCube extends Selection
 	}
 
 	/**
-	 * @param Position $place
+	 * @param Vector3 $offset
 	 * @return Selection[]
 	 */
-	public function split(Position $place): array
+	public function split(Vector3 $offset): array
 	{
 		//TODO
-		return parent::split($place);
+		return parent::split($offset);
 	}
 }

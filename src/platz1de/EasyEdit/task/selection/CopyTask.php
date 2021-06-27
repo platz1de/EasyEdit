@@ -38,7 +38,7 @@ class CopyTask extends EditTask
 				ClipBoardManager::setForPlayer($copied->getPlayer(), $copied);
 			};
 		}
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), $finish));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), new Vector3(), $finish));
 	}
 
 	/**

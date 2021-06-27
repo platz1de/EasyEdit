@@ -234,10 +234,10 @@ abstract class Selection
 	/**
 	 * Splits the selection into smaller parts
 	 * lower the impact of Chunk loading
-	 * @param Position $place
+	 * @param Vector3 $offset
 	 * @return Selection[]
 	 */
-	public function split(Position $place): array
+	public function split(Vector3 $offset): array
 	{
 		return [$this];
 	}
