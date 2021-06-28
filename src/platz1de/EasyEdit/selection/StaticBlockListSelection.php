@@ -20,6 +20,7 @@ class StaticBlockListSelection extends BlockListSelection
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
+		//TODO: offset
 		//TODO: split tiles
 		$pieces = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {

@@ -78,6 +78,7 @@ class HollowSphere extends Sphere
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
+		//TODO: offset
 		$radius = $this->pos2->getFloorX();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius) >> 4; $x <= ($this->pos1->getX() + $radius) >> 4; $x += 3) {
