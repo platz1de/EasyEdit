@@ -6,7 +6,6 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 
 class StackedCube extends Selection
