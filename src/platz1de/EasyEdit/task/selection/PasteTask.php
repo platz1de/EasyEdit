@@ -79,6 +79,7 @@ class PasteTask extends EditTask
 			}
 		});
 
+		//TODO: Fix relations like double chests not being offset
 		/** @var DynamicBlockListSelection $total */
 		$total = TaskCache::getFullSelection();
 		foreach ($total->getTiles() as $tile) {
