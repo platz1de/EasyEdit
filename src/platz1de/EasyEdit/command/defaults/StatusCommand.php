@@ -18,11 +18,10 @@ class StatusCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
-	 * @param array  $flags
+	 * @param Player   $player
+	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
 		$manager = WorkerAdapter::getCurrentTask();
@@ -51,7 +50,7 @@ class StatusCommand extends EasyEditCommand
 
 		Messages::send($player, "worker-status", [
 			"{task}" => $task,
-			"{queue}" => WorkerAdapter::getQueueLength(),
+			"{queue}" => (string) WorkerAdapter::getQueueLength(),
 			"{status}" => $status,
 			"{progress}" => $progress
 		]);

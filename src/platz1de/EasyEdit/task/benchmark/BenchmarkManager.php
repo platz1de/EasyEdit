@@ -6,8 +6,8 @@ use Closure;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\task\EditTaskResult;
+use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\task\selection\SetTask;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
@@ -36,7 +36,7 @@ class BenchmarkManager
 		if (self::$running) {
 			throw new UnexpectedValueException("Benchmark is already running");
 		}
-		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) { }, $closure);
+		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results): void { }, $closure);
 
 		self::$running = true;
 		$autoSave = MixedUtils::setAutoSave(PHP_INT_MAX);
@@ -56,12 +56,12 @@ class BenchmarkManager
 		$testCube = new Cube($name, $name, new Vector3(), new Vector3(95, Level::Y_MASK, 95));
 
 		//Task #1 - set static
-		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results) {
+		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static generate", $result->getTime(), $result->getChanged()];
 		});
 
 		//Task #2 - set static
-		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results) {
+		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 

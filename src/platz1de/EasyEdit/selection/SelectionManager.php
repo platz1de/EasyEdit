@@ -35,7 +35,7 @@ class SelectionManager
 	 */
 	public static function clearForPlayer(string $player): void
 	{
-		if(isset(self::$selections[$player])){
+		if (isset(self::$selections[$player])) {
 			self::$selections[$player]->close();
 		}
 		unset(self::$selections[$player]);

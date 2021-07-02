@@ -16,7 +16,10 @@ use pocketmine\Player;
 
 class EventListener implements Listener
 {
-	//don't spam everything
+	/**
+	 * don't spam everything
+	 * @var float
+	 */
 	private static $cooldown = 0;
 
 	/**

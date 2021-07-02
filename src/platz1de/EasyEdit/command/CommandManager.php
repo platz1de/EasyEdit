@@ -8,7 +8,7 @@ use pocketmine\Server;
 class CommandManager
 {
 	/**
-	 * @var array
+	 * @var EasyEditCommand[]
 	 */
 	private static $commands = [];
 
@@ -33,25 +33,20 @@ class CommandManager
 
 	/**
 	 * @param EasyEditCommand $command
-	 * @param array           $args
+	 * @param string[]        $args
 	 * @param Player          $player
 	 */
 	public static function processCommand(EasyEditCommand $command, array $args, Player $player): void
 	{
-		$realArgs = [];
-		$flags = [];
-		$flag = null;
-		foreach ($args as $arg) {
-			if ($flag !== null) {
-				$flags[$flag] = $arg;
-				$flag = null;
-			} elseif (strpos($arg, "-") === 0 && !is_numeric(substr($arg, 1))) {
-				$flag = substr($arg, 1);
-			} else {
-				$realArgs[] = $arg;
-			}
-		}
+		//TODO: Flags?
+		$command->process($player, $args);
+	}
 
-		$command->process($player, $realArgs, $flags);
+	/**
+	 * @return EasyEditCommand[]
+	 */
+	public static function getCommands(): array
+	{
+		return self::$commands;
 	}
 }

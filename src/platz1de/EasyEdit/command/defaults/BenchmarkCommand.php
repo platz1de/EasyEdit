@@ -16,11 +16,10 @@ class BenchmarkCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
-	 * @param array  $flags
+	 * @param Player   $player
+	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		if (BenchmarkManager::isRunning()) {
 			Messages::send($player, "benchmark-running");
@@ -29,24 +28,24 @@ class BenchmarkCommand extends EasyEditCommand
 
 		Messages::send($player, "benchmark-start");
 
-		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($player) {
+		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($player): void {
 			$i = 0;
-			$resultMsgs = array_map(static function (array $data) use (&$i) {
+			$resultMsg = array_map(static function (array $data) use (&$i): string {
 				return Messages::replace("benchmark-result", [
-					"{task}" => ++$i,
-					"{name}" => $data[0],
-					"{time}" => round($data[1], 2),
+					"{task}" => (string) ++$i,
+					"{name}" => (string) $data[0],
+					"{time}" => (string) round($data[1], 2),
 					"{blocks}" => MixedUtils::humanReadable($data[2])
 				]);
 			}, $results);
 			Messages::send($player, "benchmark-finished", [
-				"{tps_avg}" => round($tpsAvg, 2),
-				"{tps_min}" => $tpsMin,
-				"{load_avg}" => round($loadAvg, 2),
-				"{load_max}" => $loadMax,
-				"{tasks}" => $tasks,
-				"{time}" => round($time, 2),
-				"{results}" => implode("\n", $resultMsgs)
+				"{tps_avg}" => (string) round($tpsAvg, 2),
+				"{tps_min}" => (string) $tpsMin,
+				"{load_avg}" => (string) round($loadAvg, 2),
+				"{load_max}" => (string) $loadMax,
+				"{tasks}" => (string) $tasks,
+				"{time}" => (string) round($time, 2),
+				"{results}" => implode("\n", $resultMsg)
 			]);
 		});
 	}

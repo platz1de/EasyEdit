@@ -22,11 +22,10 @@ class StackCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
-	 * @param array  $flags
+	 * @param Player   $player
+	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		$count = $args[0] ?? 1;
 
@@ -39,6 +38,6 @@ class StackCommand extends EasyEditCommand
 			return;
 		}
 
-		StackTask::queue(new StackedCube($selection->getPlayer(), is_string($selection->getLevel()) ? $selection->getLevel() : $selection->getLevel()->getFolderName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), (int) $count)), $player->asPosition());
+		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getLevelName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), (int) $count)), $player->asPosition());
 	}
 }

@@ -21,12 +21,11 @@ class HollowCylinder extends Cylinder
 	 * @param int          $height
 	 * @param int          $thickness
 	 * @param bool         $piece
-	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, int $height = 0, int $thickness = 1, bool $piece = false)
 	{
-		$pos2 = new Vector3($radius, $height, $thickness); //This is not optimal, but currently needed...
-		Selection::__construct($player, $level, $pos1, $pos2, $piece);
+		parent::__construct($player, $level, $pos1, $radius, $height, $piece);
+		$this->setThickness($thickness);
 	}
 
 	/**
@@ -59,7 +58,7 @@ class HollowCylinder extends Cylinder
 	 */
 	public function getThickness(): int
 	{
-		return $this->pos2->getZ();
+		return $this->pos2->getFloorZ();
 	}
 
 	/**
@@ -72,23 +71,21 @@ class HollowCylinder extends Cylinder
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @param Vector3 $offset
+	 * @return HollowCylinderPiece[]
 	 */
-	public function split(): array
+	public function split(Vector3 $offset): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		$level = $this->getLevel();
-		if ($level instanceof Level) {
-			$level = $level->getFolderName();
-		}
-		$radius = $this->pos2->getX();
+		//TODO: offset
+		$radius = $this->pos2->getFloorX();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius - 1) >> 4; $x <= ($this->pos1->getX() + $radius + 1) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius - 1) >> 4; $z <= ($this->pos1->getZ() + $radius + 1) >> 4; $z += 3) {
-				$pieces[] = new HollowCylinderPiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getX() - $radius), max($this->pos1->getY(), 0), max($z << 4, $this->pos1->getZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getX() + $radius), min($this->pos1->getY() + $this->pos2->getY(), Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getZ() + $radius)), $radius, $this->pos2->getY(), $this->pos2->getZ());
+				$pieces[] = new HollowCylinderPiece($this->getPlayer(), $this->getLevelName(), $this->pos1, new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $this->pos2->getFloorY(), Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), $radius, $this->pos2->getFloorY(), $this->pos2->getFloorZ());
 			}
 		}
 		return $pieces;

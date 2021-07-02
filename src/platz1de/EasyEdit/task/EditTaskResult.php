@@ -131,7 +131,7 @@ class EditTaskResult
 
 		$stream->putString($this->toUndo->fastSerialize());
 
-		$stream->putString((new LittleEndianNBTStream())->write($this->tiles));
+		$stream->putString((string) (new LittleEndianNBTStream())->write($this->tiles));
 
 		$stream->putFloat($this->time);
 		$stream->putLInt($this->changed);
@@ -159,16 +159,18 @@ class EditTaskResult
 		$undo = Selection::fastDeserialize($stream->getString());
 
 		$tileData = $stream->getString();
-		if($tileData !== "") {
+		if ($tileData !== "") {
 			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
-		}else{
+		} else {
 			$tiles = [];
 		}
+		/** @var CompoundTag[] $tiles */
+		$tiles = is_array($tiles) ? $tiles : [$tiles];
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();
 
-		$result = new EditTaskResult($level, $undo, is_array($tiles) ? $tiles : [$tiles], $time, $changed);
+		$result = new EditTaskResult($level, $undo, $tiles, $time, $changed);
 		foreach ($chunks as $chunk) {
 			$result->addChunk($chunk);
 		}

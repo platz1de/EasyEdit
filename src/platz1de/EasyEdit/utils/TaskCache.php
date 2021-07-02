@@ -25,6 +25,9 @@ class TaskCache
 	 */
 	public static function getFullSelection(): Selection
 	{
+		if (self::$selection === null) {
+			throw new BadMethodCallException("Task Cache was never init");
+		}
 		return self::$selection;
 	}
 

@@ -7,6 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\level\Level;
@@ -67,7 +68,7 @@ class Cube extends Selection implements Patterned
 			if (!$this->piece && ($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
-				$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
+				$this->getLevel()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getLevel()))]);
 				$nbt = new CompoundTag("", [
 					new StringTag(Tile::TAG_ID, "StructureBlock"),
 					new IntTag(Tile::TAG_X, $this->structure->getFloorX()),
@@ -136,29 +137,29 @@ class Cube extends Selection implements Patterned
 		if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
 			//this happens when whole Chunks get sent
-			$this->level->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->level))]);
-			$this->level->sendBlocks([$player], [$this->level->getBlock($this->structure->floor())]);
+			$this->getLevel()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getLevel()))]);
+			$this->getLevel()->sendBlocks([$player], [$this->getLevel()->getBlock($this->structure->floor())]);
 		}
 	}
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @param Vector3 $offset
+	 * @return Cube[]
 	 */
-	public function split(): array
+	public function split(Vector3 $offset): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		$level = $this->getLevel();
-		if ($level instanceof Level) {
-			$level = $level->getFolderName();
-		}
+		$min = VectorUtils::enforceHeight($this->pos1->add($offset));
+		$max = VectorUtils::enforceHeight($this->pos2->add($offset));
+
 		$pieces = [];
-		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
-			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
-				$pieces[] = new Cube($this->getPlayer(), $level, new Vector3(max($x << 4, $this->pos1->getX()), $this->pos1->getY(), max($z << 4, $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())), true);
+		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 3) {
+			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 3) {
+				$pieces[] = new Cube($this->getPlayer(), $this->getLevelName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), true);
 			}
 		}
 		return $pieces;

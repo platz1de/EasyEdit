@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\pattern;
 
 use Exception;
-use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
+use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\functional\SmoothPattern;
 use platz1de\EasyEdit\pattern\logic\math\DivisiblePattern;
@@ -20,10 +20,10 @@ use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\random\RandomPattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use UnexpectedValueException;
 
 class Pattern
@@ -33,10 +33,15 @@ class Pattern
 	 */
 	protected $pieces;
 	/**
-	 * @var array
+	 * @var array<int, mixed>
 	 */
 	protected $args;
 
+	/**
+	 * Pattern constructor.
+	 * @param Pattern[]         $pieces
+	 * @param array<int, mixed> $args
+	 */
 	public function __construct(array $pieces, array $args)
 	{
 		$this->pieces = $pieces;
@@ -48,14 +53,14 @@ class Pattern
 	}
 
 	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param int                         $x
+	 * @param int                         $y
+	 * @param int                         $z
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
 		foreach ($this->pieces as $piece) {
 			if ($piece->isValidAt($x, $y, $z, $iterator, $selection)) {
@@ -66,14 +71,14 @@ class Pattern
 	}
 
 	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param int                         $x
+	 * @param int                         $y
+	 * @param int                         $z
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		return true;
 	}
@@ -95,7 +100,7 @@ class Pattern
 	/**
 	 * @param string $pattern
 	 * @param int    $start
-	 * @return array
+	 * @return array<string, array>
 	 * @throws ParseError
 	 */
 	public static function parsePiece(string $pattern, int $start = 1): array
@@ -143,7 +148,7 @@ class Pattern
 							throw new ParseError("Unknown Pattern " . $current, $i + $start);
 						}
 					} elseif (self::isBlock($current)) {
-						$pieces[] = self::getBlock($current);
+						$pieces["staticBlockInternal;" . $current] = [];
 						$current = "";
 					} else {
 						throw new ParseError("Invalid Block " . $current);
@@ -181,7 +186,7 @@ class Pattern
 					throw new ParseError("Unknown Pattern " . $current);
 				}
 			} elseif (self::isBlock($current)) {
-				$pieces[] = self::getBlock($current);
+				$pieces["staticBlockInternal;" . $current] = [];
 			} else {
 				throw new ParseError("Invalid Block " . $current);
 			}
@@ -193,20 +198,16 @@ class Pattern
 	}
 
 	/**
-	 * @param array $pattern
+	 * @param array<string, array> $pattern
 	 * @return Pattern[]
 	 */
 	public static function processPattern(array $pattern): array
 	{
 		$pieces = [];
 		foreach ($pattern as $name => $p) {
-			if ($p instanceof Block) {
-				$pieces[] = new StaticBlock($p);
-			} else {
-				$pa = self::getPattern($name, self::processPattern($p));
-				$pa->check();
-				$pieces[] = $pa;
-			}
+			$pa = self::getPattern($name, self::processPattern($p));
+			$pa->check();
+			$pieces[] = $pa;
 		}
 		return $pieces;
 	}
@@ -228,8 +229,8 @@ class Pattern
 	}
 
 	/**
-	 * @param string $pattern
-	 * @param array  $children
+	 * @param string    $pattern
+	 * @param Pattern[] $children
 	 * @return Pattern
 	 */
 	private static function getPattern(string $pattern, array $children = []): Pattern
@@ -242,6 +243,8 @@ class Pattern
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
+			case "staticBlockInternal":
+				return new StaticBlock(self::getBlock($args[0]));
 			case "not":
 				return new NotPattern($children[0] ?? null);
 			case "even":
@@ -314,10 +317,6 @@ class Pattern
 		try {
 			$block = $item->getBlock();
 		} catch (Exception $exception) {
-			throw new ParseError("Unknown Block " . $string);
-		}
-
-		if (!$block instanceof Block) {
 			throw new ParseError("Unknown Block " . $string);
 		}
 

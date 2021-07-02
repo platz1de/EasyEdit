@@ -11,6 +11,7 @@ use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\PieceManager;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\level\Position;
+use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 
 class QueuedEditTask implements QueuedTask
@@ -43,6 +44,10 @@ class QueuedEditTask implements QueuedTask
 	 * @var PieceManager
 	 */
 	private $executor;
+	/**
+	 * @var Vector3
+	 */
+	private $splitOffset;
 
 	/**
 	 * QueuedTask constructor.
@@ -51,25 +56,27 @@ class QueuedEditTask implements QueuedTask
 	 * @param Position              $place
 	 * @param string                $task
 	 * @param AdditionalDataManager $data
+	 * @param Vector3               $splitOffset
 	 * @param Closure|null          $finish
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, AdditionalDataManager $data, ?Closure $finish = null)
+	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, AdditionalDataManager $data, Vector3 $splitOffset, ?Closure $finish = null)
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
 		$this->place = Position::fromObject($place->floor(), $place->getLevelNonNull());
 		$this->task = $task;
 		$this->data = $data;
+		$this->splitOffset = $splitOffset;
 
 		if ($finish === null) {
-			$finish = static function (EditTaskResult $result) {
+			$finish = static function (EditTaskResult $result): void {
 				/** @var StaticBlockListSelection $undo */
 				$undo = $result->getUndo();
 				HistoryManager::addToHistory($undo->getPlayer(), $undo);
 			};
 		}
 
-		Utils::validateCallableSignature(static function (EditTaskResult $result) { }, $finish);
+		Utils::validateCallableSignature(static function (EditTaskResult $result): void { }, $finish);
 
 		$this->finish = $finish;
 	}
@@ -149,5 +156,13 @@ class QueuedEditTask implements QueuedTask
 	public function getExecutor(): PieceManager
 	{
 		return $this->executor;
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getSplitOffset(): Vector3
+	{
+		return $this->splitOffset;
 	}
 }

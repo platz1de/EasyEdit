@@ -22,11 +22,10 @@ class BrushCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
-	 * @param array  $flags
+	 * @param Player   $player
+	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		$type = BrushHandler::nameToIdentifier($args[0] ?? "");
 
@@ -40,12 +39,12 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 3));
+				$item->setNamedTagEntry(new ShortTag("brushSize", (int) ($args[1] ?? 3)));
 				$item->setNamedTagEntry(new StringTag("brushPattern", $args[2] ?? "stone"));
 				break;
 			case BrushHandler::BRUSH_SMOOTH:
 				$item->setNamedTagEntry(new StringTag("brushType", "smooth"));
-				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 5));
+				$item->setNamedTagEntry(new ShortTag("brushSize", (int) ($args[1] ?? 5)));
 				break;
 			case BrushHandler::BRUSH_NATURALIZE:
 				$item->setNamedTagEntry(new StringTag("brushType", "naturalize"));
@@ -57,7 +56,7 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 4));
+				$item->setNamedTagEntry(new ShortTag("brushSize", (int) ($args[1] ?? 4)));
 				$item->setNamedTagEntry(new StringTag("topBlock", $args[2] ?? "grass"));
 				$item->setNamedTagEntry(new StringTag("middleBlock", $args[3] ?? "dirt"));
 				$item->setNamedTagEntry(new StringTag("bottomBlock", $args[4] ?? "stone"));
@@ -70,11 +69,11 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$item->setNamedTagEntry(new ShortTag("brushSize", $args[1] ?? 4));
-				$item->setNamedTagEntry(new ShortTag("brushHeight", $args[2] ?? 2));
+				$item->setNamedTagEntry(new ShortTag("brushSize", (int) ($args[1] ?? 4)));
+				$item->setNamedTagEntry(new ShortTag("brushHeight", (int) ($args[2] ?? 2)));
 				$item->setNamedTagEntry(new StringTag("brushPattern", $args[3] ?? "stone"));
 		}
-		$item->setLore(array_map(static function (NamedTag $tag) {
+		$item->setLore(array_map(static function (NamedTag $tag): string {
 			return $tag->getName() . ": " . $tag->getValue();
 		}, $item->getNamedTag()->getValue()));
 		$item->setCustomName(TextFormat::GOLD . "Brush");

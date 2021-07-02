@@ -5,21 +5,21 @@ namespace platz1de\EasyEdit\pattern\functional;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
-use pocketmine\level\utils\SubChunkIteratorManager;
 
 class SmoothPattern extends Pattern
 {
 	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param int                         $x
+	 * @param int                         $y
+	 * @param int                         $z
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): ?Block
 	{
 		HeightMapCache::load($iterator, $selection);
 
@@ -61,15 +61,15 @@ class SmoothPattern extends Pattern
 			if ($y >= $mid && $y <= $max) {
 				$k = ($y - $mid) / ($max - $mid);
 				$gy = $oMid + round($k * ($oMax - $oMid));
-				$iterator->moveTo($x, $gy, $z);
-				return BlockFactory::get($iterator->currentSubChunk->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+				$iterator->moveTo($x, (int) $gy, $z);
+				return BlockFactory::get($iterator->getCurrent()->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
 			}
 
 			if ($y <= $mid && $y >= $min) {
 				$k = ($y - $mid) / ($min - $mid);
 				$gy = $oMid + round($k * ($oMin - $oMid));
-				$iterator->moveTo($x, $gy, $z);
-				return BlockFactory::get($iterator->currentSubChunk->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->currentSubChunk->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+				$iterator->moveTo($x, (int) $gy, $z);
+				return BlockFactory::get($iterator->getCurrent()->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
 			}
 		}
 

@@ -7,7 +7,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
@@ -51,7 +50,7 @@ class DynamicBlockListSelection extends BlockListSelection
 		$chunks = [];
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($place->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($place->getLevelNonNull(), $x, $z);
 			}
 		}
 		return $chunks;
@@ -99,6 +98,14 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
+	 * @param Vector3 $point
+	 */
+	public function setPoint(Vector3 $point): void
+	{
+		$this->point = $point;
+	}
+
+	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
@@ -120,9 +127,10 @@ class DynamicBlockListSelection extends BlockListSelection
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @param Vector3 $offset
+	 * @return DynamicBlockListSelection[]
 	 */
-	public function split(): array
+	public function split(Vector3 $offset): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");
@@ -130,22 +138,29 @@ class DynamicBlockListSelection extends BlockListSelection
 
 		//TODO: split tiles
 		$pieces = [];
-		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
-			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
-				$piece = new DynamicBlockListSelection($this->getPlayer(), $this->getPoint(), new Vector3(max($x << 4, $this->pos1->getX()), max($this->pos1->getY(), 0), max($z << 4, $this->pos1->getZ())), new Vector3(min(($x << 4) + 47, $this->pos2->getX()), min($this->pos2->getY(), Level::Y_MASK), min(($z << 4) + 47, $this->pos2->getZ())), true);
-				for ($chunkX = 0; $chunkX < 3; $chunkX++) {
-					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
-						$piece->getManager()->setChunk($chunkX, $chunkZ, ($chunk = $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ)));
+		$min = VectorUtils::enforceHeight($this->pos1->add($offset)->subtract($this->getPoint()));
+		$max = VectorUtils::enforceHeight($this->pos2->add($offset)->subtract($this->getPoint()));
+		for ($x = 0; $x <= ($max->getX() >> 4) - ($min->getX() >> 4); $x += 3) {
+			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
+				$piece = new DynamicBlockListSelection($this->getPlayer(), null, null, null, true);
+				$piece->setPoint($this->getPoint());
+				$piece->setPos1($pos1 = new Vector3(max(($x << 4) - ($min->getX() & 0x0f), 0), 0, max(($z << 4) - ($min->getZ() & 0x0f), 0)));
+				$piece->setPos2($pos2 = new Vector3(min(($x << 4) - ($min->getX() & 0x0f) + 47, $max->getX() - $min->getX()), $max->getY() - $min->getY(), min(($z << 4) - ($min->getZ() & 0x0f) + 47, $max->getZ() - $min->getZ())));
+				for ($chunkX = $pos1->getX() >> 4; $chunkX <= $pos2->getX() >> 4; $chunkX++) {
+					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
+						$chunk = $this->getManager()->getChunk($chunkX, $chunkZ);
 						if ($chunk !== null) {
+							$chunk = LoaderManager::cloneChunk($chunk);
 							$chunk->setX($chunkX);
 							$chunk->setZ($chunkZ);
-							$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ);
+							$piece->getManager()->setChunk($chunkX, $chunkZ, $chunk);
 						}
 					}
 				}
 				$pieces[] = $piece;
 			}
 		}
+		$this->getManager()->cleanChunks();
 		return $pieces;
 	}
 }

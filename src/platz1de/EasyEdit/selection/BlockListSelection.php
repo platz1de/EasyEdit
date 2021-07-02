@@ -6,9 +6,9 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
-use pocketmine\level\utils\SubChunkIteratorManager;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
@@ -24,7 +24,7 @@ abstract class BlockListSelection extends Selection
 	 */
 	private $manager;
 	/**
-	 * @var SubChunkIteratorManager
+	 * @var SafeSubChunkIteratorManager
 	 */
 	private $iterator;
 	/**
@@ -47,7 +47,7 @@ abstract class BlockListSelection extends Selection
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
 			$this->getManager()->load($pos1, $pos2);
 		}
-		$this->iterator = new SubChunkIteratorManager($this->manager);
+		$this->iterator = new SafeSubChunkIteratorManager($this->manager);
 	}
 
 	/**
@@ -72,15 +72,15 @@ abstract class BlockListSelection extends Selection
 			$id = 217; //structure_void
 		}
 		$this->iterator->moveTo($x, $y, $z);
-		if ($overwrite || $this->iterator->currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
-			$this->iterator->currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+		if ($overwrite || $this->iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
+			$this->iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
 		}
 	}
 
 	/**
-	 * @return SubChunkIteratorManager
+	 * @return SafeSubChunkIteratorManager
 	 */
-	public function getIterator(): SubChunkIteratorManager
+	public function getIterator(): SafeSubChunkIteratorManager
 	{
 		return $this->iterator;
 	}
@@ -117,7 +117,7 @@ abstract class BlockListSelection extends Selection
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
-		$stream->putString((new LittleEndianNBTStream())->write($this->tiles));
+		$stream->putString((string) (new LittleEndianNBTStream())->write($this->tiles));
 	}
 
 	/**
@@ -127,7 +127,7 @@ abstract class BlockListSelection extends Selection
 	{
 		parent::parseData($stream);
 
-		$this->manager = new ReferencedChunkManager(is_string($this->level) ? $this->level : $this->level->getFolderName());
+		$this->manager = new ReferencedChunkManager($this->getLevelName());
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
@@ -135,10 +135,10 @@ abstract class BlockListSelection extends Selection
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
-		$this->iterator = new SubChunkIteratorManager($this->manager);
+		$this->iterator = new SafeSubChunkIteratorManager($this->manager);
 
 		$tileData = $stream->getString();
-		if($tileData !== "") {
+		if ($tileData !== "") {
 			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
 			/** @var CompoundTag[] $tiles */
 			$tiles = is_array($tiles) ? $tiles : [$tiles];

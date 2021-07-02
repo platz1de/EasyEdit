@@ -15,7 +15,16 @@ class ClipBoardManager
 	 */
 	public static function getFromPlayer(string $player): DynamicBlockListSelection
 	{
-		return self::$selections[$player];
+		$selection = new DynamicBlockListSelection($player);
+		$selection->setPos2(self::$selections[$player]->getPos2());
+		$selection->setPoint(self::$selections[$player]->getPoint());
+		foreach (self::$selections[$player]->getManager()->getChunks() as $chunk) {
+			$selection->getManager()->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+		}
+		foreach (self::$selections[$player]->getTiles() as $tile) {
+			$selection->addTile($tile);
+		}
+		return $selection;
 	}
 
 	/**

@@ -6,11 +6,12 @@ use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\level\format\Chunk;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 
-class MovingCube extends Cube
+class MovingCube extends Selection
 {
 	/**
 	 * @var Vector3
@@ -31,16 +32,6 @@ class MovingCube extends Cube
 		$this->direction = $direction ?? new Vector3(0, 0, 0);
 	}
 
-	public function update(): void
-	{
-		Selection::update();
-	}
-
-	public function close(): void
-	{
-		Selection::close();
-	}
-
 	/**
 	 * @return Vector3
 	 */
@@ -51,20 +42,21 @@ class MovingCube extends Cube
 
 	/**
 	 * @param Position $place
-	 * @return array
+	 * @return Chunk[]
 	 */
 	public function getNeededChunks(Position $place): array
 	{
+		$level = $this->getLevel();
 		$chunks = [];
 		//TODO: Remove duplicates
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		for ($x = ($this->pos1->getX() + $this->direction->getX()) >> 4; $x <= ($this->pos2->getX() + $this->direction->getX()) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() + $this->direction->getZ()) >> 4; $z <= ($this->pos2->getZ() + $this->direction->getZ()) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($this->getLevel(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		return $chunks;
@@ -144,11 +136,12 @@ class MovingCube extends Cube
 	}
 
 	/**
-	 * @return array
+	 * @param Vector3 $offset
+	 * @return Selection[]
 	 */
-	public function split(): array
+	public function split(Vector3 $offset): array
 	{
 		//TODO
-		return Selection::split();
+		return parent::split($offset);
 	}
 }

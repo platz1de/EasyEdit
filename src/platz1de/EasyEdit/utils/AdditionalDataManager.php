@@ -8,13 +8,13 @@ use UnexpectedValueException;
 class AdditionalDataManager
 {
 	/**
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	private $data;
 
 	/**
 	 * AdditionalDataManager constructor.
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 */
 	public function __construct(array $data = [])
 	{
@@ -36,6 +36,16 @@ class AdditionalDataManager
 			}
 			throw new UnexpectedValueException("Additional data with key " . $key . " does not exist");
 		}
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool   $default
+	 * @return bool
+	 */
+	public function getBoolKeyed(string $key, bool $default = false): bool
+	{
+		return (bool) $this->getDataKeyed($key, $default);
 	}
 
 	/**

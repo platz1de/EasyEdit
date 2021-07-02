@@ -41,7 +41,7 @@ class PieceManager
 	public function __construct(QueuedEditTask $task)
 	{
 		$this->task = $task;
-		$this->pieces = $task->getSelection()->split();
+		$this->pieces = $task->getSelection()->split($task->getSplitOffset());
 		$this->totalLength = count($this->pieces);
 	}
 
@@ -55,7 +55,7 @@ class PieceManager
 			$data = $this->currentPiece->getAdditionalData();
 
 			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
-				if ($data->getDataKeyed("edit", false)) {
+				if ($data->getBoolKeyed("edit")) {
 					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 

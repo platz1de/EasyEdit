@@ -21,11 +21,10 @@ class ReplaceCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
-	 * @param array  $flags
+	 * @param Player   $player
+	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args, array $flags): void
+	public function process(Player $player, array $args): void
 	{
 		if (($args[1] ?? "") === "") {
 			$player->sendMessage($this->getUsage());

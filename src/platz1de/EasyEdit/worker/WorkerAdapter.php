@@ -31,6 +31,7 @@ class WorkerAdapter extends Task
 	public function onRun(int $currentTick): void
 	{
 		if (count(self::$priority) > 0) {
+			/** @var QueuedTask $task */
 			$task = array_shift(self::$priority);
 			if (!$task->isInstant()) {
 				if (self::$task !== null) {
@@ -44,6 +45,7 @@ class WorkerAdapter extends Task
 				self::$task = null;
 			}
 		} elseif (count(self::$queue) > 0) {
+			/** @var QueuedTask $task */
 			$task = array_shift(self::$queue);
 			if (!$task->isInstant()) {
 				self::$task = $task;

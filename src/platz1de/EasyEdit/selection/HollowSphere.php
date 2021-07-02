@@ -19,12 +19,11 @@ class HollowSphere extends Sphere
 	 * @param int          $radius
 	 * @param int          $thickness
 	 * @param bool         $piece
-	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, int $thickness = 1, bool $piece = false)
 	{
-		$pos2 = new Vector3($radius, $thickness); //This is not optimal, but currently needed...
-		Selection::__construct($player, $level, $pos1, $pos2, $piece);
+		parent::__construct($player, $level, $pos1, $radius, $piece);
+		$this->setThickness($thickness);
 	}
 
 	/**
@@ -56,7 +55,7 @@ class HollowSphere extends Sphere
 	 */
 	public function getThickness(): int
 	{
-		return $this->pos2->getY();
+		return $this->pos2->getFloorY();
 	}
 
 	/**
@@ -69,23 +68,21 @@ class HollowSphere extends Sphere
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @return array
+	 * @param Vector3 $offset
+	 * @return HollowSpherePiece[]
 	 */
-	public function split(): array
+	public function split(Vector3 $offset): array
 	{
 		if ($this->piece) {
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		$level = $this->getLevel();
-		if ($level instanceof Level) {
-			$level = $level->getFolderName();
-		}
-		$radius = $this->pos2->getX();
+		//TODO: offset
+		$radius = $this->pos2->getFloorX();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius) >> 4; $x <= ($this->pos1->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius) >> 4; $z <= ($this->pos1->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = new HollowSpherePiece($this->getPlayer(), $level, $this->pos1, new Vector3(max($x << 4, $this->pos1->getX() - $radius), max($this->pos1->getY() - $radius, 0), max($z << 4, $this->pos1->getZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getX() + $radius), min($this->pos1->getY() + $radius, Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getZ() + $radius)), $radius, $this->getThickness());
+				$pieces[] = new HollowSpherePiece($this->getPlayer(), $this->getLevelName(), $this->pos1, new Vector3(max($x << 4, $this->pos1->getX() - $radius), max($this->pos1->getY() - $radius, 0), max($z << 4, $this->pos1->getZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getX() + $radius), min($this->pos1->getY() + $radius, Level::Y_MASK), min((($z + 2) << 4) + 15, $this->pos1->getZ() + $radius)), $radius, $this->getThickness());
 			}
 		}
 		return $pieces;

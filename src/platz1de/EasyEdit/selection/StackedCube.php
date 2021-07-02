@@ -3,12 +3,14 @@
 namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
+use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 
-class StackedCube extends Cube
+class StackedCube extends Selection
 {
+	use CubicIterator;
 	use CubicChunkLoader;
 
 	/**
@@ -28,16 +30,6 @@ class StackedCube extends Cube
 	{
 		parent::__construct($player, $level, $pos1, $pos2);
 		$this->direction = $direction ?? new Vector3(0, 0, 0);
-	}
-
-	public function update(): void
-	{
-		Selection::update();
-	}
-
-	public function close(): void
-	{
-		Selection::close();
 	}
 
 	/**
@@ -85,11 +77,12 @@ class StackedCube extends Cube
 	}
 
 	/**
-	 * @return array
+	 * @param Vector3 $offset
+	 * @return Selection[]
 	 */
-	public function split(): array
+	public function split(Vector3 $offset): array
 	{
 		//TODO
-		return Selection::split();
+		return parent::split($offset);
 	}
 }

@@ -30,8 +30,12 @@ class SpherePiece extends Sphere
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $min = null, ?Vector3 $max = null, int $radius = 0)
 	{
-		$this->min = $min;
-		$this->max = $max;
+		if ($min !== null) {
+			$this->min = $min;
+		}
+		if ($max !== null) {
+			$this->max = $max;
+		}
 		parent::__construct($player, $level, $pos1, $radius, true);
 	}
 

@@ -5,29 +5,26 @@ namespace platz1de\EasyEdit\pattern\logic\relation;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
-use pocketmine\level\Level;
-use pocketmine\level\utils\SubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\math\Vector3;
 
 class AroundPattern extends Pattern
 {
 	/**
-	 * @param int                     $x
-	 * @param int                     $y
-	 * @param int                     $z
-	 * @param SubChunkIteratorManager $iterator
-	 * @param Selection               $selection
+	 * @param int                         $x
+	 * @param int                         $y
+	 * @param int                         $z
+	 * @param SafeSubChunkIteratorManager $iterator
+	 * @param Selection                   $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		for ($i = 0; $i <= 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);
-			if ($y >= 0 && $y < Level::Y_MAX) {
-				$iterator->moveTo($check->getX(), $check->getY(), $check->getZ());
-				if (($iterator->currentSubChunk->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->currentSubChunk->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
-					return true;
-				}
+			$iterator->moveTo($check->getFloorX(), $check->getFloorY(), $check->getFloorZ());
+			if (($iterator->getCurrent()->getBlockId($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->getCurrent()->getBlockData($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) === $this->args[0]->getDamage())) {
+				return true;
 			}
 		}
 

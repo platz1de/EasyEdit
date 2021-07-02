@@ -9,6 +9,9 @@ use pocketmine\utils\TextFormat;
 
 class Messages
 {
+	/**
+	 * @var string[]
+	 */
 	private static $messages = [];
 
 	public static function load(): void
