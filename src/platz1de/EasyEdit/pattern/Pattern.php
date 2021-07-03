@@ -28,6 +28,8 @@ use UnexpectedValueException;
 
 class Pattern
 {
+	private const INTERNAL_BLOCK = "staticBlockInternal";
+
 	/**
 	 * @var Pattern[]
 	 */
@@ -148,7 +150,7 @@ class Pattern
 							throw new ParseError("Unknown Pattern " . $current, $i + $start);
 						}
 					} elseif (self::isBlock($current)) {
-						$pieces["staticBlockInternal;" . $current] = [];
+						$pieces[self::INTERNAL_BLOCK . ";" . $current] = [];
 						$current = "";
 					} else {
 						throw new ParseError("Invalid Block " . $current);
@@ -186,7 +188,7 @@ class Pattern
 					throw new ParseError("Unknown Pattern " . $current);
 				}
 			} elseif (self::isBlock($current)) {
-				$pieces["staticBlockInternal;" . $current] = [];
+				$pieces[self::INTERNAL_BLOCK . ";" . $current] = [];
 			} else {
 				throw new ParseError("Invalid Block " . $current);
 			}
@@ -243,7 +245,7 @@ class Pattern
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
-			case "staticBlockInternal":
+			case self::INTERNAL_BLOCK:
 				return new StaticBlock(self::getBlock($args[0]));
 			case "not":
 				return new NotPattern($children[0] ?? null);
