@@ -65,11 +65,11 @@ class BenchmarkManager
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 
-		WorkerAdapter::queue(new QueuedCallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter) {
+		WorkerAdapter::queue(new QueuedCallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter): void {
 			$task->cancel();
 			/** @var BenchmarkTask $benchmark */
 			$benchmark = $task->getTask();
-			$time = array_sum(array_map(static function (array $dat) {
+			$time = array_sum(array_map(static function (array $dat): float {
 				return $dat[1];
 			}, $results));
 			$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);
