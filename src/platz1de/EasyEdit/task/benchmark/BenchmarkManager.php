@@ -55,7 +55,7 @@ class BenchmarkManager
 		//4x 3x3 Chunk cubes
 		$testCube = new Cube($name, $name, new Vector3(), new Vector3(95, Level::Y_MASK, 95));
 
-		//Task #1 - set static
+		//Task #1 - set static generate
 		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static generate", $result->getTime(), $result->getChanged()];
 		});
