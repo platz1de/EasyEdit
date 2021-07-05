@@ -5,10 +5,15 @@ namespace platz1de\EasyEdit\task\benchmark;
 use Closure;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
+use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\selection\CopyTask;
+use platz1de\EasyEdit\task\selection\PasteTask;
 use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\BlockFactory;
@@ -63,6 +68,16 @@ class BenchmarkManager
 		//Task #2 - set static
 		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
+		});
+
+		//Task #3 - copy
+		CopyTask::queue($testCube, $pos, function (EditTaskResult $result) use ($pos, &$results): void {
+			$results[] = ["copy", $result->getTime(), $result->getChanged()];
+
+			//Task #4 - paste
+			WorkerAdapter::priority(new QueuedEditTask($result->getUndo(), new Pattern([], []), $pos, PasteTask::class, new AdditionalDataManager(["edit" => true]), $pos, function (EditTaskResult $result) use (&$results): void {
+				$results[] = ["paste", $result->getTime(), $result->getChanged()];
+			}));
 		});
 
 		WorkerAdapter::queue(new QueuedCallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter): void {
