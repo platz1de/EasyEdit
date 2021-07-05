@@ -138,8 +138,8 @@ class DynamicBlockListSelection extends BlockListSelection
 
 		//TODO: split tiles
 		$pieces = [];
-		$min = VectorUtils::enforceHeight($this->pos1->add($offset)->subtract($this->getPoint()));
-		$max = VectorUtils::enforceHeight($this->pos2->add($offset)->subtract($this->getPoint()));
+		$min = VectorUtils::enforceHeight($this->pos1->add($offset)->subtract($this->getPoint()))->subtract(1, 1, 1);
+		$max = VectorUtils::enforceHeight($this->pos2->add($offset)->subtract($this->getPoint()))->subtract(1, 1, 1);
 		for ($x = 0; $x <= ($max->getX() >> 4) - ($min->getX() >> 4); $x += 3) {
 			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
 				$piece = new DynamicBlockListSelection($this->getPlayer(), null, null, null, true);
