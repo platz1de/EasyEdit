@@ -85,14 +85,6 @@ abstract class Selection
 	/**
 	 * @return Vector3
 	 */
-	public function getRealSize(): Vector3
-	{
-		return $this->getCubicEnd()->subtract($this->getCubicStart())->add(1, 1, 1);
-	}
-
-	/**
-	 * @return Vector3
-	 */
 	public function getCubicStart(): Vector3
 	{
 		return $this->getPos1();

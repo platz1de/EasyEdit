@@ -98,6 +98,6 @@ class PasteTask extends EditTask
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $place->subtract($selection->getPoint()), $place->subtract($selection->getPoint())->add($selection->getRealSize()));
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1()->add($place)->subtract($selection->getPoint()), $selection->getPos2()->add($place)->subtract($selection->getPoint()));
 	}
 }
