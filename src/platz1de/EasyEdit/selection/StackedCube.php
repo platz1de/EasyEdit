@@ -2,16 +2,17 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\level\format\Chunk;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 
 class StackedCube extends Selection
 {
 	use CubicIterator;
-	use CubicChunkLoader;
 
 	/**
 	 * @var Vector3
@@ -41,6 +42,39 @@ class StackedCube extends Selection
 	}
 
 	/**
+	 * @param Position $place
+	 * @return Chunk[]
+	 */
+	public function getNeededChunks(Position $place): array
+	{
+		$chunks = [];
+		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());
+		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
+		$level = $this->getLevel();
+
+		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
+			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
+				$chunks[] = LoaderManager::getChunk($level, $x, $z);
+			}
+		}
+		return $chunks;
+	}
+
+	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	{
+		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());
+		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
+
+		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
+	}
+
+	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
@@ -65,7 +99,7 @@ class StackedCube extends Selection
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return VectorUtils::getMin($this->getPos1(), $this->getPos1()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+		return VectorUtils::getMin($this->getPos1()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**
@@ -73,7 +107,7 @@ class StackedCube extends Selection
 	 */
 	public function getCubicEnd(): Vector3
 	{
-		return VectorUtils::getMax($this->getPos2(), $this->getPos2()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+		return VectorUtils::getMax($this->getPos2()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**
