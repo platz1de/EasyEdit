@@ -24,12 +24,12 @@ class TileUtils
 		$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $offset->getFloorZ());
 
 		//chest relation
-		if($compoundTag->hasTag(Chest::TAG_PAIRX, IntTag::class) && $compoundTag->hasTag(Chest::TAG_PAIRZ, IntTag::class)){
+		if ($compoundTag->hasTag(Chest::TAG_PAIRX, IntTag::class) && $compoundTag->hasTag(Chest::TAG_PAIRZ, IntTag::class)) {
 			$compoundTag->setInt(Chest::TAG_PAIRX, $compoundTag->getInt(Chest::TAG_PAIRX) + $offset->getFloorX());
 			$compoundTag->setInt(Chest::TAG_PAIRZ, $compoundTag->getInt(Chest::TAG_PAIRZ) + $offset->getFloorZ());
 		}
 
-			return $compoundTag;
+		return $compoundTag;
 	}
 
 	/**
