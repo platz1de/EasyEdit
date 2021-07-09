@@ -120,6 +120,7 @@ class Pattern
 
 		foreach ($parse as $i => $str) {
 			if ($str === ")") {
+				/** @noinspection NotOptimalIfConditionsInspection */
 				if ($piece === "" && $isPattern) {
 					throw new ParseError("Pattern was never opened", $i + $start);
 				}
