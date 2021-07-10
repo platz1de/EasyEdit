@@ -67,7 +67,7 @@ class LoaderManager
 	{
 		$chunkHash = Level::chunkHash($chunk->getX(), $chunk->getZ());
 
-		//TODO: this deletes entities in unloaded chunks
+		//TODO: this deletes entities in unloaded chunks (load entities to EditThread)
 		if ($level->isChunkLoaded($chunk->getX(), $chunk->getZ())) {
 			$old = $level->getChunk($chunk->getX(), $chunk->getZ(), false);
 			if ($old !== null) {
