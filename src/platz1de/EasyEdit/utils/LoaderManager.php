@@ -2,12 +2,16 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\format\SubChunkInterface;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
+use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\tile\Tile;
 
 class LoaderManager
@@ -102,6 +106,9 @@ class LoaderManager
 		})->call($level);
 
 		$chunk->setChanged();
+
+		//TODO: With 1.17 Mojang really ruined Chunk updates, blocks render only with about 1-5 seconds delay
+		//TODO: Find a workaround, Client sided interactions seem to trigger rerendering while server side ones don't
 	}
 
 	/**
