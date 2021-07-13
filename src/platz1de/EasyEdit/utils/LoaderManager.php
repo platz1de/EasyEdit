@@ -2,16 +2,12 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\format\SubChunkInterface;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
-use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
-use pocketmine\scheduler\ClosureTask;
 use pocketmine\tile\Tile;
 
 class LoaderManager
