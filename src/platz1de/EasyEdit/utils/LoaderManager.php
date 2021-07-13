@@ -104,7 +104,6 @@ class LoaderManager
 		$chunk->setChanged();
 
 		//TODO: In 1.17 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
-		//TODO: Find a workaround, Client sided interactions seem to trigger rerendering while server side ones don't
 	}
 
 	/**
