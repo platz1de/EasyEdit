@@ -21,8 +21,6 @@ trait CubicChunkLoader
 		$end = $this->getCubicEnd();
 		$level = $this->getLevel();
 
-		//Children sometimes implement this Interface but don't use Patterns at all
-		//TODO: Fix weird class structure
 		if ($this instanceof Patterned) {
 			$start = $start->subtract(1, 1, 1);
 			$end = $end->add(1, 1, 1);
