@@ -21,8 +21,8 @@ Feature-rich WorldEditor for PocketMine-MP
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//pos1 | Set the first Position | easyedit.position | //1<br>left click a block in creative with a wooden axe
-//pos2 | Set the first Position | easyedit.position | //2<br>break a block in creative with a wooden axe
+//pos1 [x] [y] [z]| Set the first Position | easyedit.position | //1<br>left click a block in creative with a wooden axe
+//pos2 [x] [y] [z]| Set the first Position | easyedit.position | //2<br>break a block in creative with a wooden axe
 //set \<pattern> | Set the selected Area | easyedit.command.set
 //replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
 //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
