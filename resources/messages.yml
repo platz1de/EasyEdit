@@ -1,7 +1,8 @@
 prefix: "§l§aEasy§bEdit §r> "
 
-selected-pos1: "Selected the first position"
-selected-pos2: "Selected the second position"
+#Args: {x} {y} {z}
+selected-pos1: "Selected the first position as {x} {y} {z}"
+selected-pos2: "Selected the second position as {x} {y} {z}"
 
 no-selection: "You don't have an active selection"
 no-clipboard: "You don't have an active clipboard"

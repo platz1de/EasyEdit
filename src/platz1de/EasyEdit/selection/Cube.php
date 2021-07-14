@@ -185,7 +185,7 @@ class Cube extends Selection implements Patterned
 
 		SelectionManager::setForPlayer($player->getName(), $selection);
 
-		Messages::send($player, "selected-pos1");
+		Messages::send($player, "selected-pos1", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}
 
 	/**
@@ -208,6 +208,6 @@ class Cube extends Selection implements Patterned
 
 		SelectionManager::setForPlayer($player->getName(), $selection);
 
-		Messages::send($player, "selected-pos2");
+		Messages::send($player, "selected-pos2", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}
 }
