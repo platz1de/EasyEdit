@@ -6,13 +6,13 @@ Feature-rich WorldEditor for PocketMine-MP
 
 ## Features
 
-- async Editing prevents server lag
-- split big areas, so the server doesn't get overloaded
-- lots of different Commands
+- async editing prevents server lag
+- large variety of commands
+- selection splitting reduces effect of editing
 - support for unique Patterns
-- Wooden Axe as Wand
-- undo & redo
-- various Brushes
+- selection axe & brushes
+- undo & redo your actions
+- tile support
 
 ## Commands
 
