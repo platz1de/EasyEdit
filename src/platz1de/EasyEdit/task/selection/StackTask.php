@@ -54,12 +54,13 @@ class StackTask extends EditTask
 	 */
 	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
 	{
+		/** @var StackedCube $selection */
 		$originalSize = $selection->getPos2()->subtract($selection->getPos1())->add(1, 1, 1);
-		$start = $selection->getPos1();
+		$start = $selection->getDirection()->getX() < 0 || $selection->getDirection()->getY() < 0 || $selection->getDirection()->getZ() < 0 ? $selection->getPos2() : $selection->getPos1();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $originalSize, $start): void {
-			$originalX = (int) $start->getX() + abs(($x - $start->getX()) % $originalSize->getX());
-			$originalY = (int) $start->getY() + abs(($y - $start->getY()) % $originalSize->getY());
-			$originalZ = (int) $start->getZ() + abs(($z - $start->getZ()) % $originalSize->getZ());
+			$originalX = $start->getFloorX() + ($x - $start->getX()) % $originalSize->getX();
+			$originalY = $start->getFloorY() + ($y - $start->getY()) % $originalSize->getY();
+			$originalZ = $start->getFloorZ() + ($z - $start->getZ()) % $originalSize->getZ();
 
 			$iterator->moveTo($originalX, $originalY, $originalZ);
 
