@@ -1,7 +1,7 @@
 name: EasyEdit
 main: platz1de\EasyEdit\EasyEdit
 api: 3.0.0
-version: 1.1.0-dev
+version: 1.1.0
 author: platz1de
 permissions:
  easyedit:
