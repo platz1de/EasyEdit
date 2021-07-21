@@ -28,7 +28,7 @@ class BenchmarkTask extends Task
 	 */
 	private $loadMax = 0;
 
-	public function onRun(int $currentTick): void
+	public function onRun(): void
 	{
 		$this->ticks++;
 		$tps = Server::getInstance()->getTicksPerSecond();

@@ -25,10 +25,7 @@ class WorkerAdapter extends Task
 	 */
 	private static $id = 0;
 
-	/**
-	 * @param int $currentTick
-	 */
-	public function onRun(int $currentTick): void
+	public function onRun(): void
 	{
 		if (count(self::$priority) > 0) {
 			/** @var QueuedTask $task */
