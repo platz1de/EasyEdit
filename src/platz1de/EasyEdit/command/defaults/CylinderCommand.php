@@ -7,7 +7,7 @@ use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\selection\SetTask;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class CylinderCommand extends EasyEditCommand
 {

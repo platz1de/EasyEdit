@@ -6,7 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class CancelCommand extends EasyEditCommand
 {

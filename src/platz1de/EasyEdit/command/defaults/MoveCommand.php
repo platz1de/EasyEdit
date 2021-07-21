@@ -13,7 +13,7 @@ use platz1de\EasyEdit\task\selection\MoveTask;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class MoveCommand extends EasyEditCommand
 {

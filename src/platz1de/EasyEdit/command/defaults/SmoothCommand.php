@@ -10,7 +10,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class SmoothCommand extends EasyEditCommand
 {

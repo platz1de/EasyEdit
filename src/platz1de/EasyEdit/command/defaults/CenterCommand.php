@@ -12,7 +12,7 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class CenterCommand extends EasyEditCommand
 {

@@ -9,7 +9,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\CountTask;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class CountCommand extends EasyEditCommand
 {

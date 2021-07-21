@@ -15,7 +15,7 @@ use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class ExtinguishCommand extends EasyEditCommand
 {

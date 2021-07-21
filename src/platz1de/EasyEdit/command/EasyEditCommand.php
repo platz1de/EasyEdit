@@ -6,7 +6,7 @@ use platz1de\EasyEdit\EasyEdit;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 
 abstract class EasyEditCommand extends Command implements PluginIdentifiableCommand

@@ -7,7 +7,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\selection\PasteTask;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class PasteCommand extends EasyEditCommand
 {

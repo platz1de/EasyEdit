@@ -12,7 +12,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
 use pocketmine\item\TieredTool;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class EventListener implements Listener
 {

@@ -12,7 +12,7 @@ use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\selection\StackTask;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class StackCommand extends EasyEditCommand
 {

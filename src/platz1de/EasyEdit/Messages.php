@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
