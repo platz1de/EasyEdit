@@ -6,7 +6,7 @@ use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\format\SubChunkInterface;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\tile\Tile;
 
@@ -39,7 +39,7 @@ class LoaderManager
 	 * @param CompoundTag[] $tiles
 	 * @return void
 	 */
-	public static function setChunks(Level $level, array $chunks, array $tiles): void
+	public static function setChunks(World $level, array $chunks, array $tiles): void
 	{
 		foreach ($chunks as $chunk) {
 			self::injectChunk($level, $chunk);

@@ -14,7 +14,7 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
@@ -72,12 +72,12 @@ class StackTask extends EditTask
 			$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $data);
 			$changed++;
 
-			if (isset($tiles[Level::blockHash($x, $y, $z)])) {
-				$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
-				unset($tiles[Level::blockHash($x, $y, $z)]);
+			if (isset($tiles[World::blockHash($x, $y, $z)])) {
+				$toUndo->addTile($tiles[World::blockHash($x, $y, $z)]);
+				unset($tiles[World::blockHash($x, $y, $z)]);
 			}
-			if (isset($tiles[Level::blockHash($originalX, $originalY, $originalZ)])) {
-				$tiles[Level::blockHash($x, $y, $z)] = TileUtils::offsetCompound($tiles[Level::blockHash($originalX, $originalY, $originalZ)], new Vector3($x - $originalX, $y - $originalY, $z - $originalZ));
+			if (isset($tiles[World::blockHash($originalX, $originalY, $originalZ)])) {
+				$tiles[World::blockHash($x, $y, $z)] = TileUtils::offsetCompound($tiles[World::blockHash($originalX, $originalY, $originalZ)], new Vector3($x - $originalX, $y - $originalY, $z - $originalZ));
 			}
 		});
 	}

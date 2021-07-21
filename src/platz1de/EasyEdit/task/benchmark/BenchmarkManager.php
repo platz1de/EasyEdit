@@ -18,7 +18,7 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;

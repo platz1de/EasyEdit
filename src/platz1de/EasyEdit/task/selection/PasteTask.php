@@ -16,7 +16,7 @@ use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
@@ -72,9 +72,9 @@ class PasteTask extends EditTask
 				$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->getCurrent()->getBlockData($ox & 0x0f, $oy & 0x0f, $oz & 0x0f));
 				$changed++;
 
-				if (isset($tiles[Level::blockHash($x, $y, $z)])) {
-					$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
-					unset($tiles[Level::blockHash($x, $y, $z)]);
+				if (isset($tiles[World::blockHash($x, $y, $z)])) {
+					$toUndo->addTile($tiles[World::blockHash($x, $y, $z)]);
+					unset($tiles[World::blockHash($x, $y, $z)]);
 				}
 			}
 		});
@@ -82,7 +82,7 @@ class PasteTask extends EditTask
 		/** @var DynamicBlockListSelection $total */
 		$total = TaskCache::getFullSelection();
 		foreach ($total->getTiles() as $tile) {
-			$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = TileUtils::offsetCompound($tile, $place);
+			$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = TileUtils::offsetCompound($tile, $place);
 		}
 	}
 

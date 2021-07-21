@@ -10,7 +10,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NetworkLittleEndianNBTStream;

@@ -9,7 +9,7 @@ use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 
 class NaturalizePattern extends Pattern
 {

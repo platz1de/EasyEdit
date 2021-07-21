@@ -6,7 +6,7 @@ use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 
 class BelowPattern extends Pattern
 {

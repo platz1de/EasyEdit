@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\selection\piece\HollowCylinderPiece;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;

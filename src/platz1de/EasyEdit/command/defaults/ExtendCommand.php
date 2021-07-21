@@ -8,7 +8,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
@@ -41,7 +41,7 @@ class ExtendCommand extends EasyEditCommand
 
 		if ($count === "vert" || $count === "vertical") {
 			$pos1 = new Vector3($pos1->getX(), 0, $pos1->getZ());
-			$pos2 = new Vector3($pos2->getX(), Level::Y_MASK, $pos2->getZ());
+			$pos2 = new Vector3($pos2->getX(), World::Y_MASK, $pos2->getZ());
 		} else {
 			$yaw = $player->getYaw();
 			$pitch = $player->getPitch();

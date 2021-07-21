@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
 

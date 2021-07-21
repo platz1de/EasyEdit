@@ -17,7 +17,7 @@ use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;

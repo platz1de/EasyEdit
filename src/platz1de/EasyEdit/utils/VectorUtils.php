@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Location;
 use pocketmine\math\Vector3;
 
@@ -68,6 +68,6 @@ class VectorUtils
 	 */
 	public static function enforceHeight(Vector3 $vector): Vector3
 	{
-		return new Vector3($vector->getX(), min(Level::Y_MASK, max(0, $vector->getY())), $vector->getZ());
+		return new Vector3($vector->getX(), min(World::Y_MASK, max(0, $vector->getY())), $vector->getZ());
 	}
 }

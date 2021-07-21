@@ -17,7 +17,7 @@ use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\generator\GeneratorManager;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNBTStream;

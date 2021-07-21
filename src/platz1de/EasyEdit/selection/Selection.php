@@ -7,7 +7,7 @@ use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedLevelHolder;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;

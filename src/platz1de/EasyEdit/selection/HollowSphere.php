@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\selection\piece\HollowSpherePiece;
-use pocketmine\level\Level;
+use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use UnexpectedValueException;
@@ -38,7 +38,7 @@ class HollowSphere extends Sphere
 		$radiusSquared = $radius ** 2;
 		$thicknessSquared = ($radius - $this->getThickness()) ** 2;
 		$minY = max(-$radius, -$this->pos1->getY());
-		$maxY = min($radius, Level::Y_MASK - $this->pos1->getY());
+		$maxY = min($radius, World::Y_MASK - $this->pos1->getY());
 		for ($x = -$radius; $x <= $radius; $x++) {
 			for ($z = -$radius; $z <= $radius; $z++) {
 				for ($y = $minY; $y <= $maxY; $y++) {
