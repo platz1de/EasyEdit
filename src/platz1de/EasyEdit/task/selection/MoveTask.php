@@ -75,14 +75,14 @@ class MoveTask extends EditTask
 			$iterator->getCurrent()->setBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id, $data);
 			$changed++;
 
-			if (isset($tiles[Level::blockHash($newX, $newY, $newZ)])) {
-				$toUndo->addTile($tiles[Level::blockHash($newX, $newY, $newZ)]);
-				unset($tiles[Level::blockHash($newX, $newY, $newZ)]);
+			if (isset($tiles[World::blockHash($newX, $newY, $newZ)])) {
+				$toUndo->addTile($tiles[World::blockHash($newX, $newY, $newZ)]);
+				unset($tiles[World::blockHash($newX, $newY, $newZ)]);
 			}
-			if (isset($tiles[Level::blockHash($x, $y, $z)])) {
-				$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
-				$tiles[Level::blockHash($newX, $newY, $newZ)] = TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $direction);
-				unset($tiles[Level::blockHash($x, $y, $z)]);
+			if (isset($tiles[World::blockHash($x, $y, $z)])) {
+				$toUndo->addTile($tiles[World::blockHash($x, $y, $z)]);
+				$tiles[World::blockHash($newX, $newY, $newZ)] = TileUtils::offsetCompound($tiles[World::blockHash($x, $y, $z)], $direction);
+				unset($tiles[World::blockHash($x, $y, $z)]);
 			}
 		});
 	}
