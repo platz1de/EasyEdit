@@ -11,7 +11,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\MoveTask;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\level\Position;
+use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 

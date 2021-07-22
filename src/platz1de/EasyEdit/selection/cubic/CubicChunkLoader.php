@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\selection\cubic;
 use platz1de\EasyEdit\selection\Patterned;
 use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\Position;
+use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 
 trait CubicChunkLoader

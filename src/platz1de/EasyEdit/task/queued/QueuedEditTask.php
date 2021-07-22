@@ -10,7 +10,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\PieceManager;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use pocketmine\level\Position;
+use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 
