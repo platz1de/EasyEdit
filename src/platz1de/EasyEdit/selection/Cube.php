@@ -8,8 +8,6 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockIds;
 use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;

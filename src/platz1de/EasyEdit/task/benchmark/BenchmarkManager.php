@@ -16,8 +16,7 @@ use platz1de\EasyEdit\task\selection\SetTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockIds;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -61,12 +60,12 @@ class BenchmarkManager
 		$testCube = new Cube($name, $name, new Vector3(), new Vector3(95, Level::Y_MASK, 95));
 
 		//Task #1 - set static generate
-		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results): void {
+		SetTask::queue($testCube, new StaticBlock(VanillaBlocks::STONE()), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static generate", $result->getTime(), $result->getChanged()];
 		});
 
 		//Task #2 - set static
-		SetTask::queue($testCube, new StaticBlock(BlockFactory::get(BlockIds::STONE)), $pos, function (EditTaskResult $result) use (&$results): void {
+		SetTask::queue($testCube, new StaticBlock(VanillaBlocks::STONE()), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 

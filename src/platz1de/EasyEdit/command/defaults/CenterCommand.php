@@ -9,8 +9,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockIds;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 
@@ -30,7 +29,7 @@ class CenterCommand extends EasyEditCommand
 		try {
 			$block = Pattern::getBlock($args[0]);
 		} catch (Exception $exception) {
-			$block = BlockFactory::get(BlockIds::BEDROCK);
+			$block = VanillaBlocks::BEDROCK();
 		}
 
 		try {

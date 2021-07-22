@@ -7,7 +7,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
+use pocketmine\block\VanillaBlocks;
 
 class SmoothPattern extends Pattern
 {
@@ -73,6 +73,6 @@ class SmoothPattern extends Pattern
 			}
 		}
 
-		return BlockFactory::get(0);
+		return VanillaBlocks::AIR();
 	}
 }

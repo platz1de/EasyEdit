@@ -13,8 +13,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockIds;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\player\Player;
 
 class ExtinguishCommand extends EasyEditCommand
@@ -42,6 +41,6 @@ class ExtinguishCommand extends EasyEditCommand
 			}
 		}
 
-		SetTask::queue($selection, new Pattern([new BlockPattern([new StaticBlock(BlockFactory::get(0))], [new DynamicBlock(BlockFactory::get(BlockIds::FIRE))])], []), $player);
+		SetTask::queue($selection, new Pattern([new BlockPattern([new StaticBlock(VanillaBlocks::AIR())], [new DynamicBlock(VanillaBlocks::FIRE())])], []), $player);
 	}
 }
