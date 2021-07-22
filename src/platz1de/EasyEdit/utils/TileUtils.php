@@ -7,7 +7,7 @@ use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\tile\Chest;
-use pocketmine\tile\Tile;
+use pocketmine\block\tile\Tile;
 
 class TileUtils
 {

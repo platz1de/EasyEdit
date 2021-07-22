@@ -20,7 +20,7 @@ use pocketmine\world\World;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\tile\Tile;
+use pocketmine\block\tile\Tile;
 
 class PasteTask extends EditTask
 {

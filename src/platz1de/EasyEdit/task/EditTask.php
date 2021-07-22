@@ -22,7 +22,7 @@ use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\tile\Tile;
+use pocketmine\block\tile\Tile;
 use pocketmine\utils\Random;
 use Thread;
 use Threaded;

@@ -8,7 +8,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\format\SubChunkInterface;
 use pocketmine\world\World;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\tile\Tile;
+use pocketmine\block\tile\Tile;
 
 class LoaderManager
 {

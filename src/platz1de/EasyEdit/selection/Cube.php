@@ -21,7 +21,7 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\BlockActorDataPacket;
 use pocketmine\player\Player;
 use pocketmine\Server;
-use pocketmine\tile\Tile;
+use pocketmine\block\tile\Tile;
 use pocketmine\utils\AssumptionFailedError;
 use UnexpectedValueException;
 
