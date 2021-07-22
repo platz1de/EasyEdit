@@ -67,7 +67,7 @@ class MoveTask extends EditTask
 			$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0, 0);
 
 			$newX = $x + $direction->getFloorX();
-			$newY = (int) min(Level::Y_MASK, max(0, $y + $direction->getY()));
+			$newY = (int) min(World::Y_MAX - 1, max(0, $y + $direction->getY()));
 			$newZ = $z + $direction->getFloorZ();
 
 			$iterator->moveTo($newX, $newY, $newZ);

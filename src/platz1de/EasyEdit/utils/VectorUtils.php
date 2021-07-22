@@ -68,6 +68,6 @@ class VectorUtils
 	 */
 	public static function enforceHeight(Vector3 $vector): Vector3
 	{
-		return new Vector3($vector->getX(), min(World::Y_MASK, max(0, $vector->getY())), $vector->getZ());
+		return new Vector3($vector->getX(), min(World::Y_MAX - 1, max(0, $vector->getY())), $vector->getZ());
 	}
 }
