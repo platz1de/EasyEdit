@@ -21,7 +21,7 @@ class BelowPattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
 	{
 		$y++;
-		if ($y < Level::Y_MAX) {
+		if ($y < World::Y_MAX) {
 			$iterator->moveTo($x, $y, $z);
 			return ($iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getDamage());
 		}
