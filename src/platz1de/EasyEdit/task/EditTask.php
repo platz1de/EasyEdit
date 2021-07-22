@@ -193,7 +193,7 @@ abstract class EditTask extends Threaded
 			$tileData = (new LittleEndianNBTStream())->read($this->tileData, true);
 			/** @var CompoundTag $tile */
 			foreach (is_array($tileData) ? $tileData : [$tileData] as $tile) {
-				$tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+				$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 			}
 		}
 

@@ -38,7 +38,7 @@ class NaturalizePattern extends Pattern
 	{
 		$i = 1;
 		$iterator->moveTo($x, $y, $z);
-		while ($y + $i < Level::Y_MAX && $iterator->getChunk()->getBlockId($x & 0x0f, $y + $i, $z & 0x0f) !== 0) {
+		while ($y + $i < World::Y_MAX && $iterator->getChunk()->getBlockId($x & 0x0f, $y + $i, $z & 0x0f) !== 0) {
 			$i++;
 		}
 		switch ($i) {

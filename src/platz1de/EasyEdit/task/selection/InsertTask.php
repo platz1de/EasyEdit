@@ -82,7 +82,7 @@ class InsertTask extends EditTask
 
 		foreach ($selection->getTiles() as $tile) {
 			$compoundTag = TileUtils::offsetCompound($tile, $place);
-			$tiles[Level::blockHash($compoundTag->getInt(Tile::TAG_X), $compoundTag->getInt(Tile::TAG_Y), $compoundTag->getInt(Tile::TAG_Z))] = $compoundTag;
+			$tiles[World::blockHash($compoundTag->getInt(Tile::TAG_X), $compoundTag->getInt(Tile::TAG_Y), $compoundTag->getInt(Tile::TAG_Z))] = $compoundTag;
 		}
 	}
 

@@ -90,7 +90,7 @@ abstract class BlockListSelection extends Selection
 	 */
 	public function addTile(CompoundTag $tile): void
 	{
-		$this->tiles[Level::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+		$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 	}
 
 	/**

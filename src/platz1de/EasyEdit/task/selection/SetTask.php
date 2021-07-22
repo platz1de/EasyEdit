@@ -64,9 +64,9 @@ class SetTask extends EditTask
 				$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $b->getId(), $b->getDamage());
 				$changed++;
 
-				if (isset($tiles[Level::blockHash($x, $y, $z)])) {
-					$toUndo->addTile($tiles[Level::blockHash($x, $y, $z)]);
-					unset($tiles[Level::blockHash($x, $y, $z)]);
+				if (isset($tiles[World::blockHash($x, $y, $z)])) {
+					$toUndo->addTile($tiles[World::blockHash($x, $y, $z)]);
+					unset($tiles[World::blockHash($x, $y, $z)]);
 				}
 			}
 		});

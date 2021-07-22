@@ -13,12 +13,12 @@ use pocketmine\block\tile\Tile;
 class LoaderManager
 {
 	/**
-	 * @param Level $level
+	 * @param World $level
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
 	 * @return Chunk
 	 */
-	public static function getChunk(Level $level, int $chunkX, int $chunkZ): Chunk
+	public static function getChunk(World $level, int $chunkX, int $chunkZ): Chunk
 	{
 		if ($level->isChunkLoaded($chunkX, $chunkZ)) {
 			$chunk = $level->getChunk($chunkX, $chunkZ);
@@ -34,7 +34,7 @@ class LoaderManager
 	}
 
 	/**
-	 * @param Level         $level
+	 * @param World         $level
 	 * @param Chunk[]       $chunks
 	 * @param CompoundTag[] $tiles
 	 * @return void
@@ -58,14 +58,14 @@ class LoaderManager
 	}
 
 	/**
-	 * Implementation of Level::setChunk without loading unnecessary Chunks which get overwritten anyways
-	 * @param Level $level
+	 * Implementation of World::setChunk without loading unnecessary Chunks which get overwritten anyways
+	 * @param World $level
 	 * @param Chunk $chunk
-	 * @see Level::setChunk()
+	 * @see World::setChunk()
 	 */
 	public static function injectChunk(Level $level, Chunk $chunk): void
 	{
-		$chunkHash = Level::chunkHash($chunk->getX(), $chunk->getZ());
+		$chunkHash = World::chunkHash($chunk->getX(), $chunk->getZ());
 
 		//TODO: this deletes entities in unloaded chunks (load entities to EditThread)
 		if ($level->isChunkLoaded($chunk->getX(), $chunk->getZ())) {

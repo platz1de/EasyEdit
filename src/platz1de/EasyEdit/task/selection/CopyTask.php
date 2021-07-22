@@ -68,8 +68,8 @@ class CopyTask extends EditTask
 			$toUndo->addBlock($x - $full->getPos1()->getFloorX(), $y - $full->getPos1()->getFloorY(), $z - $full->getPos1()->getFloorZ(), $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
 			$changed++;
 
-			if (isset($tiles[Level::blockHash($x, $y, $z)])) {
-				$toUndo->addTile(TileUtils::offsetCompound($tiles[Level::blockHash($x, $y, $z)], $full->getPos1()->multiply(-1)));
+			if (isset($tiles[World::blockHash($x, $y, $z)])) {
+				$toUndo->addTile(TileUtils::offsetCompound($tiles[World::blockHash($x, $y, $z)], $full->getPos1()->multiply(-1)));
 			}
 		});
 	}
