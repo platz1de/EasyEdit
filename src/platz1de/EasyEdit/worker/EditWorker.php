@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\worker;
 
+use pocketmine\thread\Worker;
 use pocketmine\utils\Utils;
-use pocketmine\Worker;
 use ThreadedLogger;
 
 class EditWorker extends Worker
@@ -31,14 +31,8 @@ class EditWorker extends Worker
 	}
 
 
-	public function run(): void
+	public function onRun(): void
 	{
-		error_reporting(-1);
-
-		$this->registerClassLoader();
-
-		set_error_handler([Utils::class, 'errorExceptionHandler']);
-
 		gc_enable();
 
 		$this->getLogger()->debug("Started EditWorker");
