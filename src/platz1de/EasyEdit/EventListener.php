@@ -12,6 +12,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
 use pocketmine\item\TieredTool;
+use pocketmine\item\ToolTier;
 use pocketmine\player\Player;
 
 class EventListener implements Listener
@@ -28,9 +29,9 @@ class EventListener implements Listener
 	public function onBreak(BlockBreakEvent $event): void
 	{
 		$axe = $event->getItem();
-		if ($axe instanceof Axe && $axe->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
-			$event->setCancelled();
-			Cube::selectPos1($event->getPlayer(), $event->getBlock()->asVector3());
+		if ($axe instanceof Axe && $axe->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
+			$event->cancel();
+			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPos());
 		}
 	}
 
@@ -43,12 +44,12 @@ class EventListener implements Listener
 		}
 
 		$item = $event->getItem();
-		if ($item instanceof TieredTool && $item->getTier() === TieredTool::TIER_WOODEN && $event->getPlayer()->isCreative()) {
-			if ($item instanceof Axe && $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK && $event->getPlayer()->hasPermission("easyedit.position")) {
-				$event->setCancelled();
-				Cube::selectPos2($event->getPlayer(), $event->getBlock()->asVector3());
-			} elseif ($item instanceof Shovel && ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK || $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_AIR) && $event->getPlayer()->hasPermission("easyedit.brush")) {
-				$event->setCancelled();
+		if ($item instanceof TieredTool && $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
+			if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
+				$event->cancel();
+				Cube::selectPos2($event->getPlayer(), $event->getBlock()->getPos());
+			} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
+				$event->cancel();
 				BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 			}
 		}
