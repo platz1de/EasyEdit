@@ -5,8 +5,9 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use pocketmine\nbt\TreeRoot;
 use pocketmine\world\format\Chunk;
-use pocketmine\nbt\LittleEndianNBTStream;
+use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 
 class EditTaskResult
@@ -131,7 +132,7 @@ class EditTaskResult
 
 		$stream->putString($this->toUndo->fastSerialize());
 
-		$stream->putString((string) (new LittleEndianNBTStream())->write($this->tiles));
+		$stream->putString((new LittleEndianNbtSerializer())->writeMultiple(array_map(static function (CompoundTag $tag): TreeRoot { return new TreeRoot($tag); }, $this->tiles)));
 
 		$stream->putFloat($this->time);
 		$stream->putLInt($this->changed);
@@ -160,7 +161,7 @@ class EditTaskResult
 
 		$tileData = $stream->getString();
 		if ($tileData !== "") {
-			$tiles = (new LittleEndianNBTStream())->read($tileData, true);
+			$tiles = (new LittleEndianNbtSerializer())->readMultiple($tileData);
 		} else {
 			$tiles = [];
 		}

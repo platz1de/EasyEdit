@@ -14,16 +14,17 @@ use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
+use pocketmine\block\tile\Tile;
+use pocketmine\math\Vector3;
+use pocketmine\nbt\LittleEndianNbtSerializer;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\TreeRoot;
+use pocketmine\utils\Random;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\Generator;
 use pocketmine\world\generator\GeneratorManager;
-use pocketmine\world\World;
 use pocketmine\world\Position;
-use pocketmine\math\Vector3;
-use pocketmine\nbt\LittleEndianNBTStream;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\block\tile\Tile;
-use pocketmine\utils\Random;
+use pocketmine\world\World;
 use Thread;
 use Threaded;
 use ThreadedLogger;
@@ -110,20 +111,22 @@ abstract class EditTask extends Threaded
 	{
 		$this->id = WorkerAdapter::getId();
 		$chunkData = new ExtendedBinaryStream();
-		$tileData = new LittleEndianNBTStream();
+		$tileData = new ExtendedBinaryStream();
 		foreach ($selection->getNeededChunks($place) as $chunk) {
 			$chunkData->putString($chunk->fastSerialize());
 
 			if (LoaderManager::isChunkInit($chunk)) {
 				foreach ($chunk->getTiles() as $tile) {
-					$tileData->writeTag($tile->saveNBT());
+					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile->saveNBT())));
 				}
 			} else {
-				$tileData->write(TileUtils::loadFrom($chunk));
+				foreach (TileUtils::loadFrom($chunk) as $tile) {
+					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
+				}
 			}
 		}
 		$this->chunkData = $chunkData->getBuffer();
-		$this->tileData = $tileData->buffer;
+		$this->tileData = $tileData->getBuffer();
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
@@ -188,13 +191,11 @@ abstract class EditTask extends Threaded
 			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), LoaderManager::cloneChunk($chunk));
 		}
 
+		$tileData = new ExtendedBinaryStream($this->tileData);
 		$tiles = [];
-		if ($this->tileData !== "") {
-			$tileData = (new LittleEndianNBTStream())->read($this->tileData, true);
-			/** @var CompoundTag $tile */
-			foreach (is_array($tileData) ? $tileData : [$tileData] as $tile) {
-				$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
-			}
+		while (!$tileData->feof()) {
+			$tile = (new LittleEndianNbtSerializer())->read($tileData->getString())->mustGetCompoundTag();
+			$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
 		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->level, $data);
