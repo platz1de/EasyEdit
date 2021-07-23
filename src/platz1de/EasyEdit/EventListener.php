@@ -6,7 +6,7 @@ use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
 use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\entity\EntityLevelChangeEvent;
+use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Axe;
@@ -54,11 +54,11 @@ class EventListener implements Listener
 		}
 	}
 
-	public function onLevelChange(EntityLevelChangeEvent $event): void
+	public function onLevelChange(EntityTeleportEvent $event): void
 	{
 		//TODO: Replace this with proper differentiation of player and selection level
 		$player = $event->getEntity();
-		if ($player instanceof Player) {
+		if ($player instanceof Player && $event->getFrom()->getWorld() !== $event->getTo()->getWorld()) {
 			SelectionManager::clearForPlayer($player->getName());
 		}
 	}
