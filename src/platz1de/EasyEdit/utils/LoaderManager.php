@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\utils;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\world\format\Chunk;
-use pocketmine\level\format\SubChunkInterface;
+use pocketmine\world\format\SubChunk;
 use pocketmine\world\World;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\block\tile\Tile;
@@ -63,7 +63,7 @@ class LoaderManager
 	 * @param Chunk $chunk
 	 * @see World::setChunk()
 	 */
-	public static function injectChunk(Level $level, Chunk $chunk): void
+	public static function injectChunk(World $level, Chunk $chunk): void
 	{
 		$chunkHash = World::chunkHash($chunk->getX(), $chunk->getZ());
 
@@ -112,7 +112,7 @@ class LoaderManager
 	 */
 	public static function cloneChunk(Chunk $chunk): Chunk
 	{
-		$new = new Chunk($chunk->getX(), $chunk->getZ(), array_map(static function (SubChunkInterface $subchunk): SubChunkInterface { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
+		$new = new Chunk($chunk->getX(), $chunk->getZ(), array_map(static function (SubChunk $subchunk): SubChunk { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
 		$new->setGenerated($chunk->isGenerated());
 		$new->setPopulated($chunk->isPopulated());
 		$new->setLightPopulated($chunk->isLightPopulated());
