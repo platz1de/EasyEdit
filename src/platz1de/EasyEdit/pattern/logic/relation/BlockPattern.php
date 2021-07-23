@@ -5,19 +5,19 @@ namespace platz1de\EasyEdit\pattern\logic\relation;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 
 class BlockPattern extends Pattern
 {
 	/**
-	 * @param int                         $x
-	 * @param int                         $y
-	 * @param int                         $z
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param int                  $x
+	 * @param int                  $y
+	 * @param int                  $z
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		$iterator->moveTo($x, $y, $z);
 		return ($iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getDamage());

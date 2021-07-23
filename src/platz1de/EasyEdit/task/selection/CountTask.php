@@ -12,7 +12,7 @@ use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\Position;
@@ -41,17 +41,17 @@ class CountTask extends EditTask
 	}
 
 	/**
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param CompoundTag[]               $tiles
-	 * @param Selection                   $selection
-	 * @param Pattern                     $pattern
-	 * @param Vector3                     $place
-	 * @param BlockListSelection          $toUndo
-	 * @param SafeSubChunkIteratorManager $origin
-	 * @param int                         $changed
-	 * @param AdditionalDataManager       $data
+	 * @param SafeSubChunkExplorer  $iterator
+	 * @param CompoundTag[]         $tiles
+	 * @param Selection             $selection
+	 * @param Pattern               $pattern
+	 * @param Vector3               $place
+	 * @param BlockListSelection    $toUndo
+	 * @param SafeSubChunkExplorer  $origin
+	 * @param int                   $changed
+	 * @param AdditionalDataManager $data
 	 */
-	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		$blocks = $data->getDataKeyed("blocks", []);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$blocks, &$changed): void {

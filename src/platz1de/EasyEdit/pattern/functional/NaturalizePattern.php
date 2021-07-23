@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\pattern\functional;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
@@ -13,28 +13,28 @@ use pocketmine\world\World;
 class NaturalizePattern extends Pattern
 {
 	/**
-	 * @param int                         $x
-	 * @param int                         $y
-	 * @param int                         $z
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param int                  $x
+	 * @param int                  $y
+	 * @param int                  $z
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		$iterator->moveTo($x, $y, $z);
 		return $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) !== 0;
 	}
 
 	/**
-	 * @param int                         $x
-	 * @param int                         $y
-	 * @param int                         $z
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param int                  $x
+	 * @param int                  $y
+	 * @param int                  $z
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
 	{
 		$i = 1;
 		$iterator->moveTo($x, $y, $z);

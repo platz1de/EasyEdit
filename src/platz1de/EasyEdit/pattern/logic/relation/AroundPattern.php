@@ -5,20 +5,20 @@ namespace platz1de\EasyEdit\pattern\logic\relation;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\math\Vector3;
 
 class AroundPattern extends Pattern
 {
 	/**
-	 * @param int                         $x
-	 * @param int                         $y
-	 * @param int                         $z
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param int                  $x
+	 * @param int                  $y
+	 * @param int                  $z
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		for ($i = 0; $i <= 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);

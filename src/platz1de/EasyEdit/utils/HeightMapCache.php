@@ -32,10 +32,10 @@ class HeightMapCache
 	private static $lowest = [];
 
 	/**
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 */
-	public static function load(SafeSubChunkIteratorManager $iterator, Selection $selection): void
+	public static function load(SafeSubChunkExplorer $iterator, Selection $selection): void
 	{
 		if (!self::$loaded) {
 			$min = $selection->getCubicStart()->subtract(1, 1, 1);

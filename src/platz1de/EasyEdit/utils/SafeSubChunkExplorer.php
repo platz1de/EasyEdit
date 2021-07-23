@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\utils;
 use BadMethodCallException;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
-use pocketmine\level\utils\SubChunkIteratorManager;
+use pocketmine\world\utils\SubChunkExplorer;
 
-class SafeSubChunkIteratorManager extends SubChunkIteratorManager
+class SafeSubChunkExplorer extends SubChunkExplorer
 {
 	/**
 	 * @return SubChunk

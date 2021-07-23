@@ -6,7 +6,7 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\tile\Tile;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
@@ -24,7 +24,7 @@ abstract class BlockListSelection extends Selection
 	 */
 	private $manager;
 	/**
-	 * @var SafeSubChunkIteratorManager
+	 * @var SafeSubChunkExplorer
 	 */
 	private $iterator;
 	/**
@@ -47,7 +47,7 @@ abstract class BlockListSelection extends Selection
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
 			$this->getManager()->load($pos1, $pos2);
 		}
-		$this->iterator = new SafeSubChunkIteratorManager($this->manager);
+		$this->iterator = new SafeSubChunkExplorer($this->manager);
 	}
 
 	/**
@@ -78,9 +78,9 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @return SafeSubChunkIteratorManager
+	 * @return SafeSubChunkExplorer
 	 */
-	public function getIterator(): SafeSubChunkIteratorManager
+	public function getIterator(): SafeSubChunkExplorer
 	{
 		return $this->iterator;
 	}
@@ -135,7 +135,7 @@ abstract class BlockListSelection extends Selection
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 
-		$this->iterator = new SafeSubChunkIteratorManager($this->manager);
+		$this->iterator = new SafeSubChunkExplorer($this->manager);
 
 		$tileData = $stream->getString();
 		if ($tileData !== "") {

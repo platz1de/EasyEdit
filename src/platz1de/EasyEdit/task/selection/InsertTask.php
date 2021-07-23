@@ -12,7 +12,7 @@ use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\type\PastingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\world\World;
@@ -44,17 +44,17 @@ class InsertTask extends EditTask
 	}
 
 	/**
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param CompoundTag[]               $tiles
-	 * @param Selection                   $selection
-	 * @param Pattern                     $pattern
-	 * @param Vector3                     $place
-	 * @param BlockListSelection          $toUndo
-	 * @param SafeSubChunkIteratorManager $origin
-	 * @param int                         $changed
-	 * @param AdditionalDataManager       $data
+	 * @param SafeSubChunkExplorer  $iterator
+	 * @param CompoundTag[]         $tiles
+	 * @param Selection             $selection
+	 * @param Pattern               $pattern
+	 * @param Vector3               $place
+	 * @param BlockListSelection    $toUndo
+	 * @param SafeSubChunkExplorer  $origin
+	 * @param int                   $changed
+	 * @param AdditionalDataManager $data
 	 */
-	public function execute(SafeSubChunkIteratorManager $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkIteratorManager $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);

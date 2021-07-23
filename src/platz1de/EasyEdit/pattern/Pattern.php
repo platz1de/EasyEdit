@@ -20,7 +20,7 @@ use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\random\RandomPattern;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
+use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\item\LegacyStringToItemParser;
@@ -55,14 +55,14 @@ class Pattern
 	}
 
 	/**
-	 * @param int                         $x
-	 * @param int                         $y
-	 * @param int                         $z
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param int                  $x
+	 * @param int                  $y
+	 * @param int                  $z
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 * @return Block|null
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
 	{
 		foreach ($this->pieces as $piece) {
 			if ($piece->isValidAt($x, $y, $z, $iterator, $selection)) {
@@ -73,14 +73,14 @@ class Pattern
 	}
 
 	/**
-	 * @param int                         $x
-	 * @param int                         $y
-	 * @param int                         $z
-	 * @param SafeSubChunkIteratorManager $iterator
-	 * @param Selection                   $selection
+	 * @param int                  $x
+	 * @param int                  $y
+	 * @param int                  $z
+	 * @param SafeSubChunkExplorer $iterator
+	 * @param Selection            $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkIteratorManager $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		return true;
 	}
