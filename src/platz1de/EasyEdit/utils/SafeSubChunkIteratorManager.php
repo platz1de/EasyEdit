@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use BadMethodCallException;
-use pocketmine\level\format\Chunk;
+use pocketmine\world\format\Chunk;
 use pocketmine\level\format\SubChunkInterface;
 use pocketmine\level\utils\SubChunkIteratorManager;
 

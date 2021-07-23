@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\utils\ReferencedLevelHolder;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\SimpleChunkManager;
+use pocketmine\world\format\Chunk;
+use pocketmine\world\SimpleChunkManager;
 use pocketmine\math\Vector3;
 
 class ReferencedChunkManager extends SimpleChunkManager

@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\level\format\Chunk;
+use pocketmine\world\format\Chunk;
 use pocketmine\level\format\SubChunkInterface;
 use pocketmine\world\World;
 use pocketmine\nbt\tag\CompoundTag;

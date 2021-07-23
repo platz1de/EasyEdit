@@ -8,7 +8,7 @@ use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\tile\Tile;
-use pocketmine\level\format\Chunk;
+use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNBTStream;

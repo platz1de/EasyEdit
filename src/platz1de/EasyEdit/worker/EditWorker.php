@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\worker;
 
 use pocketmine\block\BlockFactory;
 use pocketmine\item\ItemFactory;
-use pocketmine\level\biome\Biome;
+use pocketmine\world\biome\Biome;
 use pocketmine\utils\Utils;
 use pocketmine\Worker;
 use ThreadedLogger;
