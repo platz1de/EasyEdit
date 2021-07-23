@@ -313,10 +313,6 @@ class Pattern
 			throw new ParseError("Unknown Block " . $string);
 		}
 
-		if (!$item instanceof Item) {
-			throw new ParseError("Unknown Block " . $string);
-		}
-
 		try {
 			$block = $item->getBlock();
 		} catch (Exception $exception) {
