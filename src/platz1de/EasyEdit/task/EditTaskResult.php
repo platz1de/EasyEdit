@@ -118,7 +118,7 @@ class EditTaskResult
 	{
 		$stream = new ExtendedBinaryStream();
 
-		$stream->putString($this->manager->getLevelName());
+		$stream->putString($this->manager->getWorldName());
 
 		$chunks = new ExtendedBinaryStream();
 		$count = 0;

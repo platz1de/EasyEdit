@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
@@ -66,7 +67,7 @@ class Cube extends Selection implements Patterned
 			if (!$this->piece && ($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
-				$this->getLevel()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getLevel()))]);
+				$this->getWorld()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getWorld()))]);
 				$nbt = new CompoundTag("", [
 					new StringTag(Tile::TAG_ID, "StructureBlock"),
 					new IntTag(Tile::TAG_X, $this->structure->getFloorX()),
@@ -135,8 +136,8 @@ class Cube extends Selection implements Patterned
 		if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
 			//this happens when whole Chunks get sent
-			$this->getLevel()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getLevel()))]);
-			$this->getLevel()->sendBlocks([$player], [$this->getLevel()->getBlock($this->structure->floor())]);
+			$this->getWorld()->sendBlocks([$player], [BlockFactory::get(BlockIds::STRUCTURE_BLOCK, 0, new Position($this->structure->getFloorX(), $this->structure->getFloorY(), $this->structure->getFloorZ(), $this->getWorld()))]);
+			$this->getWorld()->sendBlocks([$player], [$this->getWorld()->getBlock($this->structure->floor())]);
 		}
 	}
 
@@ -157,7 +158,7 @@ class Cube extends Selection implements Patterned
 		$pieces = [];
 		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 3) {
 			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 3) {
-				$pieces[] = new Cube($this->getPlayer(), $this->getLevelName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), true);
+				$pieces[] = new Cube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), true);
 			}
 		}
 		return $pieces;
@@ -171,7 +172,7 @@ class Cube extends Selection implements Patterned
 	{
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self || $selection->getLevel() !== $player->getLevel()) {
+			if (!$selection instanceof self || $selection->getWorld() !== $player->getLevel()) {
 				$selection->close();
 				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 			}
@@ -194,7 +195,7 @@ class Cube extends Selection implements Patterned
 	{
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self || $selection->getLevel() !== $player->getLevel()) {
+			if (!$selection instanceof self || $selection->getWorld() !== $player->getLevel()) {
 				$selection->close();
 				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
 			}

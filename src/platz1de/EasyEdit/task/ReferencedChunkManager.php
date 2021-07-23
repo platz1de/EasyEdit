@@ -19,7 +19,7 @@ class ReferencedChunkManager extends SimpleChunkManager
 	public function __construct(string $level, int $seed = 0)
 	{
 		parent::__construct($seed);
-		$this->level = $level;
+		$this->world = $level;
 	}
 
 	/**

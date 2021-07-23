@@ -11,25 +11,25 @@ trait ReferencedLevelHolder
 	/**
 	 * @var string
 	 */
-	protected $level;
+	protected $world;
 
 	/**
 	 * @return string
 	 */
-	public function getLevelName(): string
+	public function getWorldName(): string
 	{
-		return $this->level;
+		return $this->world;
 	}
 
 	/**
-	 * @return Level
+	 * @return World
 	 */
-	public function getLevel(): Level
+	public function getWorld(): World
 	{
-		$level = Server::getInstance()->getLevelByName($this->getLevelName());
-		if ($level === null) {
-			throw new UnexpectedValueException("Level " . $this->getLevelName() . " was deleted, unloaded or renamed");
+		$world = Server::getInstance()->getWorldManager()->getWorldByName($this->getWorldName());
+		if ($world === null) {
+			throw new UnexpectedValueException("World " . $this->getWorldName() . " was deleted, unloaded or renamed");
 		}
-		return $level;
+		return $world;
 	}
 }

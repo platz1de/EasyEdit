@@ -53,7 +53,7 @@ abstract class Selection
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		$this->level = $level;
+		$this->world = $level;
 
 		if ($pos1 !== null) {
 			$this->pos1 = clone($this->selected1 = $pos1);
@@ -239,7 +239,7 @@ abstract class Selection
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString($this->level);
+		$stream->putString($this->world);
 
 		$stream->putVector($this->pos1);
 		$stream->putVector($this->pos2);
@@ -250,7 +250,7 @@ abstract class Selection
 	 */
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->level = $stream->getString();
+		$this->world = $stream->getString();
 
 		$this->pos1 = $stream->getVector();
 		$this->pos2 = $stream->getVector();

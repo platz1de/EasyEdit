@@ -132,7 +132,7 @@ class Cylinder extends Selection implements Patterned
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius) >> 4; $x <= ($this->pos1->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius) >> 4; $z <= ($this->pos1->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = new CylinderPiece($this->getPlayer(), $this->getLevelName(), $this->pos1, new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $this->pos2->getFloorY() - 1, World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), $radius, $this->pos2->getFloorY());
+				$pieces[] = new CylinderPiece($this->getPlayer(), $this->getWorldName(), $this->pos1, new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $this->pos2->getFloorY() - 1, World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), $radius, $this->pos2->getFloorY());
 			}
 		}
 		return $pieces;

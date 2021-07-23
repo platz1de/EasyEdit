@@ -56,7 +56,7 @@ class PieceManager
 
 			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
 				if ($data->getBoolKeyed("edit")) {
-					LoaderManager::setChunks($result->getManager()->getLevel(), $result->getManager()->getChunks(), $result->getTiles());
+					LoaderManager::setChunks($result->getManager()->getWorld(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
 				if ($this->result === null) {

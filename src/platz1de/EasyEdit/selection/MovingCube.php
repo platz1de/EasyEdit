@@ -46,7 +46,7 @@ class MovingCube extends Selection
 	 */
 	public function getNeededChunks(Position $place): array
 	{
-		$level = $this->getLevel();
+		$level = $this->getWorld();
 		$chunks = [];
 		//TODO: Remove duplicates
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {

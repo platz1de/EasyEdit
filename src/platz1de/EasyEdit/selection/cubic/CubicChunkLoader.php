@@ -19,7 +19,7 @@ trait CubicChunkLoader
 		$chunks = [];
 		$start = $this->getCubicStart();
 		$end = $this->getCubicEnd();
-		$level = $this->getLevel();
+		$level = $this->getWorld();
 
 		if ($this instanceof Patterned) {
 			$start = $start->subtract(1, 1, 1);

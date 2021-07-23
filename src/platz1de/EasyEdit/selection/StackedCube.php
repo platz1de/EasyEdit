@@ -50,7 +50,7 @@ class StackedCube extends Selection
 		$chunks = [];
 		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());
 		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
-		$level = $this->getLevel();
+		$level = $this->getWorld();
 
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {

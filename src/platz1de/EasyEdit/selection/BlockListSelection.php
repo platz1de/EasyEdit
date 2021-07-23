@@ -127,7 +127,7 @@ abstract class BlockListSelection extends Selection
 	{
 		parent::parseData($stream);
 
-		$this->manager = new ReferencedChunkManager($this->getLevelName());
+		$this->manager = new ReferencedChunkManager($this->getWorldName());
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
