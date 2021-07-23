@@ -50,7 +50,7 @@ class DynamicBlockListSelection extends BlockListSelection
 		$chunks = [];
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($place->getLevelNonNull(), $x, $z);
+				$chunks[] = LoaderManager::getChunk($place->getWorld(), $x, $z);
 			}
 		}
 		return $chunks;

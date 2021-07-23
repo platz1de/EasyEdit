@@ -144,12 +144,12 @@ class Cube extends Selection implements Patterned
 	{
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self || $selection->getWorld() !== $player->getLevel()) {
+			if (!$selection instanceof self || $selection->getWorld() !== $player->getWorld()) {
 				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
+				$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 			}
 		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
+			$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 		}
 
 		$selection->setPos1($position->floor());
@@ -167,12 +167,12 @@ class Cube extends Selection implements Patterned
 	{
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self || $selection->getWorld() !== $player->getLevel()) {
+			if (!$selection instanceof self || $selection->getWorld() !== $player->getWorld()) {
 				$selection->close();
-				$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
+				$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 			}
 		} catch (Exception $exception) {
-			$selection = new Cube($player->getName(), $player->getLevelNonNull()->getFolderName());
+			$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 		}
 
 		$selection->setPos2($position->floor());

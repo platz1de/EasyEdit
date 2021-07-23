@@ -63,7 +63,7 @@ class QueuedEditTask implements QueuedTask
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
-		$this->place = Position::fromObject($place->floor(), $place->getLevelNonNull());
+		$this->place = Position::fromObject($place->floor(), $place->getWorld());
 		$this->task = $task;
 		$this->data = $data;
 		$this->splitOffset = $splitOffset;

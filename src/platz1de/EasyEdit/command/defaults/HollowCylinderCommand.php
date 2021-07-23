@@ -34,6 +34,6 @@ class HollowCylinderCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue(new HollowCylinder($player->getName(), $player->getLevelNonNull()->getFolderName(), $player->asVector3()->floor(), (int) $args[0], (int) $args[1], (int) ($args[3] ?? 1)), $pattern, $player);
+		SetTask::queue(new HollowCylinder($player->getName(), $player->getWorld()->getFolderName(), $player->asVector3()->floor(), (int) $args[0], (int) $args[1], (int) ($args[3] ?? 1)), $pattern, $player);
 	}
 }

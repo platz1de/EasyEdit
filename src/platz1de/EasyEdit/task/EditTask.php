@@ -131,14 +131,14 @@ abstract class EditTask extends Threaded
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = igbinary_serialize($pattern);
 		$this->place = igbinary_serialize($place->floor());
-		$this->level = $place->getLevelNonNull()->getFolderName();
+		$this->level = $place->getWorld()->getFolderName();
 		if ($total instanceof Selection) {
 			$this->total = $total->fastSerialize();
 		}
 		$this->data = igbinary_serialize($data);
-		$this->generatorClass = GeneratorManager::getGenerator($place->getLevelNonNull()->getProvider()->getGenerator());
-		$this->settings = igbinary_serialize($place->getLevelNonNull()->getProvider()->getGeneratorOptions());
-		$this->seed = $place->getLevelNonNull()->getSeed();
+		$this->generatorClass = GeneratorManager::getGenerator($place->getWorld()->getProvider()->getGenerator());
+		$this->settings = igbinary_serialize($place->getWorld()->getProvider()->getGeneratorOptions());
+		$this->seed = $place->getWorld()->getSeed();
 	}
 
 	public function run(): void
