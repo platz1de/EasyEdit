@@ -5,11 +5,11 @@ namespace platz1de\EasyEdit\command;
 use platz1de\EasyEdit\EasyEdit;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwned;
 
-abstract class EasyEditCommand extends Command implements PluginIdentifiableCommand
+abstract class EasyEditCommand extends Command implements PluginOwned
 {
 	public function __construct(string $name, string $description, string $permission, string $usage = null, array $aliases = [])
 	{
@@ -44,7 +44,7 @@ abstract class EasyEditCommand extends Command implements PluginIdentifiableComm
 	/**
 	 * @return EasyEdit
 	 */
-	public function getPlugin(): Plugin
+	public function getOwningPlugin(): Plugin
 	{
 		return EasyEdit::getInstance();
 	}
