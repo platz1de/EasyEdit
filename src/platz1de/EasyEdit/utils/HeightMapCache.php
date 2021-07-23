@@ -3,7 +3,8 @@
 namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\selection\Selection;
-use pocketmine\block\BlockIds;
+use pocketmine\block\Block;
+use pocketmine\block\BlockLegacyIds;
 
 class HeightMapCache
 {
@@ -11,11 +12,11 @@ class HeightMapCache
 	/**
 	 * @var int[] these mess up the height calculation in different ways (this will never be complete, only the most important ones)
 	 */
-	private static $ignore = [BlockIds::AIR,
-		BlockIds::WOOD, BlockIds::WOOD2, BlockIds::LEAVES, BlockIds::LEAVES2, //trees
-		BlockIds::YELLOW_FLOWER, BlockIds::RED_FLOWER, BlockIds::TALLGRASS, //flowers and stuff
-		BlockIds::FLOWING_WATER, BlockIds::STILL_WATER, BlockIds::FLOWING_LAVA, BlockIds::STILL_LAVA, //fluids
-		BlockIds::SNOW_LAYER
+	private static $ignore = [BlockLegacyIds::AIR,
+		BlockLegacyIds::LOG, BlockLegacyIds::LOG2, BlockLegacyIds::LEAVES, BlockLegacyIds::LEAVES2, //trees
+		BlockLegacyIds::YELLOW_FLOWER, BlockLegacyIds::RED_FLOWER, BlockLegacyIds::TALLGRASS, //flowers and stuff
+		BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA, //fluids
+		BlockLegacyIds::SNOW_LAYER
 	];
 
 	/**
@@ -44,7 +45,7 @@ class HeightMapCache
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
 					$iterator->moveTo($x, 0, $z);
 					$y = $min->getFloorY();
-					while ($y <= $max->getFloorY() && in_array($iterator->getChunk()->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && in_array($iterator->getChunk()->getFullBlock($x & 0x0f, $y, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
@@ -53,7 +54,7 @@ class HeightMapCache
 						self::$lowest[$x][$z] = null;
 					}
 
-					while ($y <= $max->getFloorY() && !in_array($iterator->getChunk()->getBlockId($x & 0x0f, $y, $z & 0x0f), self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && !in_array($iterator->getChunk()->getFullBlock($x & 0x0f, $y, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
