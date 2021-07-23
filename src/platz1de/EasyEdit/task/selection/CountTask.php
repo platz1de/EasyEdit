@@ -14,6 +14,7 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\worker\WorkerAdapter;
+use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\Position;
@@ -55,7 +56,7 @@ class CountTask extends EditTask
 		$blocks = $data->getDataKeyed("blocks", []);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$blocks, &$changed): void {
 			$iterator->moveTo($x, $y, $z);
-			$id = $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$id = $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
 			if (isset($blocks[$id])) {
 				$blocks[$id]++;
 			} else {
@@ -91,7 +92,7 @@ class CountTask extends EditTask
 		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => $changed]);
 		$msg = "";
 		foreach ($data->getDataKeyed("blocks") as $block => $count) {
-			$msg .= BlockFactory::get($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
+			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
 		Messages::send($selection->getPlayer(), $msg, [], false, false);
 	}
