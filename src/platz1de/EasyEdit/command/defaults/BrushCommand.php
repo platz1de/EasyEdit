@@ -6,8 +6,7 @@ use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
-use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
+use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\NamedTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
@@ -29,7 +28,7 @@ class BrushCommand extends EasyEditCommand
 	{
 		$type = BrushHandler::nameToIdentifier($args[0] ?? "");
 
-		$item = ItemFactory::get(ItemIds::WOODEN_SHOVEL);
+		$item = VanillaItems::WOODEN_SHOVEL();
 		switch ($type) {
 			case BrushHandler::BRUSH_SPHERE:
 				$item->setNamedTagEntry(new StringTag("brushType", "sphere"));
