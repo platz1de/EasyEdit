@@ -13,6 +13,7 @@ use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
 use pocketmine\world\format\Chunk;
+use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
 
 abstract class BlockListSelection extends Selection
@@ -112,7 +113,7 @@ abstract class BlockListSelection extends Selection
 		$chunks = new ExtendedBinaryStream();
 		$count = 0;
 		foreach ($this->manager->getChunks() as $chunk) {
-			$chunks->putString($chunk->fastSerialize());
+			$chunks->putString(FastChunkSerializer::serializeWithoutLight($chunk));
 			$count++;
 		}
 		$stream->putInt($count);
@@ -132,7 +133,7 @@ abstract class BlockListSelection extends Selection
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunk = Chunk::fastDeserialize($stream->getString());
+			$chunk = FastChunkSerializer::deserialize($stream->getString());
 			$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 		}
 

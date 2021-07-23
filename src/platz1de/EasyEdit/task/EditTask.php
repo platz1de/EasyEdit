@@ -21,6 +21,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
 use pocketmine\utils\Random;
 use pocketmine\world\format\Chunk;
+use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\generator\Generator;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
@@ -113,7 +114,7 @@ abstract class EditTask extends Threaded
 		$chunkData = new ExtendedBinaryStream();
 		$tileData = new ExtendedBinaryStream();
 		foreach ($selection->getNeededChunks($place) as $chunk) {
-			$chunkData->putString($chunk->fastSerialize());
+			$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
 
 			if (LoaderManager::isChunkInit($chunk)) {
 				foreach ($chunk->getTiles() as $tile) {
@@ -171,7 +172,7 @@ abstract class EditTask extends Threaded
 
 		$chunkData = new ExtendedBinaryStream($this->chunkData);
 		while (!$chunkData->feof()) {
-			$chunk = Chunk::fastDeserialize($chunkData->getString());
+			$chunk = FastChunkSerializer::deserialize($chunkData->getString());
 
 			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
 
