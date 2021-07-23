@@ -14,10 +14,10 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\world\World;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class MoveTask extends EditTask
 {
@@ -30,7 +30,7 @@ class MoveTask extends EditTask
 	 */
 	public static function queue(MovingCube $selection, Position $place): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(["edit" => true]), new Vector3()));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(["edit" => true]), new Vector3(0, 0, 0)));
 	}
 
 	/**

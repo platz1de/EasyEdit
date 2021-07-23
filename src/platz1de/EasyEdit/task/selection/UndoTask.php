@@ -16,11 +16,11 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\world\World;
-use pocketmine\world\Position;
+use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\block\tile\Tile;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class UndoTask extends EditTask
 {
@@ -33,7 +33,7 @@ class UndoTask extends EditTask
 	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getWorld()), self::class, new AdditionalDataManager(["edit" => true]), new Vector3(), static function (EditTaskResult $result): void {
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getWorld()), self::class, new AdditionalDataManager(["edit" => true]), new Vector3(0, 0, 0), static function (EditTaskResult $result): void {
 			/** @var StaticBlockListSelection $redo */
 			$redo = $result->getUndo();
 			HistoryManager::addToFuture($redo->getPlayer(), $redo);

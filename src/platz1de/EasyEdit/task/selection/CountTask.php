@@ -14,10 +14,9 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\block\VanillaBlocks;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\world\Position;
 
 class CountTask extends EditTask
 {
@@ -27,7 +26,7 @@ class CountTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), new Vector3(), static function (EditTaskResult $result): void {
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), new Vector3(0, 0, 0), static function (EditTaskResult $result): void {
 			//Nothing is edited
 		}));
 	}
@@ -78,7 +77,7 @@ class CountTask extends EditTask
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
 		//TODO: make this optional
-		return new StaticBlockListSelection($selection->getPlayer(), "", new Vector3(), new Vector3());
+		return new StaticBlockListSelection($selection->getPlayer(), "", new Vector3(0, 0, 0), new Vector3(0, 0, 0));
 	}
 
 	/**

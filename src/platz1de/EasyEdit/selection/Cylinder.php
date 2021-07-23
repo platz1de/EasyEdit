@@ -6,9 +6,9 @@ use Closure;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\piece\CylinderPiece;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
+use pocketmine\world\World;
 use UnexpectedValueException;
 
 class Cylinder extends Selection implements Patterned
@@ -26,7 +26,7 @@ class Cylinder extends Selection implements Patterned
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, int $radius = 0, int $height = 0, bool $piece = false)
 	{
-		parent::__construct($player, $level, $pos1, new Vector3(), $piece);
+		parent::__construct($player, $level, $pos1, new Vector3(0, 0, 0), $piece);
 		$this->setRadius($radius);
 		$this->setHeight($height);
 	}

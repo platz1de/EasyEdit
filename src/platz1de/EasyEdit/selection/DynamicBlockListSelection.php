@@ -6,10 +6,10 @@ use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\format\Chunk;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
+use pocketmine\world\format\Chunk;
+use pocketmine\world\Position;
 use UnexpectedValueException;
 
 class DynamicBlockListSelection extends BlockListSelection
@@ -32,7 +32,7 @@ class DynamicBlockListSelection extends BlockListSelection
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
 			$pos2 = $pos2->subtract($pos1);
 		}
-		parent::__construct($player, "", new Vector3(), $pos2 ?? null, $piece);
+		parent::__construct($player, "", new Vector3(0, 0, 0), $pos2 ?? null, $piece);
 		if ($pos1 instanceof Vector3 && $place instanceof Vector3) {
 			$this->point = $place->subtract($pos1);
 		}

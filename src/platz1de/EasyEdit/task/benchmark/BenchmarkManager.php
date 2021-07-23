@@ -17,11 +17,11 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\world\World;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 use UnexpectedValueException;
 
 class BenchmarkManager
@@ -57,7 +57,7 @@ class BenchmarkManager
 		$pos = new Position(0, 0, 0, $level);
 
 		//4x 3x3 Chunk cubes
-		$testCube = new Cube($name, $name, new Vector3(), new Vector3(95, World::Y_MAX - 1, 95));
+		$testCube = new Cube($name, $name, new Vector3(0, 0, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		//Task #1 - set static generate
 		SetTask::queue($testCube, new StaticBlock(VanillaBlocks::STONE()), $pos, function (EditTaskResult $result) use (&$results): void {

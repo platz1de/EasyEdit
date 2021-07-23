@@ -11,9 +11,9 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\MoveTask;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 
 class MoveCommand extends EasyEditCommand
 {
@@ -39,6 +39,6 @@ class MoveCommand extends EasyEditCommand
 			return;
 		}
 
-		MoveTask::queue(new MovingCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), (int) $amount)), Position::fromObject($selection->getPos1(), $player->getLevelNonNull()));
+		MoveTask::queue(new MovingCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), (int) $amount)), Position::fromObject($selection->getPos1(), $player->getLevelNonNull()));
 	}
 }

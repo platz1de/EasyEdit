@@ -38,6 +38,6 @@ class StackCommand extends EasyEditCommand
 			return;
 		}
 
-		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(), (int) $count)), $player->asPosition());
+		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), (int) $count)), $player->asPosition());
 	}
 }
