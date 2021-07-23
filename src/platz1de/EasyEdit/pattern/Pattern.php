@@ -23,7 +23,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkIteratorManager;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
-use pocketmine\item\ItemFactory;
+use pocketmine\item\LegacyStringToItemParser;
 use UnexpectedValueException;
 
 class Pattern
@@ -308,7 +308,7 @@ class Pattern
 	public static function getBlock(string $string): Block
 	{
 		try {
-			$item = ItemFactory::fromString($string);
+			$item = LegacyStringToItemParser::getInstance()->parse($string);
 		} catch (Exception $exception) {
 			throw new ParseError("Unknown Block " . $string);
 		}
