@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use pocketmine\entity\Location;
 use pocketmine\world\World;
-use pocketmine\level\Location;
 use pocketmine\math\Vector3;
 
 class VectorUtils
