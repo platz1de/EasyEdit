@@ -50,6 +50,7 @@ class BrushHandler
 	public static function nameToIdentifier(string $brush): int
 	{
 		switch (strtolower($brush)) {
+			default:
 			case "sphere":
 			case "sph":
 			case "sp":
@@ -66,6 +67,24 @@ class BrushHandler
 			case "cy":
 				return self::BRUSH_CYLINDER;
 		}
-		return self::BRUSH_SPHERE;
+	}
+
+	/**
+	 * @param int $brush
+	 * @return string
+	 */
+	public static function identifierToName(int $brush): string
+	{
+		switch ($brush) {
+			default:
+			case self::BRUSH_SPHERE:
+				return "sphere";
+			case self::BRUSH_SMOOTH;
+				return "smooth";
+			case self::BRUSH_NATURALIZE;
+				return "naturalize";
+			case self::BRUSH_CYLINDER;
+				return "cylinder";
+		}
 	}
 }
