@@ -19,17 +19,17 @@ class VectorUtils
 		$yaw = $from->getYaw();
 		$pitch = $from->getPitch();
 		if ($pitch >= 45) {
-			$p = $vector->getSide(Vector3::SIDE_DOWN, $amount);
+			$p = $vector->down($amount);
 		} elseif ($pitch <= -45) {
-			$p = $vector->getSide(Vector3::SIDE_UP, $amount);
+			$p = $vector->up($amount);
 		} elseif ($yaw >= 315 || $yaw < 45) {
-			$p = $vector->getSide(Vector3::SIDE_SOUTH, $amount);
+			$p = $vector->south($amount);
 		} elseif ($yaw >= 45 && $yaw < 135) {
-			$p = $vector->getSide(Vector3::SIDE_WEST, $amount);
+			$p = $vector->west($amount);
 		} elseif ($yaw >= 135 && $yaw < 225) {
-			$p = $vector->getSide(Vector3::SIDE_NORTH, $amount);
+			$p = $vector->north($amount);
 		} else {
-			$p = $vector->getSide(Vector3::SIDE_EAST, $amount);
+			$p = $vector->east($amount);
 		}
 		return $p;
 	}
