@@ -57,11 +57,11 @@ class SetTask extends EditTask
 	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $pattern, $toUndo, $origin, &$changed, $selection): void {
-			$b = $pattern->getFor($x, $y, $z, $origin, $selection);
-			if ($b instanceof Block) {
+			$block = $pattern->getFor($x, $y, $z, $origin, $selection);
+			if ($block instanceof Block) {
 				$iterator->moveTo($x, $y, $z);
-				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-				$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $b->getId(), $b->getDamage());
+				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block->getFullId());
 				$changed++;
 
 				if (isset($tiles[World::blockHash($x, $y, $z)])) {

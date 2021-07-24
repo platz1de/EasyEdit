@@ -64,12 +64,12 @@ class InsertTask extends EditTask
 			$oy = $y - $place->getFloorY();
 			$oz = $z - $place->getFloorZ();
 			$selection->getIterator()->moveTo($ox, $oy, $oz);
-			$blockId = $selection->getIterator()->getCurrent()->getBlockId($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
-			if (Selection::processBlock($blockId)) {
+			$block = $selection->getIterator()->getCurrent()->getFullBlock($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
+			if (Selection::processBlock($block)) {
 				$iterator->moveTo($x, $y, $z);
-				if ($iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
-					$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-					$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->getCurrent()->getBlockData($ox & 0x0f, $oy & 0x0f, $oz & 0x0f));
+				if ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
+					$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 					$changed++;
 
 					if (isset($tiles[World::blockHash($x, $y, $z)])) {

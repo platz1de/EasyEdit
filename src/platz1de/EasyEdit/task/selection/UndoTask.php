@@ -65,11 +65,11 @@ class UndoTask extends EditTask
 		Selection::validate($selection, StaticBlockListSelection::class);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $toUndo, &$changed): void {
 			$selection->getIterator()->moveTo($x, $y, $z);
-			$blockId = $selection->getIterator()->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
-			if (Selection::processBlock($blockId)) {
+			$block = $selection->getIterator()->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			if (Selection::processBlock($block)) {
 				$iterator->moveTo($x, $y, $z);
-				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-				$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $blockId, $selection->getIterator()->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 				$changed++;
 
 				if (isset($tiles[World::blockHash($x, $y, $z)])) {

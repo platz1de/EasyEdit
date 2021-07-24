@@ -64,12 +64,11 @@ class StackTask extends EditTask
 
 			$iterator->moveTo($originalX, $originalY, $originalZ);
 
-			$id = $iterator->getCurrent()->getBlockId($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
-			$data = $iterator->getCurrent()->getBlockData($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
+			$id = $iterator->getCurrent()->getFullBlock($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
 
 			$iterator->moveTo($x, $y, $z);
-			$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f), false);
-			$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $data);
+			$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f), false);
+			$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id);
 			$changed++;
 
 			if (isset($tiles[World::blockHash($x, $y, $z)])) {

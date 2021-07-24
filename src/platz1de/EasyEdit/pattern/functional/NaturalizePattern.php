@@ -23,7 +23,7 @@ class NaturalizePattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		$iterator->moveTo($x, $y, $z);
-		return $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) !== 0;
+		return $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) !== 0;
 	}
 
 	/**
@@ -38,7 +38,7 @@ class NaturalizePattern extends Pattern
 	{
 		$i = 1;
 		$iterator->moveTo($x, $y, $z);
-		while ($y + $i < World::Y_MAX && $iterator->getChunk()->getBlockId($x & 0x0f, $y + $i, $z & 0x0f) !== 0) {
+		while ($y + $i < World::Y_MAX && $iterator->getChunk()->getFullBlock($x & 0x0f, $y + $i, $z & 0x0f) !== 0) {
 			$i++;
 		}
 		switch ($i) {

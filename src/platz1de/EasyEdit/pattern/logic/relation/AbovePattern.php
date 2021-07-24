@@ -6,6 +6,7 @@ use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use pocketmine\block\Block;
 
 class AbovePattern extends Pattern
 {
@@ -22,7 +23,7 @@ class AbovePattern extends Pattern
 		$y--;
 		if ($y >= 0) {
 			$iterator->moveTo($x, $y, $z);
-			return ($iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getId()) && ($this->args[0]->getDamage() === -1 || $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f) === $this->args[0]->getDamage());
+			return (($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args[0]->getId()) && ($this->args[0]->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args[0]->getDamage());
 		}
 		return false;
 	}

@@ -65,17 +65,16 @@ abstract class BlockListSelection extends Selection
 	 * @param int  $y
 	 * @param int  $z
 	 * @param int  $id
-	 * @param int  $damage
 	 * @param bool $overwrite
 	 */
-	public function addBlock(int $x, int $y, int $z, int $id, int $damage, bool $overwrite = true): void
+	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void
 	{
 		if ($id === 0) {
-			$id = 217; //structure_void
+			$id = 0xD90; //structure_void
 		}
 		$this->iterator->moveTo($x, $y, $z);
-		if ($overwrite || $this->iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
-			$this->iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+		if ($overwrite || $this->iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) === 0) {
+			$this->iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id);
 		}
 	}
 

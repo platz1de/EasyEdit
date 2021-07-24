@@ -209,15 +209,15 @@ abstract class Selection
 	}
 
 	/**
-	 * @param int $blockId
+	 * @param int $block
 	 * @return bool
 	 */
-	public static function processBlock(int &$blockId): bool
+	public static function processBlock(int &$block): bool
 	{
-		$return = ($blockId !== 0);
+		$return = ($block !== 0);
 
-		if ($blockId === 217) {
-			$blockId = 0;
+		if ($block === 217) {
+			$block = 0;
 		}
 
 		return $return;

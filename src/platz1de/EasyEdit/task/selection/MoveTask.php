@@ -60,19 +60,18 @@ class MoveTask extends EditTask
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $direction): void {
 			$iterator->moveTo($x, $y, $z);
 
-			$id = $iterator->getCurrent()->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f);
-			$data = $iterator->getCurrent()->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$id = $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
 
-			$toUndo->addBlock($x, $y, $z, $id, $data);
-			$iterator->getCurrent()->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0, 0);
+			$toUndo->addBlock($x, $y, $z, $id);
+			$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0);
 
 			$newX = $x + $direction->getFloorX();
 			$newY = (int) min(World::Y_MAX - 1, max(0, $y + $direction->getY()));
 			$newZ = $z + $direction->getFloorZ();
 
 			$iterator->moveTo($newX, $newY, $newZ);
-			$toUndo->addBlock($newX, $newY, $newZ, $iterator->getCurrent()->getBlockId($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), $iterator->getCurrent()->getBlockData($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), false);
-			$iterator->getCurrent()->setBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id, $data);
+			$toUndo->addBlock($newX, $newY, $newZ, $iterator->getCurrent()->getFullBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), false);
+			$iterator->getCurrent()->setFullBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id);
 			$changed++;
 
 			if (isset($tiles[World::blockHash($newX, $newY, $newZ)])) {
