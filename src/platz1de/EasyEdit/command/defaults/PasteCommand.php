@@ -29,6 +29,6 @@ class PasteCommand extends EasyEditCommand
 			return;
 		}
 
-		PasteTask::queue($selection, $player);
+		PasteTask::queue($selection, $player->getPosition());
 	}
 }

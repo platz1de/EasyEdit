@@ -29,6 +29,6 @@ class InsertCommand extends EasyEditCommand
 			return;
 		}
 
-		InsertTask::queue($selection, $player);
+		InsertTask::queue($selection, $player->getPosition());
 	}
 }

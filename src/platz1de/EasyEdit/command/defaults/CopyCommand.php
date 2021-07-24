@@ -33,6 +33,6 @@ class CopyCommand extends EasyEditCommand
 			return;
 		}
 
-		CopyTask::queue($selection, $player);
+		CopyTask::queue($selection, $player->getPosition());
 	}
 }

@@ -41,6 +41,6 @@ class WallCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new WallPattern($pattern, [])], []), $player);
+		SetTask::queue($selection, new Pattern([new WallPattern($pattern, [])], []), $player->getPosition());
 	}
 }

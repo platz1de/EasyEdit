@@ -45,6 +45,6 @@ class SetCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, $pattern, $player);
+		SetTask::queue($selection, $pattern, $player->getPosition());
 	}
 }

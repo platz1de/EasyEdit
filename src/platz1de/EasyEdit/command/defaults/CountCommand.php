@@ -36,6 +36,6 @@ class CountCommand extends EasyEditCommand
 			}
 		}
 
-		CountTask::queue($selection, $player);
+		CountTask::queue($selection, $player->getPosition());
 	}
 }
