@@ -56,10 +56,10 @@ abstract class Selection
 		$this->world = $level;
 
 		if ($pos1 !== null) {
-			$this->pos1 = clone($this->selected1 = $pos1);
+			$this->pos1 = clone($this->selected1 = $pos1->floor());
 		}
 		if ($pos2 !== null) {
-			$this->pos2 = clone($this->selected2 = $pos2);
+			$this->pos2 = clone($this->selected2 = $pos2->floor());
 		}
 
 		$this->player = $player;
