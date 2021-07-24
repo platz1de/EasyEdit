@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\block\VanillaBlocks;
 
 class SmoothPattern extends Pattern
@@ -62,14 +63,14 @@ class SmoothPattern extends Pattern
 				$k = ($y - $mid) / ($max - $mid);
 				$gy = $oMid + round($k * ($oMax - $oMid));
 				$iterator->moveTo($x, (int) $gy, $z);
-				return BlockFactory::get($iterator->getCurrent()->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+				return BlockFactory::getInstance()->fromFullBlock($iterator->getCurrent()->getFullBlock($x & 0x0f, $gy & 0x0f, $z & 0x0f));
 			}
 
 			if ($y <= $mid && $y >= $min) {
 				$k = ($y - $mid) / ($min - $mid);
 				$gy = $oMid + round($k * ($oMin - $oMid));
 				$iterator->moveTo($x, (int) $gy, $z);
-				return BlockFactory::get($iterator->getCurrent()->getBlockId($x & 0x0f, $gy & 0x0f, $z & 0x0f), $iterator->getCurrent()->getBlockData($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+				return BlockFactory::getInstance()->fromFullBlock($iterator->getCurrent()->getFullBlock($x & 0x0f, $gy & 0x0f, $z & 0x0f));
 			}
 		}
 
