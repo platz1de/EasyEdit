@@ -42,8 +42,8 @@ class StaticBlock extends Pattern
 	/**
 	 * @return int
 	 */
-	public function getDamage(): int
+	public function getMeta(): int
 	{
-		return $this->args[0]->getDamage();
+		return $this->args[0]->getMeta();
 	}
 }

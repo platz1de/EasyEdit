@@ -8,7 +8,7 @@ class DynamicBlock extends StaticBlock
 	/**
 	 * @return int
 	 */
-	public function getDamage(): int
+	public function getMeta(): int
 	{
 		return -1;
 	}
