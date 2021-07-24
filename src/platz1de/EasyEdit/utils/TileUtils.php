@@ -2,12 +2,12 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use pocketmine\world\format\Chunk;
+use pocketmine\block\tile\Chest;
+use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\tile\Chest;
-use pocketmine\block\tile\Tile;
+use pocketmine\world\format\Chunk;
 
 class TileUtils
 {
