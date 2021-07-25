@@ -5,11 +5,12 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\nbt\TreeRoot;
-use pocketmine\world\format\Chunk;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\TreeRoot;
+use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\FastChunkSerializer;
+use pocketmine\world\World;
 
 class EditTaskResult
 {
@@ -51,9 +52,9 @@ class EditTaskResult
 		$this->changed = $changed;
 	}
 
-	public function addChunk(Chunk $chunk): void
+	public function addChunk(int $x, int $z, Chunk $chunk): void
 	{
-		$this->manager->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+		$this->manager->setChunk($x, $z, $chunk);
 	}
 
 	/**
@@ -63,9 +64,10 @@ class EditTaskResult
 	{
 		$this->time += $result->getTime();
 		$this->changed += $result->getChanged();
-		foreach ($result->getUndo()->getManager()->getChunks() as $chunk) {
+		foreach ($result->getUndo()->getManager()->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
 			if ($chunk->getHighestSubChunkIndex() !== -1) {
-				$this->getUndo()->getManager()->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+				$this->getUndo()->getManager()->setChunk($x, $z, $chunk);
 			}
 		}
 		foreach ($result->getUndo()->getTiles() as $tile) {
@@ -124,7 +126,10 @@ class EditTaskResult
 
 		$chunks = new ExtendedBinaryStream();
 		$count = 0;
-		foreach ($this->manager->getChunks() as $chunk) {
+		foreach ($this->manager->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			$chunks->putInt($x);
+			$chunks->putInt($z);
 			$chunks->putString(FastChunkSerializer::serializeWithoutLight($chunk));
 			$count++;
 		}
@@ -154,7 +159,7 @@ class EditTaskResult
 		$chunks = [];
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunks[] = FastChunkSerializer::deserialize($stream->getString());
+			$chunks[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserialize($stream->getString());
 		}
 
 		/** @var BlockListSelection $undo */
@@ -173,8 +178,9 @@ class EditTaskResult
 		$changed = $stream->getLInt();
 
 		$result = new EditTaskResult($level, $undo, $tiles, $time, $changed);
-		foreach ($chunks as $chunk) {
-			$result->addChunk($chunk);
+		foreach ($chunks as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			$result->addChunk($x, $z, $chunk);
 		}
 
 		return $result;

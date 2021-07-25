@@ -4,11 +4,11 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
+use pocketmine\block\tile\Tile;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
 use pocketmine\world\World;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\block\tile\Tile;
 
 class LoaderManager
 {
@@ -27,7 +27,7 @@ class LoaderManager
 		}
 
 		if ($chunk === null) {
-			$chunk = new Chunk($chunkX, $chunkZ);
+			$chunk = new Chunk();
 		}
 
 		return $chunk;
@@ -41,8 +41,9 @@ class LoaderManager
 	 */
 	public static function setChunks(World $level, array $chunks, array $tiles): void
 	{
-		foreach ($chunks as $chunk) {
-			self::injectChunk($level, $chunk);
+		foreach ($chunks as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			self::injectChunk($level, $x, $z, $chunk);
 		}
 
 		foreach ($tiles as $tile) {
@@ -51,8 +52,9 @@ class LoaderManager
 
 		//reduce load by not setting and unloading on the same tick
 		WorkerAdapter::priority(new QueuedCallbackTask(function () use ($chunks, $level): void {
-			foreach ($chunks as $chunk) {
-				$level->unloadChunk($chunk->getX(), $chunk->getZ());
+			foreach ($chunks as $hash => $chunk) {
+				World::getXZ($hash, $x, $z);
+				$level->unloadChunk($x, $z);
 			}
 		}));
 	}
@@ -60,16 +62,18 @@ class LoaderManager
 	/**
 	 * Implementation of World::setChunk without loading unnecessary Chunks which get overwritten anyways
 	 * @param World $level
+	 * @param int   $x
+	 * @param int   $z
 	 * @param Chunk $chunk
 	 * @see World::setChunk()
 	 */
-	public static function injectChunk(World $level, Chunk $chunk): void
+	public static function injectChunk(World $level, int $x, int $z, Chunk $chunk): void
 	{
-		$chunkHash = World::chunkHash($chunk->getX(), $chunk->getZ());
+		$chunkHash = World::chunkHash($x, $z);
 
 		//TODO: this deletes entities in unloaded chunks (load entities to EditThread)
-		if ($level->isChunkLoaded($chunk->getX(), $chunk->getZ())) {
-			$old = $level->getChunk($chunk->getX(), $chunk->getZ(), false);
+		if ($level->isChunkLoaded($x, $z)) {
+			$old = $level->getChunk($x, $z);
 			if ($old !== null) {
 				foreach ($old->getTiles() as $tile) {
 					$tile->close();
@@ -86,7 +90,7 @@ class LoaderManager
 		$chunk->setGenerated();
 		$chunk->initChunk($level);
 
-		(function () use ($chunkHash, $chunk): void {
+		(function () use ($z, $x, $chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
 
 			unset($this->blockCache[$chunkHash], $this->chunkCache[$chunkHash], $this->changedBlocks[$chunkHash]);
@@ -96,7 +100,7 @@ class LoaderManager
 				unset($this->chunkSendTasks[$chunkHash]);
 			}
 
-			foreach ($this->getChunkLoaders($chunk->getX(), $chunk->getZ()) as $loader) {
+			foreach ($this->getChunkLoaders($x, $z) as $loader) {
 				$loader->onChunkChanged($chunk);
 			}
 		})->call($level);
@@ -112,7 +116,7 @@ class LoaderManager
 	 */
 	public static function cloneChunk(Chunk $chunk): Chunk
 	{
-		$new = new Chunk($chunk->getX(), $chunk->getZ(), array_map(static function (SubChunk $subchunk): SubChunk { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
+		$new = new Chunk(array_map(static function (SubChunk $subchunk): SubChunk { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
 		$new->setGenerated($chunk->isGenerated());
 		$new->setPopulated($chunk->isPopulated());
 		$new->setLightPopulated($chunk->isLightPopulated());

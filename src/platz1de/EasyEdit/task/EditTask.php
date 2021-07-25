@@ -113,8 +113,11 @@ abstract class EditTask extends Threaded
 		$this->id = WorkerAdapter::getId();
 		$chunkData = new ExtendedBinaryStream();
 		$tileData = new ExtendedBinaryStream();
-		foreach ($selection->getNeededChunks($place) as $chunk) {
+		foreach ($selection->getNeededChunks($place) as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
 			$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+			$chunkData->putInt($x);
+			$chunkData->putInt($z);
 
 			if (LoaderManager::isChunkInit($chunk)) {
 				foreach ($chunk->getTiles() as $tile) {
@@ -174,22 +177,22 @@ abstract class EditTask extends Threaded
 		while (!$chunkData->feof()) {
 			$chunk = FastChunkSerializer::deserialize($chunkData->getString());
 
-			$iterator->level->setChunk($chunk->getX(), $chunk->getZ(), $chunk);
+			$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk);
 
 			if (!$chunk->isGenerated()) {
-				$generator->generateChunk($chunk->getX(), $chunk->getZ());
+				$generator->generateChunk($x, $z);
 			}
 
 			if (!$chunk->isPopulated()) {
-				$generator->populateChunk($chunk->getX(), $chunk->getZ());
+				$generator->populateChunk($x, $z);
 			}
 
 			//separate chunks which are only loaded for patterns
-			if ($selection->isChunkOfSelection($chunk->getX(), $chunk->getZ(), $place)) {
+			if ($selection->isChunkOfSelection($x, $z, $place)) {
 				$chunk->setChanged(); //TODO: add a proper separation of core and data chunks
 			}
 
-			$origin->level->setChunk($chunk->getX(), $chunk->getZ(), LoaderManager::cloneChunk($chunk));
+			$origin->level->setChunk($x, $z, LoaderManager::cloneChunk($chunk));
 		}
 
 		$tileData = new ExtendedBinaryStream($this->tileData);
@@ -213,12 +216,13 @@ abstract class EditTask extends Threaded
 
 			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
 
-			foreach ($manager->getChunks() as $chunk) {
+			foreach ($manager->getChunks() as $hash => $chunk) {
 				if ($chunk->hasChanged()) {
 					$chunk->setGenerated();
 					$chunk->setPopulated();
 
-					$result->addChunk($chunk);
+					World::getXZ($hash, $x, $z);
+					$result->addChunk($x, $z, $chunk);
 				}
 			}
 
