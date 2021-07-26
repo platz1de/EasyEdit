@@ -38,8 +38,7 @@ class ReferencedChunkManager extends SimpleChunkManager
 	{
 		for ($x = $pos1->getX() >> 4; $x <= $pos2->getX() >> 4; $x++) {
 			for ($z = $pos1->getZ() >> 4; $z <= $pos2->getZ() >> 4; $z++) {
-				$this->setChunk($x, $z, ($chunk = new Chunk()));
-				$chunk->setGenerated();
+				$this->setChunk($x, $z, new Chunk());
 			}
 		}
 	}

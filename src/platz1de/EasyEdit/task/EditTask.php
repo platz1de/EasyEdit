@@ -11,7 +11,6 @@ use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
-use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\Tile;
@@ -115,18 +114,17 @@ abstract class EditTask extends Threaded
 		$tileData = new ExtendedBinaryStream();
 		foreach ($selection->getNeededChunks($place) as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+			if ($chunk instanceof Chunk) {
+				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+			} else {
+				$chunkData->putString(""); //Newly loaded chunk
+			}
+
 			$chunkData->putInt($x);
 			$chunkData->putInt($z);
 
-			if (LoaderManager::isChunkInit($chunk)) {
-				foreach ($chunk->getTiles() as $tile) {
-					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile->saveNBT())));
-				}
-			} else {
-				foreach (TileUtils::loadFrom($chunk) as $tile) {
-					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
-				}
+			foreach ($chunk->getNBTtiles() as $tile) {
+				$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
 			}
 		}
 		$this->chunkData = $chunkData->getBuffer();
@@ -175,21 +173,13 @@ abstract class EditTask extends Threaded
 
 		$chunkData = new ExtendedBinaryStream($this->chunkData);
 		while (!$chunkData->feof()) {
-			$chunk = FastChunkSerializer::deserialize($chunkData->getString());
-
-			$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk);
-
-			if (!$chunk->isGenerated()) {
+			$data = $chunkData->getString();
+			if ($data === "") {
+				$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = new Chunk());
 				$generator->generateChunk($x, $z);
-			}
-
-			if (!$chunk->isPopulated()) {
 				$generator->populateChunk($x, $z);
-			}
-
-			//separate chunks which are only loaded for patterns
-			if ($selection->isChunkOfSelection($x, $z, $place)) {
-				$chunk->setChanged(); //TODO: add a proper separation of core and data chunks
+			} else {
+				$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($data));
 			}
 
 			$origin->level->setChunk($x, $z, LoaderManager::cloneChunk($chunk));
@@ -217,11 +207,9 @@ abstract class EditTask extends Threaded
 			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
 
 			foreach ($manager->getChunks() as $hash => $chunk) {
-				if ($chunk->hasChanged()) {
-					$chunk->setGenerated();
-					$chunk->setPopulated();
-
-					World::getXZ($hash, $x, $z);
+				World::getXZ($hash, $x, $z);
+				//separate chunks which are only loaded for patterns
+				if ($selection->isChunkOfSelection($x, $z, $place)) {
 					$result->addChunk($x, $z, $chunk);
 				}
 			}
