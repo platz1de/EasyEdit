@@ -18,16 +18,12 @@ class LoaderManager
 	 * @param int   $chunkZ
 	 * @return Chunk
 	 */
-	public static function getChunk(World $level, int $chunkX, int $chunkZ): Chunk
+	public static function getChunk(World $level, int $chunkX, int $chunkZ): ?Chunk
 	{
 		if ($level->isChunkLoaded($chunkX, $chunkZ)) {
 			$chunk = $level->getChunk($chunkX, $chunkZ);
 		} else {
 			$chunk = $level->getProvider()->loadChunk($chunkX, $chunkZ);
-		}
-
-		if ($chunk === null) {
-			$chunk = new Chunk();
 		}
 
 		return $chunk;
@@ -86,9 +82,7 @@ class LoaderManager
 			}
 		}
 
-		$chunk->setPopulated();
-		$chunk->setGenerated();
-		$chunk->initChunk($level);
+		$chunk->setDirty();
 
 		(function () use ($z, $x, $chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
@@ -105,8 +99,6 @@ class LoaderManager
 			}
 		})->call($level);
 
-		$chunk->setChanged();
-
 		//TODO: In 1.17 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
 	}
 
@@ -116,22 +108,6 @@ class LoaderManager
 	 */
 	public static function cloneChunk(Chunk $chunk): Chunk
 	{
-		$new = new Chunk(array_map(static function (SubChunk $subchunk): SubChunk { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
-		$new->setGenerated($chunk->isGenerated());
-		$new->setPopulated($chunk->isPopulated());
-		$new->setLightPopulated($chunk->isLightPopulated());
-		$new->setChanged(false);
-		return $new;
-	}
-
-	/**
-	 * @param Chunk $chunk
-	 * @return bool
-	 */
-	public static function isChunkInit(Chunk $chunk): bool
-	{
-		return (function (): bool {
-			return $this->isInit;
-		})->call($chunk);
+		return new Chunk(array_map(static function (SubChunk $subchunk): SubChunk { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
 	}
 }

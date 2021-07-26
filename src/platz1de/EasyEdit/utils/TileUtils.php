@@ -31,15 +31,4 @@ class TileUtils
 
 		return $compoundTag;
 	}
-
-	/**
-	 * @param Chunk $chunk
-	 * @return CompoundTag[]
-	 */
-	public static function loadFrom(Chunk $chunk): array
-	{
-		return (function (): array {
-			return $this->NBTtiles;
-		})->call($chunk);
-	}
 }

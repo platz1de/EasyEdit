@@ -9,6 +9,7 @@ use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class StackedCube extends Selection
 {
@@ -54,7 +55,7 @@ class StackedCube extends Selection
 
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($level, $x, $z);
+				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		return $chunks;

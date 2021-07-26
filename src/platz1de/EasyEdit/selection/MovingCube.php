@@ -10,6 +10,7 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
+use pocketmine\world\World;
 
 class MovingCube extends Selection
 {
@@ -51,12 +52,12 @@ class MovingCube extends Selection
 		//TODO: Remove duplicates
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($level, $x, $z);
+				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		for ($x = ($this->pos1->getX() + $this->direction->getX()) >> 4; $x <= ($this->pos2->getX() + $this->direction->getX()) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() + $this->direction->getZ()) >> 4; $z <= ($this->pos2->getZ() + $this->direction->getZ()) >> 4; $z++) {
-				$chunks[] = LoaderManager::getChunk($level, $x, $z);
+				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($level, $x, $z);
 			}
 		}
 		return $chunks;
