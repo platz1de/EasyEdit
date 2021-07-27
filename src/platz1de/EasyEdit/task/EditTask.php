@@ -150,7 +150,7 @@ abstract class EditTask extends Threaded
 		$thread->setRunning();
 		$manager = new ReferencedChunkManager($this->level, $this->seed);
 		$iterator = new SafeSubChunkExplorer($manager);
-		$origin = new SafeSubChunkExplorer(clone $manager);
+		$origin = new SafeSubChunkExplorer($originManager = clone $manager);
 		$selection = Selection::fastDeserialize($this->selection);
 		/** @var Pattern $pattern */
 		$pattern = igbinary_unserialize($this->pattern);
@@ -174,14 +174,14 @@ abstract class EditTask extends Threaded
 		while (!$chunkData->feof()) {
 			$data = $chunkData->getString();
 			if ($data === "") {
-				$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = new Chunk());
+				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = new Chunk());
 				$generator->generateChunk($manager, $x, $z);
 				$generator->populateChunk($manager, $x, $z);
 			} else {
-				$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($data));
+				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($data));
 			}
 
-			$origin->level->setChunk($x, $z, LoaderManager::cloneChunk($chunk));
+			$originManager->setChunk($x, $z, LoaderManager::cloneChunk($chunk));
 		}
 
 		$tileData = new ExtendedBinaryStream($this->tileData);
