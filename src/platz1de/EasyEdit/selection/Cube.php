@@ -52,8 +52,8 @@ class Cube extends Selection implements Patterned
 			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
 			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
 
-			$this->pos1->setComponents($minX, $minY, $minZ);
-			$this->pos2->setComponents($maxX, $maxY, $maxZ);
+			$this->pos1 = new Vector3($minX, $minY, $minZ);
+			$this->pos2 = new Vector3($maxX, $maxY, $maxZ);
 
 			if (!$this->piece && ($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
 				$this->close();
