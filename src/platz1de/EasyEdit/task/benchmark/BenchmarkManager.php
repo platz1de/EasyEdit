@@ -22,6 +22,7 @@ use pocketmine\Server;
 use pocketmine\utils\Utils;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use pocketmine\world\WorldCreationOptions;
 use UnexpectedValueException;
 
 class BenchmarkManager
@@ -46,7 +47,7 @@ class BenchmarkManager
 		$autoSave = MixedUtils::setAutoSave(PHP_INT_MAX);
 		$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
 		$name = "EasyEdit-Benchmark-" . time();
-		Server::getInstance()->generateLevel($name);
+		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
 		$level = Server::getInstance()->getWorld($name);
 		if ($level === null) {
 			return; //This should never happen
