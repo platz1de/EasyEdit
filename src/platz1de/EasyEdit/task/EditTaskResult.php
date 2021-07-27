@@ -66,7 +66,7 @@ class EditTaskResult
 		$this->changed += $result->getChanged();
 		foreach ($result->getUndo()->getManager()->getChunks() as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			if ($chunk->getHighestSubChunkIndex() !== -1) {
+			if ($chunk->getHeight() > 0) {
 				$this->getUndo()->getManager()->setChunk($x, $z, $chunk);
 			}
 		}

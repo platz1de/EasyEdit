@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\block\tile\Tile;
+use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
@@ -43,7 +43,7 @@ class LoaderManager
 		}
 
 		foreach ($tiles as $tile) {
-			Tile::createTile($tile->getString(Tile::TAG_ID), $level, $tile);
+			TileFactory::getInstance()->createFromData($level, $tile);
 		}
 
 		//reduce load by not setting and unloading on the same tick

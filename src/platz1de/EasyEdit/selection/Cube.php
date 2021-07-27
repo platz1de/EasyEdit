@@ -55,7 +55,7 @@ class Cube extends Selection implements Patterned
 			$this->pos1 = new Vector3($minX, $minY, $minZ);
 			$this->pos2 = new Vector3($maxX, $maxY, $maxZ);
 
-			if (!$this->piece && ($player = Server::getInstance()->getPlayer($this->player)) instanceof Player) {
+			if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
 				PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK, CompoundTag::create()

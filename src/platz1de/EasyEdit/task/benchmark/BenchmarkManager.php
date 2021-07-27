@@ -48,7 +48,7 @@ class BenchmarkManager
 		$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		$level = Server::getInstance()->getWorld($name);
+		$level = Server::getInstance()->getWorldManager()->getWorldByName($name);
 		if ($level === null) {
 			return; //This should never happen
 		}
