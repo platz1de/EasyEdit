@@ -137,8 +137,8 @@ abstract class EditTask extends Threaded
 			$this->total = $total->fastSerialize();
 		}
 		$this->data = igbinary_serialize($data);
-		$this->generatorClass = GeneratorManager::getGenerator($place->getWorld()->getProvider()->getGenerator());
-		$this->settings = igbinary_serialize($place->getWorld()->getProvider()->getGeneratorOptions());
+		$this->generatorClass = GeneratorManager::getInstance()->getGenerator($place->getWorld()->getProvider()->getWorldData()->getGenerator());
+		$this->settings = igbinary_serialize($place->getWorld()->getProvider()->getWorldData()->getGeneratorOptions());
 		$this->seed = $place->getWorld()->getSeed();
 	}
 
@@ -168,16 +168,15 @@ abstract class EditTask extends Threaded
 		/**
 		 * @var Generator $generator
 		 */
-		$generator = new $this->generatorClass(igbinary_unserialize($this->settings));
-		$generator->init($manager, new Random($this->seed));
+		$generator = new $this->generatorClass($this->seed, igbinary_unserialize($this->settings));
 
 		$chunkData = new ExtendedBinaryStream($this->chunkData);
 		while (!$chunkData->feof()) {
 			$data = $chunkData->getString();
 			if ($data === "") {
 				$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = new Chunk());
-				$generator->generateChunk($x, $z);
-				$generator->populateChunk($x, $z);
+				$generator->generateChunk($manager, $x, $z);
+				$generator->populateChunk($manager, $x, $z);
 			} else {
 				$iterator->level->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($data));
 			}
