@@ -23,7 +23,7 @@ class FirstPositionCommand extends EasyEditCommand
 		if(count($args) > 2){
 			Cube::selectPos1($player, new Vector3((int) $args[0], (int) $args[1], (int) $args[2]));
 		}else{
-			Cube::selectPos1($player, $player->floor());
+			Cube::selectPos1($player, $player->getPosition()->floor());
 		}
 	}
 }
