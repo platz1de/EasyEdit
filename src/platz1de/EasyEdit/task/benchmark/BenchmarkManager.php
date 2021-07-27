@@ -91,7 +91,7 @@ class BenchmarkManager
 
 			if ($deleteLevelAfter) {
 				$path = $level->getProvider()->getPath();
-				Server::getInstance()->unloadLevel($level);
+				Server::getInstance()->getWorldManager()->unloadWorld($level);
 				MixedUtils::deleteDir($path);
 			}
 
