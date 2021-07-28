@@ -167,12 +167,10 @@ class EditTaskResult
 
 		$tileData = $stream->getString();
 		if ($tileData !== "") {
-			$tiles = (new LittleEndianNbtSerializer())->readMultiple($tileData);
+			$tiles = array_map(static function (TreeRoot $root) { return $root->mustGetCompoundTag(); }, (new LittleEndianNbtSerializer())->readMultiple($tileData));
 		} else {
 			$tiles = [];
 		}
-		/** @var CompoundTag[] $tiles */
-		$tiles = is_array($tiles) ? $tiles : [$tiles];
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();

@@ -142,10 +142,7 @@ abstract class BlockListSelection extends Selection
 
 		$tileData = $stream->getString();
 		if ($tileData !== "") {
-			$tiles = (new LittleEndianNbtSerializer())->readMultiple($tileData);
-			/** @var CompoundTag[] $tiles */
-			$tiles = is_array($tiles) ? $tiles : [$tiles];
-			$this->tiles = $tiles;
+			$this->tiles = array_map(static function (TreeRoot $root) { return $root->mustGetCompoundTag(); }, (new LittleEndianNbtSerializer())->readMultiple($tileData));
 		}
 	}
 
