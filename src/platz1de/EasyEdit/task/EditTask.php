@@ -128,7 +128,7 @@ abstract class EditTask extends Threaded
 		$this->chunkData = $chunkData->getBuffer();
 		$this->tileData = $tileData->getBuffer();
 		$this->selection = $selection->fastSerialize();
-		$this->pattern = igbinary_serialize($pattern);
+		$this->pattern = $pattern->fastSerialize();
 		$this->place = igbinary_serialize($place->floor());
 		$this->level = $place->getWorld()->getFolderName();
 		if ($total instanceof Selection) {
@@ -150,8 +150,7 @@ abstract class EditTask extends Threaded
 		$iterator = new SafeSubChunkExplorer($manager);
 		$origin = new SafeSubChunkExplorer($originManager = clone $manager);
 		$selection = Selection::fastDeserialize($this->selection);
-		/** @var Pattern $pattern */
-		$pattern = igbinary_unserialize($this->pattern);
+		$pattern = Pattern::fastDeserialize($this->pattern);
 		/** @var Vector3 $place */
 		$place = igbinary_unserialize($this->place);
 		/** @var AdditionalDataManager $data */

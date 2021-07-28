@@ -20,8 +20,10 @@ use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\random\RandomPattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\item\LegacyStringToItemParser;
 use UnexpectedValueException;
 
@@ -82,6 +84,51 @@ class Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		return true;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function fastSerialize(): string
+	{
+		$stream = new ExtendedBinaryStream();
+		$stream->putInt(count($this->args));
+		foreach ($this->args as $arg) {
+			if ($arg instanceof Block) {
+				$stream->putBool(true);
+				$stream->putInt($arg->getFullId());
+			} else {
+				$stream->putBool(false);
+				$stream->put((string) $arg);
+			}
+		}
+		$stream->putInt(count($this->pieces));
+		foreach ($this->pieces as $piece) {
+			$stream->putString($piece->fastSerialize());
+		}
+		return $stream->getBuffer();
+	}
+
+	/**
+	 * @param string $data
+	 * @return Selection
+	 */
+	public static function fastDeserialize(string $data): Pattern
+	{
+		$stream = new ExtendedBinaryStream($data);
+		$args = [];
+		for ($i = $stream->getInt(); $i > 0; $i--) {
+			if ($stream->getBool()) {
+				$args[] = BlockFactory::getInstance()->fromFullBlock($stream->getInt());
+			} else {
+				$args[] = self::fastDeserialize($stream->getString());
+			}
+		}
+		$pieces = [];
+		for ($i = $stream->getInt(); $i > 0; $i--) {
+			$pieces[] = self::fastDeserialize($stream->getString());
+		}
+		return new Pattern($pieces, $args);
 	}
 
 	/**
