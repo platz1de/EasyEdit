@@ -30,8 +30,10 @@ use platz1de\EasyEdit\command\defaults\StackCommand;
 use platz1de\EasyEdit\command\defaults\StatusCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\command\defaults\WallCommand;
+use platz1de\EasyEdit\utils\CompoundTile;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
+use pocketmine\block\tile\TileFactory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 
@@ -88,6 +90,9 @@ class EasyEdit extends PluginBase
 			new BenchmarkCommand(),
 			new ExtinguishCommand()
 		]);
+
+		//Just for sending block data without using the protocol directly
+		TileFactory::getInstance()->register(CompoundTile::class);
 	}
 
 	/**

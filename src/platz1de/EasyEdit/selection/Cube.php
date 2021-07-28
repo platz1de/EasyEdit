@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\PacketUtils;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
@@ -58,7 +59,7 @@ class Cube extends Selection implements Patterned
 			if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 				$this->close();
 				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
-				PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK, CompoundTag::create()
+				PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS, CompoundTag::create()
 					->setString("structureName", "selection")
 					->setString("dataField", "")
 					->setInt("xStructureOffset", $this->pos1->getFloorX() - $this->structure->getFloorX())
@@ -107,8 +108,8 @@ class Cube extends Selection implements Patterned
 		if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
 			//this happens when whole Chunks get sent
-			PacketUtils::sendFakeBlock($this->structure, $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK);
-			PacketUtils::resendBlock($this->structure, $this->getWorld(), $player);
+			PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS);
+			PacketUtils::resendBlock($this->structure->floor(), $this->getWorld(), $player);
 		}
 	}
 
