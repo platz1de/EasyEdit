@@ -103,7 +103,7 @@ abstract class Selection
 	 */
 	public function getSize(): Vector3
 	{
-		return $this->getPos2()->subtract($this->getPos1())->add(1, 1, 1);
+		return $this->getPos2()->subtractVector($this->getPos1())->add(1, 1, 1);
 	}
 
 	/**

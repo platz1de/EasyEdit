@@ -100,7 +100,7 @@ class StackedCube extends Selection
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return VectorUtils::getMin($this->getPos1()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+		return VectorUtils::getMin($this->getPos1()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**
@@ -108,7 +108,7 @@ class StackedCube extends Selection
 	 */
 	public function getCubicEnd(): Vector3
 	{
-		return VectorUtils::getMax($this->getPos2()->add(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->add(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+		return VectorUtils::getMax($this->getPos2()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**

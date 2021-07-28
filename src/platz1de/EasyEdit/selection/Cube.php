@@ -123,8 +123,8 @@ class Cube extends Selection implements Patterned
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		$min = VectorUtils::enforceHeight($this->pos1->add($offset));
-		$max = VectorUtils::enforceHeight($this->pos2->add($offset));
+		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset));
+		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset));
 
 		$pieces = [];
 		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 3) {

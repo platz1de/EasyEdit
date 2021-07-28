@@ -58,7 +58,7 @@ class InsertTask extends EditTask
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
-		$place = $place->subtract($selection->getPoint());
+		$place = $place->subtractVector($selection->getPoint());
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $place, $toUndo, &$changed): void {
 			$ox = $x - $place->getFloorX();
 			$oy = $y - $place->getFloorY();
@@ -97,6 +97,6 @@ class InsertTask extends EditTask
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1()->add($place)->subtract($selection->getPoint()), $selection->getPos2()->add($place)->subtract($selection->getPoint()));
+		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1()->addVector($place)->subtractVector($selection->getPoint()), $selection->getPos2()->addVector($place)->subtractVector($selection->getPoint()));
 	}
 }

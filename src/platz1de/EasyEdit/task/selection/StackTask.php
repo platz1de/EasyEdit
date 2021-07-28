@@ -55,7 +55,7 @@ class StackTask extends EditTask
 	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
 	{
 		/** @var StackedCube $selection */
-		$originalSize = $selection->getPos2()->subtract($selection->getPos1())->add(1, 1, 1);
+		$originalSize = $selection->getPos2()->subtractVector($selection->getPos1())->add(1, 1, 1);
 		$start = $selection->getDirection()->getX() < 0 || $selection->getDirection()->getY() < 0 || $selection->getDirection()->getZ() < 0 ? $selection->getPos2() : $selection->getPos1();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $originalSize, $start): void {
 			$originalX = $start->getFloorX() + ($x - $start->getX()) % $originalSize->getX();

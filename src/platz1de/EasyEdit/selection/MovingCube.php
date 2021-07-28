@@ -74,8 +74,8 @@ class MovingCube extends Selection
 		$start = $this->getCubicStart();
 		$end = $this->getCubicEnd();
 
-		$start2 = $start->add($this->direction);
-		$end2 = $end->add($this->direction);
+		$start2 = $start->addVector($this->direction);
+		$end2 = $end->addVector($this->direction);
 
 		return ($start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4) || ($start2->getX() >> 4 <= $x && $x <= $end2->getX() >> 4 && $start2->getZ() >> 4 <= $z && $z <= $end2->getZ() >> 4);
 	}
@@ -104,7 +104,7 @@ class MovingCube extends Selection
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return VectorUtils::getMin($this->getPos1(), $this->getPos1()->add($this->direction));
+		return VectorUtils::getMin($this->getPos1(), $this->getPos1()->addVector($this->direction));
 	}
 
 	/**
@@ -113,7 +113,7 @@ class MovingCube extends Selection
 	public function getCubicEnd(): Vector3
 	{
 		//TODO: don't add all blocks in between the positions
-		return VectorUtils::getMax($this->getPos2(), $this->getPos2()->add($this->direction));
+		return VectorUtils::getMax($this->getPos2(), $this->getPos2()->addVector($this->direction));
 	}
 
 	/**

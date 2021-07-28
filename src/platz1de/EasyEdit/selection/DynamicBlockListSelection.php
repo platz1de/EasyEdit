@@ -31,11 +31,11 @@ class DynamicBlockListSelection extends BlockListSelection
 	public function __construct(string $player, ?Vector3 $place = null, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
-			$pos2 = $pos2->subtract($pos1);
+			$pos2 = $pos2->subtractVector($pos1);
 		}
 		parent::__construct($player, "", new Vector3(0, 0, 0), $pos2 ?? null, $piece);
 		if ($pos1 instanceof Vector3 && $place instanceof Vector3) {
-			$this->point = $place->subtract($pos1);
+			$this->point = $place->subtractVector($pos1);
 		}
 	}
 
@@ -45,8 +45,8 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	public function getNeededChunks(Position $place): array
 	{
-		$start = $this->getCubicStart()->add($place)->subtract($this->getPoint());
-		$end = $this->getCubicEnd()->add($place)->subtract($this->getPoint());
+		$start = $this->getCubicStart()->addVector($place)->subtractVector($this->getPoint());
+		$end = $this->getCubicEnd()->addVector($place)->subtractVector($this->getPoint());
 
 		$chunks = [];
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
@@ -65,8 +65,8 @@ class DynamicBlockListSelection extends BlockListSelection
 	 */
 	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
 	{
-		$start = $this->getCubicStart()->add($place)->subtract($this->getPoint());
-		$end = $this->getCubicEnd()->add($place)->subtract($this->getPoint());
+		$start = $this->getCubicStart()->addVector($place)->subtractVector($this->getPoint());
+		$end = $this->getCubicEnd()->addVector($place)->subtractVector($this->getPoint());
 
 		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
 	}
@@ -79,8 +79,8 @@ class DynamicBlockListSelection extends BlockListSelection
 	public function useOnBlocks(Vector3 $place, Closure $closure): void
 	{
 		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
-		$min = VectorUtils::enforceHeight($this->pos1->add($place));
-		$max = VectorUtils::enforceHeight($this->pos2->add($place));
+		$min = VectorUtils::enforceHeight($this->pos1->addVector($place));
+		$max = VectorUtils::enforceHeight($this->pos2->addVector($place));
 		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
 			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
 				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
@@ -139,8 +139,8 @@ class DynamicBlockListSelection extends BlockListSelection
 
 		//TODO: split tiles
 		$pieces = [];
-		$min = VectorUtils::enforceHeight($this->pos1->add($offset)->subtract($this->getPoint()))->subtract(1, 1, 1);
-		$max = VectorUtils::enforceHeight($this->pos2->add($offset)->subtract($this->getPoint()))->subtract(1, 1, 1);
+		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset)->subtractVector($this->getPoint()))->subtract(1, 1, 1);
+		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset)->subtractVector($this->getPoint()))->subtract(1, 1, 1);
 		for ($x = 0; $x <= ($max->getX() >> 4) - ($min->getX() >> 4); $x += 3) {
 			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
 				$piece = new DynamicBlockListSelection($this->getPlayer(), null, null, null, true);
