@@ -148,7 +148,7 @@ abstract class EditTask extends Threaded
 		/** @var EditWorker $thread */
 		$thread = Thread::getCurrentThread();
 		$thread->setRunning();
-		$manager = new ReferencedChunkManager($this->level, $this->seed);
+		$manager = new ReferencedChunkManager($this->level);
 		$iterator = new SafeSubChunkExplorer($manager);
 		$origin = new SafeSubChunkExplorer($originManager = clone $manager);
 		$selection = Selection::fastDeserialize($this->selection);

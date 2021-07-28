@@ -6,6 +6,7 @@ use platz1de\EasyEdit\utils\ReferencedLevelHolder;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\SimpleChunkManager;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class ReferencedChunkManager extends SimpleChunkManager
 {
@@ -14,11 +15,10 @@ class ReferencedChunkManager extends SimpleChunkManager
 	/**
 	 * ReferencedChunkManager constructor.
 	 * @param string $level
-	 * @param int    $seed
 	 */
-	public function __construct(string $level, int $seed = 0)
+	public function __construct(string $level)
 	{
-		parent::__construct($seed);
+		parent::__construct(World::Y_MIN, World::Y_MAX);
 		$this->world = $level;
 	}
 
