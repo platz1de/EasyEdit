@@ -85,15 +85,10 @@ class LoaderManager
 		(function () use ($z, $x, $chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
 
-			unset($this->blockCache[$chunkHash], $this->chunkCache[$chunkHash], $this->changedBlocks[$chunkHash]);
+			unset($this->blockCache[$chunkHash], $this->changedBlocks[$chunkHash]);
 
-			if (isset($this->chunkSendTasks[$chunkHash])) { //invalidate pending caches
-				$this->chunkSendTasks[$chunkHash]->cancelRun();
-				unset($this->chunkSendTasks[$chunkHash]);
-			}
-
-			foreach ($this->getChunkLoaders($x, $z) as $loader) {
-				$loader->onChunkChanged($chunk);
+			foreach ($this->getChunkListeners($x, $z) as $loader) {
+				$loader->onChunkChanged($x, $z, $chunk);
 			}
 		})->call($level);
 
