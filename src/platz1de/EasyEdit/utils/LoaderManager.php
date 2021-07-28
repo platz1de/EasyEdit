@@ -7,7 +7,6 @@ use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
-use pocketmine\world\format\SubChunk;
 use pocketmine\world\World;
 
 class LoaderManager

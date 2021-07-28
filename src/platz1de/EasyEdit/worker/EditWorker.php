@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\worker;
 
 use pocketmine\thread\Worker;
-use pocketmine\utils\Utils;
 use ThreadedLogger;
 
 class EditWorker extends Worker

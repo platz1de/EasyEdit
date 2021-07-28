@@ -22,7 +22,6 @@ use platz1de\EasyEdit\pattern\random\RandomPattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
-use pocketmine\item\Item;
 use pocketmine\item\LegacyStringToItemParser;
 use UnexpectedValueException;
 
