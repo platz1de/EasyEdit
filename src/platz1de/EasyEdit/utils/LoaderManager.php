@@ -100,13 +100,4 @@ class LoaderManager
 
 		//TODO: In 1.17 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
 	}
-
-	/**
-	 * @param Chunk $chunk
-	 * @return Chunk
-	 */
-	public static function cloneChunk(Chunk $chunk): Chunk
-	{
-		return new Chunk(array_map(static function (SubChunk $subchunk): SubChunk { return clone $subchunk; }, $chunk->getSubChunks()->toArray()), [], [], $chunk->getBiomeIdArray(), $chunk->getHeightMapArray());
-	}
 }

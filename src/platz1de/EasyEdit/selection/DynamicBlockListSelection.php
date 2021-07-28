@@ -151,7 +151,7 @@ class DynamicBlockListSelection extends BlockListSelection
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
 						$chunk = $this->getManager()->getChunk($chunkX, $chunkZ);
 						if ($chunk !== null) {
-							$piece->getManager()->setChunk($chunkX, $chunkZ, LoaderManager::cloneChunk($chunk));
+							$piece->getManager()->setChunk($chunkX, $chunkZ, clone $chunk);
 						}
 					}
 				}

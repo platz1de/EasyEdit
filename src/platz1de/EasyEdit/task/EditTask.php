@@ -181,7 +181,7 @@ abstract class EditTask extends Threaded
 				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($data));
 			}
 
-			$originManager->setChunk($x, $z, LoaderManager::cloneChunk($chunk));
+			$originManager->setChunk($x, $z, clone $chunk);
 		}
 
 		$tileData = new ExtendedBinaryStream($this->tileData);
