@@ -77,7 +77,6 @@ class LoaderManager
 				foreach ($old->getEntities() as $entity) {
 					$chunk->addEntity($entity);
 					$old->removeEntity($entity);
-					$entity->chunk = $chunk;
 				}
 			}
 		}
