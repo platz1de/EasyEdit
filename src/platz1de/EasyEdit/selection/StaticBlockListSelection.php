@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
@@ -28,7 +29,7 @@ class StaticBlockListSelection extends BlockListSelection
 				for ($chunkX = 0; $chunkX < 3; $chunkX++) {
 					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
 						$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ));
-						$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ);
+						$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ, new Chunk());
 					}
 				}
 				$pieces[] = $piece;
