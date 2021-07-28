@@ -114,16 +114,16 @@ abstract class EditTask extends Threaded
 			World::getXZ($hash, $x, $z);
 			if ($chunk instanceof Chunk) {
 				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+
+				foreach ($chunk->getNBTtiles() as $tile) {
+					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
+				}
 			} else {
 				$chunkData->putString(""); //Newly loaded chunk
 			}
 
 			$chunkData->putInt($x);
 			$chunkData->putInt($z);
-
-			foreach ($chunk->getNBTtiles() as $tile) {
-				$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
-			}
 		}
 		$this->chunkData = $chunkData->getBuffer();
 		$this->tileData = $tileData->getBuffer();
