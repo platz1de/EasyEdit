@@ -3,4 +3,6 @@ build-by-default: true
 projects:
   EasyEdit:
     path: ""
+    lint:
+      phpstan: false
 ...
