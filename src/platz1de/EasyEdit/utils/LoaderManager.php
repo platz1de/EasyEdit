@@ -15,7 +15,7 @@ class LoaderManager
 	 * @param World $level
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
-	 * @return Chunk
+	 * @return Chunk|null
 	 */
 	public static function getChunk(World $level, int $chunkX, int $chunkZ): ?Chunk
 	{

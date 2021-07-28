@@ -28,7 +28,7 @@ class StaticBlockListSelection extends BlockListSelection
 				$piece = new StaticBlockListSelection($this->getPlayer(), $this->getWorldName(), new Vector3(max($x << 4, $this->pos1->getX()), max($this->pos1->getY(), 0), max($z << 4, $this->pos1->getZ())), new Vector3(min(($x << 4) + 47, $this->pos2->getX()), min($this->pos2->getY(), World::Y_MAX - 1), min(($z << 4) + 47, $this->pos2->getZ())), true);
 				for ($chunkX = 0; $chunkX < 3; $chunkX++) {
 					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
-						$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ));
+						$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ) ?? new Chunk());
 						$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ, new Chunk());
 					}
 				}

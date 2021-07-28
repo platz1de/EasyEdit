@@ -44,7 +44,7 @@ class StackedCube extends Selection
 
 	/**
 	 * @param Position $place
-	 * @return Chunk[]
+	 * @return array<int,Chunk|null>
 	 */
 	public function getNeededChunks(Position $place): array
 	{

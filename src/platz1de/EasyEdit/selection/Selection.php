@@ -70,7 +70,7 @@ abstract class Selection
 
 	/**
 	 * @param Position $place
-	 * @return Chunk[]
+	 * @return array<int,Chunk|null>
 	 */
 	abstract public function getNeededChunks(Position $place): array;
 

@@ -28,7 +28,7 @@ class PacketUtils
 		//construct fake data
 		/** @var ?Tile $prev */
 		$prev = (function () use ($data, $block, $vector): ?Tile {
-			$this->blockCache[World::chunkHash($vector->x >> 4, $vector->z >> 4)][World::chunkBlockHash($vector->x, $vector->y, $vector->z)] = BlockFactory::getInstance()->fromFullBlock($block);
+			$this->blockCache[World::chunkHash($vector->x >> 4, $vector->z >> 4)][World::chunkBlockHash($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorZ())] = BlockFactory::getInstance()->fromFullBlock($block);
 			$prev = $this->getTile($vector);
 			$chunk = $this->getChunk($vector->x >> 4, $vector->z >> 4);
 			if ($chunk instanceof Chunk) {
@@ -46,8 +46,8 @@ class PacketUtils
 		self::resendBlock($vector, $world, $player);
 
 		//restore data
-		(function () use ($prev, $data, $vector): void {
-			unset($this->blockCache[World::chunkHash($vector->x >> 4, $vector->z >> 4)][World::chunkBlockHash($vector->x, $vector->y, $vector->z)]);
+		(function () use ($prev, $vector): void {
+			unset($this->blockCache[World::chunkHash($vector->x >> 4, $vector->z >> 4)][World::chunkBlockHash($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorZ())]);
 			$fake = $this->getTile($vector);
 			$chunk = $this->getChunk($vector->x >> 4, $vector->z >> 4);
 			if ($chunk instanceof Chunk) {

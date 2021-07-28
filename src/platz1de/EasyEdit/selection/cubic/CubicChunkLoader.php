@@ -13,7 +13,7 @@ trait CubicChunkLoader
 {
 	/**
 	 * @param Position $place
-	 * @return Chunk[]
+	 * @return array<int,Chunk|null>
 	 */
 	public function getNeededChunks(Position $place): array
 	{
