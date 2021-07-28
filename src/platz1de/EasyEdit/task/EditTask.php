@@ -170,13 +170,13 @@ abstract class EditTask extends Threaded
 
 		$chunkData = new ExtendedBinaryStream($this->chunkData);
 		while (!$chunkData->feof()) {
-			$data = $chunkData->getString();
-			if ($data === "") {
+			$c = $chunkData->getString();
+			if ($c === "") {
 				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = new Chunk());
 				$generator->generateChunk($manager, $x, $z);
 				$generator->populateChunk($manager, $x, $z);
 			} else {
-				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($data));
+				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($c));
 			}
 
 			$originManager->setChunk($x, $z, clone $chunk);
