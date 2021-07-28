@@ -49,7 +49,7 @@ class CenterCommand extends EasyEditCommand
 		for ($x = floor($xPos); $x <= ceil($xPos); $x++) {
 			for ($y = floor($yPos); $y <= ceil($yPos); $y++) {
 				for ($z = floor($zPos); $z <= ceil($zPos); $z++) {
-					$level->setBlock(new Vector3($x, $y, $z), $block, true, false);
+					$level->setBlock(new Vector3($x, $y, $z), $block, false);
 				}
 			}
 		}
