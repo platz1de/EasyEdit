@@ -111,7 +111,7 @@ class Pattern
 
 	/**
 	 * @param string $data
-	 * @return Selection
+	 * @return Pattern
 	 */
 	public static function fastDeserialize(string $data): Pattern
 	{
