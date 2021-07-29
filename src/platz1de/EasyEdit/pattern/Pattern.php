@@ -99,7 +99,7 @@ class Pattern
 				$stream->putInt($arg->getFullId());
 			} else {
 				$stream->putBool(false);
-				$stream->put((string) $arg);
+				$stream->putString((string) $arg);
 			}
 		}
 		$stream->putInt(count($this->pieces));
