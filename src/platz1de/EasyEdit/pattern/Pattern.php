@@ -106,6 +106,7 @@ class Pattern
 		foreach ($this->pieces as $piece) {
 			$stream->putString($piece->fastSerialize());
 		}
+		$stream->putString(static::class);
 		return $stream->getBuffer();
 	}
 
@@ -121,14 +122,15 @@ class Pattern
 			if ($stream->getBool()) {
 				$args[] = BlockFactory::getInstance()->fromFullBlock($stream->getInt());
 			} else {
-				$args[] = self::fastDeserialize($stream->getString());
+				$args[] = $stream->getString();
 			}
 		}
 		$pieces = [];
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$pieces[] = self::fastDeserialize($stream->getString());
 		}
-		return new Pattern($pieces, $args);
+		$type = $stream->getString();
+		return new $type($pieces, $args);
 	}
 
 	/**
@@ -287,15 +289,15 @@ class Pattern
 		if ($pattern[0] === "!") {
 			$pa = self::getPattern(substr($pattern, 1), $children);
 			$pa->check();
-			return new NotPattern($pa);
+			return new NotPattern([$pa], []);
 		}
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
 			case self::INTERNAL_BLOCK:
-				return new StaticBlock(self::getBlock($args[0]));
+				return new StaticBlock([], [self::getBlock($args[0])]);
 			case "not":
-				return new NotPattern($children[0] ?? null);
+				return new NotPattern($children, []);
 			case "even":
 				return new EvenPattern($children, $args);
 			case "odd":
@@ -375,9 +377,9 @@ class Pattern
 	public static function getBlockType(string $string): StaticBlock
 	{
 		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
-			return new StaticBlock(self::getBlock($string));
+			return new StaticBlock([], [self::getBlock($string)]);
 		}
 
-		return new DynamicBlock(self::getBlock($string));
+		return new DynamicBlock([], [self::getBlock($string)]);
 	}
 }

@@ -7,23 +7,9 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
-use UnexpectedValueException;
 
 class NotPattern extends Pattern
 {
-	/**
-	 * Not constructor.
-	 * @param Pattern|null $piece
-	 */
-	public function __construct(?Pattern $piece)
-	{
-		if ($piece instanceof Pattern) {
-			parent::__construct([$piece], []);
-		} else {
-			throw new UnexpectedValueException("Not needs a pattern as first Argument, " . gettype($piece) . " given");
-		}
-	}
-
 	/**
 	 * @param int                  $x
 	 * @param int                  $y

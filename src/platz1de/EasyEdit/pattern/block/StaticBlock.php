@@ -10,15 +10,6 @@ use pocketmine\block\Block;
 class StaticBlock extends Pattern
 {
 	/**
-	 * BlockPattern constructor.
-	 * @param Block $block
-	 */
-	public function __construct(Block $block)
-	{
-		parent::__construct([], [$block]);
-	}
-
-	/**
 	 * @param int                  $x
 	 * @param int                  $y
 	 * @param int                  $z

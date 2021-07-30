@@ -55,13 +55,13 @@ class NaturalizePattern extends Pattern
 	public function check(): void
 	{
 		if (!isset($this->pieces[0])) {
-			$this->pieces[0] = new StaticBlock(VanillaBlocks::GRASS());
+			$this->pieces[0] = new StaticBlock([], [VanillaBlocks::GRASS()]);
 		}
 		if (!isset($this->pieces[1])) {
-			$this->pieces[1] = new StaticBlock(VanillaBlocks::DIRT());
+			$this->pieces[1] = new StaticBlock([], [VanillaBlocks::DIRT()]);
 		}
 		if (!isset($this->pieces[2])) {
-			$this->pieces[2] = new StaticBlock(VanillaBlocks::STONE());
+			$this->pieces[2] = new StaticBlock([], [VanillaBlocks::STONE()]);
 		}
 	}
 }

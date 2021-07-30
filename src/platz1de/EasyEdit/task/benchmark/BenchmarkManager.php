@@ -61,12 +61,12 @@ class BenchmarkManager
 		$testCube = new Cube($name, $name, new Vector3(0, 0, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		//Task #1 - set static generate
-		SetTask::queue($testCube, new StaticBlock(VanillaBlocks::STONE()), $pos, function (EditTaskResult $result) use (&$results): void {
+		SetTask::queue($testCube, new StaticBlock([], [VanillaBlocks::STONE()]), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static generate", $result->getTime(), $result->getChanged()];
 		});
 
 		//Task #2 - set static
-		SetTask::queue($testCube, new StaticBlock(VanillaBlocks::STONE()), $pos, function (EditTaskResult $result) use (&$results): void {
+		SetTask::queue($testCube, new StaticBlock([], [VanillaBlocks::STONE()]), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 

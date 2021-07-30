@@ -41,6 +41,6 @@ class ExtinguishCommand extends EasyEditCommand
 			}
 		}
 
-		SetTask::queue($selection, new Pattern([new BlockPattern([new StaticBlock(VanillaBlocks::AIR())], [new DynamicBlock(VanillaBlocks::FIRE())])], []), $player->getPosition());
+		SetTask::queue($selection, new Pattern([new BlockPattern([new StaticBlock([], [VanillaBlocks::AIR()])], [new DynamicBlock([], [VanillaBlocks::FIRE()])])], []), $player->getPosition());
 	}
 }
