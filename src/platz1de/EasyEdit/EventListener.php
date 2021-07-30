@@ -5,10 +5,11 @@ namespace platz1de\EasyEdit;
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\SelectionManager;
+use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
 use pocketmine\item\TieredTool;
@@ -35,7 +36,7 @@ class EventListener implements Listener
 		}
 	}
 
-	public function onInteract(PlayerInteractEvent $event): void
+	public function onUse(PlayerItemUseEvent $event): void
 	{
 		if (self::$cooldown < microtime(true)) {
 			self::$cooldown = microtime(true) + 0.5;
@@ -44,10 +45,13 @@ class EventListener implements Listener
 		}
 
 		$item = $event->getItem();
-		if ($item instanceof TieredTool && $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
+		if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 			if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
 				$event->cancel();
-				Cube::selectPos2($event->getPlayer(), $event->getBlock()->getPos());
+				$target = $event->getPlayer()->getTargetBlock(100);
+				if ($target instanceof Block) {
+					Cube::selectPos2($event->getPlayer(), $target->getPos());
+				}
 			} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
 				$event->cancel();
 				BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
