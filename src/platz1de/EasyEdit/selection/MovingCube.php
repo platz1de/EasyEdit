@@ -4,9 +4,7 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
@@ -43,21 +41,20 @@ class MovingCube extends Selection
 
 	/**
 	 * @param Position $place
-	 * @return array<int,Chunk|null>
+	 * @return int[]
 	 */
 	public function getNeededChunks(Position $place): array
 	{
-		$level = $this->getWorld();
 		$chunks = [];
 		//TODO: Remove duplicates
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x++) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z++) {
-				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($level, $x, $z);
+				$chunks[] = World::chunkHash($x, $z);
 			}
 		}
 		for ($x = ($this->pos1->getX() + $this->direction->getX()) >> 4; $x <= ($this->pos2->getX() + $this->direction->getX()) >> 4; $x++) {
 			for ($z = ($this->pos1->getZ() + $this->direction->getZ()) >> 4; $z <= ($this->pos2->getZ() + $this->direction->getZ()) >> 4; $z++) {
-				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($level, $x, $z);
+				$chunks[] = World::chunkHash($x, $z);
 			}
 		}
 		return $chunks;

@@ -4,11 +4,9 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use UnexpectedValueException;
@@ -41,7 +39,7 @@ class DynamicBlockListSelection extends BlockListSelection
 
 	/**
 	 * @param Position $place
-	 * @return array<int,Chunk|null>
+	 * @return int[]
 	 */
 	public function getNeededChunks(Position $place): array
 	{
@@ -51,7 +49,7 @@ class DynamicBlockListSelection extends BlockListSelection
 		$chunks = [];
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($place->getWorld(), $x, $z);
+				$chunks[] = World::chunkHash($x, $z);
 			}
 		}
 		return $chunks;

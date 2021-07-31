@@ -6,7 +6,6 @@ use Closure;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedLevelHolder;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
@@ -70,7 +69,7 @@ abstract class Selection
 
 	/**
 	 * @param Position $place
-	 * @return array<int,Chunk|null>
+	 * @return int[]
 	 */
 	abstract public function getNeededChunks(Position $place): array;
 

@@ -8,6 +8,7 @@ use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class LoaderManager
 {
@@ -15,14 +16,18 @@ class LoaderManager
 	 * @param World $level
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
-	 * @return Chunk|null
+	 * @return Chunk
 	 */
-	public static function getChunk(World $level, int $chunkX, int $chunkZ): ?Chunk
+	public static function getChunk(World $level, int $chunkX, int $chunkZ): Chunk
 	{
 		if ($level->isChunkLoaded($chunkX, $chunkZ)) {
 			$chunk = $level->getChunk($chunkX, $chunkZ);
 		} else {
 			$chunk = $level->getProvider()->loadChunk($chunkX, $chunkZ);
+		}
+
+		if (!$chunk instanceof Chunk) {
+			throw new UnexpectedValueException("Could not load chunk " . $chunkX . " " . $chunkZ . ", was it generated first?");
 		}
 
 		return $chunk;

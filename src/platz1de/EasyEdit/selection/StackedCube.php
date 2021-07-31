@@ -4,9 +4,7 @@ namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -44,18 +42,17 @@ class StackedCube extends Selection
 
 	/**
 	 * @param Position $place
-	 * @return array<int,Chunk|null>
+	 * @return int[]
 	 */
 	public function getNeededChunks(Position $place): array
 	{
 		$chunks = [];
 		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());
 		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
-		$level = $this->getWorld();
 
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[World::chunkHash($x, $z)] = LoaderManager::getChunk($level, $x, $z);
+				$chunks[] = World::chunkHash($x, $z);
 			}
 		}
 		return $chunks;

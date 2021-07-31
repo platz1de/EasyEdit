@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\worker\EditWorker;
@@ -84,18 +85,6 @@ abstract class EditTask extends Threaded
 	 * @var string
 	 */
 	private $total;
-	/**
-	 * @var int
-	 */
-	private $seed;
-	/**
-	 * @var string
-	 */
-	private $generatorClass;
-	/**
-	 * @var string
-	 */
-	private $settings;
 
 	/**
 	 * EditTask constructor.
@@ -110,20 +99,17 @@ abstract class EditTask extends Threaded
 		$this->id = WorkerAdapter::getId();
 		$chunkData = new ExtendedBinaryStream();
 		$tileData = new ExtendedBinaryStream();
-		foreach ($selection->getNeededChunks($place) as $hash => $chunk) {
+		foreach ($selection->getNeededChunks($place) as $hash) {
 			World::getXZ($hash, $x, $z);
-			if ($chunk instanceof Chunk) {
-				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
-
-				foreach ($chunk->getNBTtiles() as $tile) {
-					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
-				}
-			} else {
-				$chunkData->putString(""); //Newly loaded chunk
-			}
-
 			$chunkData->putInt($x);
 			$chunkData->putInt($z);
+
+			$chunk = LoaderManager::getChunk($place->getWorld(), $x, $z);
+			$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+
+			foreach ($chunk->getNBTtiles() as $tile) {
+				$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
+			}
 		}
 		$this->chunkData = $chunkData->getBuffer();
 		$this->tileData = $tileData->getBuffer();
@@ -135,9 +121,6 @@ abstract class EditTask extends Threaded
 			$this->total = $total->fastSerialize();
 		}
 		$this->data = igbinary_serialize($data);
-		$this->generatorClass = GeneratorManager::getInstance()->getGenerator($place->getWorld()->getProvider()->getWorldData()->getGenerator());
-		$this->settings = igbinary_serialize($place->getWorld()->getProvider()->getWorldData()->getGeneratorOptions());
-		$this->seed = $place->getWorld()->getSeed();
 	}
 
 	public function run(): void
@@ -161,22 +144,9 @@ abstract class EditTask extends Threaded
 			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
 		}
 
-		//TODO: Maybe actually only plant full trees or sth?
-		/**
-		 * @var Generator $generator
-		 */
-		$generator = new $this->generatorClass($this->seed, igbinary_unserialize($this->settings));
-
 		$chunkData = new ExtendedBinaryStream($this->chunkData);
 		while (!$chunkData->feof()) {
-			$c = $chunkData->getString();
-			if ($c === "") {
-				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = new Chunk());
-				$generator->generateChunk($manager, $x, $z);
-				$generator->populateChunk($manager, $x, $z);
-			} else {
-				$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($c));
-			}
+			$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($chunkData->getString()));
 
 			$originManager->setChunk($x, $z, clone $chunk);
 		}
