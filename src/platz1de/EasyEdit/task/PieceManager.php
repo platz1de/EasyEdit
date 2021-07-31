@@ -73,12 +73,10 @@ class PieceManager
 					if (count($this->pieces) === 1) {
 						$data->setDataKeyed("finalPiece", true);
 					}
-					$task = $this->task->getTask();
 
 					//reduce load by not setting and loading on the same tick
-					WorkerAdapter::priority(new QueuedCallbackTask(function () use ($data, $task): void {
-						$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data);
-						EasyEdit::getWorker()->stack($this->currentPiece);
+					WorkerAdapter::priority(new QueuedCallbackTask(function () use ($data): void {
+						$this->startPiece($data);
 					}));
 					return false; //more to go
 				}
@@ -98,8 +96,16 @@ class PieceManager
 		if (count($this->pieces) === 1) {
 			$this->task->getData()->setDataKeyed("finalPiece", true);
 		}
+		$this->startPiece($this->task->getData());
+	}
+
+	/**
+	 * @param AdditionalDataManager $data
+	 */
+	private function startPiece(AdditionalDataManager $data): void
+	{
 		$task = $this->task->getTask();
-		$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $this->task->getData(), $this->task->getSelection());
+		$this->currentPiece = new $task(array_pop($this->pieces), $this->task->getPattern(), $this->task->getPlace(), $data, $data->getBoolKeyed("firstPiece") ? $this->task->getSelection() : null);
 		EasyEdit::getWorker()->stack($this->currentPiece);
 	}
 
