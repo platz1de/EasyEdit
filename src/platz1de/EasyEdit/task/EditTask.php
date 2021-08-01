@@ -16,7 +16,6 @@ use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\BaseNbtSerializer;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
@@ -96,11 +95,6 @@ abstract class EditTask extends Threaded
 	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, ?Selection $total = null)
 	{
 		$this->id = WorkerAdapter::getId();
-		$chunkData = new ExtendedBinaryStream();
-		$tileData = new ExtendedBinaryStream();
-		$chunks = $selection->getNeededChunks($place);
-		$this->prepareNextChunk($chunks, $place->getWorld(), $chunkData, $tileData);
-
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = $pattern->fastSerialize();
 		$this->place = igbinary_serialize($place->floor());
@@ -109,6 +103,8 @@ abstract class EditTask extends Threaded
 			$this->total = $total->fastSerialize();
 		}
 		$this->data = igbinary_serialize($data);
+
+		$this->prepareNextChunk( $selection->getNeededChunks($place), $place->getWorld(), new ExtendedBinaryStream(), new ExtendedBinaryStream());
 	}
 
 	/**
