@@ -215,7 +215,7 @@ abstract class Selection
 	{
 		$return = ($block !== 0);
 
-		if ($block === 217) {
+		if ($block === 0xD90) { //structure_void
 			$block = 0;
 		}
 
