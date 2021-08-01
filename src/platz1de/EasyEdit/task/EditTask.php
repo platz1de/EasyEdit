@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -15,13 +16,11 @@ use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\BaseNbtSerializer;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\FastChunkSerializer;
-use pocketmine\world\generator\Generator;
-use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use Thread;
@@ -99,20 +98,9 @@ abstract class EditTask extends Threaded
 		$this->id = WorkerAdapter::getId();
 		$chunkData = new ExtendedBinaryStream();
 		$tileData = new ExtendedBinaryStream();
-		foreach ($selection->getNeededChunks($place) as $hash) {
-			World::getXZ($hash, $x, $z);
-			$chunkData->putInt($x);
-			$chunkData->putInt($z);
+		$chunks = $selection->getNeededChunks($place);
+		$this->prepareNextChunk($chunks, $place->getWorld(), $chunkData, $tileData);
 
-			$chunk = LoaderManager::getChunk($place->getWorld(), $x, $z);
-			$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
-
-			foreach ($chunk->getNBTtiles() as $tile) {
-				$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
-			}
-		}
-		$this->chunkData = $chunkData->getBuffer();
-		$this->tileData = $tileData->getBuffer();
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = $pattern->fastSerialize();
 		$this->place = igbinary_serialize($place->floor());
@@ -121,6 +109,41 @@ abstract class EditTask extends Threaded
 			$this->total = $total->fastSerialize();
 		}
 		$this->data = igbinary_serialize($data);
+	}
+
+	/**
+	 * @param int[]                $chunks
+	 * @param World                $world
+	 * @param ExtendedBinaryStream $chunkData
+	 * @param ExtendedBinaryStream $tileData
+	 */
+	private function prepareNextChunk(array $chunks, World $world, ExtendedBinaryStream $chunkData, ExtendedBinaryStream $tileData): void
+	{
+		World::getXZ((int) array_pop($chunks), $x, $z);
+
+		$world->orderChunkPopulation($x, $z, null)->onCompletion(
+			function () use ($tileData, $chunkData, $z, $x, $world, $chunks): void {
+				$chunkData->putInt($x);
+				$chunkData->putInt($z);
+				$chunk = LoaderManager::getChunk($world, $x, $z);
+				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+
+				foreach ($chunk->getNBTtiles() as $tile) {
+					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
+				}
+
+				if ($chunks === []) {
+					$this->chunkData = $chunkData->getBuffer();
+					$this->tileData = $tileData->getBuffer();
+					EasyEdit::getWorker()->stack($this);
+				} else {
+					$this->prepareNextChunk($chunks, $world, $chunkData, $tileData);
+				}
+			},
+			function () use ($z, $x): void {
+				throw new UnexpectedValueException("Failed to prepare Chunk " . $x . " " . $z);
+			}
+		);
 	}
 
 	public function run(): void

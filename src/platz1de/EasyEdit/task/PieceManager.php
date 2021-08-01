@@ -35,10 +35,6 @@ class PieceManager
 	 * @var EditTaskResult
 	 */
 	private $result;
-	/**
-	 * @var bool
-	 */
-	private $preparing;
 
 	/**
 	 * PieceManager constructor.
@@ -56,7 +52,7 @@ class PieceManager
 	 */
 	public function continue(): bool
 	{
-		if (!$this->preparing && $this->currentPiece->isFinished()) {
+		if ($this->currentPiece->isFinished()) {
 			$result = $this->currentPiece->getResult();
 			$data = $this->currentPiece->getAdditionalData();
 
@@ -114,26 +110,9 @@ class PieceManager
 		if (!$piece instanceof Selection) {
 			throw new UnexpectedValueException("Tried to start executing without any pieces in stack");
 		}
-		$this->preparing = true;
 
-		$chunks = $piece->getNeededChunks($this->task->getPlace());
-		$done = 0;
-		foreach ($chunks as $hash) {
-			World::getXZ($hash, $x, $z);
-			$this->task->getPlace()->getWorld()->orderChunkPopulation($x, $z, null)->onCompletion(
-				function () use ($data, $piece, $chunks, &$done): void {
-					if (++$done === count($chunks)) {
-						$task = $this->task->getTask();
-						$this->currentPiece = new $task($piece, $this->task->getPattern(), $this->task->getPlace(), $data, $data->getBoolKeyed("firstPiece") ? $this->task->getSelection() : null);
-						EasyEdit::getWorker()->stack($this->currentPiece);
-						$this->preparing = false;
-					}
-				},
-				function () use ($z, $x): void {
-					throw new UnexpectedValueException("Failed to prepare Chunk " . $x . " " . $z);
-				}
-			);
-		}
+		$task = $this->task->getTask();
+		$this->currentPiece = new $task($piece, $this->task->getPattern(), $this->task->getPlace(), $data, $data->getBoolKeyed("firstPiece") ? $this->task->getSelection() : null);
 	}
 
 	/**
