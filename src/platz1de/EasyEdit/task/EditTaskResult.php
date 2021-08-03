@@ -67,6 +67,7 @@ class EditTaskResult
 		$this->changed += $result->getChanged();
 		foreach ($result->getUndo()->getManager()->getChunks() as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
+			//TODO: only create Chunks which are really needed
 			if (LoaderManager::isChunkUsed($chunk)) {
 				$this->getUndo()->getManager()->setChunk($x, $z, $chunk);
 			}
