@@ -22,6 +22,7 @@ class PacketUtils
 	 * @param Player           $player
 	 * @param int              $block
 	 * @param CompoundTag|null $data
+	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public static function sendFakeBlock(Vector3 $vector, World $world, Player $player, int $block, ?CompoundTag $data = null): void
 	{
