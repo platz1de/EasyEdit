@@ -38,7 +38,7 @@ class Cube extends Selection implements Patterned
 	 */
 	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		$this->structure = new Vector3(0, 0, 0);
+		$this->structure = new Vector3(0, World::Y_MIN, 0);
 
 		parent::__construct($player, $level, $pos1, $pos2, $piece);
 	}
@@ -48,7 +48,7 @@ class Cube extends Selection implements Patterned
 		if ($this->isValid()) {
 			$minX = min($this->pos1->getX(), $this->pos2->getX());
 			$maxX = max($this->pos1->getX(), $this->pos2->getX());
-			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), 0);
+			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), World::Y_MIN);
 			$maxY = min(max($this->pos1->getY(), $this->pos2->getY()), World::Y_MAX - 1);
 			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
 			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
@@ -58,7 +58,7 @@ class Cube extends Selection implements Patterned
 
 			if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
 				$this->close();
-				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), 0, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
+				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
 				PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS, CompoundTag::create()
 					->setString("structureName", "selection")
 					->setString("dataField", "")

@@ -31,7 +31,7 @@ class DynamicBlockListSelection extends BlockListSelection
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
 			$pos2 = $pos2->subtractVector($pos1);
 		}
-		parent::__construct($player, "", new Vector3(0, 0, 0), $pos2 ?? null, $piece);
+		parent::__construct($player, "", new Vector3(0, World::Y_MIN, 0), $pos2 ?? null, $piece);
 		if ($pos1 instanceof Vector3 && $place instanceof Vector3) {
 			$this->point = $place->subtractVector($pos1);
 		}
@@ -143,8 +143,8 @@ class DynamicBlockListSelection extends BlockListSelection
 			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
 				$piece = new DynamicBlockListSelection($this->getPlayer(), null, null, null, true);
 				$piece->setPoint($this->getPoint());
-				$piece->setPos1($pos1 = new Vector3(max(($x << 4) - ($min->getX() & 0x0f), 0), 0, max(($z << 4) - ($min->getZ() & 0x0f), 0)));
-				$piece->setPos2($pos2 = new Vector3(min(($x << 4) - ($min->getX() & 0x0f) + 47, $max->getX() - $min->getX()), $max->getY() - $min->getY(), min(($z << 4) - ($min->getZ() & 0x0f) + 47, $max->getZ() - $min->getZ())));
+				$piece->setPos1($pos1 = new Vector3(max(($x << 4) - ($min->getX() & 0x0f), 0), World::Y_MIN, max(($z << 4) - ($min->getZ() & 0x0f), 0)));
+				$piece->setPos2($pos2 = new Vector3(min(($x << 4) - ($min->getX() & 0x0f) + 47, $max->getX() - $min->getX()), World::Y_MIN + $max->getY() - $min->getY(), min(($z << 4) - ($min->getZ() & 0x0f) + 47, $max->getZ() - $min->getZ())));
 				for ($chunkX = $pos1->getX() >> 4; $chunkX <= $pos2->getX() >> 4; $chunkX++) {
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
 						$chunk = $this->getManager()->getChunk($chunkX, $chunkZ);

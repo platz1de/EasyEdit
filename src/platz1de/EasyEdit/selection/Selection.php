@@ -129,7 +129,7 @@ abstract class Selection
 		if ($this->isValid()) {
 			$minX = min($this->pos1->getX(), $this->pos2->getX());
 			$maxX = max($this->pos1->getX(), $this->pos2->getX());
-			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), 0);
+			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), World::Y_MIN);
 			$maxY = min(max($this->pos1->getY(), $this->pos2->getY()), World::Y_MAX - 1);
 			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
 			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());

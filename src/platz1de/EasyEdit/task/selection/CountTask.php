@@ -18,6 +18,7 @@ use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class CountTask extends EditTask
 {
@@ -78,7 +79,7 @@ class CountTask extends EditTask
 	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
 	{
 		//TODO: make this optional
-		return new StaticBlockListSelection($selection->getPlayer(), "", new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+		return new StaticBlockListSelection($selection->getPlayer(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
 	}
 
 	/**

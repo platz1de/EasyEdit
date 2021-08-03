@@ -40,7 +40,7 @@ class ExtendCommand extends EasyEditCommand
 		$pos2 = $selection->getPos2();
 
 		if ($count === "vert" || $count === "vertical") {
-			$pos1 = new Vector3($pos1->getX(), 0, $pos1->getZ());
+			$pos1 = new Vector3($pos1->getX(), World::Y_MIN, $pos1->getZ());
 			$pos2 = new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ());
 		} else {
 			$yaw = $player->getLocation()->getYaw();
