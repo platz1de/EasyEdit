@@ -65,7 +65,7 @@ class LoaderManager
 	 * @param int   $x
 	 * @param int   $z
 	 * @param Chunk $chunk
-	 * @see World::setChunk()
+	 * @see          World::setChunk()
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public static function injectChunk(World $level, int $x, int $z, Chunk $chunk): void

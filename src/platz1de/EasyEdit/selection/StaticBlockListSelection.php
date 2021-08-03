@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
-use pocketmine\math\Vector3;
 use UnexpectedValueException;
 
 class StaticBlockListSelection extends BlockListSelection
