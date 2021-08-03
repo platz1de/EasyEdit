@@ -100,4 +100,19 @@ class LoaderManager
 
 		//TODO: In 1.17 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
 	}
+
+	/**
+	 * @param Chunk $chunk
+	 * @return bool
+	 */
+	public static function isChunkUsed(Chunk $chunk): bool
+	{
+		foreach ($chunk->getSubChunks() as $subChunk) {
+			if (!$subChunk->isEmptyFast()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

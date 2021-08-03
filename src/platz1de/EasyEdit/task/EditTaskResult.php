@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
@@ -66,7 +67,7 @@ class EditTaskResult
 		$this->changed += $result->getChanged();
 		foreach ($result->getUndo()->getManager()->getChunks() as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			if ($chunk->getHeight() > 0) {
+			if (LoaderManager::isChunkUsed($chunk)) {
 				$this->getUndo()->getManager()->setChunk($x, $z, $chunk);
 			}
 		}
