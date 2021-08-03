@@ -66,7 +66,7 @@ class QueuedEditTask implements QueuedTask
 		$this->place = Position::fromObject($place->floor(), $place->getWorld());
 		$this->task = $task;
 		$this->data = $data;
-		$this->splitOffset = $splitOffset;
+		$this->splitOffset = $splitOffset->floor();
 
 		if ($finish === null) {
 			$finish = static function (EditTaskResult $result): void {
