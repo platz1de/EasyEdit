@@ -7,14 +7,10 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\PacketUtils;
+use platz1de\EasyEdit\utils\HighlightingManager;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -24,24 +20,9 @@ class Cube extends Selection implements Patterned
 	use CubicChunkLoader;
 
 	/**
-	 * @var Vector3
+	 * @var int
 	 */
 	private $structure;
-
-	/**
-	 * Cube constructor.
-	 * @param string       $player
-	 * @param string       $level
-	 * @param null|Vector3 $pos1
-	 * @param null|Vector3 $pos2
-	 * @param bool         $piece
-	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
-	{
-		$this->structure = new Vector3(0, World::Y_MIN, 0);
-
-		parent::__construct($player, $level, $pos1, $pos2, $piece);
-	}
 
 	public function update(): void
 	{
@@ -56,29 +37,9 @@ class Cube extends Selection implements Patterned
 			$this->pos1 = new Vector3($minX, $minY, $minZ);
 			$this->pos2 = new Vector3($maxX, $maxY, $maxZ);
 
-			if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
+			if (!$this->piece) {
 				$this->close();
-				$this->structure = new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2));
-				PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS, CompoundTag::create()
-					->setString("structureName", "selection")
-					->setString("dataField", "")
-					->setInt("xStructureOffset", $this->pos1->getFloorX() - $this->structure->getFloorX())
-					->setInt("yStructureOffset", $this->pos1->getFloorY() - $this->structure->getFloorY())
-					->setInt("zStructureOffset", $this->pos1->getFloorZ() - $this->structure->getFloorZ())
-					->setInt("xStructureSize", $this->pos2->getFloorX() - $this->pos1->getFloorX() + 1)
-					->setInt("yStructureSize", $this->pos2->getFloorY() - $this->pos1->getFloorY() + 1)
-					->setInt("zStructureSize", $this->pos2->getFloorZ() - $this->pos1->getFloorZ() + 1)
-					->setInt("data", 5)
-					->setByte("rotation", 0)
-					->setByte("mirror", 0)
-					->setFloat("integrity", 100.0)
-					->setLong("seed", 0)
-					->setByte("ignoreEntities", 1)
-					->setByte("includePlayers", 0)
-					->setByte("removeBlocks", 0)
-					->setByte("showBoundingBox", 1)
-					->setByte("isMovable", 1)
-					->setByte("isPowered", 0));
+				$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
 			}
 		}
 	}
@@ -90,7 +51,7 @@ class Cube extends Selection implements Patterned
 	{
 		parent::putData($stream);
 
-		$stream->putVector($this->structure);
+		$stream->putInt($this->structure);
 	}
 
 	/**
@@ -100,16 +61,13 @@ class Cube extends Selection implements Patterned
 	{
 		parent::parseData($stream);
 
-		$this->structure = $stream->getVector();
+		$this->structure = $stream->getInt();
 	}
 
 	public function close(): void
 	{
-		if (!$this->piece && ($player = Server::getInstance()->getPlayerExact($this->player)) instanceof Player) {
-			//Minecraft doesn't delete BlockData if the original Block shouldn't have some
-			//this happens when whole Chunks get sent
-			PacketUtils::sendFakeBlock($this->structure->floor(), $this->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS);
-			PacketUtils::resendBlock($this->structure->floor(), $this->getWorld(), $player);
+		if ($this->structure !== null) {
+			HighlightingManager::clear($this->getPlayer(), $this->structure);
 		}
 	}
 

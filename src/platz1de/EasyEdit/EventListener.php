@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\utils\HighlightingManager;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
@@ -61,10 +61,9 @@ class EventListener implements Listener
 
 	public function onLevelChange(EntityTeleportEvent $event): void
 	{
-		//TODO: Replace this with proper differentiation of player and selection level
 		$player = $event->getEntity();
-		if ($player instanceof Player && $event->getFrom()->getWorld() !== $event->getTo()->getWorld()) {
-			SelectionManager::clearForPlayer($player->getName());
+		if ($player instanceof Player) {
+			HighlightingManager::resendAll($player->getName());
 		}
 	}
 }
