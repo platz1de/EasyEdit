@@ -22,7 +22,7 @@ class Cube extends Selection implements Patterned
 	/**
 	 * @var int
 	 */
-	private $structure;
+	private $structure = 0;
 
 	public function update(): void
 	{

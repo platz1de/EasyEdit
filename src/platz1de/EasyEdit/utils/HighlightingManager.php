@@ -25,7 +25,7 @@ class HighlightingManager
 	/**
 	 * @var int
 	 */
-	private static $id = 0;
+	private static $id = 1;
 
 	/**
 	 * Highlight a cube using structure blocks
