@@ -5,6 +5,8 @@ namespace platz1de\EasyEdit\task\benchmark;
 use Closure;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
+use platz1de\EasyEdit\pattern\logic\math\OddPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\EditTaskResult;
@@ -60,14 +62,16 @@ class BenchmarkManager
 		//4x 3x3 Chunk cubes
 		$testCube = new Cube($name, $name, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
-		//Task #1 - set static generate
-		SetTask::queue($testCube, new StaticBlock([], [VanillaBlocks::STONE()]), $pos, function (EditTaskResult $result) use (&$results): void {
-			$results[] = ["set static generate", $result->getTime(), $result->getChanged()];
-		});
-
-		//Task #2 - set static
+		//Task #1 - set static
 		SetTask::queue($testCube, new StaticBlock([], [VanillaBlocks::STONE()]), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
+		});
+
+		//Task #2 - set complex
+		//3D-Chess Pattern with stone and dirt
+		$pattern = new Pattern([new EvenPattern([new EvenPattern([new StaticBlock([], [VanillaBlocks::STONE()])], ["x", "z"]), new OddPattern([new StaticBlock([], [VanillaBlocks::STONE()])], ["x", "z"]), new StaticBlock([], [VanillaBlocks::DIRT()])], ["y"]), new EvenPattern([new StaticBlock([], [VanillaBlocks::DIRT()])], ["x", "z"]), new OddPattern([new StaticBlock([], [VanillaBlocks::DIRT()])], ["x", "z"]), new StaticBlock([], [VanillaBlocks::STONE()])], []);
+		SetTask::queue($testCube, $pattern, $pos, function (EditTaskResult $result) use (&$results): void {
+			$results[] = ["set complex", $result->getTime(), $result->getChanged()];
 		});
 
 		//Task #3 - copy
