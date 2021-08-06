@@ -21,10 +21,10 @@ class AroundPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
-		for ($i = 0; $i <= 6; $i++) {
+		for ($i = 0; $i < 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);
 			$iterator->moveTo($check->getFloorX(), $check->getFloorY(), $check->getFloorZ());
-			if ((($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta())) {
+			if ((($iterator->getCurrent()->getFullBlock($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta())) {
 				return true;
 			}
 		}
