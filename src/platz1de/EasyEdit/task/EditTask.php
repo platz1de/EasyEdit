@@ -94,6 +94,7 @@ abstract class EditTask extends Threaded
 	 */
 	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, ?Selection $total = null)
 	{
+		EasyEdit::getWorker()->setStatus(EditWorker::STATUS_PREPARING);
 		$this->id = WorkerAdapter::getId();
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = $pattern->fastSerialize();
@@ -104,7 +105,7 @@ abstract class EditTask extends Threaded
 		}
 		$this->data = igbinary_serialize($data);
 
-		$this->prepareNextChunk( $selection->getNeededChunks($place), $place->getWorld(), new ExtendedBinaryStream(), new ExtendedBinaryStream());
+		$this->prepareNextChunk($selection->getNeededChunks($place), $place->getWorld(), new ExtendedBinaryStream(), new ExtendedBinaryStream());
 	}
 
 	/**
@@ -147,7 +148,7 @@ abstract class EditTask extends Threaded
 		$start = microtime(true);
 		/** @var EditWorker $thread */
 		$thread = Thread::getCurrentThread();
-		$thread->setRunning();
+		$thread->setStatus(EditWorker::STATUS_RUNNING);
 		$manager = new ReferencedChunkManager($this->level);
 		$iterator = new SafeSubChunkExplorer($manager);
 		$origin = new SafeSubChunkExplorer($originManager = clone $manager);
@@ -207,7 +208,7 @@ abstract class EditTask extends Threaded
 			unset($this->result);
 		}
 		$this->finished = true;
-		$thread->setRunning(false);
+		$thread->setStatus(EditWorker::STATUS_IDLE);
 
 		if ($data->getBoolKeyed("finalPiece")) {
 			TaskCache::clear();

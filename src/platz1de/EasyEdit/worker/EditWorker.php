@@ -7,14 +7,18 @@ use ThreadedLogger;
 
 class EditWorker extends Worker
 {
+	public const STATUS_IDLE = 0;
+	public const STATUS_PREPARING = 1;
+	public const STATUS_RUNNING = 2;
+
 	/**
 	 * @var ThreadedLogger
 	 */
 	private $logger;
 	/**
-	 * @var bool
+	 * @var int
 	 */
-	private $running = false;
+	private $status = self::STATUS_IDLE;
 	/**
 	 * @var float currently just last start/end of a task
 	 */
@@ -60,24 +64,33 @@ class EditWorker extends Worker
 	 */
 	public function isRunning(): bool
 	{
-		return $this->running;
+		return $this->getStatus() === self::STATUS_RUNNING;
 	}
 
 	/**
-	 * @param bool $running
+	 * @return int
 	 */
-	public function setRunning(bool $running = true): void
+	public function getStatus(): int
 	{
-		$this->running = $running;
+		return $this->status;
+	}
+
+	/**
+	 * @param int $status
+	 */
+	public function setStatus(int $status): void
+	{
+		$this->status = $status;
 		$this->lastResponse = microtime(true);
 	}
 
 	//TODO: Implement proper callbacks
+
 	/**
 	 * @return float
 	 */
 	public function getLastResponse(): float
 	{
-		return $this->isRunning() ? $this->lastResponse : microtime(true);
+		return $this->getStatus() === self::STATUS_IDLE ? microtime(true) : $this->lastResponse;
 	}
 }

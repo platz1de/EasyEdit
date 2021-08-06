@@ -6,6 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -34,18 +35,34 @@ class StatusCommand extends EasyEditCommand
 			$progress = "-";
 		}
 
-		if (EasyEdit::getWorker()->isRunning()) {
-			$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": ";
-			$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
-			if ($last < 1) {
-				$status .= TextFormat::GREEN . round($last * 1000) . "ms" . TextFormat::RESET;
-			} elseif ($last < 10) {
-				$status .= TextFormat::GOLD . round($last * 1000) . "ms" . TextFormat::RESET;
-			} else {
-				$status .= TextFormat::RED . round($last * 1000) . "ms" . TextFormat::RESET;
-			}
-		} else {
-			$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
+		switch (EasyEdit::getWorker()->getStatus()) {
+			case EditWorker::STATUS_IDLE:
+				$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
+				break;
+			case EditWorker::STATUS_PREPARING:
+				$status = TextFormat::AQUA . "PREPARING" . TextFormat::RESET . ": ";
+				$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
+				if ($last < 1) {
+					$status .= TextFormat::GREEN . round($last * 1000) . "ms" . TextFormat::RESET;
+				} elseif ($last < 10) {
+					$status .= TextFormat::GOLD . round($last * 1000) . "ms" . TextFormat::RESET;
+				} else {
+					$status .= TextFormat::RED . round($last * 1000) . "ms" . TextFormat::RESET;
+				}
+				break;
+			case EditWorker::STATUS_RUNNING:
+				$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": ";
+				$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
+				if ($last < 1) {
+					$status .= TextFormat::GREEN . round($last * 1000) . "ms" . TextFormat::RESET;
+				} elseif ($last < 10) {
+					$status .= TextFormat::GOLD . round($last * 1000) . "ms" . TextFormat::RESET;
+				} else {
+					$status .= TextFormat::RED . round($last * 1000) . "ms" . TextFormat::RESET;
+				}
+				break;
+			default:
+				return;
 		}
 
 		Messages::send($player, "worker-status", [
