@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\pattern\logic;
 
 
+use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
@@ -34,5 +35,12 @@ class NotPattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $selection);
+	}
+
+	public function check(): void
+	{
+		if (!isset($this->pieces[0])) {
+			throw new ParseError("Not needs exactly one child pattern");
+		}
 	}
 }

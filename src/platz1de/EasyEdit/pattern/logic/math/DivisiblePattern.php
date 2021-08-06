@@ -36,5 +36,8 @@ class DivisiblePattern extends Pattern
 		if ($this->args->getInt("count") !== 0) {
 			throw new ParseError("Divisible can't be used with a count of zero");
 		}
+		if (!($this->args->checkXAxis() || $this->args->checkYAxis() || $this->args->checkZAxis())) {
+			throw new ParseError("Even needs at least one axis, zero given");
+		}
 	}
 }

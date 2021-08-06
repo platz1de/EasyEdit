@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\pattern\block;
 
+use Exception;
+use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
@@ -36,5 +38,15 @@ class StaticBlock extends Pattern
 	public function getMeta(): int
 	{
 		return $this->args->getRealBlock()->getMeta();
+	}
+
+	public function check(): void
+	{
+		try {
+			//shut up phpstorm
+			$this->args->setRealBlock($this->args->getRealBlock());
+		} catch (Exception $error) {
+			throw new ParseError("StaticBlock needs a block as first Argument");
+		}
 	}
 }

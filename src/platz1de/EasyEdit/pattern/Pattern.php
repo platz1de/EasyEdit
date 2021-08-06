@@ -301,7 +301,7 @@ class Pattern
 			case "naturalized":
 				return new NaturalizePattern($children);
 			case "smooth":
-				return new SmoothPattern($children);
+				return new SmoothPattern([]);
 			case "walls":
 			case "wall":
 				return new WallPattern($children);
