@@ -19,13 +19,13 @@ class DivisiblePattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
-		if (abs($x) % $this->args[0] !== 0 && in_array("x", $this->args, true)) {
+		if ($this->args->checkXAxis() && abs($x) % $this->args->getInt("number") !== 0) {
 			return false;
 		}
-		if (abs($y) % $this->args[0] !== 0 && in_array("y", $this->args, true)) {
+		if ($this->args->checkXAxis() && abs($y) % $this->args->getInt("number") !== 0) {
 			return false;
 		}
-		if (abs($z) % $this->args[0] !== 0 && in_array("z", $this->args, true)) {
+		if ($this->args->checkXAxis() && abs($z) % $this->args->getInt("number") !== 0) {
 			return false;
 		}
 		return true;
@@ -33,8 +33,8 @@ class DivisiblePattern extends Pattern
 
 	public function check(): void
 	{
-		if (!is_numeric($this->args[0] ?? "")) {
-			throw new ParseError("Divisible needs an int as first Argument, " . ($this->args[0] ?? "") . " given");
+		if ($this->args->getInt("count") !== 0) {
+			throw new ParseError("Divisible can't be used with a count of zero");
 		}
 	}
 }

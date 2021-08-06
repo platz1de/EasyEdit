@@ -19,7 +19,7 @@ class StaticBlock extends Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
 	{
-		return $this->args[0];
+		return $this->args->getRealBlock();
 	}
 
 	/**
@@ -27,7 +27,7 @@ class StaticBlock extends Pattern
 	 */
 	public function getId(): int
 	{
-		return $this->args[0]->getId();
+		return $this->args->getRealBlock()->getId();
 	}
 
 	/**
@@ -35,6 +35,6 @@ class StaticBlock extends Pattern
 	 */
 	public function getMeta(): int
 	{
-		return $this->args[0]->getMeta();
+		return $this->args->getRealBlock()->getMeta();
 	}
 }

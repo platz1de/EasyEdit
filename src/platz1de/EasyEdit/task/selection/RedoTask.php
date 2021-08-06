@@ -31,7 +31,7 @@ class RedoTask extends EditTask
 	public static function queue(BlockListSelection $selection): void
 	{
 		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), new Position(0, 0, 0, $selection->getWorld()), self::class, new AdditionalDataManager(["edit" => true]), new Vector3(0, 0, 0)));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), new Position(0, 0, 0, $selection->getWorld()), self::class, new AdditionalDataManager(["edit" => true]), new Vector3(0, 0, 0)));
 	}
 
 	/**

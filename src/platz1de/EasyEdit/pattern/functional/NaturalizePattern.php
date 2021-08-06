@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\pattern\functional;
 
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -55,13 +56,13 @@ class NaturalizePattern extends Pattern
 	public function check(): void
 	{
 		if (!isset($this->pieces[0])) {
-			$this->pieces[0] = new StaticBlock([], [VanillaBlocks::GRASS()]);
+			$this->pieces[0] = new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::GRASS()));
 		}
 		if (!isset($this->pieces[1])) {
-			$this->pieces[1] = new StaticBlock([], [VanillaBlocks::DIRT()]);
+			$this->pieces[1] = new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()));
 		}
 		if (!isset($this->pieces[2])) {
-			$this->pieces[2] = new StaticBlock([], [VanillaBlocks::STONE()]);
+			$this->pieces[2] = new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()));
 		}
 	}
 }

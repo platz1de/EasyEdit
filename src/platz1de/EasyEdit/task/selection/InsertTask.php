@@ -32,7 +32,7 @@ class InsertTask extends EditTask
 	 */
 	public static function queue(BlockListSelection $selection, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(["edit" => true]), new Vector3(0, 0, 0), $finish));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(["edit" => true]), new Vector3(0, 0, 0), $finish));
 	}
 
 	/**

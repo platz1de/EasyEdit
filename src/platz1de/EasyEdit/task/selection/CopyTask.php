@@ -17,10 +17,10 @@ use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\world\World;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class CopyTask extends EditTask
 {
@@ -38,7 +38,7 @@ class CopyTask extends EditTask
 				ClipBoardManager::setForPlayer($copied->getPlayer(), $copied);
 			};
 		}
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([], []), $place, self::class, new AdditionalDataManager(), $selection->getPos1()->multiply(-1), $finish));
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(), $selection->getPos1()->multiply(-1), $finish));
 	}
 
 	/**

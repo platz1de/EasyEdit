@@ -23,9 +23,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
 use pocketmine\item\LegacyStringToItemParser;
-use UnexpectedValueException;
 
 class Pattern
 {
@@ -36,19 +34,19 @@ class Pattern
 	 */
 	protected $pieces;
 	/**
-	 * @var array<int, mixed>
+	 * @var PatternArgumentData
 	 */
 	protected $args;
 
 	/**
 	 * Pattern constructor.
-	 * @param Pattern[]         $pieces
-	 * @param array<int, mixed> $args
+	 * @param Pattern[]                $pieces
+	 * @param PatternArgumentData|null $args
 	 */
-	public function __construct(array $pieces, array $args)
+	public function __construct(array $pieces, ?PatternArgumentData $args = null)
 	{
 		$this->pieces = $pieces;
-		$this->args = $args;
+		$this->args = $args ?? new PatternArgumentData();
 	}
 
 	public function check(): void
@@ -92,16 +90,7 @@ class Pattern
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putInt(count($this->args));
-		foreach ($this->args as $arg) {
-			if ($arg instanceof Block) {
-				$stream->putBool(true);
-				$stream->putInt($arg->getFullId());
-			} else {
-				$stream->putBool(false);
-				$stream->putString((string) $arg);
-			}
-		}
+		$stream->putString($this->args->fastSerialize());
 		$stream->putInt(count($this->pieces));
 		foreach ($this->pieces as $piece) {
 			$stream->putString($piece->fastSerialize());
@@ -117,14 +106,7 @@ class Pattern
 	public static function fastDeserialize(string $data): Pattern
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$args = [];
-		for ($i = $stream->getInt(); $i > 0; $i--) {
-			if ($stream->getBool()) {
-				$args[] = BlockFactory::getInstance()->fromFullBlock($stream->getInt());
-			} else {
-				$args[] = $stream->getString();
-			}
-		}
+		$args = PatternArgumentData::fastDeserialize($stream->getString());
 		$pieces = [];
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$pieces[] = self::fastDeserialize($stream->getString());
@@ -141,8 +123,8 @@ class Pattern
 	public static function parse(string $pattern): Pattern
 	{
 		try {
-			return new Pattern(self::processPattern(self::parsePiece($pattern)), []);
-		} catch (UnexpectedValueException $exception) {
+			return new Pattern(self::processPattern(self::parsePiece($pattern)));
+		} catch (Exception $exception) {
 			throw new ParseError($exception->getMessage()); //the difference is purely internally
 		}
 	}
@@ -274,7 +256,7 @@ class Pattern
 			return true;
 		} catch (ParseError $exception) {
 			return false;
-		} catch (UnexpectedValueException $exception) {
+		} catch (Exception $exception) {
 			return true; //This Pattern exists, but is not complete
 		}
 	}
@@ -289,46 +271,46 @@ class Pattern
 		if ($pattern[0] === "!") {
 			$pa = self::getPattern(substr($pattern, 1), $children);
 			$pa->check();
-			return new NotPattern([$pa], []);
+			return new NotPattern([$pa]);
 		}
 
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
 			case self::INTERNAL_BLOCK:
-				return new StaticBlock([], [self::getBlock($args[0])]);
+				return new StaticBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($args[0])));
 			case "not":
-				return new NotPattern($children, []);
+				return new NotPattern($children);
 			case "even":
-				return new EvenPattern($children, $args);
+				return new EvenPattern($children, PatternArgumentData::create()->parseAxes($args));
 			case "odd":
-				return new OddPattern($children, $args);
+				return new OddPattern($children, PatternArgumentData::create()->parseAxes($args));
 			case "divisible":
-				return new DivisiblePattern($children, $args);
+				return new DivisiblePattern($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) $args[0]));
 			case "block":
-				return new BlockPattern($children, $args);
+				return new BlockPattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
 			case "above":
-				return new AbovePattern($children, $args);
+				return new AbovePattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
 			case "below":
-				return new BelowPattern($children, $args);
+				return new BelowPattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
 			case "around":
-				return new AroundPattern($children, $args);
+				return new AroundPattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
 			case "rand":
 			case "random":
-				return new RandomPattern($children, $args);
+				return new RandomPattern($children);
 			case "nat":
 			case "naturalized":
-				return new NaturalizePattern($children, $args);
+				return new NaturalizePattern($children);
 			case "smooth":
-				return new SmoothPattern($children, $args);
+				return new SmoothPattern($children);
 			case "walls":
 			case "wall":
-				return new WallPattern($children, $args);
+				return new WallPattern($children);
 			case "sides":
 			case "side":
-				return new SidesPattern($children, $args);
+				return new SidesPattern($children);
 			case "center":
 			case "middle":
-				return new CenterPattern($children, $args);
+				return new CenterPattern($children);
 		}
 
 		throw new ParseError("Unknown Pattern " . $pattern);
@@ -377,9 +359,9 @@ class Pattern
 	public static function getBlockType(string $string): StaticBlock
 	{
 		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
-			return new StaticBlock([], [self::getBlock($string)]);
+			return new StaticBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($string)));
 		}
 
-		return new DynamicBlock([], [self::getBlock($string)]);
+		return new DynamicBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($string)));
 	}
 }

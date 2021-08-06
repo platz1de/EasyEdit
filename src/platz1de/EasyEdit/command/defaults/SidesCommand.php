@@ -41,6 +41,6 @@ class SidesCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new SidesPattern($pattern, [])], []), $player->getPosition());
+		SetTask::queue($selection, new Pattern([new SidesPattern($pattern)]), $player->getPosition());
 	}
 }

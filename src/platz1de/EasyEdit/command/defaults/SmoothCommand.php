@@ -33,6 +33,6 @@ class SmoothCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new SmoothPattern([], [])], []), $player->getPosition());
+		SetTask::queue($selection, new Pattern([new SmoothPattern([])]), $player->getPosition());
 	}
 }

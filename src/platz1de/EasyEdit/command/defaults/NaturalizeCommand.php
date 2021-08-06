@@ -43,6 +43,6 @@ class NaturalizeCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new NaturalizePattern([$top, $middle, $bottom], [])], []), $player->getPosition());
+		SetTask::queue($selection, new Pattern([new NaturalizePattern([$top, $middle, $bottom])]), $player->getPosition());
 	}
 }

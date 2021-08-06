@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
+use Exception;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
@@ -21,15 +22,16 @@ class BlockPattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		$iterator->moveTo($x, $y, $z);
-		return ((($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args[0]->getId()) && ($this->args[0]->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args[0]->getDamage()));
+		return ((($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta()));
 	}
 
 	public function check(): void
 	{
 		try {
-			$this->args[0] = Pattern::getBlockType($this->args[0] ?? "");
-		} catch (ParseError $error) {
-			throw new ParseError("Block needs a block as first Argument, " . ($this->args[0] ?? "") . " given");
+			//shut up phpstorm
+			$this->args->setBlock($this->args->getBlock());
+		} catch (Exception $error) {
+			throw new ParseError("Block needs a block as first Argument");
 		}
 	}
 }

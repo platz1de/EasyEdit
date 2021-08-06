@@ -8,6 +8,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
@@ -47,6 +48,6 @@ class ReplaceCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new BlockPattern($pattern, [$block])], []), $player->getPosition());
+		SetTask::queue($selection, new Pattern([new BlockPattern($pattern, PatternArgumentData::create()->setBlock($block))]), $player->getPosition());
 	}
 }

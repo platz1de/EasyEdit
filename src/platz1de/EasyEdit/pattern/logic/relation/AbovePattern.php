@@ -23,7 +23,7 @@ class AbovePattern extends Pattern
 		$y--;
 		if ($y >= 0) {
 			$iterator->moveTo($x, $y, $z);
-			return (($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args[0]->getId()) && ($this->args[0]->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args[0]->getDamage());
+			return (($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta());
 		}
 		return false;
 	}
@@ -31,9 +31,10 @@ class AbovePattern extends Pattern
 	public function check(): void
 	{
 		try {
-			$this->args[0] = Pattern::getBlockType($this->args[0] ?? "");
+			//shut up phpstorm
+			$this->args->setBlock($this->args->getBlock());
 		} catch (ParseError $error) {
-			throw new ParseError("Above needs a block as first Argument, " . ($this->args[0] ?? "") . " given");
+			throw new ParseError("Above needs a block as first Argument");
 		}
 	}
 }

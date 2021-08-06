@@ -18,13 +18,13 @@ class EvenPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
-		if (abs($x) % 2 !== 0 && in_array("x", $this->args, true)) {
+		if ($this->args->checkXAxis() && abs($x) % 2 !== 0) {
 			return false;
 		}
-		if (abs($y) % 2 !== 0 && in_array("y", $this->args, true)) {
+		if ($this->args->checkYAxis() && abs($y) % 2 !== 0) {
 			return false;
 		}
-		if (abs($z) % 2 !== 0 && in_array("z", $this->args, true)) {
+		if ($this->args->checkZAxis() && abs($z) % 2 !== 0) {
 			return false;
 		}
 		return true;

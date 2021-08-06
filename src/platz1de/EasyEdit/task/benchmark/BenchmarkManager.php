@@ -8,6 +8,7 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
 use platz1de\EasyEdit\pattern\logic\math\OddPattern;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
@@ -63,13 +64,13 @@ class BenchmarkManager
 		$testCube = new Cube($name, $name, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		//Task #1 - set static
-		SetTask::queue($testCube, new StaticBlock([], [VanillaBlocks::STONE()]), $pos, function (EditTaskResult $result) use (&$results): void {
+		SetTask::queue($testCube, new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE())), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
-		$pattern = new Pattern([new EvenPattern([new EvenPattern([new StaticBlock([], [VanillaBlocks::STONE()])], ["x", "z"]), new OddPattern([new StaticBlock([], [VanillaBlocks::STONE()])], ["x", "z"]), new StaticBlock([], [VanillaBlocks::DIRT()])], ["y"]), new EvenPattern([new StaticBlock([], [VanillaBlocks::DIRT()])], ["x", "z"]), new OddPattern([new StaticBlock([], [VanillaBlocks::DIRT()])], ["x", "z"]), new StaticBlock([], [VanillaBlocks::STONE()])], []);
+		$pattern = new Pattern([new EvenPattern([new EvenPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()))], PatternArgumentData::create()->useYAxis()), new EvenPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()))]);
 		SetTask::queue($testCube, $pattern, $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set complex", $result->getTime(), $result->getChanged()];
 		});
@@ -79,7 +80,7 @@ class BenchmarkManager
 			$results[] = ["copy", $result->getTime(), $result->getChanged()];
 
 			//Task #4 - paste
-			WorkerAdapter::priority(new QueuedEditTask($result->getUndo(), new Pattern([], []), $pos, PasteTask::class, new AdditionalDataManager(["edit" => true]), $pos, function (EditTaskResult $result) use (&$results): void {
+			WorkerAdapter::priority(new QueuedEditTask($result->getUndo(), new Pattern([]), $pos, PasteTask::class, new AdditionalDataManager(["edit" => true]), $pos, function (EditTaskResult $result) use (&$results): void {
 				$results[] = ["paste", $result->getTime(), $result->getChanged()];
 			}));
 		});
