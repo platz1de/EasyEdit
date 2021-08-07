@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\command\defaults;
 
-use Exception;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
@@ -13,6 +12,7 @@ use platz1de\EasyEdit\task\selection\StackTask;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use Throwable;
 
 class StackCommand extends EasyEditCommand
 {
@@ -33,7 +33,7 @@ class StackCommand extends EasyEditCommand
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			/** @var Cube $selection */
 			Selection::validate($selection, Cube::class);
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			Messages::send($player, "no-selection");
 			return;
 		}

@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\pattern;
 
-use Exception;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
@@ -24,6 +23,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
 use pocketmine\item\LegacyStringToItemParser;
+use Throwable;
 
 class Pattern
 {
@@ -125,7 +125,7 @@ class Pattern
 	{
 		try {
 			return new Pattern(self::processPattern(self::parsePiece($pattern)));
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			throw new ParseError($exception->getMessage(), null, false); //the difference is purely internally
 		}
 	}
@@ -276,7 +276,7 @@ class Pattern
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
 			case self::INTERNAL_BLOCK:
-				return StaticBlock::from(self::getBlock($args[0]));
+				return StaticBlock::from(self::getBlock($args[0] ?? ""));
 			case "not":
 				return new NotPattern($children);
 			case "even":
@@ -284,15 +284,15 @@ class Pattern
 			case "odd":
 				return new OddPattern($children, PatternArgumentData::create()->parseAxes($args));
 			case "divisible":
-				return new DivisiblePattern($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) $args[0]));
+				return new DivisiblePattern($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) ($args[0] ?? -1)));
 			case "block":
-				return new BlockPattern($children, PatternArgumentData::fromBlockType($args[0]));
+				return new BlockPattern($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
 			case "above":
-				return new AbovePattern($children, PatternArgumentData::fromBlockType($args[0]));
+				return new AbovePattern($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
 			case "below":
-				return new BelowPattern($children, PatternArgumentData::fromBlockType($args[0]));
+				return new BelowPattern($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
 			case "around":
-				return new AroundPattern($children, PatternArgumentData::fromBlockType($args[0]));
+				return new AroundPattern($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
 			case "rand":
 			case "random":
 				return new RandomPattern($children);
@@ -338,13 +338,13 @@ class Pattern
 	{
 		try {
 			$item = LegacyStringToItemParser::getInstance()->parse($string);
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			throw new ParseError("Unknown Block " . $string);
 		}
 
 		try {
 			$block = $item->getBlock();
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			throw new ParseError("Unknown Block " . $string);
 		}
 

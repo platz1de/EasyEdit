@@ -33,7 +33,10 @@ class DivisiblePattern extends Pattern
 
 	public function check(): void
 	{
-		if ($this->args->getInt("count") !== 0) {
+		if ($this->args->getInt("count") === -1) {
+			throw new WrongPatternUsageException("Divisible needs a count argument");
+		}
+		if ($this->args->getInt("count") === 0) {
 			throw new WrongPatternUsageException("Divisible can't be used with a count of zero");
 		}
 		if (!($this->args->checkXAxis() || $this->args->checkYAxis() || $this->args->checkZAxis())) {

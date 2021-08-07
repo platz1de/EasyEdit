@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\command\defaults;
 
-use Exception;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
@@ -12,6 +12,7 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use Throwable;
 
 class CenterCommand extends EasyEditCommand
 {
@@ -28,14 +29,14 @@ class CenterCommand extends EasyEditCommand
 	{
 		try {
 			$block = Pattern::getBlock($args[0]);
-		} catch (Exception $exception) {
+		} catch (ParseError $exception) {
 			$block = VanillaBlocks::BEDROCK();
 		}
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			Selection::validate($selection, Cube::class);
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			Messages::send($player, "no-selection");
 			return;
 		}

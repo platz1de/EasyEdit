@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use Exception;
+use Throwable;
 use UnexpectedValueException;
 
 class AdditionalDataManager
@@ -30,7 +30,7 @@ class AdditionalDataManager
 	{
 		try {
 			return $this->data[$key];
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			if ($default !== null) {
 				return $default;
 			}

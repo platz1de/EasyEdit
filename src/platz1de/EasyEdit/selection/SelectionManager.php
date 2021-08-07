@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Exception;
+use Throwable;
 
 class SelectionManager
 {
@@ -14,7 +14,7 @@ class SelectionManager
 	/**
 	 * @param string $player
 	 * @return Selection
-	 * @throws Exception
+	 * @throws Throwable
 	 */
 	public static function getFromPlayer(string $player): Selection
 	{

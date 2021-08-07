@@ -2,12 +2,12 @@
 
 namespace platz1de\EasyEdit\command\defaults;
 
-use Exception;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\selection\InsertTask;
 use pocketmine\player\Player;
+use Throwable;
 
 class InsertCommand extends EasyEditCommand
 {
@@ -24,7 +24,7 @@ class InsertCommand extends EasyEditCommand
 	{
 		try {
 			$selection = ClipBoardManager::getFromPlayer($player->getName());
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			Messages::send($player, "no-clipboard");
 			return;
 		}

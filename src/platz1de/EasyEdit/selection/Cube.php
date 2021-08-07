@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use Exception;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\selection\cubic\CubicIterator;
@@ -12,6 +11,7 @@ use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\World;
+use Throwable;
 use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned
@@ -106,7 +106,7 @@ class Cube extends Selection implements Patterned
 				$selection->close();
 				$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 			}
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 		}
 
@@ -129,7 +129,7 @@ class Cube extends Selection implements Patterned
 				$selection->close();
 				$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 			}
-		} catch (Exception $exception) {
+		} catch (Throwable $exception) {
 			$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
 		}
 
