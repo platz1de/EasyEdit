@@ -39,7 +39,7 @@ class NotPattern extends Pattern
 
 	public function check(): void
 	{
-		if (!isset($this->pieces[0])) {
+		if (count($this->pieces) !== 1) {
 			throw new WrongPatternUsageException("Not needs exactly one child pattern");
 		}
 	}
