@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\pattern\logic;
 
 
-use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -40,7 +40,7 @@ class NotPattern extends Pattern
 	public function check(): void
 	{
 		if (!isset($this->pieces[0])) {
-			throw new ParseError("Not needs exactly one child pattern");
+			throw new WrongPatternUsageException("Not needs exactly one child pattern");
 		}
 	}
 }

@@ -8,11 +8,12 @@ class ParseError extends UnexpectedValueException
 {
 	/**
 	 * ParseError constructor.
-	 * @param string $message
-	 * @param int    $pos
+	 * @param string   $message
+	 * @param int|null $pos
+	 * @param bool     $prefix
 	 */
-	public function __construct(string $message, int $pos = 0)
+	public function __construct(string $message, ?int $pos = null, bool $prefix = true)
 	{
-		parent::__construct("Parse Error: " . $message . " at Character " . $pos);
+		parent::__construct(($prefix ? "Parse Error: " : "") . $message . ($pos === null ? "" : " at Character " . $pos));
 	}
 }

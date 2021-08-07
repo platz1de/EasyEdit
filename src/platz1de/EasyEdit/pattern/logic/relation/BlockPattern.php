@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
 use Exception;
-use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -31,7 +31,7 @@ class BlockPattern extends Pattern
 			//shut up phpstorm
 			$this->args->setBlock($this->args->getBlock());
 		} catch (Exception $error) {
-			throw new ParseError("Block needs a block as first Argument");
+			throw new WrongPatternUsageException("Block needs a block as first Argument");
 		}
 	}
 }

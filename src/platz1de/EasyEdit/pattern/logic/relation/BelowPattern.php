@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\pattern\logic\relation;
 
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -35,7 +36,7 @@ class BelowPattern extends Pattern
 			//shut up phpstorm
 			$this->args->setBlock($this->args->getBlock());
 		} catch (ParseError $error) {
-			throw new ParseError("Below needs a block as first Argument");
+			throw new WrongPatternUsageException("Below needs a block as first Argument");
 		}
 	}
 }

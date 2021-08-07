@@ -3,9 +3,9 @@
 namespace platz1de\EasyEdit\pattern\block;
 
 use Exception;
-use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
+use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -47,7 +47,7 @@ class StaticBlock extends Pattern
 			//shut up phpstorm
 			$this->args->setRealBlock($this->args->getRealBlock());
 		} catch (Exception $error) {
-			throw new ParseError("StaticBlock needs a block as first Argument");
+			throw new WrongPatternUsageException("StaticBlock needs a block as first Argument");
 		}
 	}
 

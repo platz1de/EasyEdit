@@ -126,7 +126,7 @@ class Pattern
 		try {
 			return new Pattern(self::processPattern(self::parsePiece($pattern)));
 		} catch (Exception $exception) {
-			throw new ParseError($exception->getMessage()); //the difference is purely internally
+			throw new ParseError($exception->getMessage(), null, false); //the difference is purely internally
 		}
 	}
 
@@ -217,15 +217,15 @@ class Pattern
 				if (self::isPattern($current)) {
 					$pieces[$current] = [];
 				} else {
-					throw new ParseError("Unknown Pattern " . $current);
+					throw new ParseError("Unknown Pattern " . $current, count($parse) + $start);
 				}
 			} elseif (self::isBlock($current)) {
 				$pieces[self::INTERNAL_BLOCK . ";" . $current] = [];
 			} else {
-				throw new ParseError("Invalid Block " . $current);
+				throw new ParseError("Invalid Block " . $current, count($parse) + $start);
 			}
 		} elseif ($piece !== "") {
-			throw new ParseError("Pattern was never Closed");
+			throw new ParseError("Pattern was never Closed", count($parse) + $start);
 		}
 
 		return $pieces;
@@ -256,9 +256,7 @@ class Pattern
 			self::getPattern($pattern);
 			return true;
 		} catch (ParseError $exception) {
-			return false;
-		} catch (Exception $exception) {
-			return true; //This Pattern exists, but is not complete
+			return $exception instanceof WrongPatternUsageException;
 		}
 	}
 

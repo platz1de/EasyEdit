@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\pattern\random;
 
-use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -30,7 +30,7 @@ class RandomPattern extends Pattern
 	public function check(): void
 	{
 		if (count($this->pieces) < 2) {
-			throw new ParseError("Random needs at least 2 child patterns");
+			throw new WrongPatternUsageException("Random needs at least 2 child patterns");
 		}
 	}
 }

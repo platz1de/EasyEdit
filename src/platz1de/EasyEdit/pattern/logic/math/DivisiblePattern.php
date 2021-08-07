@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\pattern\logic\math;
 
-use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 
@@ -34,10 +34,10 @@ class DivisiblePattern extends Pattern
 	public function check(): void
 	{
 		if ($this->args->getInt("count") !== 0) {
-			throw new ParseError("Divisible can't be used with a count of zero");
+			throw new WrongPatternUsageException("Divisible can't be used with a count of zero");
 		}
 		if (!($this->args->checkXAxis() || $this->args->checkYAxis() || $this->args->checkZAxis())) {
-			throw new ParseError("Even needs at least one axis, zero given");
+			throw new WrongPatternUsageException("Even needs at least one axis, zero given");
 		}
 	}
 }
