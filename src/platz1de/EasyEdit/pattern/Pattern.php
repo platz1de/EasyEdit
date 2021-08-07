@@ -160,7 +160,7 @@ class Pattern
 					$current .= $str;
 					continue;
 				}
-				$pieces[$piece] = self::parsePiece($current, $i + $start + 2);
+				$pieces[$piece] = self::parsePiece($current, $i + $start - strlen($current));
 				$current = "";
 				$isPattern = false;
 				$piece = "";
