@@ -64,13 +64,13 @@ class BenchmarkManager
 		$testCube = new Cube($name, $name, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		//Task #1 - set static
-		SetTask::queue($testCube, new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE())), $pos, function (EditTaskResult $result) use (&$results): void {
+		SetTask::queue($testCube, StaticBlock::from(VanillaBlocks::STONE()), $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set static", $result->getTime(), $result->getChanged()];
 		});
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
-		$pattern = new Pattern([new EvenPattern([new EvenPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()))], PatternArgumentData::create()->useYAxis()), new EvenPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::DIRT()))], PatternArgumentData::create()->useXAxis()->useZAxis()), new StaticBlock([], PatternArgumentData::create()->setRealBlock(VanillaBlocks::STONE()))]);
+		$pattern = new Pattern([new EvenPattern([new EvenPattern([StaticBlock::from(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([StaticBlock::from(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::from(VanillaBlocks::DIRT())], PatternArgumentData::create()->useYAxis()), new EvenPattern([StaticBlock::from(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([StaticBlock::from(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::from(VanillaBlocks::STONE())]);
 		SetTask::queue($testCube, $pattern, $pos, function (EditTaskResult $result) use (&$results): void {
 			$results[] = ["set complex", $result->getTime(), $result->getChanged()];
 		});

@@ -278,7 +278,7 @@ class Pattern
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
 			case self::INTERNAL_BLOCK:
-				return new StaticBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($args[0])));
+				return StaticBlock::from(self::getBlock($args[0]));
 			case "not":
 				return new NotPattern($children);
 			case "even":
@@ -360,7 +360,7 @@ class Pattern
 	public static function getBlockType(string $string): StaticBlock
 	{
 		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
-			return new StaticBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($string)));
+			return StaticBlock::from(self::getBlock($string));
 		}
 
 		return new DynamicBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($string)));

@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\pattern\block;
 use Exception;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -48,5 +49,14 @@ class StaticBlock extends Pattern
 		} catch (Exception $error) {
 			throw new ParseError("StaticBlock needs a block as first Argument");
 		}
+	}
+
+	/**
+	 * @param Block $block
+	 * @return StaticBlock
+	 */
+	public static function from(Block $block): StaticBlock
+	{
+		return new self([], PatternArgumentData::create()->setRealBlock($block));
 	}
 }
