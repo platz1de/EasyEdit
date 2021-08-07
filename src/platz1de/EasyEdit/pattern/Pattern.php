@@ -47,6 +47,7 @@ class Pattern
 	{
 		$this->pieces = $pieces;
 		$this->args = $args ?? new PatternArgumentData();
+		$this->check();
 	}
 
 	public function check(): void
