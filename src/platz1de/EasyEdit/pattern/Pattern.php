@@ -286,13 +286,13 @@ class Pattern
 			case "divisible":
 				return new DivisiblePattern($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) $args[0]));
 			case "block":
-				return new BlockPattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
+				return new BlockPattern($children, PatternArgumentData::fromBlockType($args[0]));
 			case "above":
-				return new AbovePattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
+				return new AbovePattern($children, PatternArgumentData::fromBlockType($args[0]));
 			case "below":
-				return new BelowPattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
+				return new BelowPattern($children, PatternArgumentData::fromBlockType($args[0]));
 			case "around":
-				return new AroundPattern($children, PatternArgumentData::create()->setBlock(self::getBlockType($args[0])));
+				return new AroundPattern($children, PatternArgumentData::fromBlockType($args[0]));
 			case "rand":
 			case "random":
 				return new RandomPattern($children);

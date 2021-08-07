@@ -164,6 +164,18 @@ class PatternArgumentData
 	}
 
 	/**
+	 * @param string $block
+	 * @return PatternArgumentData
+	 */
+	public static function fromBlockType(string $block): PatternArgumentData
+	{
+		if ($block === "") {
+			return new self;
+		}
+		return self::create()->setBlock(Pattern::getBlockType($block));
+	}
+
+	/**
 	 * @return string
 	 */
 	public function fastSerialize(): string
