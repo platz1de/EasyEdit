@@ -57,6 +57,6 @@ class StaticBlock extends Pattern
 	 */
 	public static function from(Block $block): StaticBlock
 	{
-		return new self([], PatternArgumentData::create()->setRealBlock($block));
+		return new static([], PatternArgumentData::create()->setRealBlock($block));
 	}
 }

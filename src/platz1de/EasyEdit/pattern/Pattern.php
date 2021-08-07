@@ -43,7 +43,7 @@ class Pattern
 	 * @param Pattern[]                $pieces
 	 * @param PatternArgumentData|null $args
 	 */
-	public function __construct(array $pieces, ?PatternArgumentData $args = null)
+	final public function __construct(array $pieces, ?PatternArgumentData $args = null)
 	{
 		$this->pieces = $pieces;
 		$this->args = $args ?? new PatternArgumentData();
@@ -363,6 +363,6 @@ class Pattern
 			return StaticBlock::from(self::getBlock($string));
 		}
 
-		return new DynamicBlock([], PatternArgumentData::create()->setRealBlock(self::getBlock($string)));
+		return DynamicBlock::from(self::getBlock($string));
 	}
 }
