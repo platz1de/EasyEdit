@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\pattern\ParseError;
-use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
@@ -30,7 +30,7 @@ class BrushCommand extends EasyEditCommand
 		switch ($type) {
 			case BrushHandler::BRUSH_SPHERE:
 				try {
-					Pattern::parse($args[2] ?? "stone");
+					PatternParser::parse($args[2] ?? "stone");
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
@@ -43,9 +43,9 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_NATURALIZE:
 				try {
-					Pattern::parse($args[2] ?? "grass");
-					Pattern::parse($args[3] ?? "dirt");
-					Pattern::parse($args[4] ?? "stone");
+					PatternParser::parse($args[2] ?? "grass");
+					PatternParser::parse($args[3] ?? "dirt");
+					PatternParser::parse($args[4] ?? "stone");
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
@@ -57,7 +57,7 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_CYLINDER:
 				try {
-					Pattern::parse($args[3] ?? "stone");
+					PatternParser::parse($args[3] ?? "stone");
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
@@ -68,7 +68,7 @@ class BrushCommand extends EasyEditCommand
 		}
 		$item = VanillaItems::WOODEN_SHOVEL()->setNamedTag($nbt);
 		$lore = [];
-		foreach ($nbt->getValue() as $name => $value){
+		foreach ($nbt->getValue() as $name => $value) {
 			$lore[] = $name . ": " . $value;
 		}
 		$item->setLore($lore);

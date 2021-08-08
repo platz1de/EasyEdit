@@ -7,6 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
@@ -27,7 +28,7 @@ class WallCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$pattern = Pattern::processPattern(Pattern::parsePiece($args[0] ?? "stone"));
+			$pattern = PatternParser::processPattern(PatternParser::parsePiece($args[0] ?? "stone"));
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

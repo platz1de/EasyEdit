@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\pattern\ParseError;
-use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\player\Player;
@@ -28,7 +28,7 @@ class CylinderCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = Pattern::parse($args[2]);
+			$pattern = PatternParser::parse($args[2]);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

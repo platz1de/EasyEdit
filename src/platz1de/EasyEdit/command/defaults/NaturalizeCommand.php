@@ -7,6 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
@@ -27,9 +28,9 @@ class NaturalizeCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$top = Pattern::parse($args[0] ?? "grass");
-			$middle = Pattern::parse($args[1] ?? "dirt");
-			$bottom = Pattern::parse($args[2] ?? "stone");
+			$top = PatternParser::parse($args[0] ?? "grass");
+			$middle = PatternParser::parse($args[1] ?? "dirt");
+			$bottom = PatternParser::parse($args[2] ?? "stone");
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

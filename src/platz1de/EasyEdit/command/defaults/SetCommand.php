@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\ParseError;
-use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
@@ -31,7 +31,7 @@ class SetCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = Pattern::parse($args[0]);
+			$pattern = PatternParser::parse($args[0]);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

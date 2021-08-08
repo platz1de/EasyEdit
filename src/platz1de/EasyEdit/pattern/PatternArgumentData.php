@@ -172,7 +172,7 @@ class PatternArgumentData
 		if ($block === "") {
 			return new self;
 		}
-		return self::create()->setBlock(Pattern::getBlockType($block));
+		return self::create()->setBlock(PatternParser::getBlockType($block));
 	}
 
 	/**

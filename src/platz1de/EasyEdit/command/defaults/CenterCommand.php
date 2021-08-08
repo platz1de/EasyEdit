@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\ParseError;
-use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
@@ -28,7 +28,7 @@ class CenterCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$block = Pattern::getBlock($args[0]);
+			$block = PatternParser::getBlock($args[0]);
 		} catch (ParseError $exception) {
 			$block = VanillaBlocks::BEDROCK();
 		}
