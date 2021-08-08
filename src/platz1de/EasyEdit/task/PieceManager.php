@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
@@ -10,7 +9,6 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\world\World;
 use UnexpectedValueException;
 
 class PieceManager
