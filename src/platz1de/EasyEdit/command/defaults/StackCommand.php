@@ -27,7 +27,7 @@ class StackCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		$count = $args[0] ?? 1;
+		$count = (int) ($args[0] ?? 1);
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
@@ -38,6 +38,6 @@ class StackCommand extends EasyEditCommand
 			return;
 		}
 
-		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), (int) $count)), $player->getPosition());
+		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), $count)), $player->getPosition());
 	}
 }

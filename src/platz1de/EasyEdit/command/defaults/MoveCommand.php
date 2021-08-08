@@ -28,7 +28,7 @@ class MoveCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		$amount = $args[0] ?? 1;
+		$amount = (int) ($args[0] ?? 1);
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
@@ -39,6 +39,6 @@ class MoveCommand extends EasyEditCommand
 			return;
 		}
 
-		MoveTask::queue(new MovingCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), (int) $amount)), Position::fromObject($selection->getPos1(), $player->getWorld()));
+		MoveTask::queue(new MovingCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), $amount)), Position::fromObject($selection->getPos1(), $player->getWorld()));
 	}
 }

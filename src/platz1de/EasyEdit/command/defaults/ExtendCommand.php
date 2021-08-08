@@ -25,8 +25,6 @@ class ExtendCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		$count = $args[0] ?? 1;
-
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			/** @var Cube $selection */
@@ -39,24 +37,25 @@ class ExtendCommand extends EasyEditCommand
 		$pos1 = $selection->getPos1();
 		$pos2 = $selection->getPos2();
 
-		if ($count === "vert" || $count === "vertical") {
+		if (($args[0] ?? "") === "vert" || ($args[0] ?? "") === "vertical") {
 			$pos1 = new Vector3($pos1->getX(), World::Y_MIN, $pos1->getZ());
 			$pos2 = new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ());
 		} else {
+			$count = (int) ($args[0] ?? 1);
 			$yaw = $player->getLocation()->getYaw();
 			$pitch = $player->getLocation()->getPitch();
 			if ($pitch >= 45) {
-				$pos1 = $pos1->down((int) $count);
+				$pos1 = $pos1->down($count);
 			} elseif ($pitch <= -45) {
-				$pos2 = $pos2->up((int) $count);
+				$pos2 = $pos2->up($count);
 			} elseif ($yaw >= 315 || $yaw < 45) {
-				$pos2 = $pos2->south((int) $count);
+				$pos2 = $pos2->south($count);
 			} elseif ($yaw < 135) {
-				$pos1 = $pos1->west((int) $count);
+				$pos1 = $pos1->west($count);
 			} elseif ($yaw < 225) {
-				$pos1 = $pos1->north((int) $count);
+				$pos1 = $pos1->north($count);
 			} else {
-				$pos2 = $pos2->east((int) $count);
+				$pos2 = $pos2->east($count);
 			}
 		}
 
