@@ -24,9 +24,9 @@ class VectorUtils
 			$p = $vector->up($amount);
 		} elseif ($yaw >= 315 || $yaw < 45) {
 			$p = $vector->south($amount);
-		} elseif ($yaw >= 45 && $yaw < 135) {
+		} elseif ($yaw < 135) {
 			$p = $vector->west($amount);
-		} elseif ($yaw >= 135 && $yaw < 225) {
+		} elseif ($yaw < 225) {
 			$p = $vector->north($amount);
 		} else {
 			$p = $vector->east($amount);

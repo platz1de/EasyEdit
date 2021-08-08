@@ -51,9 +51,9 @@ class ExtendCommand extends EasyEditCommand
 				$pos2 = $pos2->up((int) $count);
 			} elseif ($yaw >= 315 || $yaw < 45) {
 				$pos2 = $pos2->south((int) $count);
-			} elseif ($yaw >= 45 && $yaw < 135) {
+			} elseif ($yaw < 135) {
 				$pos1 = $pos1->west((int) $count);
-			} elseif ($yaw >= 135 && $yaw < 225) {
+			} elseif ($yaw < 225) {
 				$pos1 = $pos1->north((int) $count);
 			} else {
 				$pos2 = $pos2->east((int) $count);
