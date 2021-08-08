@@ -16,9 +16,7 @@ use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\Position;
 use pocketmine\world\World;
@@ -126,7 +124,7 @@ abstract class EditTask extends Threaded
 				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
 
 				foreach ($chunk->getNBTtiles() as $tile) {
-					$tileData->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($tile)));
+					$tileData->putCompound($tile);
 				}
 
 				if ($chunks === []) {
@@ -174,7 +172,7 @@ abstract class EditTask extends Threaded
 		$tileData = new ExtendedBinaryStream($this->tileData);
 		$tiles = [];
 		while (!$tileData->feof()) {
-			$tile = (new LittleEndianNbtSerializer())->read($tileData->getString())->mustGetCompoundTag();
+			$tile = $tileData->getCompound();
 			$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 

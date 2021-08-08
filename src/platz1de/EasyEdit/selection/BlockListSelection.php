@@ -9,9 +9,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
 
@@ -120,7 +118,7 @@ abstract class BlockListSelection extends Selection
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
 
-		$stream->putString((new LittleEndianNbtSerializer())->writeMultiple(array_map(static function (CompoundTag $tag): TreeRoot { return new TreeRoot($tag); }, $this->tiles)));
+		$stream->putCompounds($this->tiles);
 	}
 
 	/**
@@ -140,10 +138,7 @@ abstract class BlockListSelection extends Selection
 
 		$this->iterator = new SafeSubChunkExplorer($this->manager);
 
-		$tileData = $stream->getString();
-		if ($tileData !== "") {
-			$this->tiles = array_map(static function (TreeRoot $root): CompoundTag { return $root->mustGetCompoundTag(); }, (new LittleEndianNbtSerializer())->readMultiple($tileData));
-		}
+		$this->tiles = $stream->getCompounds();
 	}
 
 	public function free(): void

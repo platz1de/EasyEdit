@@ -3,6 +3,9 @@
 namespace platz1de\EasyEdit\utils;
 
 use pocketmine\math\Vector3;
+use pocketmine\nbt\LittleEndianNbtSerializer;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\TreeRoot;
 use pocketmine\utils\BinaryStream;
 
 class ExtendedBinaryStream extends BinaryStream
@@ -40,6 +43,46 @@ class ExtendedBinaryStream extends BinaryStream
 	public function getVector(): Vector3
 	{
 		return new Vector3($this->getInt(), $this->getInt(), $this->getInt());
+	}
+
+	/**
+	 * @param CompoundTag $compound
+	 */
+	public function putCompound(CompoundTag $compound): void
+	{
+		$this->putString((new LittleEndianNbtSerializer())->write(new TreeRoot($compound)));
+	}
+
+	/**
+	 * @return CompoundTag
+	 */
+	public function getCompound(): CompoundTag
+	{
+		return (new LittleEndianNbtSerializer())->read($this->getString())->mustGetCompoundTag();
+	}
+
+	/**
+	 * @param CompoundTag[] $compounds
+	 */
+	public function putCompounds(array $compounds): void
+	{
+		$this->putInt(count($compounds));
+		foreach ($compounds as $compound) {
+			$this->putCompound($compound);
+		}
+	}
+
+	/**
+	 * @return CompoundTag[]
+	 */
+	public function getCompounds(): array
+	{
+		$compounds = [];
+		$count = $this->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$compounds[] = $this->getCompound();
+		}
+		return $compounds;
 	}
 
 	/**

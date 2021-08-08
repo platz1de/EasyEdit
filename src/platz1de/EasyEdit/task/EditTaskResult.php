@@ -6,9 +6,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
@@ -140,7 +138,7 @@ class EditTaskResult
 
 		$stream->putString($this->toUndo->fastSerialize());
 
-		$stream->putString((new LittleEndianNbtSerializer())->writeMultiple(array_map(static function (CompoundTag $tag): TreeRoot { return new TreeRoot($tag); }, $this->tiles)));
+		$stream->putCompounds($this->tiles);
 
 		$stream->putFloat($this->time);
 		$stream->putLInt($this->changed);
@@ -167,12 +165,7 @@ class EditTaskResult
 		/** @var BlockListSelection $undo */
 		$undo = Selection::fastDeserialize($stream->getString());
 
-		$tileData = $stream->getString();
-		if ($tileData !== "") {
-			$tiles = array_map(static function (TreeRoot $root): CompoundTag { return $root->mustGetCompoundTag(); }, (new LittleEndianNbtSerializer())->readMultiple($tileData));
-		} else {
-			$tiles = [];
-		}
+		$tiles = $stream->getCompounds();
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();
