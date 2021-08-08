@@ -41,13 +41,19 @@ class LoaderManager
 	 */
 	public static function setChunks(World $level, array $chunks, array $tiles): void
 	{
+		foreach ($tiles as $tile) {
+			$tile = TileFactory::getInstance()->createFromData($level, $tile);
+			if ($tile !== null) {
+				$hash = World::chunkHash($tile->getPos()->getX() >> 4, $tile->getPos()->getZ() >> 4);
+				if (isset($chunks[$hash])) {
+					$chunks[$hash]->addTile($tile);
+				}
+			}
+		}
+
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
 			self::injectChunk($level, $x, $z, $chunk);
-		}
-
-		foreach ($tiles as $tile) {
-			TileFactory::getInstance()->createFromData($level, $tile);
 		}
 
 		//reduce load by not setting and unloading on the same tick
