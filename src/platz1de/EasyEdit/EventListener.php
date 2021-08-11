@@ -15,6 +15,7 @@ use pocketmine\item\Shovel;
 use pocketmine\item\TieredTool;
 use pocketmine\item\ToolTier;
 use pocketmine\player\Player;
+use pocketmine\scheduler\ClosureTask;
 
 class EventListener implements Listener
 {
@@ -63,7 +64,10 @@ class EventListener implements Listener
 	{
 		$player = $event->getEntity();
 		if ($player instanceof Player) {
-			HighlightingManager::resendAll($player->getName());
+			$playerName = $player->getName();
+			EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($playerName): void {
+				HighlightingManager::resendAll($playerName);
+			}));
 		}
 	}
 }
