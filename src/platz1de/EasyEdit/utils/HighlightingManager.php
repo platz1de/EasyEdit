@@ -111,7 +111,7 @@ class HighlightingManager
 	 */
 	public static function resendAll(string $player): void
 	{
-		if (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
+		if (isset(self::$staticDataHolders[$player]) && (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player)) {
 			foreach (self::$staticDataHolders[$player] as $id => $pos) {
 				if ($pos->getWorld() === $p->getWorld()) {
 					self::sendStaticHolder($player, $id);
