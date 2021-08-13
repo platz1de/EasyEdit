@@ -67,20 +67,20 @@ class LoaderManager
 
 	/**
 	 * Implementation of World::setChunk without loading unnecessary Chunks which get overwritten anyways
-	 * @param World $level
+	 * @param World $world
 	 * @param int   $x
 	 * @param int   $z
 	 * @param Chunk $chunk
 	 * @see          World::setChunk()
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
-	public static function injectChunk(World $level, int $x, int $z, Chunk $chunk): void
+	public static function injectChunk(World $world, int $x, int $z, Chunk $chunk): void
 	{
 		$chunkHash = World::chunkHash($x, $z);
 
 		//TODO: this deletes entities in unloaded chunks (load entities to EditThread)
-		if ($level->isChunkLoaded($x, $z)) {
-			$old = $level->getChunk($x, $z);
+		if ($world->isChunkLoaded($x, $z)) {
+			$old = $world->getChunk($x, $z);
 			if ($old !== null) {
 				foreach ($old->getTiles() as $tile) {
 					$tile->close();
@@ -102,7 +102,7 @@ class LoaderManager
 			foreach ($this->getChunkListeners($x, $z) as $loader) {
 				$loader->onChunkChanged($x, $z, $chunk);
 			}
-		})->call($level);
+		})->call($world);
 
 		//TODO: In 1.17 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
 	}
