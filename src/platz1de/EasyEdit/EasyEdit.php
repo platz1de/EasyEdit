@@ -31,10 +31,12 @@ use platz1de\EasyEdit\command\defaults\StatusCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\command\defaults\WallCommand;
 use platz1de\EasyEdit\utils\CompoundTile;
+use platz1de\EasyEdit\utils\HighlightingManager;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
 
 class EasyEdit extends PluginBase
@@ -58,6 +60,9 @@ class EasyEdit extends PluginBase
 		self::$worker->start(PTHREADS_INHERIT_INI | PTHREADS_INHERIT_CONSTANTS);
 
 		$this->getScheduler()->scheduleRepeatingTask(new WorkerAdapter(), 1);
+		$this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
+			HighlightingManager::refresh();
+		}), 10);
 
 		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
 

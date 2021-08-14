@@ -8,6 +8,7 @@ use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use pocketmine\world\particle\FlameParticle;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 
@@ -120,5 +121,96 @@ class HighlightingManager
 				}
 			}
 		}
+	}
+
+	/**
+	 * @var array{string, World, Vector3, Vector3, float}[]
+	 */
+	private static $cubes = [];
+
+	public static function refresh(): void
+	{
+		foreach (self::$cubes as $cube) {
+			if (($p = Server::getInstance()->getPlayerExact($cube[0])) instanceof Player) {
+				self::cube($p, $cube[1], $cube[2], $cube[3], $cube[4]);
+			}
+		}
+	}
+
+	/**
+	 * @param string  $player
+	 * @param World   $world
+	 * @param Vector3 $pos1
+	 * @param Vector3 $pos2
+	 * @param float   $step
+	 * @return int
+	 */
+	public static function highlightCube(string $player, World $world, Vector3 $pos1, Vector3 $pos2, float $step = 0.5): int
+	{
+		self::$cubes[self::$id] = [$player, $world, $pos1, $pos2, $step];
+		return self::$id++;
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param World   $world
+	 * @param Vector3 $start
+	 * @param Vector3 $end
+	 * @param float   $step
+	 */
+	private static function cube(Player $player, World $world, Vector3 $start, Vector3 $end, float $step = 0.5): void
+	{
+		//x-Axis from start
+		self::line($player, $world, $start, $sx = new Vector3($end->getX(), $start->getY(), $start->getZ()));
+		//y-Axis from start
+		self::line($player, $world, $start, $sy = new Vector3($start->getX(), $end->getY(), $start->getZ()));
+		//z-Axis from start
+		self::line($player, $world, $start, $sz = new Vector3($start->getX(), $start->getY(), $end->getZ()));
+		//x-Axis from end
+		self::line($player, $world, $end, $ex = new Vector3($start->getX(), $end->getY(), $end->getZ()));
+		//y-Axis from end
+		self::line($player, $world, $end, $ey = new Vector3($end->getX(), $start->getY(), $end->getZ()));
+		//z-Axis from end
+		self::line($player, $world, $end, $ez = new Vector3($end->getX(), $end->getY(), $start->getZ()));
+
+		self::line($player, $world, $sx, $ez);
+		self::line($player, $world, $sz, $ex);
+		self::line($player, $world, $sy, $ex);
+		self::line($player, $world, $sy, $ez);
+		self::line($player, $world, $ey, $sx);
+		self::line($player, $world, $ey, $sz);
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param World   $world
+	 * @param Vector3 $start
+	 * @param Vector3 $end
+	 * @param float   $step
+	 */
+	private static function line(Player $player, World $world, Vector3 $start, Vector3 $end, float $step = 0.5): void
+	{
+		$min = VectorUtils::getMin($start, $end);
+		$max = VectorUtils::getMax($start, $end);
+		$direction = $max->subtractVector($min)->normalize()->multiply($step);
+		VectorUtils::makeLoopSafe($direction);
+		for ($x = $min->getX(); $x <= $max->getX(); $x += $direction->getX()) {
+			for ($y = $min->getY(); $y <= $max->getY(); $y += $direction->getY()) {
+				for ($z = $min->getZ(); $z <= $max->getZ(); $z += $direction->getZ()) {
+					self::dot($player, $world, new Vector3($x, $y, $z));
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Player  $player
+	 * @param World   $world
+	 * @param Vector3 $pos
+	 */
+	private static function dot(Player $player, World $world, Vector3 $pos): void
+	{
+		$particle = new FlameParticle();
+		$world->addParticle($pos, $particle, [$player]);
 	}
 }
