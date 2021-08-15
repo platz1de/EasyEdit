@@ -70,20 +70,4 @@ class VectorUtils
 	{
 		return new Vector3($vector->getX(), min(World::Y_MAX - 1, max(0, $vector->getY())), $vector->getZ());
 	}
-
-	/**
-	 * @param Vector3 $vector
-	 */
-	public static function makeLoopSafe(Vector3 $vector): void
-	{
-		if ((float) $vector->getX() === 0.0) {
-			$vector->x = PHP_INT_MAX;
-		}
-		if ((float) $vector->getY() === 0.0) {
-			$vector->y = PHP_INT_MAX;
-		}
-		if ((float) $vector->getZ() === 0.0) {
-			$vector->z = PHP_INT_MAX;
-		}
-	}
 }
