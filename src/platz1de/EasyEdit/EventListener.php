@@ -33,7 +33,7 @@ class EventListener implements Listener
 		$axe = $event->getItem();
 		if ($axe instanceof Axe && $axe->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
 			$event->cancel();
-			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPos());
+			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPosition());
 		}
 	}
 
@@ -51,7 +51,7 @@ class EventListener implements Listener
 				$event->cancel();
 				$target = $event->getPlayer()->getTargetBlock(100);
 				if ($target instanceof Block) {
-					Cube::selectPos2($event->getPlayer(), $target->getPos());
+					Cube::selectPos2($event->getPlayer(), $target->getPosition());
 				}
 			} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
 				$event->cancel();

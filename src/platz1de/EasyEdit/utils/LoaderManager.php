@@ -44,7 +44,7 @@ class LoaderManager
 		foreach ($tiles as $tile) {
 			$tile = TileFactory::getInstance()->createFromData($level, $tile);
 			if ($tile !== null) {
-				$hash = World::chunkHash($tile->getPos()->getX() >> 4, $tile->getPos()->getZ() >> 4);
+				$hash = World::chunkHash($tile->getPosition()->getX() >> 4, $tile->getPosition()->getZ() >> 4);
 				if (isset($chunks[$hash])) {
 					$chunks[$hash]->addTile($tile);
 				}
