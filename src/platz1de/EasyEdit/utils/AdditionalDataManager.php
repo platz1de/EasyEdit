@@ -26,7 +26,7 @@ class AdditionalDataManager
 	 * @param mixed  $default
 	 * @return mixed
 	 */
-	public function getDataKeyed(string $key, $default = null)
+	public function getDataKeyed(string $key, mixed $default = null): mixed
 	{
 		try {
 			return $this->data[$key];
@@ -52,7 +52,7 @@ class AdditionalDataManager
 	 * @param string     $key
 	 * @param mixed|null $data
 	 */
-	public function setDataKeyed(string $key, $data = null): void
+	public function setDataKeyed(string $key, mixed $data = null): void
 	{
 		$this->data[$key] = $data;
 	}

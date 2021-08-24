@@ -27,7 +27,7 @@ class Messages
 	 * @param bool                            $isId
 	 * @param bool                            $usePrefix
 	 */
-	public static function send($players, string $id, $replace = [], bool $isId = true, bool $usePrefix = true): void
+	public static function send(mixed $players, string $id, mixed $replace = [], bool $isId = true, bool $usePrefix = true): void
 	{
 		if (is_array($players)) {
 			foreach ($players as $player) {
@@ -46,7 +46,7 @@ class Messages
 	 * @param bool            $isId
 	 * @return string
 	 */
-	public static function replace(string $id, $replace = [], bool $isId = true): string
+	public static function replace(string $id, mixed $replace = [], bool $isId = true): string
 	{
 		if (is_array($replace)) {
 			return str_replace(array_keys($replace), array_values($replace), $isId ? self::translate($id) : $id);
