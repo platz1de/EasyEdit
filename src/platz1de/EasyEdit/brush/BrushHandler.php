@@ -52,9 +52,6 @@ class BrushHandler
 	{
 		switch (strtolower($brush)) {
 			default:
-			case "sphere":
-			case "sph":
-			case "sp":
 				return self::BRUSH_SPHERE;
 			case "smooth":
 			case "smoothing":
