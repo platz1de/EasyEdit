@@ -41,15 +41,11 @@ class NaturalizePattern extends Pattern
 		while ($y + $i < World::Y_MAX && $iterator->getChunk()->getFullBlock($x & 0x0f, $y + $i, $z & 0x0f) !== 0) {
 			$i++;
 		}
-		switch ($i) {
-			case 1:
-				return $this->pieces[0]->getFor($x, $y, $z, $iterator, $selection);
-			case 2:
-			case 3:
-				return $this->pieces[1]->getFor($x, $y, $z, $iterator, $selection);
-			default:
-				return $this->pieces[2]->getFor($x, $y, $z, $iterator, $selection);
-		}
+		return match ($i) {
+			1 => $this->pieces[0]->getFor($x, $y, $z, $iterator, $selection),
+			2, 3 => $this->pieces[1]->getFor($x, $y, $z, $iterator, $selection),
+			default => $this->pieces[2]->getFor($x, $y, $z, $iterator, $selection),
+		};
 	}
 
 	public function check(): void
