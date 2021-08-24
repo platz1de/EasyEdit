@@ -50,21 +50,12 @@ class BrushHandler
 	 */
 	public static function nameToIdentifier(string $brush): int
 	{
-		switch (strtolower($brush)) {
-			default:
-				return self::BRUSH_SPHERE;
-			case "smooth":
-			case "smoothing":
-				return self::BRUSH_SMOOTH;
-			case "naturalize":
-			case "nat":
-			case "naturalized":
-				return self::BRUSH_NATURALIZE;
-			case "cylinder":
-			case "cyl":
-			case "cy":
-				return self::BRUSH_CYLINDER;
-		}
+		return match (strtolower($brush)) {
+			default => self::BRUSH_SPHERE,
+			"smooth", "smoothing" => self::BRUSH_SMOOTH,
+			"naturalize", "nat", "naturalized" => self::BRUSH_NATURALIZE,
+			"cylinder", "cyl", "cy" => self::BRUSH_CYLINDER,
+		};
 	}
 
 	/**
@@ -73,16 +64,11 @@ class BrushHandler
 	 */
 	public static function identifierToName(int $brush): string
 	{
-		switch ($brush) {
-			default:
-			case self::BRUSH_SPHERE:
-				return "sphere";
-			case self::BRUSH_SMOOTH;
-				return "smooth";
-			case self::BRUSH_NATURALIZE;
-				return "naturalize";
-			case self::BRUSH_CYLINDER;
-				return "cylinder";
-		}
+		return match ($brush) {
+			default => "sphere",
+			self::BRUSH_SMOOTH => "smooth",
+			self::BRUSH_NATURALIZE => "naturalize",
+			self::BRUSH_CYLINDER => "cylinder",
+		};
 	}
 }
