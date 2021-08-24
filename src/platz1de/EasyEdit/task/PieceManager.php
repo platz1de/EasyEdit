@@ -146,7 +146,7 @@ class PieceManager
 	}
 
 	/**
-	 * @return EditTaskResult Current result of task, may not be finished yet
+	 * @return EditTaskResult|null Current result of task, may not be finished yet
 	 */
 	public function getResult(): ?EditTaskResult
 	{
