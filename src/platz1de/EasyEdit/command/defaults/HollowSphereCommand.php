@@ -28,7 +28,7 @@ class HollowSphereCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = PatternParser::parse($args[1]);
+			$pattern = PatternParser::parse($args[1], $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

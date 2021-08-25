@@ -65,6 +65,8 @@ Examples:
 - command_block
 - stone:1
 
+  The keyword "hand" represents the block you hold in your hand (or air for items/nothing) and can be used like normal blocks
+
 ### Random Pattern
 
 The Random Pattern as it name suggests selects a random Pattern

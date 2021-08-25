@@ -28,7 +28,7 @@ class HollowCylinderCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = PatternParser::parse($args[2]);
+			$pattern = PatternParser::parse($args[2], $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

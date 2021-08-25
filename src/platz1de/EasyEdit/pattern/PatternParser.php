@@ -20,6 +20,7 @@ use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\random\RandomPattern;
 use pocketmine\block\Block;
 use pocketmine\item\LegacyStringToItemParser;
+use pocketmine\player\Player;
 use Throwable;
 
 class PatternParser
@@ -27,12 +28,16 @@ class PatternParser
 	private const INTERNAL_BLOCK = "staticBlockInternal";
 
 	/**
-	 * @param string $pattern
+	 * @param string      $pattern
+	 * @param Player|null $player
 	 * @return Pattern
 	 * @throws ParseError
 	 */
-	public static function parse(string $pattern): Pattern
+	public static function parse(string $pattern, ?Player $player = null): Pattern
 	{
+		if ($player instanceof Player) {
+			$pattern = str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern);
+		}
 		try {
 			return new Pattern(self::processPattern(self::parsePiece($pattern)));
 		} catch (Throwable $exception) {

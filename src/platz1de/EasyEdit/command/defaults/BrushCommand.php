@@ -30,7 +30,7 @@ class BrushCommand extends EasyEditCommand
 		switch ($type) {
 			case BrushHandler::BRUSH_SPHERE:
 				try {
-					PatternParser::parse($args[2] ?? "stone");
+					PatternParser::parse($args[2] ?? "stone", $player);
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
@@ -43,9 +43,9 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_NATURALIZE:
 				try {
-					PatternParser::parse($args[2] ?? "grass");
-					PatternParser::parse($args[3] ?? "dirt");
-					PatternParser::parse($args[4] ?? "stone");
+					PatternParser::parse($args[2] ?? "grass", $player);
+					PatternParser::parse($args[3] ?? "dirt", $player);
+					PatternParser::parse($args[4] ?? "stone", $player);
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
@@ -57,7 +57,7 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_CYLINDER:
 				try {
-					PatternParser::parse($args[3] ?? "stone");
+					PatternParser::parse($args[3] ?? "stone", $player);
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
