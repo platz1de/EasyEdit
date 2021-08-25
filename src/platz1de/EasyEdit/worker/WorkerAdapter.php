@@ -7,7 +7,7 @@ use pocketmine\scheduler\Task;
 
 class WorkerAdapter extends Task
 {
-	private static ?QueuedTask $task;
+	private static ?QueuedTask $task = null;
 	/**
 	 * @var QueuedTask[]
 	 */

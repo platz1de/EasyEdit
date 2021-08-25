@@ -63,7 +63,7 @@ class Cube extends Selection implements Patterned
 
 	public function close(): void
 	{
-		if ($this->structure !== null) {
+		if (isset($this->structure)) {
 			HighlightingManager::clear($this->getPlayer(), $this->structure);
 		}
 	}

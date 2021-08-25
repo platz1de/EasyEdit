@@ -47,7 +47,7 @@ class PieceManager
 					LoaderManager::setChunks($result->getManager()->getWorld(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
-				if ($this->result === null) {
+				if (!isset($this->result)) {
 					$this->result = $result;
 				} else {
 					$this->result->merge($result);

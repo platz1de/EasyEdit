@@ -125,7 +125,7 @@ abstract class Selection
 	public function setPos1(Vector3 $pos1): void
 	{
 		$this->pos1 = clone($this->selected1 = $pos1);
-		if ($this->selected2 !== null) {
+		if (isset($this->selected2)) {
 			$this->pos2 = clone($this->selected2);
 		}
 
@@ -137,7 +137,7 @@ abstract class Selection
 	 */
 	public function setPos2(Vector3 $pos2): void
 	{
-		if ($this->selected1 !== null) {
+		if (isset($this->selected1)) {
 			$this->pos1 = clone($this->selected1);
 		}
 		$this->pos2 = clone($this->selected2 = $pos2);
