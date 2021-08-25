@@ -13,12 +13,12 @@ class HistoryManager
 	 * //undo
 	 * @var StaticBlockListSelection[][]
 	 */
-	private static $past = [];
+	private static array $past = [];
 	/**
 	 * //redo
 	 * @var StaticBlockListSelection[][]
 	 */
-	private static $future = [];
+	private static array $future = [];
 
 	/**
 	 * @param string                   $player

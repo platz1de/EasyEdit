@@ -12,7 +12,7 @@ class Messages
 	/**
 	 * @var string[]
 	 */
-	private static $messages = [];
+	private static array $messages = [];
 
 	public static function load(): void
 	{

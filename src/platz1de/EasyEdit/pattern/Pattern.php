@@ -12,11 +12,8 @@ class Pattern
 	/**
 	 * @var Pattern[]
 	 */
-	protected $pieces;
-	/**
-	 * @var PatternArgumentData
-	 */
-	protected $args;
+	protected array $pieces;
+	protected PatternArgumentData $args;
 
 	/**
 	 * Pattern constructor.

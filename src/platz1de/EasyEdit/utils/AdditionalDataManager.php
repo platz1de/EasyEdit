@@ -10,7 +10,7 @@ class AdditionalDataManager
 	/**
 	 * @var array<string, mixed>
 	 */
-	private $data;
+	private array $data;
 
 	/**
 	 * AdditionalDataManager constructor.

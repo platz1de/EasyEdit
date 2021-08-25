@@ -9,30 +9,15 @@ use pocketmine\block\BlockFactory;
 
 class PatternArgumentData
 {
-	/**
-	 * @var bool
-	 */
-	private $xAxis = false;
-	/**
-	 * @var bool
-	 */
-	private $yAxis = false;
-	/**
-	 * @var bool
-	 */
-	private $zAxis = false;
-	/**
-	 * @var StaticBlock
-	 */
-	private $block;
-	/**
-	 * @var Block
-	 */
-	private $realBlock;
+	private bool $xAxis = false;
+	private bool $yAxis = false;
+	private bool $zAxis = false;
+	private StaticBlock $block;
+	private Block $realBlock;
 	/**
 	 * @var int[]
 	 */
-	private $intData = [];
+	private array $intData = [];
 
 	/**
 	 * @return bool

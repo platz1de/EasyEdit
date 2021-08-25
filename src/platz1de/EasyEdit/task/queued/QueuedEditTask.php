@@ -16,38 +16,14 @@ use pocketmine\world\Position;
 
 class QueuedEditTask implements QueuedTask
 {
-	/**
-	 * @var Selection
-	 */
-	private $selection;
-	/**
-	 * @var Pattern
-	 */
-	private $pattern;
-	/**
-	 * @var Position
-	 */
-	private $place;
-	/**
-	 * @var string
-	 */
-	private $task;
-	/**
-	 * @var Closure
-	 */
-	private $finish;
-	/**
-	 * @var AdditionalDataManager
-	 */
-	private $data;
-	/**
-	 * @var PieceManager
-	 */
-	private $executor;
-	/**
-	 * @var Vector3
-	 */
-	private $splitOffset;
+	private Selection $selection;
+	private Pattern $pattern;
+	private Position $place;
+	private string $task;
+	private Closure $finish;
+	private AdditionalDataManager $data;
+	private PieceManager $executor;
+	private Vector3 $splitOffset;
 
 	/**
 	 * QueuedTask constructor.

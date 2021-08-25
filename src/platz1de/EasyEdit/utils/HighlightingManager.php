@@ -16,16 +16,13 @@ class HighlightingManager
 	/**
 	 * @var array<string, array<int, Position>>
 	 */
-	private static $staticDataHolders = [];
+	private static array $staticDataHolders = [];
 	/**
 	 * @var CompoundTag[]
 	 */
-	private static $staticData = [];
+	private static array $staticData = [];
 
-	/**
-	 * @var int
-	 */
-	private static $id = 1;
+	private static int $id = 1;
 
 	/**
 	 * Highlight a cube using structure blocks

@@ -8,10 +8,7 @@ use UnexpectedValueException;
 
 trait ReferencedLevelHolder
 {
-	/**
-	 * @var string
-	 */
-	protected $world;
+	protected string $world;
 
 	/**
 	 * @return string

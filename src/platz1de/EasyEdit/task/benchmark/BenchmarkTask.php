@@ -7,26 +7,11 @@ use pocketmine\Server;
 
 class BenchmarkTask extends Task
 {
-	/**
-	 * @var int
-	 */
-	private $ticks;
-	/**
-	 * @var float
-	 */
-	private $tpsTotal;
-	/**
-	 * @var float
-	 */
-	private $tpsMin = 20;
-	/**
-	 * @var float
-	 */
-	private $loadTotal;
-	/**
-	 * @var float
-	 */
-	private $loadMax = 0;
+	private int $ticks;
+	private float $tpsTotal;
+	private float $tpsMin = 20;
+	private float $loadTotal;
+	private float $loadMax = 0;
 
 	public function onRun(): void
 	{

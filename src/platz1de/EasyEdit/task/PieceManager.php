@@ -13,26 +13,14 @@ use UnexpectedValueException;
 
 class PieceManager
 {
-	/**
-	 * @var QueuedEditTask
-	 */
-	private $task;
+	private QueuedEditTask $task;
 	/**
 	 * @var Selection[]
 	 */
-	private $pieces;
-	/**
-	 * @var EditTask
-	 */
-	private $currentPiece;
-	/**
-	 * @var int
-	 */
-	private $totalLength;
-	/**
-	 * @var EditTaskResult
-	 */
-	private $result;
+	private array $pieces;
+	private EditTask $currentPiece;
+	private int $totalLength;
+	private EditTaskResult $result;
 
 	/**
 	 * PieceManager constructor.

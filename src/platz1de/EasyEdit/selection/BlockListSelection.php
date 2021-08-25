@@ -18,18 +18,12 @@ abstract class BlockListSelection extends Selection
 	use CubicChunkLoader;
 	use CubicIterator;
 
-	/**
-	 * @var ReferencedChunkManager
-	 */
-	private $manager;
-	/**
-	 * @var SafeSubChunkExplorer
-	 */
-	private $iterator;
+	private ReferencedChunkManager $manager;
+	private SafeSubChunkExplorer $iterator;
 	/**
 	 * @var CompoundTag[]
 	 */
-	private $tiles = [];
+	private array $tiles = [];
 
 	/**
 	 * BlockListSelection constructor.

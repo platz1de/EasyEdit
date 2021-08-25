@@ -11,18 +11,9 @@ class EditWorker extends Worker
 	public const STATUS_PREPARING = 1;
 	public const STATUS_RUNNING = 2;
 
-	/**
-	 * @var ThreadedLogger
-	 */
-	private $logger;
-	/**
-	 * @var int
-	 */
-	private $status = self::STATUS_IDLE;
-	/**
-	 * @var float currently just last start/end of a task
-	 */
-	private $lastResponse;
+	private ThreadedLogger $logger;
+	private int $status = self::STATUS_IDLE;
+	private float $lastResponse;
 
 	/**
 	 * EditWorker constructor.

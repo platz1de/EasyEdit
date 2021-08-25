@@ -7,23 +7,17 @@ use pocketmine\scheduler\Task;
 
 class WorkerAdapter extends Task
 {
-	/**
-	 * @var QueuedTask|null
-	 */
-	private static $task;
+	private static ?QueuedTask $task;
 	/**
 	 * @var QueuedTask[]
 	 */
-	private static $queue = [];
+	private static array $queue = [];
 	/**
 	 * @var QueuedTask[]
 	 */
-	private static $priority = [];
+	private static array $priority = [];
 
-	/**
-	 * @var int
-	 */
-	private static $id = 0;
+	private static int $id = 0;
 
 	public function onRun(): void
 	{

@@ -39,14 +39,8 @@ use pocketmine\Server;
 
 class EasyEdit extends PluginBase
 {
-	/**
-	 * @var EasyEdit
-	 */
-	private static $instance;
-	/**
-	 * @var EditWorker
-	 */
-	private static $worker;
+	private static EasyEdit $instance;
+	private static EditWorker $worker;
 
 	public function onEnable(): void
 	{

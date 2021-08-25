@@ -10,14 +10,8 @@ use pocketmine\utils\Utils;
 
 class CylinderPiece extends Cylinder
 {
-	/**
-	 * @var Vector3
-	 */
-	protected $min;
-	/**
-	 * @var Vector3
-	 */
-	protected $max;
+	protected Vector3 $min;
+	protected Vector3 $max;
 
 	/**
 	 * CylinderPiece constructor.

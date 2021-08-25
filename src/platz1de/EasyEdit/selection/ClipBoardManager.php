@@ -9,7 +9,7 @@ class ClipBoardManager
 	/**
 	 * @var DynamicBlockListSelection[]
 	 */
-	private static $selections = [];
+	private static array $selections = [];
 
 	/**
 	 * @param string $player

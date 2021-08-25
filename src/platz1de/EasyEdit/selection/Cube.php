@@ -19,10 +19,7 @@ class Cube extends Selection implements Patterned
 	use CubicIterator;
 	use CubicChunkLoader;
 
-	/**
-	 * @var int
-	 */
-	private $structure = 0;
+	private int $structure = 0;
 
 	public function update(): void
 	{

@@ -15,32 +15,12 @@ abstract class Selection
 {
 	use ReferencedLevelHolder;
 
-	/**
-	 * @var Vector3
-	 */
-	protected $pos1;
-	/**
-	 * @var Vector3
-	 */
-	protected $pos2;
-	/**
-	 * @var Vector3
-	 */
-	protected $selected1;
-	/**
-	 * @var Vector3
-	 */
-	protected $selected2;
-
-	/**
-	 * @var string
-	 */
-	protected $player;
-
-	/**
-	 * @var bool
-	 */
-	protected $piece;
+	protected Vector3 $pos1;
+	protected Vector3 $pos2;
+	protected Vector3 $selected1;
+	protected Vector3 $selected2;
+	protected string $player;
+	protected bool $piece;
 
 	/**
 	 * Selection constructor.

@@ -13,26 +13,14 @@ use pocketmine\world\World;
 
 class EditTaskResult
 {
-	/**
-	 * @var ReferencedChunkManager
-	 */
-	private $manager;
-	/**
-	 * @var BlockListSelection
-	 */
-	private $toUndo;
+	private ReferencedChunkManager $manager;
+	private BlockListSelection $toUndo;
 	/**
 	 * @var CompoundTag[]
 	 */
-	private $tiles;
-	/**
-	 * @var float
-	 */
-	private $time;
-	/**
-	 * @var int
-	 */
-	private $changed;
+	private array $tiles;
+	private float $time;
+	private int $changed;
 
 	/**
 	 * EditTaskResult constructor.

@@ -10,14 +10,8 @@ use pocketmine\utils\Utils;
 
 class SpherePiece extends Sphere
 {
-	/**
-	 * @var Vector3
-	 */
-	protected $min;
-	/**
-	 * @var Vector3
-	 */
-	protected $max;
+	protected Vector3 $min;
+	protected Vector3 $max;
 
 	/**
 	 * SpherePiece constructor.

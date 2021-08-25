@@ -19,11 +19,7 @@ use pocketmine\scheduler\ClosureTask;
 
 class EventListener implements Listener
 {
-	/**
-	 * don't spam everything
-	 * @var float
-	 */
-	private static $cooldown = 0;
+	private static float $cooldown = 0;
 
 	/**
 	 * @param BlockBreakEvent $event

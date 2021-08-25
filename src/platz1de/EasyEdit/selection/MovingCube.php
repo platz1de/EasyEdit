@@ -12,10 +12,7 @@ use pocketmine\world\World;
 
 class MovingCube extends Selection
 {
-	/**
-	 * @var Vector3
-	 */
-	private $direction;
+	private Vector3 $direction;
 
 	/**
 	 * MovingCube constructor.

@@ -30,10 +30,7 @@ use UnexpectedValueException;
 
 class BenchmarkManager
 {
-	/**
-	 * @var bool
-	 */
-	private static $running = false;
+	private static bool $running = false;
 
 	/**
 	 * @param Closure $closure

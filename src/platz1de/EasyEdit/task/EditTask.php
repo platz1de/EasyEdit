@@ -28,59 +28,23 @@ use UnexpectedValueException;
 
 abstract class EditTask extends Threaded
 {
-	/**
-	 * @var bool
-	 */
-	private $finished = false;
+	private bool $finished = false;
 
 	/**
 	 * @var EditWorker
 	 */
 	protected $worker;
 
-	/**
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * @var string
-	 */
-	private $chunkData;
-	/**
-	 * @var string
-	 */
-	private $tileData;
-
-	/**
-	 * @var string
-	 */
-	private $selection;
-	/**
-	 * @var string
-	 */
-	private $pattern;
-	/**
-	 * @var string
-	 */
-	private $place;
-	/**
-	 * @var string
-	 */
-	private $level;
-
-	/**
-	 * @var string
-	 */
-	private $result;
-	/**
-	 * @var string
-	 */
-	private $data;
-	/**
-	 * @var string
-	 */
-	private $total;
+	private int $id;
+	private string $chunkData;
+	private string $tileData;
+	private string $selection;
+	private string $pattern;
+	private string $place;
+	private string $level;
+	private string $result;
+	private string $data;
+	private string $total;
 
 	/**
 	 * EditTask constructor.

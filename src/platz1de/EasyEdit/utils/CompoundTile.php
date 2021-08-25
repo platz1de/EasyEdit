@@ -10,10 +10,7 @@ use pocketmine\world\World;
 
 class CompoundTile extends Spawnable
 {
-	/**
-	 * @var CompoundTag
-	 */
-	private $data;
+	private CompoundTag $data;
 
 	/**
 	 * CompoundTile constructor.

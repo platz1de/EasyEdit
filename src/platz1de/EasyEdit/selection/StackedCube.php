@@ -13,10 +13,7 @@ class StackedCube extends Selection
 {
 	use CubicIterator;
 
-	/**
-	 * @var Vector3
-	 */
-	private $direction;
+	private Vector3 $direction;
 
 	/**
 	 * StackedCube constructor.

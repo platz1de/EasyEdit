@@ -13,10 +13,7 @@ use UnexpectedValueException;
 
 class DynamicBlockListSelection extends BlockListSelection
 {
-	/**
-	 * @var Vector3
-	 */
-	private $point;
+	private Vector3 $point;
 
 	/**
 	 * DynamicBlockListSelection constructor.

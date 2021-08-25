@@ -10,7 +10,7 @@ class CommandManager
 	/**
 	 * @var EasyEditCommand[]
 	 */
-	private static $commands = [];
+	private static array $commands = [];
 
 	/**
 	 * @param EasyEditCommand $command

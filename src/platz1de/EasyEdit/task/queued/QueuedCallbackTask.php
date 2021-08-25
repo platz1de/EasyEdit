@@ -7,10 +7,7 @@ use Closure;
 
 class QueuedCallbackTask implements QueuedTask
 {
-	/**
-	 * @var Closure
-	 */
-	private $callback;
+	private Closure $callback;
 
 	/**
 	 * QueuedCallbackTask constructor.
