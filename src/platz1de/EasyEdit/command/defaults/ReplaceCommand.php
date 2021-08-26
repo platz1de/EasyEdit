@@ -35,7 +35,7 @@ class ReplaceCommand extends EasyEditCommand
 
 		try {
 			$block = PatternParser::getBlockType($args[0]);
-			$pattern = PatternParser::processPattern(PatternParser::parsePiece($args[1]));
+			$pattern = PatternParser::parseInputArgument($args[1], $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

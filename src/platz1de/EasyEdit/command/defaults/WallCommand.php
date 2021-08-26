@@ -28,7 +28,7 @@ class WallCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$pattern = PatternParser::processPattern(PatternParser::parsePiece($args[0] ?? "stone"));
+			$pattern = PatternParser::parseInputArgument($args[0] ?? "stone", $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

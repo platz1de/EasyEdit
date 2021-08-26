@@ -28,18 +28,37 @@ class PatternParser
 	private const INTERNAL_BLOCK = "staticBlockInternal";
 
 	/**
-	 * @param string      $pattern
-	 * @param Player|null $player
+	 * Parses player input (mostly commands)
+	 * @param string $pattern
+	 * @param Player $player
 	 * @return Pattern
+	 */
+	public static function parseInput(string $pattern, Player $player): Pattern
+	{
+		return new Pattern(self::parseInputArgument($pattern, $player));
+	}
+
+	/**
+	 * Parses player input as argument for other patterns, needed for helper commands like replace
+	 * @param string $pattern
+	 * @param Player $player
+	 * @return Pattern[]
+	 */
+	public static function parseInputArgument(string $pattern, Player $player): array
+	{
+		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern));
+	}
+
+	/**
+	 * Parses internal saved patterns
+	 * @param string $pattern
+	 * @return Pattern[]
 	 * @throws ParseError
 	 */
-	public static function parse(string $pattern, ?Player $player = null): Pattern
+	public static function parseInternal(string $pattern): array
 	{
-		if ($player instanceof Player) {
-			$pattern = str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern);
-		}
 		try {
-			return new Pattern(self::processPattern(self::parsePiece($pattern)));
+			return self::processPattern(self::parsePiece($pattern));
 		} catch (Throwable $exception) {
 			throw new ParseError($exception->getMessage(), null, false); //the difference is purely internally
 		}
@@ -51,7 +70,7 @@ class PatternParser
 	 * @return array<string, array>
 	 * @throws ParseError
 	 */
-	public static function parsePiece(string $pattern, int $start = 1): array
+	private static function parsePiece(string $pattern, int $start = 1): array
 	{
 		if ($pattern === "") {
 			throw new ParseError("No pattern given");
@@ -150,7 +169,7 @@ class PatternParser
 	 * @param array<string, array> $pattern
 	 * @return Pattern[]
 	 */
-	public static function processPattern(array $pattern): array
+	private static function processPattern(array $pattern): array
 	{
 		$pieces = [];
 		foreach ($pattern as $name => $p) {
@@ -234,7 +253,7 @@ class PatternParser
 	 * @param string $block
 	 * @return bool
 	 */
-	public static function isBlock(string $block): bool
+	private static function isBlock(string $block): bool
 	{
 		try {
 			self::getBlock($block);
@@ -249,7 +268,7 @@ class PatternParser
 	 * @return Block
 	 * @throws ParseError
 	 */
-	public static function getBlock(string $string): Block
+	private static function getBlock(string $string): Block
 	{
 		try {
 			$item = LegacyStringToItemParser::getInstance()->parse($string);
@@ -267,11 +286,16 @@ class PatternParser
 	}
 
 	/**
-	 * @param string $string
+	 * @param string      $string
+	 * @param Player|null $player
 	 * @return StaticBlock
 	 */
-	public static function getBlockType(string $string): StaticBlock
+	public static function getBlockType(string $string, ?Player $player = null): StaticBlock
 	{
+		if ($player instanceof Player && $string === "hand") {
+			return StaticBlock::from($player->getInventory()->getItemInHand()->getBlock());
+		}
+
 		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
 			return StaticBlock::from(self::getBlock($string));
 		}

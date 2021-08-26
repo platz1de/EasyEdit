@@ -28,7 +28,7 @@ class SphereCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = PatternParser::parse($args[1], $player);
+			$pattern = PatternParser::parseInput($args[1], $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

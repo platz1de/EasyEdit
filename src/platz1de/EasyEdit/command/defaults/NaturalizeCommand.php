@@ -28,9 +28,9 @@ class NaturalizeCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$top = PatternParser::parse($args[0] ?? "grass", $player);
-			$middle = PatternParser::parse($args[1] ?? "dirt", $player);
-			$bottom = PatternParser::parse($args[2] ?? "stone", $player);
+			$top = PatternParser::parseInput($args[0] ?? "grass", $player);
+			$middle = PatternParser::parseInput($args[1] ?? "dirt", $player);
+			$bottom = PatternParser::parseInput($args[2] ?? "stone", $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

@@ -30,16 +30,16 @@ class BrushHandler
 		if ($target !== null) {
 			switch (self::nameToIdentifier($brush->getString("brushType", ""))) {
 				case self::BRUSH_SPHERE:
-					SetTask::queue(new Sphere($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), PatternParser::parse($brush->getString("brushPattern", "stone")), $player->getPosition());
+					SetTask::queue(new Sphere($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new Pattern(PatternParser::parseInternal($brush->getString("brushPattern", "stone"))), $player->getPosition());
 					break;
 				case self::BRUSH_SMOOTH:
 					SetTask::queue(new Sphere($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new SmoothPattern([]), $player->getPosition());
 					break;
 				case self::BRUSH_NATURALIZE:
-					SetTask::queue(new Sphere($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new Pattern([new NaturalizePattern([PatternParser::parse($brush->getString("topBlock", "grass")), PatternParser::parse($brush->getString("middleBlock", "dirt")), PatternParser::parse($brush->getString("bottomBlock", "stone"))])]), $player->getPosition());
+					SetTask::queue(new Sphere($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new Pattern([new NaturalizePattern([new Pattern(PatternParser::parseInternal($brush->getString("topBlock", "grass"))), new Pattern(PatternParser::parseInternal($brush->getString("middleBlock", "dirt"))), new Pattern(PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))])]), $player->getPosition());
 					break;
 				case self::BRUSH_CYLINDER:
-					SetTask::queue(new Cylinder($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parse($brush->getString("brushPattern", "stone")), $player->getPosition());
+					SetTask::queue(new Cylinder($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0), $brush->getShort("brushHeight", 0)), new Pattern(PatternParser::parseInternal($brush->getString("brushPattern", "stone"))), $player->getPosition());
 			}
 		}
 	}

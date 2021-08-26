@@ -208,7 +208,11 @@ class PatternArgumentData
 		$result->zAxis = $stream->getBool();
 
 		if ($stream->getBool()) {
-			/** @phpstan-ignore-next-line */
+			//TODO: Add a separate Block-only parser
+			/**
+			 * @phpstan-ignore-next-line
+			 * @noinspection PhpFieldAssignmentTypeMismatchInspection
+			 */
 			$result->block = Pattern::fastDeserialize($stream->getString());
 		}
 

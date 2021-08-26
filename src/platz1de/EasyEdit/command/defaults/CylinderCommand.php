@@ -28,7 +28,7 @@ class CylinderCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = PatternParser::parse($args[2], $player);
+			$pattern = PatternParser::parseInput($args[2], $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;
