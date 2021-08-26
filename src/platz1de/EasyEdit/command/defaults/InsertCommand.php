@@ -24,7 +24,7 @@ class InsertCommand extends EasyEditCommand
 	{
 		try {
 			$selection = ClipBoardManager::getFromPlayer($player->getName());
-		} catch (Throwable $exception) {
+		} catch (Throwable) {
 			Messages::send($player, "no-clipboard");
 			return;
 		}

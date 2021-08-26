@@ -30,14 +30,14 @@ class CenterCommand extends EasyEditCommand
 			//TODO: Fix parsing
 			//$block = PatternParser::getBlock($args[0]);
 			$block = VanillaBlocks::STONE();
-		} catch (ParseError $exception) {
+		} catch (ParseError) {
 			$block = VanillaBlocks::BEDROCK();
 		}
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			Selection::validate($selection, Cube::class);
-		} catch (Throwable $exception) {
+		} catch (Throwable) {
 			Messages::send($player, "no-selection");
 			return;
 		}

@@ -30,7 +30,7 @@ class BlockPattern extends Pattern
 		try {
 			//shut up phpstorm
 			$this->args->setBlock($this->args->getBlock());
-		} catch (Throwable $error) {
+		} catch (Throwable) {
 			throw new WrongPatternUsageException("Block needs a block as first Argument");
 		}
 	}

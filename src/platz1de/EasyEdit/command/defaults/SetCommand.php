@@ -40,7 +40,7 @@ class SetCommand extends EasyEditCommand
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			Selection::validate($selection);
-		} catch (Throwable $exception) {
+		} catch (Throwable) {
 			Messages::send($player, "no-selection");
 			return;
 		}

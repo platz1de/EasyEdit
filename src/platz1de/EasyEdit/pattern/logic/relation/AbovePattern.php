@@ -34,7 +34,7 @@ class AbovePattern extends Pattern
 		try {
 			//shut up phpstorm
 			$this->args->setBlock($this->args->getBlock());
-		} catch (ParseError $error) {
+		} catch (ParseError) {
 			throw new WrongPatternUsageException("Above needs a block as first Argument");
 		}
 	}

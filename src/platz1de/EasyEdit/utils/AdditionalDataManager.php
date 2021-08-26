@@ -30,7 +30,7 @@ class AdditionalDataManager
 	{
 		try {
 			return $this->data[$key];
-		} catch (Throwable $e) {
+		} catch (Throwable) {
 			if ($default !== null) {
 				return $default;
 			}

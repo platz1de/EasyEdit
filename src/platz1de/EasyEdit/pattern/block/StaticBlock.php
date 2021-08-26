@@ -46,7 +46,7 @@ class StaticBlock extends Pattern
 		try {
 			//shut up phpstorm
 			$this->args->setRealBlock($this->args->getRealBlock());
-		} catch (Throwable $error) {
+		} catch (Throwable) {
 			throw new WrongPatternUsageException("StaticBlock needs a block as first Argument");
 		}
 	}

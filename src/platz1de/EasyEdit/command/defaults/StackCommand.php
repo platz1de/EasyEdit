@@ -33,7 +33,7 @@ class StackCommand extends EasyEditCommand
 			$selection = SelectionManager::getFromPlayer($player->getName());
 			/** @var Cube $selection */
 			Selection::validate($selection, Cube::class);
-		} catch (Throwable $exception) {
+		} catch (Throwable) {
 			Messages::send($player, "no-selection");
 			return;
 		}

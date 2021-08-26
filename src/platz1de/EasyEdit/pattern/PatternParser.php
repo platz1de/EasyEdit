@@ -258,7 +258,7 @@ class PatternParser
 		try {
 			self::getBlock($block);
 			return true;
-		} catch (ParseError $exception) {
+		} catch (ParseError) {
 			return false;
 		}
 	}
@@ -272,13 +272,13 @@ class PatternParser
 	{
 		try {
 			$item = LegacyStringToItemParser::getInstance()->parse($string);
-		} catch (Throwable $exception) {
+		} catch (Throwable) {
 			throw new ParseError("Unknown Block " . $string);
 		}
 
 		try {
 			$block = $item->getBlock();
-		} catch (Throwable $exception) {
+		} catch (Throwable) {
 			throw new ParseError("Unknown Block " . $string);
 		}
 
