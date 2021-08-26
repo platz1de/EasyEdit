@@ -18,8 +18,7 @@ use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\random\RandomPattern;
-use pocketmine\block\Block;
-use pocketmine\item\LegacyStringToItemParser;
+use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -210,7 +209,7 @@ class PatternParser
 		$args = explode(";", $pattern);
 		switch (array_shift($args)) {
 			case self::INTERNAL_BLOCK:
-				return StaticBlock::from(self::getBlock($args[0] ?? ""));
+				return StaticBlock::from(BlockParser::getBlock($args[0] ?? ""));
 			case "not":
 				return new NotPattern($children);
 			case "even":
@@ -256,33 +255,11 @@ class PatternParser
 	private static function isBlock(string $block): bool
 	{
 		try {
-			self::getBlock($block);
+			BlockParser::getBlock($block);
 			return true;
 		} catch (ParseError) {
 			return false;
 		}
-	}
-
-	/**
-	 * @param string $string
-	 * @return Block
-	 * @throws ParseError
-	 */
-	private static function getBlock(string $string): Block
-	{
-		try {
-			$item = LegacyStringToItemParser::getInstance()->parse($string);
-		} catch (Throwable) {
-			throw new ParseError("Unknown Block " . $string);
-		}
-
-		try {
-			$block = $item->getBlock();
-		} catch (Throwable) {
-			throw new ParseError("Unknown Block " . $string);
-		}
-
-		return $block;
 	}
 
 	/**
@@ -296,10 +273,10 @@ class PatternParser
 			return StaticBlock::from($player->getInventory()->getItemInHand()->getBlock());
 		}
 
-		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
-			return StaticBlock::from(self::getBlock($string));
+		if (BlockParser::isStatic($string)) {
+			return StaticBlock::from(BlockParser::getBlock($string));
 		}
 
-		return DynamicBlock::from(self::getBlock($string));
+		return DynamicBlock::from(BlockParser::getBlock($string));
 	}
 }
