@@ -16,14 +16,14 @@ class CylinderPiece extends Cylinder
 	/**
 	 * CylinderPiece constructor.
 	 * @param string       $player
-	 * @param string       $level
+	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $min
 	 * @param Vector3|null $max
 	 * @param int          $radius
 	 * @param int          $height
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $min = null, ?Vector3 $max = null, int $radius = 0, int $height = 0)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $min = null, ?Vector3 $max = null, int $radius = 0, int $height = 0)
 	{
 		if ($min !== null) {
 			$this->min = $min;
@@ -32,7 +32,7 @@ class CylinderPiece extends Cylinder
 			$this->max = $max;
 		}
 
-		parent::__construct($player, $level, $pos1, $radius, $height, true);
+		parent::__construct($player, $world, $pos1, $radius, $height, true);
 	}
 
 	/**

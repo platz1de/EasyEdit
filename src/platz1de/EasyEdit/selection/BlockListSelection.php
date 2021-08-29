@@ -28,15 +28,15 @@ abstract class BlockListSelection extends Selection
 	/**
 	 * BlockListSelection constructor.
 	 * @param string       $player
-	 * @param string       $level
+	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
 	 * @param bool         $piece
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		parent::__construct($player, $level, $pos1, $pos2, $piece);
-		$this->manager = new ReferencedChunkManager($level);
+		parent::__construct($player, $world, $pos1, $pos2, $piece);
+		$this->manager = new ReferencedChunkManager($world);
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
 			$this->getManager()->load($pos1, $pos2);
 		}

@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\ReferencedLevelHolder;
+use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\world\World;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
@@ -13,7 +13,7 @@ use UnexpectedValueException;
 
 abstract class Selection
 {
-	use ReferencedLevelHolder;
+	use ReferencedWorldHolder;
 
 	protected Vector3 $pos1;
 	protected Vector3 $pos2;
@@ -25,14 +25,14 @@ abstract class Selection
 	/**
 	 * Selection constructor.
 	 * @param string       $player
-	 * @param string       $level
+	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
 	 * @param bool         $piece
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
-		$this->world = $level;
+		$this->world = $world;
 
 		if ($pos1 !== null) {
 			$this->pos1 = clone($this->selected1 = $pos1->floor());

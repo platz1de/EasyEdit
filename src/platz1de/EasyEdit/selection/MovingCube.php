@@ -17,14 +17,14 @@ class MovingCube extends Selection
 	/**
 	 * MovingCube constructor.
 	 * @param string       $player
-	 * @param string       $level
+	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
 	 * @param Vector3|null $direction
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null)
 	{
-		parent::__construct($player, $level, $pos1, $pos2);
+		parent::__construct($player, $world, $pos1, $pos2);
 		$this->direction = $direction ?? new Vector3(0, 0, 0);
 	}
 

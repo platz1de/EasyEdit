@@ -13,17 +13,17 @@ use UnexpectedValueException;
 class LoaderManager
 {
 	/**
-	 * @param World $level
+	 * @param World $world
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
 	 * @return Chunk
 	 */
-	public static function getChunk(World $level, int $chunkX, int $chunkZ): Chunk
+	public static function getChunk(World $world, int $chunkX, int $chunkZ): Chunk
 	{
-		if ($level->isChunkLoaded($chunkX, $chunkZ)) {
-			$chunk = $level->getChunk($chunkX, $chunkZ);
+		if ($world->isChunkLoaded($chunkX, $chunkZ)) {
+			$chunk = $world->getChunk($chunkX, $chunkZ);
 		} else {
-			$chunk = $level->getProvider()->loadChunk($chunkX, $chunkZ);
+			$chunk = $world->getProvider()->loadChunk($chunkX, $chunkZ);
 		}
 
 		if (!$chunk instanceof Chunk) {
@@ -34,15 +34,15 @@ class LoaderManager
 	}
 
 	/**
-	 * @param World         $level
+	 * @param World         $world
 	 * @param Chunk[]       $chunks
 	 * @param CompoundTag[] $tiles
 	 * @return void
 	 */
-	public static function setChunks(World $level, array $chunks, array $tiles): void
+	public static function setChunks(World $world, array $chunks, array $tiles): void
 	{
 		foreach ($tiles as $tile) {
-			$tile = TileFactory::getInstance()->createFromData($level, $tile);
+			$tile = TileFactory::getInstance()->createFromData($world, $tile);
 			if ($tile !== null) {
 				$hash = World::chunkHash($tile->getPosition()->getX() >> 4, $tile->getPosition()->getZ() >> 4);
 				if (isset($chunks[$hash])) {
@@ -53,14 +53,14 @@ class LoaderManager
 
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			self::injectChunk($level, $x, $z, $chunk);
+			self::injectChunk($world, $x, $z, $chunk);
 		}
 
 		//reduce load by not setting and unloading on the same tick
-		WorkerAdapter::priority(new QueuedCallbackTask(function () use ($chunks, $level): void {
+		WorkerAdapter::priority(new QueuedCallbackTask(function () use ($chunks, $world): void {
 			foreach ($chunks as $hash => $chunk) {
 				World::getXZ($hash, $x, $z);
-				$level->unloadChunk($x, $z);
+				$world->unloadChunk($x, $z);
 			}
 		}));
 	}

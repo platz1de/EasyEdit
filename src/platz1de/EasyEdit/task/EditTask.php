@@ -41,7 +41,7 @@ abstract class EditTask extends Threaded
 	private string $selection;
 	private string $pattern;
 	private string $place;
-	private string $level;
+	private string $world;
 	private string $result;
 	private string $data;
 	private string $total;
@@ -61,7 +61,7 @@ abstract class EditTask extends Threaded
 		$this->selection = $selection->fastSerialize();
 		$this->pattern = $pattern->fastSerialize();
 		$this->place = igbinary_serialize($place->floor());
-		$this->level = $place->getWorld()->getFolderName();
+		$this->world = $place->getWorld()->getFolderName();
 		if ($total instanceof Selection) {
 			$this->total = $total->fastSerialize();
 		}
@@ -111,7 +111,7 @@ abstract class EditTask extends Threaded
 		/** @var EditWorker $thread */
 		$thread = Thread::getCurrentThread();
 		$thread->setStatus(EditWorker::STATUS_RUNNING);
-		$manager = new ReferencedChunkManager($this->level);
+		$manager = new ReferencedChunkManager($this->world);
 		$iterator = new SafeSubChunkExplorer($manager);
 		$origin = new SafeSubChunkExplorer($originManager = clone $manager);
 		$selection = Selection::fastDeserialize($this->selection);
@@ -140,7 +140,7 @@ abstract class EditTask extends Threaded
 			$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
-		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->level, $data);
+		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data);
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
 
@@ -152,7 +152,7 @@ abstract class EditTask extends Threaded
 			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed, $data);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
 
-			$result = new EditTaskResult($this->level, $toUndo, $tiles, microtime(true) - $start, $changed);
+			$result = new EditTaskResult($this->world, $toUndo, $tiles, microtime(true) - $start, $changed);
 
 			foreach ($manager->getChunks() as $hash => $chunk) {
 				World::getXZ($hash, $x, $z);
@@ -262,9 +262,9 @@ abstract class EditTask extends Threaded
 	/**
 	 * @param Selection             $selection
 	 * @param Vector3               $place
-	 * @param string                $level
+	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @return BlockListSelection
 	 */
-	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection;
+	abstract public function getUndoBlockList(Selection $selection, Vector3 $place, string $world, AdditionalDataManager $data): BlockListSelection;
 }

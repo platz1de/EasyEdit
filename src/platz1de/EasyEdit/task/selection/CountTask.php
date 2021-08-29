@@ -72,11 +72,11 @@ class CountTask extends EditTask
 	/**
 	 * @param Selection             $selection
 	 * @param Vector3               $place
-	 * @param string                $level
+	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $world, AdditionalDataManager $data): BlockListSelection
 	{
 		//TODO: make this optional
 		return new StaticBlockListSelection($selection->getPlayer(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));

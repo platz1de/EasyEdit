@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\utils\ReferencedLevelHolder;
+use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\SimpleChunkManager;
 use pocketmine\math\Vector3;
@@ -10,16 +10,16 @@ use pocketmine\world\World;
 
 class ReferencedChunkManager extends SimpleChunkManager
 {
-	use ReferencedLevelHolder;
+	use ReferencedWorldHolder;
 
 	/**
 	 * ReferencedChunkManager constructor.
-	 * @param string $level
+	 * @param string $world
 	 */
-	public function __construct(string $level)
+	public function __construct(string $world)
 	{
 		parent::__construct(World::Y_MIN, World::Y_MAX);
-		$this->world = $level;
+		$this->world = $world;
 	}
 
 	/**

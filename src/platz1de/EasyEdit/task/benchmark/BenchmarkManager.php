@@ -34,9 +34,9 @@ class BenchmarkManager
 
 	/**
 	 * @param Closure $closure
-	 * @param bool    $deleteLevelAfter Useful when testing core functions
+	 * @param bool    $deleteWorldAfter Useful when testing core functions
 	 */
-	public static function start(Closure $closure, bool $deleteLevelAfter = true): void
+	public static function start(Closure $closure, bool $deleteWorldAfter = true): void
 	{
 		if (self::$running) {
 			throw new UnexpectedValueException("Benchmark is already running");
@@ -48,14 +48,14 @@ class BenchmarkManager
 		$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		$level = Server::getInstance()->getWorldManager()->getWorldByName($name);
-		if ($level === null) {
+		$world = Server::getInstance()->getWorldManager()->getWorldByName($name);
+		if ($world === null) {
 			return; //This should never happen
 		}
 
 		$results = [];
 
-		$pos = new Position(0, World::Y_MIN, 0, $level);
+		$pos = new Position(0, World::Y_MIN, 0, $world);
 
 		//4x 3x3 Chunk cubes
 		$testCube = new Cube($name, $name, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
@@ -82,7 +82,7 @@ class BenchmarkManager
 			}));
 		});
 
-		WorkerAdapter::queue(new QueuedCallbackTask(function () use ($autoSave, $level, $task, $closure, &$results, $deleteLevelAfter): void {
+		WorkerAdapter::queue(new QueuedCallbackTask(function () use ($autoSave, $world, $task, $closure, &$results, $deleteWorldAfter): void {
 			$task->cancel();
 			/** @var BenchmarkTask $benchmark */
 			$benchmark = $task->getTask();
@@ -91,9 +91,9 @@ class BenchmarkManager
 			}, $results));
 			$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);
 
-			if ($deleteLevelAfter) {
-				$path = $level->getProvider()->getPath();
-				Server::getInstance()->getWorldManager()->unloadWorld($level);
+			if ($deleteWorldAfter) {
+				$path = $world->getProvider()->getPath();
+				Server::getInstance()->getWorldManager()->unloadWorld($world);
 				MixedUtils::deleteDir($path);
 			}
 

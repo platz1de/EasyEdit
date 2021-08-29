@@ -24,15 +24,15 @@ class EditTaskResult
 
 	/**
 	 * EditTaskResult constructor.
-	 * @param string             $level
+	 * @param string             $world
 	 * @param BlockListSelection $toUndo
 	 * @param CompoundTag[]      $tiles
 	 * @param float              $time
 	 * @param int                $changed
 	 */
-	public function __construct(string $level, BlockListSelection $toUndo, array $tiles, float $time, int $changed)
+	public function __construct(string $world, BlockListSelection $toUndo, array $tiles, float $time, int $changed)
 	{
-		$this->manager = new ReferencedChunkManager($level);
+		$this->manager = new ReferencedChunkManager($world);
 		$this->toUndo = $toUndo;
 		$this->tiles = $tiles;
 		$this->time = $time;
@@ -142,7 +142,7 @@ class EditTaskResult
 	{
 		$stream = new ExtendedBinaryStream($data);
 
-		$level = $stream->getString();
+		$world = $stream->getString();
 
 		$chunks = [];
 		$count = $stream->getInt();
@@ -158,7 +158,7 @@ class EditTaskResult
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();
 
-		$result = new EditTaskResult($level, $undo, $tiles, $time, $changed);
+		$result = new EditTaskResult($world, $undo, $tiles, $time, $changed);
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
 			$result->addChunk($x, $z, $chunk);

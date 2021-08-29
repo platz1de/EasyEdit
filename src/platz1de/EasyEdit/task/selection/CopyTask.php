@@ -77,11 +77,11 @@ class CopyTask extends EditTask
 	/**
 	 * @param Selection             $selection
 	 * @param Vector3               $place
-	 * @param string                $level
+	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @return DynamicBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $world, AdditionalDataManager $data): BlockListSelection
 	{
 		return new DynamicBlockListSelection($selection->getPlayer(), $place, $selection->getCubicStart(), $selection->getCubicEnd());
 	}

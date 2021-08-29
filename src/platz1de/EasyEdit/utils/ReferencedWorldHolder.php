@@ -6,7 +6,7 @@ use pocketmine\world\World;
 use pocketmine\Server;
 use UnexpectedValueException;
 
-trait ReferencedLevelHolder
+trait ReferencedWorldHolder
 {
 	protected string $world;
 

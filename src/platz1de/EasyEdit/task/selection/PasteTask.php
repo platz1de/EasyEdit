@@ -89,14 +89,14 @@ class PasteTask extends EditTask
 	/**
 	 * @param Selection             $selection
 	 * @param Vector3               $place
-	 * @param string                $level
+	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $world, AdditionalDataManager $data): BlockListSelection
 	{
 		/** @var DynamicBlockListSelection $selection */
 		Selection::validate($selection, DynamicBlockListSelection::class);
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getPos1()->addVector($place)->subtractVector($selection->getPoint()), $selection->getPos2()->addVector($place)->subtractVector($selection->getPoint()));
+		return new StaticBlockListSelection($selection->getPlayer(), $world, $selection->getPos1()->addVector($place)->subtractVector($selection->getPoint()), $selection->getPos2()->addVector($place)->subtractVector($selection->getPoint()));
 	}
 }

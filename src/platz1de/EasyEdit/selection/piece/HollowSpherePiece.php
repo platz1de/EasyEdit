@@ -11,16 +11,16 @@ class HollowSpherePiece extends SpherePiece
 	/**
 	 * HollowSpherePiece constructor.
 	 * @param string       $player
-	 * @param string       $level
+	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $min
 	 * @param Vector3|null $max
 	 * @param int          $radius
 	 * @param int          $thickness
 	 */
-	public function __construct(string $player, string $level = "", ?Vector3 $pos1 = null, ?Vector3 $min = null, ?Vector3 $max = null, int $radius = 0, int $thickness = 1)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $min = null, ?Vector3 $max = null, int $radius = 0, int $thickness = 1)
 	{
-		parent::__construct($player, $level, $pos1, $min, $max, $radius);
+		parent::__construct($player, $world, $pos1, $min, $max, $radius);
 		$this->setThickness($thickness);
 	}
 

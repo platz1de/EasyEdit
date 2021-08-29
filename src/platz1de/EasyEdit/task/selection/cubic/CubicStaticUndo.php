@@ -13,12 +13,12 @@ trait CubicStaticUndo
 	/**
 	 * @param Selection             $selection
 	 * @param Vector3               $place
-	 * @param string                $level
+	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(Selection $selection, Vector3 $place, string $level, AdditionalDataManager $data): BlockListSelection
+	public function getUndoBlockList(Selection $selection, Vector3 $place, string $world, AdditionalDataManager $data): BlockListSelection
 	{
-		return new StaticBlockListSelection($selection->getPlayer(), $level, $selection->getCubicStart(), $selection->getCubicEnd());
+		return new StaticBlockListSelection($selection->getPlayer(), $world, $selection->getCubicStart(), $selection->getCubicEnd());
 	}
 }

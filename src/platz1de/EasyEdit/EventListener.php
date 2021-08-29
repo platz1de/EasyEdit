@@ -92,7 +92,7 @@ class EventListener implements Listener
 		}
 	}
 
-	public function onLevelChange(EntityTeleportEvent $event): void
+	public function onWorldChange(EntityTeleportEvent $event): void
 	{
 		$player = $event->getEntity();
 		if ($player instanceof Player) {
