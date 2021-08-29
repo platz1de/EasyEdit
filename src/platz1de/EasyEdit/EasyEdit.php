@@ -31,6 +31,7 @@ use platz1de\EasyEdit\command\defaults\StatusCommand;
 use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\command\defaults\WallCommand;
 use platz1de\EasyEdit\utils\CompoundTile;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\TileFactory;
@@ -47,6 +48,7 @@ class EasyEdit extends PluginBase
 		self::$instance = $this;
 
 		Messages::load();
+		ConfigManager::load();
 
 		self::$worker = new EditWorker(Server::getInstance()->getLogger());
 		self::$worker->start(PTHREADS_INHERIT_INI | PTHREADS_INHERIT_CONSTANTS);
