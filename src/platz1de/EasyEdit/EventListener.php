@@ -9,6 +9,7 @@ use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
@@ -20,6 +21,7 @@ use pocketmine\scheduler\ClosureTask;
 class EventListener implements Listener
 {
 	private static float $cooldown = 0;
+	private const CREATIVE_REACH = 5;
 
 	/**
 	 * @param BlockBreakEvent $event
@@ -31,27 +33,61 @@ class EventListener implements Listener
 			$event->cancel();
 			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPosition());
 		}
+
+		self::$cooldown = microtime(true) + 0.5;
 	}
 
+	/**
+	 * @param PlayerInteractEvent $event
+	 */
+	public function onInteract(PlayerInteractEvent $event): void
+	{
+		if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+			if (self::$cooldown < microtime(true)) {
+				self::$cooldown = microtime(true) + 0.5;
+			} else {
+				return;
+			}
+
+			$item = $event->getItem();
+			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
+				if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
+					$event->cancel();
+					Cube::selectPos2($event->getPlayer(), $event->getBlock()->getPosition());
+				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
+					$event->cancel();
+					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Interaction with air
+	 * @param PlayerItemUseEvent $event
+	 */
 	public function onUse(PlayerItemUseEvent $event): void
 	{
-		if (self::$cooldown < microtime(true)) {
-			self::$cooldown = microtime(true) + 0.5;
-		} else {
-			return;
-		}
-
-		$item = $event->getItem();
-		if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
-			if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
-				$event->cancel();
-				$target = $event->getPlayer()->getTargetBlock(100);
-				if ($target instanceof Block) {
-					Cube::selectPos2($event->getPlayer(), $target->getPosition());
+		$block = $event->getPlayer()->getTargetBlock(self::CREATIVE_REACH);
+		if ($block === null || $block->getId() === 0) {
+			$item = $event->getItem();
+			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
+				if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
+					$event->cancel();
+					$target = $event->getPlayer()->getTargetBlock(100);
+					if ($target instanceof Block) {
+						//HACK: Touch control sends Itemuse when starting to break a block
+						//This gets triggered when breaking a block which isn't fokused
+						EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($target, $event): void {
+							if (self::$cooldown < microtime(true)) {
+								Cube::selectPos2($event->getPlayer(), $target->getPosition());
+							}
+						}));
+					}
+				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
+					$event->cancel();
+					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
-			} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
-				$event->cancel();
-				BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 			}
 		}
 	}
