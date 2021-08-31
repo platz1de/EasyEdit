@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\pattern\block;
 
+use pocketmine\block\Block;
+
 /** Ignores Damage */
 class DynamicBlock extends StaticBlock
 {
@@ -11,5 +13,10 @@ class DynamicBlock extends StaticBlock
 	public function getMeta(): int
 	{
 		return -1;
+	}
+
+	public function equals(int $fullBlock): bool
+	{
+		return ($fullBlock >> Block::INTERNAL_METADATA_BITS) === $this->getId();
 	}
 }

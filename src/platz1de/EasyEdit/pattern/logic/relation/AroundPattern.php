@@ -25,7 +25,7 @@ class AroundPattern extends Pattern
 		for ($i = 0; $i < 6; $i++) {
 			$check = (new Vector3($x, $y, $z))->getSide($i);
 			$iterator->moveTo($check->getFloorX(), $check->getFloorY(), $check->getFloorZ());
-			if ((($iterator->getCurrent()->getFullBlock($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta())) {
+			if ($this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($check->getX() & 0x0f, $check->getY() & 0x0f, $check->getZ() & 0x0f))) {
 				return true;
 			}
 		}

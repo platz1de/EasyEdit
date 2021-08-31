@@ -25,7 +25,7 @@ class BelowPattern extends Pattern
 		$y++;
 		if ($y < World::Y_MAX) {
 			$iterator->moveTo($x, $y, $z);
-			return ((($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta()));
+			return $this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
 		}
 		return false;
 	}

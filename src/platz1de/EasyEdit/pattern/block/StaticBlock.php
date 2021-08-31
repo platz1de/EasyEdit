@@ -59,4 +59,13 @@ class StaticBlock extends Pattern
 	{
 		return new static([], PatternArgumentData::create()->setRealBlock($block));
 	}
+
+	/**
+	 * @param int $fullBlock
+	 * @return bool
+	 */
+	public function equals(int $fullBlock): bool
+	{
+		return $fullBlock === $this->args->getRealBlock()->getFullId();
+	}
 }

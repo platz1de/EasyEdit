@@ -22,7 +22,7 @@ class BlockPattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		$iterator->moveTo($x, $y, $z);
-		return ((($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS) === $this->args->getBlock()->getId()) && ($this->args->getBlock()->getMeta() === -1 || ($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f) & Block::INTERNAL_METADATA_MASK) === $this->args->getBlock()->getMeta()));
+		return $this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
 	}
 
 	public function check(): void
