@@ -17,6 +17,7 @@ use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\Position;
 use pocketmine\world\World;
@@ -85,11 +86,18 @@ abstract class EditTask extends Threaded
 				$chunkData->putInt($x);
 				$chunkData->putInt($z);
 				$chunk = LoaderManager::getChunk($world, $x, $z);
-				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+				if ($chunk instanceof ChunkData) {
+					foreach ($chunk->getTileNBT() as $tile) {
+						$tileData->putCompound($tile);
+					}
 
-				foreach ($chunk->getNBTtiles() as $tile) {
-					$tileData->putCompound($tile);
+					$chunk = $chunk->getChunk();
+				}else{
+					foreach ($chunk->getTiles() as $tile) {
+						$tileData->putCompound($tile->saveNBT());
+					}
 				}
+				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
 
 				if ($chunks === []) {
 					$this->chunkData = $chunkData->getBuffer();

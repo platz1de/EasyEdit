@@ -7,6 +7,7 @@ use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
+use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -16,9 +17,9 @@ class LoaderManager
 	 * @param World $world
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
-	 * @return Chunk
+	 * @return Chunk|ChunkData
 	 */
-	public static function getChunk(World $world, int $chunkX, int $chunkZ): Chunk
+	public static function getChunk(World $world, int $chunkX, int $chunkZ): Chunk|ChunkData
 	{
 		if ($world->isChunkLoaded($chunkX, $chunkZ)) {
 			$chunk = $world->getChunk($chunkX, $chunkZ);
@@ -26,7 +27,7 @@ class LoaderManager
 			$chunk = $world->getProvider()->loadChunk($chunkX, $chunkZ);
 		}
 
-		if (!$chunk instanceof Chunk) {
+		if (!$chunk instanceof Chunk && !$chunk instanceof ChunkData) {
 			throw new UnexpectedValueException("Could not load chunk " . $chunkX . " " . $chunkZ . ", was it generated first?");
 		}
 
@@ -92,7 +93,7 @@ class LoaderManager
 			}
 		}
 
-		$chunk->setDirty();
+		$chunk->setTerrainDirty();
 
 		(function () use ($z, $x, $chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
