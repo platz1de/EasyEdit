@@ -40,26 +40,10 @@ class StatusCommand extends EasyEditCommand
 				$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
 				break;
 			case EditWorker::STATUS_PREPARING:
-				$status = TextFormat::AQUA . "PREPARING" . TextFormat::RESET . ": ";
-				$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
-				if ($last < 1) {
-					$status .= TextFormat::GREEN . round($last * 1000) . "ms" . TextFormat::RESET;
-				} elseif ($last < 10) {
-					$status .= TextFormat::GOLD . round($last * 1000) . "ms" . TextFormat::RESET;
-				} else {
-					$status .= TextFormat::RED . round($last * 1000) . "ms" . TextFormat::RESET;
-				}
+				$status = TextFormat::AQUA . "PREPARING" . TextFormat::RESET . ": " . self::getColoredTiming();
 				break;
 			case EditWorker::STATUS_RUNNING:
-				$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": ";
-				$last = microtime(true) - EasyEdit::getWorker()->getLastResponse();
-				if ($last < 1) {
-					$status .= TextFormat::GREEN . round($last * 1000) . "ms" . TextFormat::RESET;
-				} elseif ($last < 10) {
-					$status .= TextFormat::GOLD . round($last * 1000) . "ms" . TextFormat::RESET;
-				} else {
-					$status .= TextFormat::RED . round($last * 1000) . "ms" . TextFormat::RESET;
-				}
+				$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();
 				break;
 			default:
 				return;
@@ -71,5 +55,19 @@ class StatusCommand extends EasyEditCommand
 			"{status}" => $status,
 			"{progress}" => $progress
 		]);
+	}
+
+	private static function getColoredTiming(): string
+	{
+		$time = microtime(true) - EasyEdit::getWorker()->getLastResponse();
+		if ($time < 1) {
+			return TextFormat::GREEN . round($time * 1000) . "ms" . TextFormat::RESET;
+		}
+
+		if ($time < 10) {
+			return TextFormat::GOLD . round($time * 1000) . "ms" . TextFormat::RESET;
+		}
+
+		return TextFormat::RED . round($time * 1000) . "ms" . TextFormat::RESET;
 	}
 }
