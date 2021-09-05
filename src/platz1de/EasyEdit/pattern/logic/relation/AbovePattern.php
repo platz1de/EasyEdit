@@ -23,8 +23,7 @@ class AbovePattern extends Pattern
 	{
 		$y--;
 		if ($y >= 0) {
-			$iterator->moveTo($x, $y, $z);
-			return $this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+			return $this->args->getBlock()->equals($iterator->getBlockAt($x, $y, $z));
 		}
 		return false;
 	}

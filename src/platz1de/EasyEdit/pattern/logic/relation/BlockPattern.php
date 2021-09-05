@@ -21,8 +21,7 @@ class BlockPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
-		$iterator->moveTo($x, $y, $z);
-		return $this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+		return $this->args->getBlock()->equals($iterator->getBlockAt($x, $y, $z));
 	}
 
 	public function check(): void

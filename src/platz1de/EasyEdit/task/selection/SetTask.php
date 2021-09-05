@@ -59,8 +59,7 @@ class SetTask extends EditTask
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $pattern, $toUndo, $origin, &$changed, $selection): void {
 			$block = $pattern->getFor($x, $y, $z, $origin, $selection);
 			if ($block instanceof Block) {
-				$iterator->moveTo($x, $y, $z);
-				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
 				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block->getFullId());
 				$changed++;
 

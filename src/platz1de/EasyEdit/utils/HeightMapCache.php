@@ -41,9 +41,8 @@ class HeightMapCache
 			$max = $selection->getCubicEnd()->add(1, 1, 1);
 			for ($x = $min->getFloorX(); $x <= $max->getX(); $x++) {
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
-					$iterator->moveTo($x, World::Y_MIN, $z);
 					$y = $min->getFloorY();
-					while ($y <= $max->getFloorY() && in_array($iterator->getChunk()->getFullBlock($x & 0x0f, $y, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {
@@ -52,7 +51,7 @@ class HeightMapCache
 						self::$lowest[$x][$z] = null;
 					}
 
-					while ($y <= $max->getFloorY() && !in_array($iterator->getChunk()->getFullBlock($x & 0x0f, $y, $z & 0x0f) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+					while ($y <= $max->getFloorY() && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 						$y++;
 					}
 					if ($y < $max->getY()) {

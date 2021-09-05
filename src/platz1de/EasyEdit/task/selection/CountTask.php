@@ -56,8 +56,7 @@ class CountTask extends EditTask
 	{
 		$blocks = $data->getDataKeyed("blocks", []);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$blocks, &$changed): void {
-			$iterator->moveTo($x, $y, $z);
-			$id = $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$id = $iterator->getBlockAt($x, $y, $z);
 			if (isset($blocks[$id])) {
 				$blocks[$id]++;
 			} else {

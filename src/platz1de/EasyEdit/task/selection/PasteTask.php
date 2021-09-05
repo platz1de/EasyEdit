@@ -64,11 +64,9 @@ class PasteTask extends EditTask
 			$ox = $x - $place->getFloorX();
 			$oy = $y - $place->getFloorY();
 			$oz = $z - $place->getFloorZ();
-			$selection->getIterator()->moveTo($ox, $oy, $oz);
-			$block = $selection->getIterator()->getCurrent()->getFullBlock($ox & 0x0f, $oy & 0x0f, $oz & 0x0f);
+			$block = $selection->getIterator()->getBlockAt($ox, $oy, $oz);
 			if (Selection::processBlock($block)) {
-				$iterator->moveTo($x, $y, $z);
-				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
 				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 				$changed++;
 

@@ -22,9 +22,8 @@ class AroundPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
-		foreach((new Vector3($x, $y, $z))->sides() as $side) {
-			$iterator->moveTo($side->getFloorX(), $side->getFloorY(), $side->getFloorZ());
-			if ($this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($side->getX() & 0x0f, $side->getY() & 0x0f, $side->getZ() & 0x0f))) {
+		foreach ((new Vector3($x, $y, $z))->sides() as $side) {
+			if ($this->args->getBlock()->equals($iterator->getBlock($side))) {
 				return true;
 			}
 		}

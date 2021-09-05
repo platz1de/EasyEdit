@@ -62,12 +62,9 @@ class StackTask extends EditTask
 			$originalY = $start->getFloorY() + ($y - $start->getY()) % $originalSize->getY();
 			$originalZ = $start->getFloorZ() + ($z - $start->getZ()) % $originalSize->getZ();
 
-			$iterator->moveTo($originalX, $originalY, $originalZ);
+			$id = $iterator->getBlockAt($originalX, $originalY, $originalZ);
 
-			$id = $iterator->getCurrent()->getFullBlock($originalX & 0x0f, $originalY & 0x0f, $originalZ & 0x0f);
-
-			$iterator->moveTo($x, $y, $z);
-			$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f), false);
+			$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z), false);
 			$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id);
 			$changed++;
 

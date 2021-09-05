@@ -24,8 +24,7 @@ class BelowPattern extends Pattern
 	{
 		$y++;
 		if ($y < World::Y_MAX) {
-			$iterator->moveTo($x, $y, $z);
-			return $this->args->getBlock()->equals($iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+			return $this->args->getBlock()->equals($iterator->getBlockAt($x, $y, $z));
 		}
 		return false;
 	}

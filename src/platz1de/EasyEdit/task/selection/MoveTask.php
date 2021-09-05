@@ -58,9 +58,7 @@ class MoveTask extends EditTask
 		$s = $selection;
 		$direction = $s->getDirection();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $direction): void {
-			$iterator->moveTo($x, $y, $z);
-
-			$id = $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$id = $iterator->getBlockAt($x, $y, $z);
 
 			$toUndo->addBlock($x, $y, $z, $id);
 			$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0);
@@ -69,8 +67,7 @@ class MoveTask extends EditTask
 			$newY = (int) min(World::Y_MAX - 1, max(0, $y + $direction->getY()));
 			$newZ = $z + $direction->getFloorZ();
 
-			$iterator->moveTo($newX, $newY, $newZ);
-			$toUndo->addBlock($newX, $newY, $newZ, $iterator->getCurrent()->getFullBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f), false);
+			$toUndo->addBlock($newX, $newY, $newZ, $iterator->getBlockAt($newX, $newY, $newZ), false);
 			$iterator->getCurrent()->setFullBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id);
 			$changed++;
 

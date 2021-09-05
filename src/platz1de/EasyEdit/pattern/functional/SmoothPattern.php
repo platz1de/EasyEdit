@@ -62,15 +62,13 @@ class SmoothPattern extends Pattern
 			if ($y >= $mid && $y <= $max) {
 				$k = ($y - $mid) / ($max - $mid);
 				$gy = $oMid + round($k * ($oMax - $oMid));
-				$iterator->moveTo($x, (int) $gy, $z);
-				return BlockFactory::getInstance()->fromFullBlock($iterator->getCurrent()->getFullBlock($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+				return BlockFactory::getInstance()->fromFullBlock($iterator->getBlockAt($x, (int) $gy, $z));
 			}
 
 			if ($y <= $mid && $y >= $min) {
 				$k = ($y - $mid) / ($min - $mid);
 				$gy = $oMid + round($k * ($oMin - $oMid));
-				$iterator->moveTo($x, (int) $gy, $z);
-				return BlockFactory::getInstance()->fromFullBlock($iterator->getCurrent()->getFullBlock($x & 0x0f, $gy & 0x0f, $z & 0x0f));
+				return BlockFactory::getInstance()->fromFullBlock($iterator->getBlockAt($x, (int) $gy, $z));
 			}
 		}
 

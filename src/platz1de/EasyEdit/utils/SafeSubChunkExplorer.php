@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use BadMethodCallException;
+use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
 use pocketmine\world\utils\SubChunkExplorer;
@@ -29,5 +30,26 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 			throw new BadMethodCallException("Tried to access unknown Chunk");
 		}
 		return $this->currentChunk;
+	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @return int
+	 */
+	public function getBlock(Vector3 $vector): int
+	{
+		return $this->getBlockAt($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorX());
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @return int
+	 */
+	public function getBlockAt(int $x, int $y, int $z): int
+	{
+		$this->moveTo($x, $y, $z);
+		return $this->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
 	}
 }

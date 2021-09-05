@@ -58,11 +58,9 @@ class RedoTask extends EditTask
 		/** @var StaticBlockListSelection $selection */
 		Selection::validate($selection, StaticBlockListSelection::class);
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $selection, $toUndo, &$changed): void {
-			$selection->getIterator()->moveTo($x, $y, $z);
-			$block = $selection->getIterator()->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
+			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 			if (Selection::processBlock($block)) {
-				$iterator->moveTo($x, $y, $z);
-				$toUndo->addBlock($x, $y, $z, $iterator->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f));
+				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
 				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 				$changed++;
 
