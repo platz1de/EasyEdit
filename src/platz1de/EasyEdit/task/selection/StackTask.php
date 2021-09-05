@@ -62,10 +62,8 @@ class StackTask extends EditTask
 			$originalY = $start->getFloorY() + ($y - $start->getY()) % $originalSize->getY();
 			$originalZ = $start->getFloorZ() + ($z - $start->getZ()) % $originalSize->getZ();
 
-			$id = $iterator->getBlockAt($originalX, $originalY, $originalZ);
-
 			$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z), false);
-			$iterator->setBlockAt($x, $y, $z, $id);
+			$iterator->setBlockAt($x, $y, $z, $iterator->getBlockAt($originalX, $originalY, $originalZ));
 			$changed++;
 
 			if (isset($tiles[World::blockHash($x, $y, $z)])) {
