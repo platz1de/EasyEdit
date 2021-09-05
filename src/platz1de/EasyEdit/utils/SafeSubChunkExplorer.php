@@ -7,6 +7,7 @@ use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
 use pocketmine\world\utils\SubChunkExplorer;
+use pocketmine\world\World;
 
 class SafeSubChunkExplorer extends SubChunkExplorer
 {
@@ -49,6 +50,7 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	 */
 	public function getBlockAt(int $x, int $y, int $z): int
 	{
+		$y = (int) min(World::Y_MAX - 1, max(0, $y));
 		$this->moveTo($x, $y, $z);
 		return $this->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
 	}
@@ -70,6 +72,7 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	 */
 	public function setBlockAt(int $x, int $y, int $z, int $block): void
 	{
+		$y = (int) min(World::Y_MAX - 1, max(0, $y));
 		$this->moveTo($x, $y, $z);
 		$this->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 	}
