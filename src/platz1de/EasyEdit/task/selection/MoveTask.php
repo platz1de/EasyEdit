@@ -61,14 +61,14 @@ class MoveTask extends EditTask
 			$id = $iterator->getBlockAt($x, $y, $z);
 
 			$toUndo->addBlock($x, $y, $z, $id);
-			$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, 0);
+			$iterator->setBlockAt($x, $y, $z, 0);
 
 			$newX = $x + $direction->getFloorX();
 			$newY = (int) min(World::Y_MAX - 1, max(0, $y + $direction->getY()));
 			$newZ = $z + $direction->getFloorZ();
 
 			$toUndo->addBlock($newX, $newY, $newZ, $iterator->getBlockAt($newX, $newY, $newZ), false);
-			$iterator->getCurrent()->setFullBlock($newX & 0x0f, $newY & 0x0f, $newZ & 0x0f, $id);
+			$iterator->setBlockAt($newX, $newY, $newZ, $id);
 			$changed++;
 
 			if (isset($tiles[World::blockHash($newX, $newY, $newZ)])) {

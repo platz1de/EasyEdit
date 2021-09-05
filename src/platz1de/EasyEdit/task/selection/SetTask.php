@@ -60,7 +60,7 @@ class SetTask extends EditTask
 			$block = $pattern->getFor($x, $y, $z, $origin, $selection);
 			if ($block instanceof Block) {
 				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
-				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block->getFullId());
+				$iterator->setBlockAt($x, $y, $z, $block->getFullId());
 				$changed++;
 
 				if (isset($tiles[World::blockHash($x, $y, $z)])) {

@@ -66,7 +66,7 @@ class InsertTask extends EditTask
 			$block = $selection->getIterator()->getBlockAt($ox, $oy, $oz);
 			if (Selection::processBlock($block) && $iterator->getBlockAt($x, $y, $z) === 0) {
 				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
-				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
+				$iterator->setBlockAt($x, $y, $z, $block);
 				$changed++;
 
 				if (isset($tiles[World::blockHash($x, $y, $z)])) {

@@ -52,4 +52,25 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 		$this->moveTo($x, $y, $z);
 		return $this->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
 	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @param int     $block
+	 */
+	public function setBlock(Vector3 $vector, int $block): void
+	{
+		$this->setBlockAt($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorX(), $block);
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @param int $block
+	 */
+	public function setBlockAt(int $x, int $y, int $z, int $block): void
+	{
+		$this->moveTo($x, $y, $z);
+		$this->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
+	}
 }

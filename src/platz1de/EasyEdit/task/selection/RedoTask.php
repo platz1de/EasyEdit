@@ -61,7 +61,7 @@ class RedoTask extends EditTask
 			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 			if (Selection::processBlock($block)) {
 				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
-				$iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
+				$iterator->setBlockAt($x, $y, $z, $block);
 				$changed++;
 
 				if (isset($tiles[World::blockHash($x, $y, $z)])) {

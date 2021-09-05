@@ -64,8 +64,7 @@ abstract class BlockListSelection extends Selection
 			$id = 0xD90; //structure_void
 		}
 		if ($overwrite || $this->iterator->getBlockAt($x, $y, $z) === 0) {
-			$this->iterator->moveTo($x, $y, $z);
-			$this->iterator->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id);
+			$this->iterator->setBlockAt($x, $y, $z, $id);
 		}
 	}
 
