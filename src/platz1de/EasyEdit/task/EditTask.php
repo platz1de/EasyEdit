@@ -92,7 +92,7 @@ abstract class EditTask extends Threaded
 					}
 
 					$chunk = $chunk->getChunk();
-				}else{
+				} else {
 					foreach ($chunk->getTiles() as $tile) {
 						$tileData->putCompound($tile->saveNBT());
 					}
