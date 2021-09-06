@@ -6,7 +6,6 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
-use pocketmine\block\Block;
 use Throwable;
 
 class BlockPattern extends Pattern

@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\utils;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
-use pocketmine\world\World;
 
 class HeightMapCache
 {
