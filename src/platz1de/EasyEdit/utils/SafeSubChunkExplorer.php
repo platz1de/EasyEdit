@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\task\ReferencedChunkManager;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
@@ -11,6 +12,25 @@ use pocketmine\world\World;
 
 class SafeSubChunkExplorer extends SubChunkExplorer
 {
+	/** @var ReferencedChunkManager */
+	protected $world;
+
+	/**
+	 * @param ReferencedChunkManager $world
+	 */
+	public function __construct(ReferencedChunkManager $world)
+	{
+		parent::__construct($world);
+	}
+
+	/**
+	 * @return ReferencedChunkManager
+	 */
+	public function getManager(): ReferencedChunkManager
+	{
+		return $this->world;
+	}
+
 	/**
 	 * @return SubChunk
 	 */
