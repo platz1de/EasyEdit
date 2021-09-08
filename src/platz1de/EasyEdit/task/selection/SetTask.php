@@ -4,20 +4,17 @@ namespace platz1de\EasyEdit\task\selection;
 
 use Closure;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\selection\type\SettingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\Position;
-use pocketmine\world\World;
 
 class SetTask extends EditTask
 {
@@ -44,29 +41,18 @@ class SetTask extends EditTask
 	}
 
 	/**
-	 * @param SafeSubChunkExplorer  $iterator
-	 * @param CompoundTag[]         $tiles
+	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
 	 * @param Pattern               $pattern
 	 * @param Vector3               $place
-	 * @param BlockListSelection    $toUndo
-	 * @param SafeSubChunkExplorer  $origin
-	 * @param int                   $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void
 	{
-		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $pattern, $toUndo, $origin, &$changed, $selection): void {
-			$block = $pattern->getFor($x, $y, $z, $origin, $selection);
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $pattern, $selection): void {
+			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection);
 			if ($block instanceof Block) {
-				$toUndo->addBlock($x, $y, $z, $iterator->getBlockAt($x, $y, $z));
-				$iterator->setBlockAt($x, $y, $z, $block->getFullId());
-				$changed++;
-
-				if (isset($tiles[World::blockHash($x, $y, $z)])) {
-					$toUndo->addTile($tiles[World::blockHash($x, $y, $z)]);
-					unset($tiles[World::blockHash($x, $y, $z)]);
-				}
+				$handler->changeBlock($x, $y, $z, $block->getFullId());
 			}
 		});
 	}

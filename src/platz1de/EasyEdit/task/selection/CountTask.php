@@ -8,15 +8,14 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 
@@ -42,27 +41,22 @@ class CountTask extends EditTask
 	}
 
 	/**
-	 * @param SafeSubChunkExplorer  $iterator
-	 * @param CompoundTag[]         $tiles
+	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
 	 * @param Pattern               $pattern
 	 * @param Vector3               $place
-	 * @param BlockListSelection    $toUndo
-	 * @param SafeSubChunkExplorer  $origin
-	 * @param int                   $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void
 	{
 		$blocks = $data->getDataKeyed("blocks", []);
-		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$blocks, &$changed): void {
-			$id = $iterator->getBlockAt($x, $y, $z);
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, &$blocks): void {
+			$id = $handler->getBlock($x, $y, $z);
 			if (isset($blocks[$id])) {
 				$blocks[$id]++;
 			} else {
 				$blocks[$id] = 1;
 			}
-			$changed++;
 		});
 		arsort($blocks, SORT_NUMERIC);
 		$data->setDataKeyed("blocks", $blocks);
@@ -89,7 +83,7 @@ class CountTask extends EditTask
 	 */
 	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => $changed]);
+		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => array_sum($data->getDataKeyed("blocks"))]);
 		$msg = "";
 		foreach ($data->getDataKeyed("blocks") as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";

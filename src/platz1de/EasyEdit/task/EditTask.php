@@ -10,13 +10,10 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\worker\EditWorker;
 use platz1de\EasyEdit\worker\WorkerAdapter;
-use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\Position;
@@ -119,9 +116,6 @@ abstract class EditTask extends Threaded
 		/** @var EditWorker $thread */
 		$thread = Thread::getCurrentThread();
 		$thread->setStatus(EditWorker::STATUS_RUNNING);
-		$manager = new ReferencedChunkManager($this->world);
-		$iterator = new SafeSubChunkExplorer($manager);
-		$origin = new SafeSubChunkExplorer($originManager = clone $manager);
 		$selection = Selection::fastDeserialize($this->selection);
 		$pattern = Pattern::fastDeserialize($this->pattern);
 		/** @var Vector3 $place */
@@ -134,35 +128,19 @@ abstract class EditTask extends Threaded
 			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
 		}
 
-		$chunkData = new ExtendedBinaryStream($this->chunkData);
-		while (!$chunkData->feof()) {
-			$manager->setChunk($x = $chunkData->getInt(), $z = $chunkData->getInt(), $chunk = FastChunkSerializer::deserialize($chunkData->getString()));
+		$handler = EditTaskHandler::fromData($this->world, $this->chunkData, $this->tileData, $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data), $data);
 
-			$originManager->setChunk($x, $z, clone $chunk);
-		}
-
-		$tileData = new ExtendedBinaryStream($this->tileData);
-		$tiles = [];
-		while (!$tileData->feof()) {
-			$tile = $tileData->getCompound();
-			$tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
-		}
-
-		$toUndo = $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data);
-
-		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . count($manager->getChunks()) . " Chunks");
-
-		$changed = 0;
+		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks");
 
 		HeightMapCache::prepare();
 
 		try {
-			$this->execute($iterator, $tiles, $selection, $pattern, $place, $toUndo, $origin, $changed, $data);
-			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $changed . " blocks");
+			$this->execute($handler, $selection, $pattern, $place, $data);
+			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks");
 
-			$result = new EditTaskResult($this->world, $toUndo, $tiles, microtime(true) - $start, $changed);
+			$result = new EditTaskResult($this->world, $handler->getChanges(), $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
 
-			foreach ($manager->getChunks() as $hash => $chunk) {
+			foreach ($handler->getResult()->getChunks() as $hash => $chunk) {
 				World::getXZ($hash, $x, $z);
 				//separate chunks which are only loaded for patterns
 				if ($selection->isChunkOfSelection($x, $z, $place)) {
@@ -199,17 +177,13 @@ abstract class EditTask extends Threaded
 	abstract public function getTaskName(): string;
 
 	/**
-	 * @param SafeSubChunkExplorer  $iterator
-	 * @param CompoundTag[]         $tiles
+	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
 	 * @param Pattern               $pattern
 	 * @param Vector3               $place
-	 * @param BlockListSelection    $toUndo also used as return value of Task for things like copy
-	 * @param SafeSubChunkExplorer  $origin original World, used for patterns
-	 * @param int                   $changed
 	 * @param AdditionalDataManager $data
 	 */
-	abstract public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void;
+	abstract public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void;
 
 	/**
 	 * @return int

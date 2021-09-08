@@ -10,17 +10,14 @@ use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
-use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\Position;
-use pocketmine\world\World;
 
 class CopyTask extends EditTask
 {
@@ -50,26 +47,17 @@ class CopyTask extends EditTask
 	}
 
 	/**
-	 * @param SafeSubChunkExplorer  $iterator
-	 * @param CompoundTag[]         $tiles
+	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
 	 * @param Pattern               $pattern
 	 * @param Vector3               $place
-	 * @param BlockListSelection    $toUndo
-	 * @param SafeSubChunkExplorer  $origin
-	 * @param int                   $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public function execute(SafeSubChunkExplorer $iterator, array &$tiles, Selection $selection, Pattern $pattern, Vector3 $place, BlockListSelection $toUndo, SafeSubChunkExplorer $origin, int &$changed, AdditionalDataManager $data): void
+	public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void
 	{
 		$full = TaskCache::getFullSelection();
-		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($iterator, &$tiles, $toUndo, &$changed, $full): void {
-			$toUndo->addBlock($x - $full->getPos1()->getFloorX(), $y - $full->getPos1()->getFloorY(), $z - $full->getPos1()->getFloorZ(), $iterator->getBlockAt($x, $y, $z));
-			$changed++;
-
-			if (isset($tiles[World::blockHash($x, $y, $z)])) {
-				$toUndo->addTile(TileUtils::offsetCompound($tiles[World::blockHash($x, $y, $z)], $full->getPos1()->multiply(-1)));
-			}
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $full): void {
+			$handler->addToUndo($x, $y, $z, $full->getPos1()->multiply(-1));
 		});
 	}
 
