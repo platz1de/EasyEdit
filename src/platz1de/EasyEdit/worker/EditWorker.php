@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\worker;
 
+use BadMethodCallException;
 use pocketmine\thread\Worker;
 use ThreadedLogger;
 
@@ -40,6 +41,18 @@ class EditWorker extends Worker
 	public function getLogger(): ThreadedLogger
 	{
 		return $this->logger;
+	}
+
+	/**
+	 * @return EditWorker
+	 */
+	public static function getInstance(): EditWorker
+	{
+		$thread = self::getCurrentThread();
+		if (!$thread instanceof self) {
+			throw new BadMethodCallException("EditWorker::getInstance is only callable from the edit thread");
+		}
+		return $thread;
 	}
 
 	/**
