@@ -86,10 +86,6 @@ class LoaderManager
 				foreach ($old->getTiles() as $tile) {
 					$tile->close();
 				}
-				foreach ($old->getEntities() as $entity) {
-					$chunk->addEntity($entity);
-					$old->removeEntity($entity);
-				}
 			}
 		}
 
