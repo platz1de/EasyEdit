@@ -101,7 +101,7 @@ class LoaderManager
 			}
 		})->call($world);
 
-		//TODO: In 1.17 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
+		//TODO: In 1.16 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
 	}
 
 	/**
