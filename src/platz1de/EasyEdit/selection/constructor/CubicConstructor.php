@@ -1,6 +1,8 @@
 <?php
 
+namespace platz1de\EasyEdit\selection\constructor;
 
+use Closure;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
