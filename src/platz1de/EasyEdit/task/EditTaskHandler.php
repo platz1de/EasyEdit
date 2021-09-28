@@ -29,7 +29,7 @@ class EditTaskHandler
 	private array $tiles;
 
 	//TODO: Split into multiple types
-	private int $changedBlocks;
+	private int $changedBlocks = 0;
 
 	/**
 	 * @param ReferencedChunkManager $origin  Edited Chunks
