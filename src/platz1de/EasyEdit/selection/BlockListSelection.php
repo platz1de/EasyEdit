@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
-use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
@@ -16,7 +15,6 @@ use pocketmine\world\World;
 abstract class BlockListSelection extends Selection
 {
 	use CubicChunkLoader;
-	use CubicIterator;
 
 	private ReferencedChunkManager $manager;
 	private SafeSubChunkExplorer $iterator;

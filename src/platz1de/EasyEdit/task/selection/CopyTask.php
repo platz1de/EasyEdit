@@ -49,11 +49,10 @@ class CopyTask extends EditTask
 	/**
 	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
-	 * @param Pattern               $pattern
 	 * @param Vector3               $place
 	 * @param AdditionalDataManager $data
 	 */
-	public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void
+	public function execute(EditTaskHandler $handler, Selection $selection, Vector3 $place, AdditionalDataManager $data): void
 	{
 		$full = TaskCache::getFullSelection();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $full): void {

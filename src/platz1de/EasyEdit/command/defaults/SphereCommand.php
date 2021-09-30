@@ -34,6 +34,6 @@ class SphereCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue(new Sphere($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]), $pattern, $player->getPosition());
+		SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]), $pattern, $player->getPosition());
 	}
 }

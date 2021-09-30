@@ -128,14 +128,14 @@ abstract class EditTask extends Threaded
 			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
 		}
 
-		$handler = EditTaskHandler::fromData($this->world, $this->chunkData, $this->tileData, $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data), $data);
+		$handler = EditTaskHandler::fromData($this->world, $this->chunkData, $this->tileData, $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data), $data, $pattern);
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks");
 
 		HeightMapCache::prepare();
 
 		try {
-			$this->execute($handler, $selection, $pattern, $place, $data);
+			$this->execute($handler, $selection, $place, $data);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks");
 
 			$result = new EditTaskResult($this->world, $handler->getChanges(), $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
@@ -179,11 +179,10 @@ abstract class EditTask extends Threaded
 	/**
 	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
-	 * @param Pattern               $pattern
 	 * @param Vector3               $place
 	 * @param AdditionalDataManager $data
 	 */
-	abstract public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void;
+	abstract public function execute(EditTaskHandler $handler, Selection $selection, Vector3 $place, AdditionalDataManager $data): void;
 
 	/**
 	 * @return int

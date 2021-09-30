@@ -6,6 +6,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
 use Throwable;
@@ -67,5 +68,10 @@ class StaticBlock extends Pattern
 	public function equals(int $fullBlock): bool
 	{
 		return $fullBlock === $this->args->getRealBlock()->getFullId();
+	}
+
+	public function getSelectionContext(): int
+	{
+		return SelectionContext::FULL;
 	}
 }

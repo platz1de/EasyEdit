@@ -2,17 +2,16 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use platz1de\EasyEdit\selection\cubic\CubicIterator;
+use Closure;
+use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
+use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class StackedCube extends Selection
 {
-	use CubicIterator;
-
 	private Vector3 $direction;
 
 	/**
@@ -67,6 +66,16 @@ class StackedCube extends Selection
 		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
 
 		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
+	}
+
+	/**
+	 * @param Vector3 $place
+	 * @param Closure $closure
+	 * @param int     $context
+	 */
+	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
+	{
+		CubicConstructor::betweenPoints($this->getCubicStart(), $this->getCubicEnd(), $closure);
 	}
 
 	/**

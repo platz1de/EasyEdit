@@ -40,11 +40,10 @@ class StackTask extends EditTask
 	/**
 	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
-	 * @param Pattern               $pattern
 	 * @param Vector3               $place
 	 * @param AdditionalDataManager $data
 	 */
-	public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void
+	public function execute(EditTaskHandler $handler, Selection $selection, Vector3 $place, AdditionalDataManager $data): void
 	{
 		/** @var StackedCube $selection */
 		$originalSize = $selection->getPos2()->subtractVector($selection->getPos1())->add(1, 1, 1);

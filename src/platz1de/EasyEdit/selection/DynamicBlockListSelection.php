@@ -3,10 +3,10 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\utils\Utils;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use UnexpectedValueException;
@@ -69,20 +69,11 @@ class DynamicBlockListSelection extends BlockListSelection
 	/**
 	 * @param Vector3 $place
 	 * @param Closure $closure
-	 * @return void
+	 * @param int     $context
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
+	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
 	{
-		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
-		$min = VectorUtils::enforceHeight($this->pos1->addVector($place));
-		$max = VectorUtils::enforceHeight($this->pos2->addVector($place));
-		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
-			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
-				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
-					$closure($x, $y, $z);
-				}
-			}
-		}
+		CubicConstructor::betweenPoints($this->getPos1()->addVector($place), $this->getPos2()->addVector($place), $closure);
 	}
 
 	/**

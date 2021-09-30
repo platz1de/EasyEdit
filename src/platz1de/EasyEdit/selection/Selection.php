@@ -6,9 +6,9 @@ use Closure;
 use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
-use pocketmine\world\World;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 use UnexpectedValueException;
 
 abstract class Selection
@@ -88,9 +88,9 @@ abstract class Selection
 	/**
 	 * @param Vector3 $place
 	 * @param Closure $closure
-	 * @return void
+	 * @param int     $context
 	 */
-	abstract public function useOnBlocks(Vector3 $place, Closure $closure): void;
+	abstract public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void;
 
 	/**
 	 * @return bool

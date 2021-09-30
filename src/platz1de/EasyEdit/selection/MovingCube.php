@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
+use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class MovingCube extends Selection
@@ -77,9 +77,9 @@ class MovingCube extends Selection
 	/**
 	 * @param Vector3 $place
 	 * @param Closure $closure
-	 * @return void
+	 * @param int     $context
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure): void
+	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
 	{
 		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$min = VectorUtils::enforceHeight($this->pos1);

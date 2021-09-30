@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
+use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
@@ -9,6 +11,11 @@ use UnexpectedValueException;
 
 class StaticBlockListSelection extends BlockListSelection
 {
+	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
+	{
+		CubicConstructor::betweenPoints($this->getPos1(), $this->getPos2(), $closure);
+	}
+
 	/**
 	 * splits into 3x3 Chunk pieces
 	 * @param Vector3 $offset

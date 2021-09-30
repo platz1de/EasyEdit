@@ -2,12 +2,15 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use Closure;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
-use platz1de\EasyEdit\selection\cubic\CubicIterator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HighlightingManager;
+use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\World;
@@ -16,7 +19,6 @@ use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned
 {
-	use CubicIterator;
 	use CubicChunkLoader;
 
 	private int $structure = 0;
@@ -89,6 +91,34 @@ class Cube extends Selection implements Patterned
 			}
 		}
 		return $pieces;
+	}
+
+	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
+	{
+		if ($context === SelectionContext::NONE) {
+			return;
+		}
+
+		if ($context === SelectionContext::FULL) {
+			CubicConstructor::betweenPoints($this->getPos1(), $this->getPos2(), $closure);
+		} else {
+			if (($context & SelectionContext::FILLING) === SelectionContext::FILLING) {
+				//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
+				CubicConstructor::betweenPoints(Vector3::maxComponents(TaskCache::getFullSelection()->getCubicStart()->add(1, 1, 1), $this->getCubicStart()), Vector3::minComponents(TaskCache::getFullSelection()->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd()), $closure);
+			}
+
+			if (($context & SelectionContext::HOLLOW) === SelectionContext::HOLLOW) {
+				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::ALL, $closure);
+			} elseif (($context & SelectionContext::WALLS) === SelectionContext::WALLS) {
+				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $closure);
+			} elseif (($context & SelectionContext::TOP_BOTTOM) === SelectionContext::TOP_BOTTOM) {
+				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), [Facing::DOWN, Facing::UP], $closure);
+			}
+
+			if (($context & SelectionContext::CENTER) === SelectionContext::CENTER) {
+				CubicConstructor::betweenPoints(Vector3::maxComponents(TaskCache::getFullSelection()->getPos1()->addVector(TaskCache::getFullSelection()->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents(TaskCache::getFullSelection()->getPos1()->addVector(TaskCache::getFullSelection()->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
+			}
+		}
 	}
 
 	/**

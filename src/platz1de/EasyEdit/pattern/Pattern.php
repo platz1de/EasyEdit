@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\pattern;
 
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
@@ -60,6 +61,19 @@ class Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
 		return true;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSelectionContext(): int
+	{
+		if (static::class === __CLASS__ && $this->pieces === []) {
+			return SelectionContext::FULL; //TODO: Add separate Mask pattern types
+		}
+		return SelectionContext::mergeContexts(array_map(static function (Pattern $child): int {
+			return $child->getSelectionContext();
+		}, $this->pieces));
 	}
 
 	/**

@@ -31,7 +31,7 @@ class ExtinguishCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		if (isset($args[0])) {
-			$selection = new Sphere($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]);
+			$selection = Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]);
 		} else {
 			try {
 				$selection = SelectionManager::getFromPlayer($player->getName());

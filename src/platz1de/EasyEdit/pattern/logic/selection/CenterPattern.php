@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\pattern\logic\selection;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TaskCache;
 
@@ -27,5 +28,10 @@ class CenterPattern extends Pattern
 		$zPos = ($min->getZ() + $max->getZ()) / 2;
 
 		return floor($xPos) <= $x && $x <= ceil($xPos) && floor($yPos) <= $y && $y <= ceil($yPos) && floor($zPos) <= $z && $z <= ceil($zPos);
+	}
+
+	public function getSelectionContext(): int
+	{
+		return SelectionContext::CENTER;
 	}
 }

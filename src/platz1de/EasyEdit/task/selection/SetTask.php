@@ -43,17 +43,16 @@ class SetTask extends EditTask
 	/**
 	 * @param EditTaskHandler       $handler
 	 * @param Selection             $selection
-	 * @param Pattern               $pattern
 	 * @param Vector3               $place
 	 * @param AdditionalDataManager $data
 	 */
-	public function execute(EditTaskHandler $handler, Selection $selection, Pattern $pattern, Vector3 $place, AdditionalDataManager $data): void
+	public function execute(EditTaskHandler $handler, Selection $selection, Vector3 $place, AdditionalDataManager $data): void
 	{
-		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $pattern, $selection): void {
-			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection);
+		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $selection): void {
+			$block = $handler->getPattern()->getFor($x, $y, $z, $handler->getOrigin(), $selection);
 			if ($block instanceof Block) {
 				$handler->changeBlock($x, $y, $z, $block->getFullId());
 			}
-		});
+		}, $handler->getSelectionContext());
 	}
 }

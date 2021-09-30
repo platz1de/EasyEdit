@@ -3,9 +3,11 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\ParseError;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternParser;
-use platz1de\EasyEdit\selection\HollowCylinder;
+use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\player\Player;
 
@@ -28,12 +30,13 @@ class HollowCylinderCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = PatternParser::parseInput($args[2], $player);
+			$pattern = new Pattern([new SidesPattern(PatternParser::parseInputArgument($args[2], $player))]);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;
 		}
 
-		SetTask::queue(new HollowCylinder($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0], (int) $args[1], (int) ($args[3] ?? 1)), $pattern, $player->getPosition());
+		//TODO thickness
+		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0], (int) $args[1]), $pattern, $player->getPosition());
 	}
 }
