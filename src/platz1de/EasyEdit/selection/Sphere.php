@@ -131,11 +131,11 @@ class Sphere extends Selection implements Patterned
 		}
 
 		//TODO: offset
-		$radius = $this->pos2->getFloorX();
+		$radius = $this->getRadius();
 		$pieces = [];
 		for ($x = ($this->pos1->getX() - $radius) >> 4; $x <= ($this->pos1->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->pos1->getZ() - $radius) >> 4; $z <= ($this->pos1->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = self::aroundPoint($this->getPlayer(), $this->getWorldName(), $this->getPoint(), $this->getRadius(), new Vector3(max($x << 4, $this->pos1->getFloorX() - $radius), max($this->pos1->getFloorY() - $radius, 0), max($z << 4, $this->pos1->getFloorZ() - $radius)), new Vector3(min((($x + 2) << 4) + 15, $this->pos1->getFloorX() + $radius), min($this->pos1->getFloorY() + $radius, World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos1->getFloorZ() + $radius)), true);
+				$pieces[] = self::aroundPoint($this->getPlayer(), $this->getWorldName(), $this->getPoint(), $this->getRadius(), new Vector3(max($x << 4, $this->pos1->getFloorX()), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getFloorX()), min($this->pos2->getFloorY(), World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos2->getFloorZ())), true);
 			}
 		}
 		return $pieces;
