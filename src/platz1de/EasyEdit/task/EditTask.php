@@ -1,4 +1,8 @@
 <?php
+/**
+ * pthreads returns null for undefined properties, so we have to use normal ones
+ * @noinspection PhpMissingFieldTypeInspection
+ */
 
 namespace platz1de\EasyEdit\task;
 
@@ -33,16 +37,46 @@ abstract class EditTask extends Threaded
 	 */
 	protected $worker;
 
-	private int $id;
-	private string $chunkData;
-	private string $tileData;
-	private string $selection;
-	private string $pattern;
-	private string $place;
-	private string $world;
-	private string $result;
-	private string $data;
-	private string $total;
+	/**
+	 * @var int
+	 */
+	private $id;
+	/**
+	 * @var string
+	 */
+	private $chunkData;
+	/**
+	 * @var string
+	 */
+	private $tileData;
+	/**
+	 * @var string
+	 */
+	private $selection;
+	/**
+	 * @var string
+	 */
+	private $pattern;
+	/**
+	 * @var string
+	 */
+	private $place;
+	/**
+	 * @var string
+	 */
+	private $world;
+	/**
+	 * @var string
+	 */
+	private $result;
+	/**
+	 * @var string
+	 */
+	private $data;
+	/**
+	 * @var string
+	 */
+	private $total;
 
 	/**
 	 * EditTask constructor.
@@ -122,7 +156,7 @@ abstract class EditTask extends Threaded
 		$place = igbinary_unserialize($this->place);
 		/** @var AdditionalDataManager $data */
 		$data = igbinary_unserialize($this->data);
-		if (isset($this->total)) {
+		if ($this->total !== null) {
 			TaskCache::init(Selection::fastDeserialize($this->total));
 		} elseif ($data->getBoolKeyed("firstPiece")) {
 			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
@@ -213,7 +247,7 @@ abstract class EditTask extends Threaded
 	 */
 	public function getResult(): ?EditTaskResult
 	{
-		if (isset($this->result)) {
+		if ($this->result !== null) {
 			return EditTaskResult::fastDeserialize($this->result);
 		}
 
@@ -225,7 +259,7 @@ abstract class EditTask extends Threaded
 	 */
 	public function getAdditionalData(): ?AdditionalDataManager
 	{
-		if (isset($this->data)) {
+		if ($this->data !== null) {
 			return igbinary_unserialize($this->data);
 		}
 

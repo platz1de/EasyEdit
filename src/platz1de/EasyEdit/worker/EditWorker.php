@@ -1,4 +1,8 @@
 <?php
+/**
+ * pthreads returns null for undefined properties, so we have to use normal ones
+ * @noinspection PhpMissingFieldTypeInspection
+ */
 
 namespace platz1de\EasyEdit\worker;
 
@@ -12,9 +16,15 @@ class EditWorker extends Worker
 	public const STATUS_PREPARING = 1;
 	public const STATUS_RUNNING = 2;
 
-	private ThreadedLogger $logger;
+	/**
+	 * @var ThreadedLogger
+	 */
+	private $logger;
 	private int $status = self::STATUS_IDLE;
-	private float $lastResponse;
+	/**
+	 * @var float
+	 */
+	private $lastResponse;
 
 	/**
 	 * EditWorker constructor.
