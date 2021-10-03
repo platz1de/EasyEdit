@@ -4,12 +4,13 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\ParseError;
-use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use pocketmine\block\VanillaBlocks;
-use pocketmine\math\Vector3;
+use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -27,33 +28,20 @@ class CenterCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			//TODO: Fix parsing
-			//$block = PatternParser::getBlock($args[0]);
-			$block = VanillaBlocks::STONE();
-		} catch (ParseError) {
-			$block = VanillaBlocks::BEDROCK();
+			$pattern = PatternParser::parseInputArgument($args[0] ?? "stone", $player);
+		} catch (ParseError $exception) {
+			$player->sendMessage($exception->getMessage());
+			return;
 		}
 
 		try {
 			$selection = SelectionManager::getFromPlayer($player->getName());
-			Selection::validate($selection, Cube::class);
+			Selection::validate($selection);
 		} catch (Throwable) {
 			Messages::send($player, "no-selection");
 			return;
 		}
 
-		//Move this somewhere else?
-		$xPos = ($selection->getPos1()->getX() + $selection->getPos2()->getX()) / 2;
-		$yPos = ($selection->getPos1()->getY() + $selection->getPos2()->getY()) / 2;
-		$zPos = ($selection->getPos1()->getZ() + $selection->getPos2()->getZ()) / 2;
-		$world = $selection->getWorld();
-
-		for ($x = floor($xPos); $x <= ceil($xPos); $x++) {
-			for ($y = floor($yPos); $y <= ceil($yPos); $y++) {
-				for ($z = floor($zPos); $z <= ceil($zPos); $z++) {
-					$world->setBlock(new Vector3($x, $y, $z), $block, false);
-				}
-			}
-		}
+		SetTask::queue($selection, new Pattern([new CenterPattern($pattern)]), $player->getPosition());
 	}
 }
