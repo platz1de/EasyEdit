@@ -79,7 +79,7 @@ class SelectionContext
 	 */
 	public function includesFilling(): bool
 	{
-		return $this->includeWalls;
+		return $this->includeFilling;
 	}
 
 	/**
