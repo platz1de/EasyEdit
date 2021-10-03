@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\selection;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\MovingCube;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
@@ -51,6 +52,6 @@ class MoveTask extends EditTask
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->changeBlock($x, $y, $z, 0);
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getY(), $z + $direction->getFloorZ(), $x, $y, $z);
-		});
+		}, SelectionContext::full());
 	}
 }

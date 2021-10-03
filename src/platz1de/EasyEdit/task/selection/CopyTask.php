@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\EditTaskResult;
@@ -57,7 +58,7 @@ class CopyTask extends EditTask
 		$full = TaskCache::getFullSelection();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $full): void {
 			$handler->addToUndo($x, $y, $z, $full->getPos1()->multiply(-1));
-		});
+		}, SelectionContext::full());
 	}
 
 	/**

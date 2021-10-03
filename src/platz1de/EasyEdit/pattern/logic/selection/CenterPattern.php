@@ -40,8 +40,11 @@ class CenterPattern extends Pattern
 		throw new ParseError("Center pattern does not support selection of type " . $selection::class);
 	}
 
-	public function getSelectionContext(): int
+	/**
+	 * @param SelectionContext $context
+	 */
+	public function applySelectionContext(SelectionContext $context): void
 	{
-		return SelectionContext::CENTER;
+		$context->includeCenter();
 	}
 }

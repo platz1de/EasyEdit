@@ -93,29 +93,32 @@ class Cube extends Selection implements Patterned
 		return $pieces;
 	}
 
-	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
+	/**
+	 * @param Vector3          $place
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
+	 */
+	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void
 	{
-		if ($context === SelectionContext::NONE) {
+		if ($context->isEmpty()) {
 			return;
 		}
 
-		if ($context === SelectionContext::FULL) {
+		if ($context->isFull()) {
 			CubicConstructor::betweenPoints($this->getPos1(), $this->getPos2(), $closure);
 		} else {
-			if (($context & SelectionContext::FILLING) === SelectionContext::FILLING) {
+			if ($context->includesFilling()) {
 				//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
 				CubicConstructor::betweenPoints(Vector3::maxComponents(TaskCache::getFullSelection()->getCubicStart()->add(1, 1, 1), $this->getCubicStart()), Vector3::minComponents(TaskCache::getFullSelection()->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd()), $closure);
 			}
 
-			if (($context & SelectionContext::HOLLOW) === SelectionContext::HOLLOW) {
+			if ($context->includesAllSides()) {
 				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::ALL, $closure);
-			} elseif (($context & SelectionContext::WALLS) === SelectionContext::WALLS) {
+			} elseif ($context->includesWalls()) {
 				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $closure);
-			} elseif (($context & SelectionContext::TOP_BOTTOM) === SelectionContext::TOP_BOTTOM) {
-				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), [Facing::DOWN, Facing::UP], $closure);
 			}
 
-			if (($context & SelectionContext::CENTER) === SelectionContext::CENTER) {
+			if ($context->includesCenter()) {
 				CubicConstructor::betweenPoints(Vector3::maxComponents(TaskCache::getFullSelection()->getPos1()->addVector(TaskCache::getFullSelection()->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents(TaskCache::getFullSelection()->getPos1()->addVector(TaskCache::getFullSelection()->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
 			}
 		}

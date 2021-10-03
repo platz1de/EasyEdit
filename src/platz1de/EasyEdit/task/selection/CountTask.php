@@ -6,6 +6,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
@@ -56,7 +57,7 @@ class CountTask extends EditTask
 			} else {
 				$blocks[$id] = 1;
 			}
-		});
+		}, SelectionContext::full());
 		arsort($blocks, SORT_NUMERIC);
 		$data->setDataKeyed("blocks", $blocks);
 	}

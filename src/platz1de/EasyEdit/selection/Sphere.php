@@ -37,29 +37,31 @@ class Sphere extends Selection implements Patterned
 		return $sphere;
 	}
 
-	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
+	/**
+	 * @param Vector3          $place
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
+	 */
+	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void
 	{
-		if ($context === SelectionContext::NONE) {
+		if ($context->isEmpty()) {
 			return;
 		}
 
-		if ($context === SelectionContext::FULL) {
+		if ($context->isFull()) {
 			SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), $closure, $this->getPos1(), $this->getPos2());
 		} else {
-			if (($context & SelectionContext::FILLING) === SelectionContext::FILLING) {
+			if ($context->includesFilling()) {
 				SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius() - 1, $closure, $this->getPos1(), $this->getPos2());
 			}
 
-			if (($context & SelectionContext::HOLLOW) === SelectionContext::HOLLOW) {
+			if ($context->includesAllSides()) {
 				SphericalConstructor::aroundPointHollow($this->getPoint(), $this->getRadius(), 1, $closure, $this->getPos1(), $this->getPos2());
-			} elseif (($context & SelectionContext::WALLS) === SelectionContext::WALLS) {
+			} elseif ($context->includesWalls()) {
 				CylindricalConstructor::tubeAround($this->getPoint()->down((int) $this->getRadius()), $this->getRadius(), 1, (int) $this->getRadius() * 2 + 1, $closure, $this->getPos1(), $this->getPos2());
-			} elseif (($context & SelectionContext::TOP_BOTTOM) === SelectionContext::TOP_BOTTOM) {
-				CylindricalConstructor::aroundPoint($this->getPos1()->down((int) $this->getRadius()), $this->getRadius(), 1, $closure, $this->getPos1(), $this->getPos2());
-				CylindricalConstructor::aroundPoint($this->getPos1()->up((int) $this->getRadius()), $this->getRadius(), 1, $closure, $this->getPos1(), $this->getPos2());
 			}
 
-			if (($context & SelectionContext::CENTER) === SelectionContext::CENTER) {
+			if ($context->includesCenter()) {
 				CubicConstructor::single($this->getPos1(), $closure, $this->getPos1(), $this->getPos2());
 			}
 		}

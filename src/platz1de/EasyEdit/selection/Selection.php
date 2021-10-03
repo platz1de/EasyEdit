@@ -86,11 +86,11 @@ abstract class Selection
 	}
 
 	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 * @param int     $context
+	 * @param Vector3          $place
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
 	 */
-	abstract public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void;
+	abstract public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void;
 
 	/**
 	 * @return bool

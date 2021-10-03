@@ -64,16 +64,26 @@ class Pattern
 	}
 
 	/**
-	 * @return int
+	 * @return SelectionContext
 	 */
-	public function getSelectionContext(): int
+	public function getSelectionContext(): SelectionContext
 	{
 		if (static::class === __CLASS__ && $this->pieces === []) {
-			return SelectionContext::FULL; //TODO: Add separate Mask pattern types
+			return SelectionContext::full(); //TODO: Add separate Mask pattern types
 		}
-		return SelectionContext::mergeContexts(array_map(static function (Pattern $child): int {
-			return $child->getSelectionContext();
-		}, $this->pieces));
+		$context = SelectionContext::empty();
+		$this->applySelectionContext($context);
+		return $context;
+	}
+
+	/**
+	 * @param SelectionContext $context
+	 */
+	public function applySelectionContext(SelectionContext $context): void
+	{
+		foreach ($this->pieces as $piece) {
+			$piece->applySelectionContext($context);
+		}
 	}
 
 	/**

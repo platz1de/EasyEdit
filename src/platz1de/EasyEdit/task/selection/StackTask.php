@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\selection;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
@@ -50,6 +51,6 @@ class StackTask extends EditTask
 		$start = $selection->getDirection()->getX() < 0 || $selection->getDirection()->getY() < 0 || $selection->getDirection()->getZ() < 0 ? $selection->getPos2() : $selection->getPos1();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $originalSize, $start): void {
 			$handler->copyBlock($x, $y, $z, $start->getFloorX() + ($x - $start->getX()) % $originalSize->getX(), $start->getFloorY() + ($y - $start->getY()) % $originalSize->getY(), $start->getFloorZ() + ($z - $start->getZ()) % $originalSize->getZ());
-		});
+		}, SelectionContext::full());
 	}
 }

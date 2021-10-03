@@ -39,8 +39,18 @@ class SidesPattern extends Pattern
 		throw new ParseError("Sides pattern does not support selection of type " . $selection::class);
 	}
 
-	public function getSelectionContext(): int
+	/**
+	 * @param SelectionContext $context
+	 */
+	public function applySelectionContext(SelectionContext $context): void
 	{
-		return SelectionContext::HOLLOW;
+		$context->includeWalls()->includeVerticals();
+	}
+
+	public function check(): void
+	{
+		if ($this->args->getInt("thickness") === -1) {
+			$this->args->setInt("thickness", 1);
+		}
 	}
 }

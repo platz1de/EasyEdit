@@ -70,8 +70,11 @@ class StaticBlock extends Pattern
 		return $fullBlock === $this->args->getRealBlock()->getFullId();
 	}
 
-	public function getSelectionContext(): int
+	/**
+	 * @param SelectionContext $context
+	 */
+	public function applySelectionContext(SelectionContext $context): void
 	{
-		return SelectionContext::FULL;
+		$context->includeWalls()->includeVerticals()->includeFilling();
 	}
 }

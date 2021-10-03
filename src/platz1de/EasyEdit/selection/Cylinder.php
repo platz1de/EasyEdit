@@ -40,33 +40,30 @@ class Cylinder extends Selection implements Patterned
 	}
 
 	/**
-	 * @param Vector3 $place
-	 * @param Closure $closure
-	 * @param int     $context
+	 * @param Vector3          $place
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, int $context = SelectionContext::FULL): void
+	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void
 	{
-		if ($context === SelectionContext::NONE) {
+		if ($context->isEmpty()) {
 			return;
 		}
 
-		if ($context === SelectionContext::FULL) {
+		if ($context->isFull()) {
 			CylindricalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
 		} else {
-			if (($context & SelectionContext::FILLING) === SelectionContext::FILLING) {
+			if ($context->includesFilling()) {
 				CylindricalConstructor::aroundPoint($this->getPoint(), $this->getRadius() - 1, $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
 			}
 
-			if (($context & SelectionContext::HOLLOW) === SelectionContext::HOLLOW) {
+			if ($context->includesAllSides()) {
 				CylindricalConstructor::hollowAround($this->getPoint(), $this->getRadius(), 1, $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
-			} elseif (($context & SelectionContext::WALLS) === SelectionContext::WALLS) {
+			} elseif ($context->includesWalls()) {
 				CylindricalConstructor::tubeAround($this->getPoint(), $this->getRadius(), 1, $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
-			} elseif (($context & SelectionContext::TOP_BOTTOM) === SelectionContext::TOP_BOTTOM) {
-				CylindricalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), 1, $closure, $this->getPos1(), $this->getPos2());
-				CylindricalConstructor::aroundPoint($this->getPoint()->up($this->getHeight() - 1), $this->getRadius(), 1, $closure, $this->getPos1(), $this->getPos2());
 			}
 
-			if (($context & SelectionContext::CENTER) === SelectionContext::CENTER) {
+			if ($context->includesCenter()) {
 				CubicConstructor::single($this->getPoint(), $closure, $this->getPos1(), $this->getPos2());
 			}
 		}

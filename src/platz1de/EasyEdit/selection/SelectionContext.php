@@ -4,59 +4,143 @@ namespace platz1de\EasyEdit\selection;
 
 class SelectionContext
 {
-	public const NONE = 0;
-	public const CENTER = 1;
-	public const WALLS = 2;
-	public const TOP_BOTTOM = 4;
-	public const HOLLOW = 6;
-	public const FILLING = 8; //includes center
-	public const FULL = 14;
+	private bool $includeCenter = false;
+	private bool $includeWalls = false;
+	private bool $includeVerticals = false;
+	private bool $includeFilling = false;
 
-	/**
-	 * @param int[] $contexts
-	 * @return int
-	 */
-	public static function mergeContexts(array $contexts): int
+	public static function empty(): SelectionContext
 	{
-		if (in_array(self::FULL, $contexts)) {
-			return self::FULL;
-		}
-		$c = self::NONE;
-		foreach ($contexts as $context) {
-			$c |= $context;
-		}
-		if (($c & self::CENTER) !== 0 && ($c & self::FILLING) !== 0) {
-			return $c ^ self::CENTER; //Center is included in filling
-		}
-		return $c;
+		return new self();
+	}
+
+	public static function full(): SelectionContext
+	{
+		return (new self())->includeWalls()->includeVerticals()->includeFilling();
+	}
+
+	public static function hollow(): SelectionContext
+	{
+		return (new self())->includeWalls()->includeVerticals();
+	}
+
+	public static function walls(): SelectionContext
+	{
+		return (new self())->includeWalls();
+	}
+
+	public static function center(): SelectionContext
+	{
+		return (new self())->includeCenter();
 	}
 
 	/**
-	 * @param int $context
+	 * @return bool
+	 */
+	public function isEmpty(): bool
+	{
+		return !$this->includeWalls && !$this->includeVerticals && !$this->includeFilling && !$this->includeCenter;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isFull(): bool
+	{
+		return $this->includeWalls && $this->includeVerticals && $this->includeFilling;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function includesAllSides(): bool
+	{
+		return $this->includeWalls && $this->includeVerticals;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function includesWalls(): bool
+	{
+		return $this->includeWalls;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function includesCenter(): bool
+	{
+		return $this->includeCenter && !$this->includeFilling;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function includesFilling(): bool
+	{
+		return $this->includeWalls;
+	}
+
+	/**
 	 * @return string
 	 */
-	public static function getName(int $context): string
+	public function getName(): string
 	{
-		if ($context === self::NONE) {
+		if ($this->isEmpty()) {
 			return "none";
 		}
-		if ($context === self::FULL) {
+		if ($this->isFull()) {
 			return "full";
 		}
 		$c = [];
-		if (($context & self::FILLING) !== 0) {
+		if ($this->includesFilling()) {
 			$c[] = "filled";
 		}
-		if (($context & self::HOLLOW) === self::HOLLOW) {
+		if ($this->includesAllSides()) {
 			$c[] = "hollow";
-		} else if (($context & self::TOP_BOTTOM) !== 0) {
-			$c[] = "vertical";
-		} else if (($context & self::WALLS) !== 0) {
+		} else if ($this->includesWalls()) {
 			$c[] = "walled";
 		}
-		if (($context & self::CENTER) !== 0) {
+		if ($this->includesCenter()) {
 			$c[] = "center";
 		}
 		return implode(" ", $c);
+	}
+
+	/**
+	 * @return SelectionContext
+	 */
+	public function includeCenter(): SelectionContext
+	{
+		$this->includeCenter = true;
+		return $this;
+	}
+
+	/**
+	 * @return SelectionContext
+	 */
+	public function includeWalls(): SelectionContext
+	{
+		$this->includeWalls = true;
+		return $this;
+	}
+
+	/**
+	 * @return SelectionContext
+	 */
+	public function includeVerticals(): SelectionContext
+	{
+		$this->includeVerticals = true;
+		return $this;
+	}
+
+	/**
+	 * @return SelectionContext
+	 */
+	public function includeFilling(): SelectionContext
+	{
+		$this->includeFilling = true;
+		return $this;
 	}
 }

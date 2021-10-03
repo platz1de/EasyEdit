@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
@@ -20,7 +21,7 @@ class EditTaskHandler
 	private SafeSubChunkExplorer $result; //Write-only
 	private BlockListSelection $changes;
 	private Pattern $pattern;
-	private int $selectionContext;
+	private SelectionContext $selectionContext;
 
 	/**
 	 * @var CompoundTag[]
@@ -40,9 +41,9 @@ class EditTaskHandler
 	 * @param BlockListSelection     $changes Saves made changes, used for undoing
 	 * @param AdditionalDataManager  $data
 	 * @param Pattern                $pattern
-	 * @param int                    $selectionContext
+	 * @param SelectionContext       $selectionContext
 	 */
-	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, AdditionalDataManager $data, Pattern $pattern, int $selectionContext)
+	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, AdditionalDataManager $data, Pattern $pattern, SelectionContext $selectionContext)
 	{
 		//TODO: Never use changes as result (eg. copy)
 		$this->origin = new SafeSubChunkExplorer($origin);
@@ -218,9 +219,9 @@ class EditTaskHandler
 	}
 
 	/**
-	 * @return int
+	 * @return SelectionContext
 	 */
-	public function getSelectionContext(): int
+	public function getSelectionContext(): SelectionContext
 	{
 		return $this->selectionContext;
 	}

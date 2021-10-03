@@ -7,6 +7,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
@@ -57,7 +58,7 @@ class PasteTask extends EditTask
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
-		});
+		}, SelectionContext::full());
 
 		/** @var DynamicBlockListSelection $total */
 		$total = TaskCache::getFullSelection();
