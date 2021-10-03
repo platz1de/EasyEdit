@@ -18,6 +18,10 @@ class PatternArgumentData
 	 * @var int[]
 	 */
 	private array $intData = [];
+	/**
+	 * @var float[]
+	 */
+	private array $floatData = [];
 
 	/**
 	 * @return bool
@@ -125,6 +129,26 @@ class PatternArgumentData
 	}
 
 	/**
+	 * @param string $name
+	 * @return float
+	 */
+	public function getFloat(string $name): float
+	{
+		return $this->floatData[$name] ?? -1.0;
+	}
+
+	/**
+	 * @param string $name
+	 * @param float  $float
+	 * @return $this
+	 */
+	public function setFloat(string $name, float $float): PatternArgumentData
+	{
+		$this->floatData[$name] = $float;
+		return $this;
+	}
+
+	/**
 	 * @param array<int, mixed> $args
 	 * @return PatternArgumentData
 	 */
@@ -191,6 +215,12 @@ class PatternArgumentData
 			$stream->putInt($int);
 		}
 
+		$stream->putInt(count($this->floatData));
+		foreach ($this->floatData as $name => $float) {
+			$stream->putString($name);
+			$stream->putFloat($float);
+		}
+
 		return $stream->getBuffer();
 	}
 
@@ -222,6 +252,10 @@ class PatternArgumentData
 
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$result->intData[$stream->getString()] = $stream->getInt();
+		}
+
+		for ($i = $stream->getInt(); $i > 0; $i--) {
+			$result->floatData[$stream->getString()] = $stream->getFloat();
 		}
 
 		return $result;

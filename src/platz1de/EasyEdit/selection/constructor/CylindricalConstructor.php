@@ -95,7 +95,7 @@ class CylindricalConstructor
 	public static function hollowAround(Vector3 $point, float $radius, float $thickness, int $height, Closure $closure, Vector3 $min = null, Vector3 $max = null): void
 	{
 		self::tubeAround($point->up(), $radius, $thickness, $height - 2, $closure, $min, $max);
-		self::aroundPoint($point, $radius, 1, $closure, $min, $max);
-		self::aroundPoint($point->up($height - 1), $radius, 1, $closure, $min, $max);
+		self::aroundPoint($point, $radius, (int) $thickness, $closure, $min, $max);
+		self::aroundPoint($point->up($height - 1), $radius, (int) $thickness, $closure, $min, $max);
 	}
 }

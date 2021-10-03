@@ -56,9 +56,9 @@ class Sphere extends Selection implements Patterned
 			}
 
 			if ($context->includesAllSides()) {
-				SphericalConstructor::aroundPointHollow($this->getPoint(), $this->getRadius(), 1, $closure, $this->getPos1(), $this->getPos2());
+				SphericalConstructor::aroundPointHollow($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $closure, $this->getPos1(), $this->getPos2());
 			} elseif ($context->includesWalls()) {
-				CylindricalConstructor::tubeAround($this->getPoint()->down((int) $this->getRadius()), $this->getRadius(), 1, (int) $this->getRadius() * 2 + 1, $closure, $this->getPos1(), $this->getPos2());
+				CylindricalConstructor::tubeAround($this->getPoint()->down((int) $this->getRadius()), $this->getRadius(), $context->getSideThickness(), (int) $this->getRadius() * 2 + 1, $closure, $this->getPos1(), $this->getPos2());
 			}
 
 			if ($context->includesCenter()) {

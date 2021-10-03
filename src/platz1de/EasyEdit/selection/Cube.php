@@ -113,9 +113,9 @@ class Cube extends Selection implements Patterned
 			}
 
 			if ($context->includesAllSides()) {
-				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::ALL, $closure);
+				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::ALL, $context->getSideThickness(), $closure);
 			} elseif ($context->includesWalls()) {
-				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $closure);
+				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $context->getSideThickness(), $closure);
 			}
 
 			if ($context->includesCenter()) {

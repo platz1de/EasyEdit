@@ -58,9 +58,9 @@ class Cylinder extends Selection implements Patterned
 			}
 
 			if ($context->includesAllSides()) {
-				CylindricalConstructor::hollowAround($this->getPoint(), $this->getRadius(), 1, $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
+				CylindricalConstructor::hollowAround($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
 			} elseif ($context->includesWalls()) {
-				CylindricalConstructor::tubeAround($this->getPoint(), $this->getRadius(), 1, $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
+				CylindricalConstructor::tubeAround($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $this->getHeight(), $closure, $this->getPos1(), $this->getPos2());
 			}
 
 			if ($context->includesCenter()) {

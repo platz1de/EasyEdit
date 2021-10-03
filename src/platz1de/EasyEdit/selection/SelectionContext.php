@@ -9,6 +9,8 @@ class SelectionContext
 	private bool $includeVerticals = false;
 	private bool $includeFilling = false;
 
+	private float $sideThickness = 0;
+
 	public static function empty(): SelectionContext
 	{
 		return new self();
@@ -118,19 +120,23 @@ class SelectionContext
 	}
 
 	/**
+	 * @param float $thickness
 	 * @return SelectionContext
 	 */
-	public function includeWalls(): SelectionContext
+	public function includeWalls(float $thickness = 1): SelectionContext
 	{
+		$this->sideThickness = max($this->sideThickness, $thickness);
 		$this->includeWalls = true;
 		return $this;
 	}
 
 	/**
+	 * @param float $thickness
 	 * @return SelectionContext
 	 */
-	public function includeVerticals(): SelectionContext
+	public function includeVerticals(float $thickness = 1): SelectionContext
 	{
+		$this->sideThickness = max($this->sideThickness, $thickness);
 		$this->includeVerticals = true;
 		return $this;
 	}
@@ -142,5 +148,13 @@ class SelectionContext
 	{
 		$this->includeFilling = true;
 		return $this;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getSideThickness(): float
+	{
+		return $this->includesFilling() ? 1 : $this->sideThickness;
 	}
 }

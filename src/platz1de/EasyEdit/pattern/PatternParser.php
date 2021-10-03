@@ -236,10 +236,10 @@ class PatternParser
 				return new SmoothPattern([]);
 			case "walls":
 			case "wall":
-				return new WallPattern($children);
+				return new WallPattern($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0)));
 			case "sides":
 			case "side":
-				return new SidesPattern($children);
+				return new SidesPattern($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0)));
 			case "center":
 			case "middle":
 				return new CenterPattern($children);

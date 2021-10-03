@@ -6,6 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
@@ -30,13 +31,12 @@ class HollowSphereCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = new Pattern([new SidesPattern(PatternParser::parseInputArgument($args[1], $player))]);
+			$pattern = new Pattern([new SidesPattern(PatternParser::parseInputArgument($args[1], $player), PatternArgumentData::create()->setFloat("thickness", (float) ($args[2] ?? 1.0)))]);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;
 		}
 
-		//TODO thickness
-		SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]), $pattern, $player->getPosition());
+		SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]), $pattern, $player->getPosition());
 	}
 }

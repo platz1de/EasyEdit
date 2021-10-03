@@ -34,29 +34,30 @@ class CubicConstructor
 	 * @param Vector3 $start
 	 * @param Vector3 $end
 	 * @param int     $side
+	 * @param float   $thickness
 	 * @param Closure $closure
 	 * @return void
 	 */
-	public static function onSide(Vector3 $start, Vector3 $end, int $side, Closure $closure): void
+	public static function onSide(Vector3 $start, Vector3 $end, int $side, float $thickness, Closure $closure): void
 	{
 		switch ($side) {
 			case Facing::DOWN:
-				self::betweenPoints($start, $end->withComponents(null, $start->getY(), null), $closure);
+				self::betweenPoints($start, $end->withComponents(null, $start->getY() + $thickness - 1, null), $closure);
 				break;
 			case Facing::UP:
-				self::betweenPoints($start->withComponents(null, $end->getY(), null), $end, $closure);
+				self::betweenPoints($start->withComponents(null, $end->getY() - $thickness + 1, null), $end, $closure);
 				break;
 			case Facing::NORTH:
-				self::betweenPoints($start, $end->withComponents(null, null, $start->getZ()), $closure);
+				self::betweenPoints($start, $end->withComponents(null, null, $start->getZ() + $thickness - 1), $closure);
 				break;
 			case Facing::SOUTH:
-				self::betweenPoints($start->withComponents(null, null, $end->getZ()), $end, $closure);
+				self::betweenPoints($start->withComponents(null, null, $end->getZ() - $thickness + 1), $end, $closure);
 				break;
 			case Facing::WEST:
-				self::betweenPoints($start, $end->withComponents($start->getX(), null, null), $closure);
+				self::betweenPoints($start, $end->withComponents($start->getX() + $thickness - 1, null, null), $closure);
 				break;
 			case Facing::EAST:
-				self::betweenPoints($start->withComponents($end->getX(), null, null), $end, $closure);
+				self::betweenPoints($start->withComponents($end->getX() - $thickness + 1, null, null), $end, $closure);
 		}
 	}
 
@@ -64,10 +65,11 @@ class CubicConstructor
 	 * @param Vector3 $start
 	 * @param Vector3 $end
 	 * @param int[]   $sides
+	 * @param float   $thickness
 	 * @param Closure $closure
 	 * @return void
 	 */
-	public static function onSides(Vector3 $start, Vector3 $end, array $sides, Closure $closure): void
+	public static function onSides(Vector3 $start, Vector3 $end, array $sides, float $thickness, Closure $closure): void
 	{
 		//remove duplicate Blocks from sides
 		$xStart = $start;
@@ -94,13 +96,13 @@ class CubicConstructor
 		foreach ($sides as $side) {
 			switch (Facing::axis($side)) {
 				case Axis::Y:
-					self::onSide($start, $end, $side, $closure);
+					self::onSide($start, $end, $side, $thickness, $closure);
 					break;
 				case Axis::X:
-					self::onSide($xStart, $xEnd, $side, $closure);
+					self::onSide($xStart, $xEnd, $side, $thickness, $closure);
 					break;
 				case Axis::Z:
-					self::onSide($zStart, $zEnd, $side, $closure);
+					self::onSide($zStart, $zEnd, $side, $thickness, $closure);
 			}
 		}
 	}

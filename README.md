@@ -4,7 +4,8 @@
 
 Feature-rich WorldEditor for PocketMine-MP
 
-**Note: please don't complain about slow chunk updates, this is caused by a minecraft bug present since 1.17 #BlameMojang**
+**Note: please don't complain about slow chunk updates, this is caused by a minecraft bug present since 1.17
+#BlameMojang**
 
 ## Features
 
@@ -60,18 +61,21 @@ Usage of Patterns: #patternName;arg1;arg2...(block1,block2...)
 Block Patterns are just blocks, they just consist out of the name of the block or its numeric ID
 
 Examples:
+
 - stone
 - 4
 - command_block
 - stone:1
 
-  The keyword "hand" represents the block you hold in your hand (or air for items/nothing) and can be used like normal blocks
+  The keyword "hand" represents the block you hold in your hand (or air for items/nothing) and can be used like normal
+  blocks
 
 ### Random Pattern
 
 The Random Pattern as it name suggests selects a random Pattern
 
 Example:
+
 ```
 #random(dirt,stone,air)
 ```
@@ -79,6 +83,7 @@ Example:
 It can also be used with Logic Patterns, note that it only selects once, if the pattern is not valid nothing is changed
 
 It also works nested:
+
 ```
 #random(#random(stone,stone:1,stone:2),#random(dirt,grass))
 ```
@@ -90,16 +95,21 @@ These Patterns allow control over the usage of Blocks
 If one Pattern is not valid, the next one is being used (separated by a comma)
 
 Example:
+
 ```
 #block;stone(dirt),#around;stone(grass)
 ```
+
 -> stone and blocks next to stone get replaced with dirt/grass, otherwise nothing happens
 
 They can also be nested:
+
 ```
 #block;stone(#around;dirt(grass)),air
 ```
--> stone blocks which also have dirt blocks next to them get replaced with grass, other stone blocks stay as they are, non-stone blocks are set to air
+
+-> stone blocks which also have dirt blocks next to them get replaced with grass, other stone blocks stay as they are,
+non-stone blocks are set to air
 
 \<argument> - required Argument<br>
 [argument] - optional Argument<br>
@@ -115,8 +125,8 @@ Pattern | Description
 #odd;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at odd coordinates at x, y and z Axis, the x, y and z can be left out (only given ones will be checked)
 #even;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at even coordinates (see odd for more info)
 #divisible;\<number>;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at coordinates which are divisible by the given number (see odd for more info)
-#walls(patterns) | Executes Patterns if the block is one of the walls of the selections
-#sides(patterns) | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)
+#walls;\[thickness](patterns) | Executes Patterns if the block is one of the walls of the selections
+#sides;\[thickness](patterns) | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)
 
 ### Functional Patterns
 

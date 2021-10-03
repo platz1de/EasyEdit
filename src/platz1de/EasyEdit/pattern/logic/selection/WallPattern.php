@@ -24,14 +24,15 @@ class WallPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
+		$thickness = $this->args->getFloat("thickness");
 		if ($selection instanceof Cube) {
 			$min = TaskCache::getFullSelection()->getPos1();
 			$max = TaskCache::getFullSelection()->getPos2();
 
-			return $x === $min->getX() || $x === $max->getX() || $z === $min->getZ() || $z === $max->getZ();
+			return ($x - $min->getX() + 1) <= $thickness || ($max->getX() - $x + 1) <= $thickness || ($z - $min->getZ() + 1) <= $thickness || ($max->getZ() + $z - 1) <= $thickness;
 		}
 		if ($selection instanceof Cylinder || $selection instanceof Sphere) {
-			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - 1) ** 2);
+			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $thickness) ** 2);
 		}
 		throw new ParseError("Walls pattern does not support selection of type " . $selection::class);
 	}
@@ -41,13 +42,13 @@ class WallPattern extends Pattern
 	 */
 	public function applySelectionContext(SelectionContext $context): void
 	{
-		$context->includeWalls();
+		$context->includeWalls($this->args->getFloat("thickness"));
 	}
 
 	public function check(): void
 	{
-		if ($this->args->getInt("thickness") === -1) {
-			$this->args->setInt("thickness", 1);
+		if ($this->args->getFloat("thickness") === -1.0) {
+			$this->args->setFloat("thickness", 1.0);
 		}
 	}
 }

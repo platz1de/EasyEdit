@@ -24,17 +24,18 @@ class SidesPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
 	{
+		$thickness = $this->args->getFloat("thickness");
 		if ($selection instanceof Cube) {
 			$min = TaskCache::getFullSelection()->getPos1();
 			$max = TaskCache::getFullSelection()->getPos2();
 
-			return $x === $min->getX() || $x === $max->getX() || $y === $min->getY() || $y === $max->getY() || $z === $min->getZ() || $z === $max->getZ();
+			return ($x - $min->getX() + 1) <= $thickness || ($max->getX() - $x + 1) <= $thickness || ($y - $min->getY() + 1) <= $thickness || ($max->getY() - $y + 1) <= $thickness || ($z - $min->getZ() + 1) <= $thickness || ($max->getZ() - $z + 1) <= $thickness;
 		}
 		if ($selection instanceof Cylinder) {
-			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - 1) ** 2) || $y === $selection->getPos1()->getFloorY() || $y === $selection->getPos2()->getFloorY();
+			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $thickness) ** 2) || ($y - $selection->getPos1()->getY() + 1) <= $thickness || ($selection->getPos2()->getY() - $y + 1) <= $thickness;
 		}
 		if ($selection instanceof Sphere) {
-			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($y - $selection->getPoint()->getFloorY()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - 1) ** 2) || $y === $selection->getPos1()->getFloorY() || $y === $selection->getPos2()->getFloorY();
+			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($y - $selection->getPoint()->getFloorY()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $thickness) ** 2) || ($y - $selection->getPos1()->getY() + 1) <= $thickness || ($selection->getPos2()->getY() - $y + 1) <= $thickness;
 		}
 		throw new ParseError("Sides pattern does not support selection of type " . $selection::class);
 	}
@@ -44,13 +45,13 @@ class SidesPattern extends Pattern
 	 */
 	public function applySelectionContext(SelectionContext $context): void
 	{
-		$context->includeWalls()->includeVerticals();
+		$context->includeWalls($this->args->getFloat("thickness"))->includeVerticals(0);
 	}
 
 	public function check(): void
 	{
-		if ($this->args->getInt("thickness") === -1) {
-			$this->args->setInt("thickness", 1);
+		if ($this->args->getFloat("thickness") === -1.0) {
+			$this->args->setFloat("thickness", 1.0);
 		}
 	}
 }
