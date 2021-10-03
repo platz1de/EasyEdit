@@ -84,11 +84,13 @@ class CylindricalConstructor
 	}
 
 	/**
-	 * @param Vector3 $point
-	 * @param float   $radius
-	 * @param float   $thickness
-	 * @param int     $height
-	 * @param Closure $closure
+	 * @param Vector3      $point
+	 * @param float        $radius
+	 * @param float        $thickness
+	 * @param int          $height
+	 * @param Closure      $closure
+	 * @param Vector3|null $min
+	 * @param Vector3|null $max
 	 */
 	public static function hollowAround(Vector3 $point, float $radius, float $thickness, int $height, Closure $closure, Vector3 $min = null, Vector3 $max = null): void
 	{
