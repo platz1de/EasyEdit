@@ -170,7 +170,7 @@ abstract class EditTask extends Threaded
 
 		try {
 			$this->execute($handler, $selection, $place, $data);
-			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks");
+			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written, " . $handler->getChangedTileCount() . " affected tiles)");
 
 			$result = new EditTaskResult($this->world, $handler->getChanges(), $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
 

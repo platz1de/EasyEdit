@@ -32,8 +32,7 @@ class EditTaskHandler
 	 */
 	private array $tiles;
 
-	//TODO: Split into multiple types
-	private int $changedBlocks = 0;
+	private int $affectedTiles = 0;
 
 	/**
 	 * @param ReferencedChunkManager $origin  Edited Chunks
@@ -98,7 +97,32 @@ class EditTaskHandler
 	 */
 	public function getChangedBlockCount(): int
 	{
-		return $this->changedBlocks;
+		return $this->changes->getIterator()->getWrittenBlockCount(); //hack to return copied blocks too
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getWrittenBlockCount(): int
+	{
+		return $this->origin->getWrittenBlockCount() + $this->result->getWrittenBlockCount() + $this->changes->getIterator()->getWrittenBlockCount();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getReadBlockCount(): int
+	{
+		//TODO: Blocklist selections
+		return $this->origin->getReadBlockCount() + $this->result->getReadBlockCount() + $this->result->getReadBlockCount();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getChangedTileCount(): int
+	{
+		return $this->affectedTiles;
 	}
 
 	/**
@@ -160,11 +184,10 @@ class EditTaskHandler
 		if (isset($this->tiles[World::blockHash($x, $y, $z)])) {
 			$this->changes->addTile($this->originalTiles[World::blockHash($x, $y, $z)]);
 			unset($this->tiles[World::blockHash($x, $y, $z)]);
+			$this->affectedTiles++;
 		}
 
 		$this->result->setBlockAt($x, $y, $z, $block);
-
-		$this->changedBlocks++;
 	}
 
 	/**
@@ -182,6 +205,7 @@ class EditTaskHandler
 		//This currently blocks tiles being set before changing the block properly
 		if (isset($this->tiles[World::blockHash($ox, $oy, $oz)])) {
 			$this->addTile(TileUtils::offsetCompound($this->tiles[World::blockHash($ox, $oy, $oz)], new Vector3($x - $ox, $y - $oy, $z - $oz)));
+			$this->affectedTiles++;
 		}
 	}
 
@@ -199,6 +223,7 @@ class EditTaskHandler
 
 		if (isset($this->originalTiles[World::blockHash($x, $y, $z)])) {
 			$this->changes->addTile(TileUtils::offsetCompound($this->originalTiles[World::blockHash($x, $y, $z)], $offset));
+			$this->affectedTiles++;
 		}
 	}
 
@@ -208,6 +233,7 @@ class EditTaskHandler
 	public function addTile(CompoundTag $tile): void
 	{
 		$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+		$this->affectedTiles++;
 	}
 
 	/**
