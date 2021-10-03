@@ -164,7 +164,7 @@ abstract class EditTask extends Threaded
 
 		$handler = EditTaskHandler::fromData($this->world, $this->chunkData, $this->tileData, $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data), $data, $pattern);
 
-		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks");
+		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks, Context: " . $handler->getSelectionContext()->getName());
 
 		HeightMapCache::prepare();
 
