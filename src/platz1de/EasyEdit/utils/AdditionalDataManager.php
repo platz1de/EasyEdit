@@ -2,58 +2,84 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use Throwable;
-use UnexpectedValueException;
-
 class AdditionalDataManager
 {
-	/**
-	 * @var array<string, mixed>
-	 */
-	private array $data;
+	private bool $firstPiece = true;
+	private bool $finalPiece = false;
+	private bool $saveEditedChunks;
+	private bool $saveUndo;
 
 	/**
-	 * AdditionalDataManager constructor.
-	 * @param array<string, mixed> $data
+	 * Used in count tasks
+	 * @var int[]
 	 */
-	public function __construct(array $data = [])
+	private array $countedBlocks = [];
+
+	/**
+	 * @param bool $saveEditedChunks
+	 * @param bool $saveUndo
+	 */
+	public function __construct(bool $saveEditedChunks, bool $saveUndo)
 	{
-		$this->data = $data;
+		$this->saveEditedChunks = $saveEditedChunks;
+		$this->saveUndo = $saveUndo;
 	}
 
 	/**
-	 * @param string $key
-	 * @param mixed  $default
-	 * @return mixed
-	 */
-	public function getDataKeyed(string $key, mixed $default = null): mixed
-	{
-		try {
-			return $this->data[$key];
-		} catch (Throwable) {
-			if ($default !== null) {
-				return $default;
-			}
-			throw new UnexpectedValueException("Additional data with key " . $key . " does not exist");
-		}
-	}
-
-	/**
-	 * @param string $key
-	 * @param bool   $default
 	 * @return bool
 	 */
-	public function getBoolKeyed(string $key, bool $default = false): bool
+	public function isFirstPiece(): bool
 	{
-		return (bool) $this->getDataKeyed($key, $default);
+		return $this->firstPiece;
 	}
 
 	/**
-	 * @param string     $key
-	 * @param mixed|null $data
+	 * @return bool
 	 */
-	public function setDataKeyed(string $key, mixed $data = null): void
+	public function isFinalPiece(): bool
 	{
-		$this->data[$key] = $data;
+		return $this->finalPiece;
+	}
+
+	public function donePiece(): void
+	{
+		$this->firstPiece = false;
+	}
+
+	public function setFinal(): void
+	{
+		$this->finalPiece = true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSavingChunks(): bool
+	{
+		return $this->saveEditedChunks;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSavingUndo(): bool
+	{
+		return $this->saveUndo;
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public function getCountedBlocks(): array
+	{
+		return $this->countedBlocks;
+	}
+
+	/**
+	 * @param int[] $countedBlocks
+	 */
+	public function setCountedBlocks(array $countedBlocks): void
+	{
+		$this->countedBlocks = $countedBlocks;
 	}
 }

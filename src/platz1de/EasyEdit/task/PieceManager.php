@@ -43,7 +43,7 @@ class PieceManager
 			$data = $this->currentPiece->getAdditionalData();
 
 			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
-				if ($data->getBoolKeyed("edit")) {
+				if ($data->isSavingChunks()) {
 					LoaderManager::setChunks($result->getManager()->getWorld(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
@@ -57,9 +57,9 @@ class PieceManager
 				$result->free();
 
 				if (count($this->pieces) > 0) {
-					$data->setDataKeyed("firstPiece", false);
+					$data->donePiece();
 					if (count($this->pieces) === 1) {
-						$data->setDataKeyed("finalPiece", true);
+						$data->setFinal();
 					}
 
 					//reduce load by not setting and loading on the same tick
@@ -80,9 +80,8 @@ class PieceManager
 
 	public function start(): void
 	{
-		$this->task->getData()->setDataKeyed("firstPiece", true);
 		if (count($this->pieces) === 1) {
-			$this->task->getData()->setDataKeyed("finalPiece", true);
+			$this->task->getData()->setFinal();
 		}
 		$this->startPiece($this->task->getData());
 	}
@@ -98,7 +97,7 @@ class PieceManager
 		}
 
 		$task = $this->task->getTask();
-		$this->currentPiece = new $task($piece, $this->task->getPattern(), $this->task->getPlace(), $data, $data->getBoolKeyed("firstPiece") ? $this->task->getSelection() : null);
+		$this->currentPiece = new $task($piece, $this->task->getPattern(), $this->task->getPlace(), $data, $data->isFirstPiece() ? $this->task->getSelection() : null);
 	}
 
 	/**

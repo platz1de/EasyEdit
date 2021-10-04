@@ -158,7 +158,7 @@ abstract class EditTask extends Threaded
 		$data = igbinary_unserialize($this->data);
 		if ($this->total !== null) {
 			TaskCache::init(Selection::fastDeserialize($this->total));
-		} elseif ($data->getBoolKeyed("firstPiece")) {
+		} elseif ($data->isFirstPiece()) {
 			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
 		}
 
@@ -192,7 +192,7 @@ abstract class EditTask extends Threaded
 		$this->finished = true;
 		$thread->setStatus(EditWorker::STATUS_IDLE);
 
-		if ($data->getBoolKeyed("finalPiece")) {
+		if ($data->isFinalPiece()) {
 			TaskCache::clear();
 		}
 	}

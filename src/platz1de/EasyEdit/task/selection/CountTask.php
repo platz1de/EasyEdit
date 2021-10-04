@@ -28,7 +28,7 @@ class CountTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(), new Vector3(0, 0, 0), static function (EditTaskResult $result): void {
+		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(false, false), new Vector3(0, 0, 0), static function (EditTaskResult $result): void {
 			//Nothing is edited
 		}));
 	}
@@ -49,7 +49,7 @@ class CountTask extends EditTask
 	 */
 	public function execute(EditTaskHandler $handler, Selection $selection, Vector3 $place, AdditionalDataManager $data): void
 	{
-		$blocks = $data->getDataKeyed("blocks", []);
+		$blocks = $data->getCountedBlocks();
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, &$blocks): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($blocks[$id])) {
@@ -59,7 +59,7 @@ class CountTask extends EditTask
 			}
 		}, SelectionContext::full());
 		arsort($blocks, SORT_NUMERIC);
-		$data->setDataKeyed("blocks", $blocks);
+		$data->setCountedBlocks($blocks);
 	}
 
 	/**
@@ -83,9 +83,9 @@ class CountTask extends EditTask
 	 */
 	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => array_sum($data->getDataKeyed("blocks"))]);
+		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => array_sum($data->getCountedBlocks())]);
 		$msg = "";
-		foreach ($data->getDataKeyed("blocks") as $block => $count) {
+		foreach ($data->getCountedBlocks() as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
 		Messages::send($selection->getPlayer(), $msg, [], false, false);
