@@ -7,9 +7,6 @@ selected-pos2: "Selected the second position as {x} {y} {z}"
 no-selection: "You don't have an active selection"
 no-clipboard: "You don't have an active clipboard"
 
-history-nearly-full: "Your History is nearly full, it will not be possible to undo your oldest actions"
-history-full: "Your History is full, it will not be possible to undo your oldest actions anymore"
-
 no-history: "Nothing to undo"
 no-future: "Nothing to redo"
 
