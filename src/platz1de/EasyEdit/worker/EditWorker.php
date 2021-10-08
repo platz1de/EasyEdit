@@ -21,10 +21,7 @@ class EditWorker extends Worker
 	 */
 	private $logger;
 	private int $status = self::STATUS_IDLE;
-	/**
-	 * @var float
-	 */
-	private $lastResponse;
+	private float $lastResponse = 0.0;
 
 	/**
 	 * EditWorker constructor.
