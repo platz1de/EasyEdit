@@ -62,10 +62,7 @@ class PieceManager
 						$data->setFinal();
 					}
 
-					//reduce load by not setting and loading on the same tick
-					WorkerAdapter::priority(new QueuedCallbackTask(function () use ($data): void {
-						$this->startPiece($data);
-					}));
+					$this->startPiece($data);
 					return false; //more to go
 				}
 
