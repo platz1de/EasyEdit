@@ -24,7 +24,7 @@ worker-status: "Status of EditWorker:\nStatus: {status}\nCurrent Task: {task}\nP
 
 benchmark-start: "Started benchmark, this can take up to a minute"
 benchmark-running: "There is already a benchmark running"
-benchmark-cancel: "Benchmarks can't be canceled"
+benchmark-cancel: "Benchmarks can't be cancelled"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
 benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}%)\nMinimal TPS: {tps_min} ({load_max}%)\nExecuted {tasks} tasks in {time}s:\n{results}"
