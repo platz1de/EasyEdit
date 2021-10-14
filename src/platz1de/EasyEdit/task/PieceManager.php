@@ -49,7 +49,6 @@ class PieceManager
 
 				if (isset($this->result)) {
 					$this->result->merge($result);
-					$result->getUndo()->free();
 				} else {
 					$this->result = $result;
 				}
