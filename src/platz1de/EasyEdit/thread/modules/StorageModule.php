@@ -1,12 +1,14 @@
 <?php
 
-namespace platz1de\EasyEdit\worker\modules;
+namespace platz1de\EasyEdit\thread\modules;
 
 use BadMethodCallException;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class StorageModule
 {
@@ -15,7 +17,7 @@ class StorageModule
 	 */
 	private static array $storage = [];
 	private static int $storageSlot = 0;
-	private static ?StaticBlockListSelection $collected = null;
+	private static ?BlockListSelection $collected = null;
 
 	/**
 	 * @return int
@@ -32,9 +34,9 @@ class StorageModule
 	}
 
 	/**
-	 * @param StaticBlockListSelection $piece
+	 * @param BlockListSelection $piece
 	 */
-	public static function collect(StaticBlockListSelection $piece): void
+	public static function collect(BlockListSelection $piece): void
 	{
 		if (self::$collected === null) {
 			self::$collected = $piece;
@@ -66,7 +68,26 @@ class StorageModule
 	 */
 	public static function getStored(int $id): BlockListSelection
 	{
-		return self::$storage[$id];
+		$toClone = self::$storage[$id];
+		$class = $toClone::class;
+		$selection = new $class($toClone->getPlayer());
+		$selection->setPos1($toClone->getPos1());
+		$selection->setPos2($toClone->getPos2());
+		if ($selection instanceof DynamicBlockListSelection && $toClone instanceof DynamicBlockListSelection) {
+			$selection->setPoint($toClone->getPoint());
+		} elseif ($selection instanceof StaticBlockListSelection && $toClone instanceof StaticBlockListSelection) {
+			$selection->setWorld($toClone->getWorldName());
+		} else {
+			throw new UnexpectedValueException("Invalid selection of type " . $class . " saved at id " . $id);
+		}
+		foreach ($toClone->getManager()->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			$selection->getManager()->setChunk($x, $z, $chunk);
+		}
+		foreach ($toClone->getTiles() as $tile) {
+			$selection->addTile($tile);
+		}
+		return $selection;
 	}
 
 	/**

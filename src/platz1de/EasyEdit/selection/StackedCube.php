@@ -7,7 +7,6 @@ use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class StackedCube extends Selection
@@ -37,10 +36,10 @@ class StackedCube extends Selection
 	}
 
 	/**
-	 * @param Position $place
+	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Position $place): array
+	public function getNeededChunks(Vector3 $place): array
 	{
 		$chunks = [];
 		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());

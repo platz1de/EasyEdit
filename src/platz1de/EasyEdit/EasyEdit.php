@@ -32,8 +32,8 @@ use platz1de\EasyEdit\command\defaults\UndoCommand;
 use platz1de\EasyEdit\command\defaults\WallCommand;
 use platz1de\EasyEdit\utils\CompoundTile;
 use platz1de\EasyEdit\utils\ConfigManager;
-use platz1de\EasyEdit\worker\EditWorker;
-use platz1de\EasyEdit\worker\WorkerAdapter;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\EditAdapter;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
@@ -41,7 +41,7 @@ use pocketmine\Server;
 class EasyEdit extends PluginBase
 {
 	private static EasyEdit $instance;
-	private static EditWorker $worker;
+	private static EditThread $worker;
 
 	public function onEnable(): void
 	{
@@ -50,10 +50,10 @@ class EasyEdit extends PluginBase
 		Messages::load();
 		ConfigManager::load();
 
-		self::$worker = new EditWorker(Server::getInstance()->getLogger());
+		self::$worker = new EditThread(Server::getInstance()->getLogger());
 		self::$worker->start(PTHREADS_INHERIT_INI | PTHREADS_INHERIT_CONSTANTS);
 
-		$this->getScheduler()->scheduleRepeatingTask(new WorkerAdapter(), 1);
+		$this->getScheduler()->scheduleRepeatingTask(new EditAdapter(), 1);
 
 		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
 
@@ -100,9 +100,9 @@ class EasyEdit extends PluginBase
 	}
 
 	/**
-	 * @return EditWorker
+	 * @return EditThread
 	 */
-	public static function getWorker(): EditWorker
+	public static function getWorker(): EditThread
 	{
 		return self::$worker;
 	}

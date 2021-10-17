@@ -6,8 +6,8 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
-use platz1de\EasyEdit\worker\EditWorker;
-use platz1de\EasyEdit\worker\WorkerAdapter;
+use platz1de\EasyEdit\thread\EditAdapter;
+use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -25,7 +25,7 @@ class StatusCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
-		$manager = WorkerAdapter::getCurrentTask();
+		$manager = EditAdapter::getCurrentTask();
 		if ($manager instanceof QueuedEditTask) {
 			$manager = $manager->getExecutor();
 			$task = $manager->getCurrent()->getTaskName() . ":" . $manager->getCurrent()->getId() . " by " . $manager->getQueued()->getSelection()->getPlayer();
@@ -36,13 +36,13 @@ class StatusCommand extends EasyEditCommand
 		}
 
 		switch (EasyEdit::getWorker()->getStatus()) {
-			case EditWorker::STATUS_IDLE:
+			case EditThread::STATUS_IDLE:
 				$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
 				break;
-			case EditWorker::STATUS_PREPARING:
+			case EditThread::STATUS_PREPARING:
 				$status = TextFormat::AQUA . "PREPARING" . TextFormat::RESET . ": " . self::getColoredTiming();
 				break;
-			case EditWorker::STATUS_RUNNING:
+			case EditThread::STATUS_RUNNING:
 				$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();
 				break;
 			default:
@@ -51,7 +51,7 @@ class StatusCommand extends EasyEditCommand
 
 		Messages::send($player, "worker-status", [
 			"{task}" => $task,
-			"{queue}" => (string) WorkerAdapter::getQueueLength(),
+			"{queue}" => (string) EditAdapter::getQueueLength(),
 			"{status}" => $status,
 			"{progress}" => $progress
 		]);

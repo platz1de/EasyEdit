@@ -38,7 +38,7 @@ class DynamicBlockListSelection extends BlockListSelection
 	 * @param Position $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Position $place): array
+	public function getNeededChunks(Vector3 $place): array
 	{
 		$start = $this->getCubicStart()->addVector($place)->subtractVector($this->getPoint());
 		$end = $this->getCubicEnd()->addVector($place)->subtractVector($this->getPoint());

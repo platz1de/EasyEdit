@@ -2,25 +2,22 @@
 
 namespace platz1de\EasyEdit\task\queued;
 
-use Closure;
-use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\PieceManager;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
-use pocketmine\utils\Utils;
-use pocketmine\world\Position;
 
 class QueuedEditTask implements QueuedTask
 {
+	use ReferencedWorldHolder;
+
 	private Selection $selection;
 	private Pattern $pattern;
-	private Position $place;
+	private Vector3 $place;
 	private string $task;
-	private Closure $finish;
 	private AdditionalDataManager $data;
 	private PieceManager $executor;
 	private Vector3 $splitOffset;
@@ -29,32 +26,21 @@ class QueuedEditTask implements QueuedTask
 	 * QueuedTask constructor.
 	 * @param Selection             $selection
 	 * @param Pattern               $pattern
-	 * @param Position              $place
+	 * @param string                $world
+	 * @param Vector3               $place
 	 * @param string                $task
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $splitOffset
-	 * @param Closure|null          $finish
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, string $task, AdditionalDataManager $data, Vector3 $splitOffset, ?Closure $finish = null)
+	public function __construct(Selection $selection, Pattern $pattern, string $world, Vector3 $place, string $task, AdditionalDataManager $data, Vector3 $splitOffset)
 	{
 		$this->selection = $selection;
 		$this->pattern = $pattern;
-		$this->place = Position::fromObject($place->floor(), $place->getWorld());
+		$this->world = $world;
+		$this->place = $place->floor();
 		$this->task = $task;
 		$this->data = $data;
 		$this->splitOffset = $splitOffset->floor();
-
-		if ($finish === null) {
-			$finish = static function (EditTaskResult $result): void {
-				/** @var StaticBlockListSelection $undo */
-				$undo = $result->getUndo();
-				HistoryManager::addToHistory($undo->getPlayer(), $undo);
-			};
-		}
-
-		Utils::validateCallableSignature(static function (EditTaskResult $result): void { }, $finish);
-
-		$this->finish = $finish;
 	}
 
 	/**
@@ -74,9 +60,9 @@ class QueuedEditTask implements QueuedTask
 	}
 
 	/**
-	 * @return Position
+	 * @return Vector3
 	 */
-	public function getPlace(): Position
+	public function getPlace(): Vector3
 	{
 		return $this->place;
 	}
@@ -95,16 +81,6 @@ class QueuedEditTask implements QueuedTask
 	public function getData(): AdditionalDataManager
 	{
 		return $this->data;
-	}
-
-	/**
-	 * @param EditTaskResult $result
-	 * @return void
-	 */
-	public function finishWith(EditTaskResult $result): void
-	{
-		$finish = $this->finish;
-		$finish($result);
 	}
 
 	/**
@@ -140,5 +116,34 @@ class QueuedEditTask implements QueuedTask
 	public function getSplitOffset(): Vector3
 	{
 		return $this->splitOffset;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function fastSerialize(): string
+	{
+		$stream = new ExtendedBinaryStream();
+
+		$stream->putString($this->selection->fastSerialize());
+		$stream->putString($this->pattern->fastSerialize());
+		$stream->putString($this->world);
+		$stream->putVector($this->place);
+		$stream->putString($this->task);
+		$stream->putString(igbinary_serialize($this->data));
+		$stream->putVector($this->splitOffset);
+
+		return $stream->getBuffer();
+	}
+
+	/**
+	 * @param string $data
+	 * @return QueuedEditTask
+	 */
+	public static function fastDeserialize(string $data): QueuedEditTask
+	{
+		$stream = new ExtendedBinaryStream($data);
+
+		return new QueuedEditTask(Selection::fastDeserialize($stream->getString()), Pattern::fastDeserialize($stream->getString()), $stream->getString(), $stream->getVector(), $stream->getString(), igbinary_unserialize($stream->getString()), $stream->getVector());
 	}
 }

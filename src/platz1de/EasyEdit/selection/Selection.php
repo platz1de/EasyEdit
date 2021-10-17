@@ -7,7 +7,6 @@ use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -48,10 +47,10 @@ abstract class Selection
 	}
 
 	/**
-	 * @param Position $place
+	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	abstract public function getNeededChunks(Position $place): array;
+	abstract public function getNeededChunks(Vector3 $place): array;
 
 	/**
 	 * @param int     $x

@@ -2,13 +2,15 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\selection\LinkedBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\selection\RedoTask;
+use platz1de\EasyEdit\task\selection\UndoTask;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\output\ResultingChunkData;
+use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use UnexpectedValueException;
 
 class PieceManager
@@ -21,6 +23,8 @@ class PieceManager
 	private EditTask $currentPiece;
 	private int $totalLength;
 	private EditTaskResult $result;
+	private Selection $selection;
+	private string $world;
 
 	/**
 	 * PieceManager constructor.
@@ -29,7 +33,13 @@ class PieceManager
 	public function __construct(QueuedEditTask $task)
 	{
 		$this->task = $task;
-		$this->pieces = $task->getSelection()->split($task->getSplitOffset());
+		$sel = $task->getSelection();
+		$this->selection = $sel instanceof LinkedBlockListSelection ? $sel->get() : $sel;
+		if ($sel instanceof LinkedBlockListSelection && ($this->task->getTask() === UndoTask::class || $this->task->getTask() === RedoTask::class)) {
+			$sel->clear();
+		}
+		$this->world = $sel instanceof LinkedBlockListSelection ? $this->selection->getWorldName() : $this->task->getWorldName();
+		$this->pieces = $this->selection->split($task->getSplitOffset());
 		$this->totalLength = count($this->pieces);
 	}
 
@@ -44,7 +54,7 @@ class PieceManager
 
 			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
 				if ($data->isSavingChunks()) {
-					LoaderManager::setChunks($result->getManager()->getWorld(), $result->getManager()->getChunks(), $result->getTiles());
+					EditThread::getInstance()->sendOutput(ResultingChunkData::from($result->getManager()->getWorldName(), $result->getManager()->getChunks(), $result->getTiles()));
 				}
 
 				if (isset($this->result)) {
@@ -65,9 +75,9 @@ class PieceManager
 					return false; //more to go
 				}
 
-				$this->task->finishWith($this->result);
+				//$this->task->finishWith($this->result);
 
-				$this->currentPiece->notifyUser($this->task->getSelection(), round($this->result->getTime(), 2), MixedUtils::humanReadable($this->result->getChanged()), $data);
+				EditThread::getInstance()->sendOutput(TaskResultData::from($this->selection->getPlayer(), $this->task->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId()));
 			}
 			return true;
 		}
@@ -93,7 +103,7 @@ class PieceManager
 		}
 
 		$task = $this->task->getTask();
-		$this->currentPiece = new $task($piece, $this->task->getPattern(), $this->task->getPlace(), $data, $data->isFirstPiece() ? $this->task->getSelection() : null);
+		$this->currentPiece = new $task($piece, $this->task->getPattern(), $this->world, $this->task->getPlace(), $data, $data->isFirstPiece() ? $this->selection : null);
 	}
 
 	/**

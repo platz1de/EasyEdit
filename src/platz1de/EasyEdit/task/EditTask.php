@@ -1,200 +1,129 @@
 <?php
-/**
- * pthreads returns null for undefined properties, so we have to use normal ones
- * @noinspection PhpMissingFieldTypeInspection
- */
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\thread\EditAdapter;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\input\ChunkInputData;
+use platz1de\EasyEdit\thread\modules\StorageModule;
+use platz1de\EasyEdit\thread\output\ChunkRequestData;
+use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
-use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\TaskCache;
-use platz1de\EasyEdit\worker\EditWorker;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;
-use pocketmine\world\format\io\ChunkData;
-use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use Thread;
-use Threaded;
 use ThreadedLogger;
 use Throwable;
 use UnexpectedValueException;
 
-abstract class EditTask extends Threaded
+abstract class EditTask
 {
 	private bool $finished = false;
 
-	/**
-	 * @var EditWorker
-	 */
-	protected $worker;
-
-	/**
-	 * @var int
-	 */
-	private $id;
-	/**
-	 * @var string
-	 */
-	private $chunkData;
-	/**
-	 * @var string
-	 */
-	private $tileData;
-	/**
-	 * @var string
-	 */
-	private $selection;
-	/**
-	 * @var string
-	 */
-	private $pattern;
-	/**
-	 * @var string
-	 */
-	private $place;
-	/**
-	 * @var string
-	 */
-	private $world;
-	/**
-	 * @var string
-	 */
-	private $result;
-	/**
-	 * @var string
-	 */
-	private $data;
-	/**
-	 * @var string
-	 */
-	private $total;
+	protected EditThread $worker;
+	private int $id;
+	private Selection $selection;
+	private Pattern $pattern;
+	private Vector3 $place;
+	private string $world;
+	private EditTaskResult $result;
+	private int $changeId = -1;
+	private AdditionalDataManager $data;
+	private Selection $total;
 
 	/**
 	 * EditTask constructor.
 	 * @param Selection             $selection
 	 * @param Pattern               $pattern
+	 * @param string                $world
 	 * @param Position              $place
 	 * @param AdditionalDataManager $data
 	 * @param Selection|null        $total Initial Selection
 	 */
-	public function __construct(Selection $selection, Pattern $pattern, Position $place, AdditionalDataManager $data, ?Selection $total = null)
+	public function __construct(Selection $selection, Pattern $pattern, string $world, Vector3 $place, AdditionalDataManager $data, ?Selection $total = null)
 	{
-		EasyEdit::getWorker()->setStatus(EditWorker::STATUS_PREPARING);
-		$this->id = WorkerAdapter::getId();
-		$this->selection = $selection->fastSerialize();
-		$this->pattern = $pattern->fastSerialize();
-		$this->place = igbinary_serialize($place->floor());
-		$this->world = $place->getWorld()->getFolderName();
+		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
+		$this->id = EditAdapter::getId();
+		$this->selection = $selection;
+		$this->pattern = $pattern;
+		$this->place = $place->floor();
+		$this->world = $world;
 		if ($total instanceof Selection) {
-			$this->total = $total->fastSerialize();
+			$this->total = $total;
 		}
-		$this->data = igbinary_serialize($data);
+		$this->data = $data;
 
-		$this->prepareNextChunk($selection->getNeededChunks($place), $place->getWorld(), new ExtendedBinaryStream(), new ExtendedBinaryStream());
+		EditThread::getInstance()->sendOutput(ChunkRequestData::from($selection->getNeededChunks($place), $world));
 	}
 
-	/**
-	 * @param int[]                $chunks
-	 * @param World                $world
-	 * @param ExtendedBinaryStream $chunkData
-	 * @param ExtendedBinaryStream $tileData
-	 */
-	private function prepareNextChunk(array $chunks, World $world, ExtendedBinaryStream $chunkData, ExtendedBinaryStream $tileData): void
+	public function checkData(): void
 	{
-		World::getXZ((int) array_pop($chunks), $x, $z);
-
-		$world->orderChunkPopulation($x, $z, null)->onCompletion(
-			function () use ($tileData, $chunkData, $z, $x, $world, $chunks): void {
-				$chunkData->putInt($x);
-				$chunkData->putInt($z);
-				$chunk = LoaderManager::getChunk($world, $x, $z);
-				if ($chunk instanceof ChunkData) {
-					foreach ($chunk->getTileNBT() as $tile) {
-						$tileData->putCompound($tile);
-					}
-
-					$chunk = $chunk->getChunk();
-				} else {
-					foreach ($chunk->getTiles() as $tile) {
-						$tileData->putCompound($tile->saveNBT());
-					}
-				}
-				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
-
-				if ($chunks === []) {
-					$this->chunkData = $chunkData->getBuffer();
-					$this->tileData = $tileData->getBuffer();
-					EasyEdit::getWorker()->stack($this);
-				} else {
-					$this->prepareNextChunk($chunks, $world, $chunkData, $tileData);
-				}
-			},
-			function () use ($z, $x): void {
-				throw new UnexpectedValueException("Failed to prepare Chunk " . $x . " " . $z);
+		if (!$this->finished) {
+			$data = ThreadData::getStoredData();
+			if ($data !== null) {
+				$this->run($data);
 			}
-		);
+		}
 	}
 
-	public function run(): void
+	public function run(ChunkInputData $chunkData): void
 	{
 		$start = microtime(true);
-		/** @var EditWorker $thread */
+		/** @var EditThread $thread */
 		$thread = Thread::getCurrentThread();
-		$thread->setStatus(EditWorker::STATUS_RUNNING);
-		$selection = Selection::fastDeserialize($this->selection);
-		$pattern = Pattern::fastDeserialize($this->pattern);
-		/** @var Vector3 $place */
-		$place = igbinary_unserialize($this->place);
-		/** @var AdditionalDataManager $data */
-		$data = igbinary_unserialize($this->data);
-		if ($this->total !== null) {
-			TaskCache::init(Selection::fastDeserialize($this->total));
-		} elseif ($data->isFirstPiece()) {
-			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
-		}
-
-		$handler = EditTaskHandler::fromData($this->world, $this->chunkData, $this->tileData, $this->getUndoBlockList(TaskCache::getFullSelection(), $place, $this->world, $data), $data, $pattern);
-
-		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks, Context: " . $handler->getSelectionContext()->getName());
-
-		HeightMapCache::prepare();
+		$thread->setStatus(EditThread::STATUS_RUNNING);
 
 		try {
-			$this->execute($handler, $selection, $place, $data);
+			if (isset($this->total)) {
+				TaskCache::init($this->total);
+			} elseif ($this->data->isFirstPiece()) {
+				throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
+			}
+
+			$handler = EditTaskHandler::fromData($this->world, $chunkData->getChunkData(), $chunkData->getTileData(), $this->getUndoBlockList(TaskCache::getFullSelection(), $this->place, $this->world, $this->data), $this->data, $this->pattern);
+
+			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks, Context: " . $handler->getSelectionContext()->getName());
+
+			HeightMapCache::prepare();
+
+			$this->execute($handler, $this->selection, $this->place, $this->data);
 			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written, " . $handler->getChangedTileCount() . " affected tiles)");
 
-			$result = new EditTaskResult($this->world, $handler->getChanges(), $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
+			if ($this->data->isSavingUndo()) {
+				StorageModule::collect($handler->getChanges());
+			}
+			$result = new EditTaskResult($this->world, $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
 
 			foreach ($handler->getResult()->getChunks() as $hash => $chunk) {
 				World::getXZ($hash, $x, $z);
 				//separate chunks which are only loaded for patterns
-				if ($selection->isChunkOfSelection($x, $z, $place)) {
+				if ($this->selection->isChunkOfSelection($x, $z, $this->place)) {
 					$result->addChunk($x, $z, $chunk);
 				}
 			}
 
-			$this->result = $result->fastSerialize();
+			$this->result = $result;
 
-			$this->data = igbinary_serialize($data);
+			if ($this->data->isFinalPiece() && $this->data->isSavingUndo()) {
+				$this->changeId = StorageModule::finishCollecting();
+			}
 		} catch (Throwable $exception) {
 			$this->getLogger()->logException($exception);
 			unset($this->result);
 		}
-		$this->finished = true;
-		$thread->setStatus(EditWorker::STATUS_IDLE);
 
-		if ($data->isFinalPiece()) {
+		if ($this->data->isFinalPiece()) {
 			TaskCache::clear();
 		}
+
+		$this->finished = true;
+		$thread->setStatus(EditThread::STATUS_IDLE);
 	}
 
 	/**
@@ -202,7 +131,7 @@ abstract class EditTask extends Threaded
 	 */
 	public function getLogger(): ThreadedLogger
 	{
-		return $this->worker->getLogger();
+		return EditThread::getInstance()->getLogger();
 	}
 
 	/**
@@ -231,6 +160,7 @@ abstract class EditTask extends Threaded
 	 */
 	public function isFinished(): bool
 	{
+		$this->checkData();
 		return $this->finished;
 	}
 
@@ -247,11 +177,7 @@ abstract class EditTask extends Threaded
 	 */
 	public function getResult(): ?EditTaskResult
 	{
-		if ($this->result !== null) {
-			return EditTaskResult::fastDeserialize($this->result);
-		}
-
-		return null;
+		return $this->result ?? null;
 	}
 
 	/**
@@ -259,20 +185,24 @@ abstract class EditTask extends Threaded
 	 */
 	public function getAdditionalData(): ?AdditionalDataManager
 	{
-		if ($this->data !== null) {
-			return igbinary_unserialize($this->data);
-		}
-
-		return null;
+		return $this->data ?? null;
 	}
 
 	/**
-	 * @param Selection             $selection
+	 * @return int
+	 */
+	public function getChangeId(): int
+	{
+		return $this->changeId;
+	}
+
+	/**
+	 * @param string                $player
 	 * @param float                 $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	abstract public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void;
+	abstract public static function notifyUser(string $player, float $time, string $changed, AdditionalDataManager $data): void;
 
 	/**
 	 * @param Selection             $selection

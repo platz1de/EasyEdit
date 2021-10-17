@@ -10,11 +10,10 @@ use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
-use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
@@ -28,9 +27,7 @@ class CountTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(false, false), new Vector3(0, 0, 0), static function (EditTaskResult $result): void {
-			//Nothing is edited
-		}));
+		EditAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place->getWorld()->getFolderName(), $place->asVector3(), self::class, new AdditionalDataManager(false, false), new Vector3(0, 0, 0)), null);
 	}
 
 	/**
@@ -76,18 +73,18 @@ class CountTask extends EditTask
 	}
 
 	/**
-	 * @param Selection             $selection
+	 * @param string                $player
 	 * @param float                 $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(string $player, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-counted", ["{time}" => (string) $time, "{changed}" => array_sum($data->getCountedBlocks())]);
+		Messages::send($player, "blocks-counted", ["{time}" => (string) $time, "{changed}" => array_sum($data->getCountedBlocks())]);
 		$msg = "";
 		foreach ($data->getCountedBlocks() as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
-		Messages::send($selection->getPlayer(), $msg, [], false, false);
+		Messages::send($player, $msg, [], false, false);
 	}
 }

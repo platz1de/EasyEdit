@@ -2,23 +2,20 @@
 
 namespace platz1de\EasyEdit\task\selection;
 
-use platz1de\EasyEdit\history\HistoryManager;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\LinkedBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
-use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\selection\type\PastingNotifier;
+use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TaskCache;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class UndoTask extends EditTask
@@ -27,16 +24,11 @@ class UndoTask extends EditTask
 	use PastingNotifier;
 
 	/**
-	 * @param BlockListSelection $selection
+	 * @param int $id
 	 */
-	public static function queue(BlockListSelection $selection): void
+	public static function queue(int $id): void
 	{
-		Selection::validate($selection, StaticBlockListSelection::class);
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), new Position(0, World::Y_MIN, 0, $selection->getWorld()), self::class, new AdditionalDataManager(true, true), new Vector3(0, 0, 0), static function (EditTaskResult $result): void {
-			/** @var StaticBlockListSelection $redo */
-			$redo = $result->getUndo();
-			HistoryManager::addToFuture($redo->getPlayer(), $redo);
-		}));
+		EditAdapter::queue(new QueuedEditTask(new LinkedBlockListSelection("EasyEdit", "", $id), new Pattern([]), "", new Vector3(0, World::Y_MIN, 0), self::class, new AdditionalDataManager(true, true), new Vector3(0, 0, 0)), null);
 	}
 
 	/**

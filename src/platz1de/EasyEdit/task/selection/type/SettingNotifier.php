@@ -9,13 +9,13 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 trait SettingNotifier
 {
 	/**
-	 * @param Selection             $selection
+	 * @param string                $player
 	 * @param float                 $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(string $player, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-set", ["{time}" => (string) $time, "{changed}" => $changed]);
+		Messages::send($player, "blocks-set", ["{time}" => (string) $time, "{changed}" => $changed]);
 	}
 }

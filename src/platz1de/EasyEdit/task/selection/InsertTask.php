@@ -13,10 +13,10 @@ use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\type\PastingNotifier;
+use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\TileUtils;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 
@@ -31,7 +31,7 @@ class InsertTask extends EditTask
 	 */
 	public static function queue(BlockListSelection $selection, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(true, true), new Vector3(0, 0, 0), $finish));
+		EditAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place->getWorld()->getFolderName(), $place->asVector3(), self::class, new AdditionalDataManager(true, true), new Vector3(0, 0, 0)), $finish);
 	}
 
 	/**

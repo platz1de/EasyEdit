@@ -3,17 +3,16 @@
 namespace platz1de\EasyEdit\selection\cubic;
 
 use platz1de\EasyEdit\selection\Patterned;
-use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 trait CubicChunkLoader
 {
 	/**
-	 * @param Position $place
+	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Position $place): array
+	public function getNeededChunks(Vector3 $place): array
 	{
 		$chunks = [];
 		$start = $this->getCubicStart();

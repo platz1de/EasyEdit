@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\queued;
 
-use platz1de\EasyEdit\EasyEdit;
 use Threaded;
 
 class QueuedSimpleTask implements QueuedTask
@@ -25,7 +24,7 @@ class QueuedSimpleTask implements QueuedTask
 
 	public function execute(): void
 	{
-		EasyEdit::getWorker()->stack($this->task);
+		//EasyEdit::getWorker()->stack($this->task);
 	}
 
 	public function continue(): bool

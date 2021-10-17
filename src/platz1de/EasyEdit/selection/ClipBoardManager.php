@@ -2,40 +2,38 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use pocketmine\world\World;
+use BadMethodCallException;
+use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 
 class ClipBoardManager
 {
 	/**
-	 * @var DynamicBlockListSelection[]
+	 * @var int[]
 	 */
-	private static array $selections = [];
+	private static array $clipboard = [];
 
 	/**
 	 * @param string $player
-	 * @return DynamicBlockListSelection
+	 * @return int
 	 */
-	public static function getFromPlayer(string $player): DynamicBlockListSelection
+	public static function getFromPlayer(string $player): int
 	{
-		$selection = new DynamicBlockListSelection($player);
-		$selection->setPos2(self::$selections[$player]->getPos2());
-		$selection->setPoint(self::$selections[$player]->getPoint());
-		foreach (self::$selections[$player]->getManager()->getChunks() as $hash => $chunk) {
-			World::getXZ($hash, $x, $z);
-			$selection->getManager()->setChunk($x, $z, $chunk);
-		}
-		foreach (self::$selections[$player]->getTiles() as $tile) {
-			$selection->addTile($tile);
-		}
-		return $selection;
+		return self::$clipboard[$player];
 	}
 
 	/**
-	 * @param string                    $player
-	 * @param DynamicBlockListSelection $selection
+	 * @param string $player
+	 * @param int    $id
 	 */
-	public static function setForPlayer(string $player, DynamicBlockListSelection $selection): void
+	public static function setForPlayer(string $player, int $id): void
 	{
-		self::$selections[$player] = $selection;
+		if ($id === -1) {
+			throw new BadMethodCallException("Invalid Task Id -1 given");
+		}
+		if (isset(self::$clipboard[$player])) {
+			EasyEdit::getWorker()->sendToThread(CleanStorageTask::from([self::$clipboard[$player]]));
+		}
+		self::$clipboard[$player] = $id;
 	}
 }

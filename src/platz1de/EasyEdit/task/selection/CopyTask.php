@@ -12,11 +12,11 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\EditTask;
 use platz1de\EasyEdit\task\EditTaskHandler;
-use platz1de\EasyEdit\task\EditTaskResult;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\thread\EditAdapter;
+use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\TaskCache;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 
@@ -30,13 +30,11 @@ class CopyTask extends EditTask
 	public static function queue(Selection $selection, Position $place, ?Closure $finish = null): void
 	{
 		if ($finish === null) {
-			$finish = static function (EditTaskResult $result): void {
-				/** @var DynamicBlockListSelection $copied */
-				$copied = $result->getUndo();
-				ClipBoardManager::setForPlayer($copied->getPlayer(), $copied);
+			$finish = static function (TaskResultData $result): void {
+				ClipBoardManager::setForPlayer($result->getPlayer(), $result->getChangeId());
 			};
 		}
-		WorkerAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place, self::class, new AdditionalDataManager(false, false), $selection->getPos1()->multiply(-1), $finish));
+		EditAdapter::queue(new QueuedEditTask($selection, new Pattern([]), $place->getWorld()->getFolderName(), $place->asVector3(), self::class, new AdditionalDataManager(false, true), $selection->getPos1()->multiply(-1)), $finish);
 	}
 
 	/**
@@ -74,13 +72,13 @@ class CopyTask extends EditTask
 	}
 
 	/**
-	 * @param Selection             $selection
+	 * @param string                $player
 	 * @param float                 $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public function notifyUser(Selection $selection, float $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(string $player, float $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($selection->getPlayer(), "blocks-copied", ["{time}" => (string) $time, "{changed}" => $changed]);
+		Messages::send($player, "blocks-copied", ["{time}" => (string) $time, "{changed}" => $changed]);
 	}
 }

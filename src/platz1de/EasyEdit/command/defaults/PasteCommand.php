@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
+use platz1de\EasyEdit\selection\LinkedBlockListSelection;
 use platz1de\EasyEdit\task\selection\PasteTask;
 use pocketmine\player\Player;
 use Throwable;
@@ -29,6 +30,6 @@ class PasteCommand extends EasyEditCommand
 			return;
 		}
 
-		PasteTask::queue($selection, $player->getPosition());
+		PasteTask::queue(new LinkedBlockListSelection($player->getName(), $player->getWorld()->getFolderName(), $selection), $player->getPosition());
 	}
 }

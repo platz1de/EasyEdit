@@ -8,7 +8,7 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 
-class LinkedBlockListSelection extends Selection
+class LinkedBlockListSelection extends BlockListSelection
 {
 	use CubicChunkLoader;
 
@@ -32,7 +32,19 @@ class LinkedBlockListSelection extends Selection
 	 */
 	public function get(): BlockListSelection
 	{
-		return StorageModule::getStored($this->id);
+		$selection = StorageModule::getStored($this->id);
+		if ($selection instanceof DynamicBlockListSelection) {
+			$selection->world = $this->getWorldName();
+		}
+		if ($this->player !== "EasyEdit") {
+			$selection->player = $this->player;
+		}
+		return $selection;
+	}
+
+	public function clear(): void
+	{
+		StorageModule::cleanStored($this->id);
 	}
 
 	/**

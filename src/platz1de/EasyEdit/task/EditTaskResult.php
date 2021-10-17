@@ -2,10 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\FastChunkSerializer;
@@ -14,26 +11,24 @@ use pocketmine\world\World;
 class EditTaskResult
 {
 	private ReferencedChunkManager $manager;
-	private BlockListSelection $toUndo;
 	/**
 	 * @var CompoundTag[]
 	 */
 	private array $tiles;
 	private float $time;
 	private int $changed;
+	private int $changeId = -1; //only on main-thread
 
 	/**
 	 * EditTaskResult constructor.
-	 * @param string             $world
-	 * @param BlockListSelection $toUndo
-	 * @param CompoundTag[]      $tiles
-	 * @param float              $time
-	 * @param int                $changed
+	 * @param string        $world
+	 * @param CompoundTag[] $tiles
+	 * @param float         $time
+	 * @param int           $changed
 	 */
-	public function __construct(string $world, BlockListSelection $toUndo, array $tiles, float $time, int $changed)
+	public function __construct(string $world, array $tiles, float $time, int $changed)
 	{
 		$this->manager = new ReferencedChunkManager($world);
-		$this->toUndo = $toUndo;
 		$this->tiles = $tiles;
 		$this->time = $time;
 		$this->changed = $changed;
@@ -51,16 +46,6 @@ class EditTaskResult
 	{
 		$this->time += $result->getTime();
 		$this->changed += $result->getChanged();
-		foreach ($result->getUndo()->getManager()->getChunks() as $hash => $chunk) {
-			World::getXZ($hash, $x, $z);
-			//TODO: only create Chunks which are really needed
-			if (LoaderManager::isChunkUsed($chunk)) {
-				$this->getUndo()->getManager()->setChunk($x, $z, $chunk);
-			}
-		}
-		foreach ($result->getUndo()->getTiles() as $tile) {
-			$this->getUndo()->addTile($tile);
-		}
 	}
 
 	/**
@@ -69,14 +54,6 @@ class EditTaskResult
 	public function getManager(): ReferencedChunkManager
 	{
 		return $this->manager;
-	}
-
-	/**
-	 * @return BlockListSelection
-	 */
-	public function getUndo(): BlockListSelection
-	{
-		return $this->toUndo;
 	}
 
 	/**
@@ -104,6 +81,23 @@ class EditTaskResult
 	}
 
 	/**
+	 * @return int
+	 */
+	public function getChangeId(): int
+	{
+		return $this->changeId;
+	}
+
+	/**
+	 * @param int $changeId
+	 * @return int
+	 */
+	public function setChangeId(int $changeId): int
+	{
+		return $this->changeId = $changeId;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function fastSerialize(): string
@@ -123,8 +117,6 @@ class EditTaskResult
 		}
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
-
-		$stream->putString($this->toUndo->fastSerialize());
 
 		$stream->putCompounds($this->tiles);
 
@@ -150,15 +142,12 @@ class EditTaskResult
 			$chunks[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserialize($stream->getString());
 		}
 
-		/** @var BlockListSelection $undo */
-		$undo = Selection::fastDeserialize($stream->getString());
-
 		$tiles = $stream->getCompounds();
 
 		$time = $stream->getFloat();
 		$changed = $stream->getLInt();
 
-		$result = new EditTaskResult($world, $undo, $tiles, $time, $changed);
+		$result = new EditTaskResult($world, $tiles, $time, $changed);
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
 			$result->addChunk($x, $z, $chunk);

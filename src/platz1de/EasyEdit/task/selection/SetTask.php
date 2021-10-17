@@ -10,8 +10,8 @@ use platz1de\EasyEdit\task\EditTaskHandler;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\selection\type\SettingNotifier;
+use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
@@ -29,7 +29,7 @@ class SetTask extends EditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place, ?Closure $finish = null): void
 	{
-		WorkerAdapter::queue(new QueuedEditTask($selection, $pattern, $place, self::class, new AdditionalDataManager(true, true), new Vector3(0, 0, 0), $finish));
+		EditAdapter::queue(new QueuedEditTask($selection, $pattern, $place->getWorld()->getFolderName(), $place, self::class, new AdditionalDataManager(true, true), new Vector3(0, 0, 0)), $finish);
 	}
 
 	/**

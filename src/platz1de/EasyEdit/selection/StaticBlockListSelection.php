@@ -17,6 +17,14 @@ class StaticBlockListSelection extends BlockListSelection
 	}
 
 	/**
+	 * @param string $world
+	 */
+	public function setWorld(string $world): void
+	{
+		$this->world = $world;
+	}
+
+	/**
 	 * splits into 3x3 Chunk pieces
 	 * @param Vector3 $offset
 	 * @return StaticBlockListSelection[]
