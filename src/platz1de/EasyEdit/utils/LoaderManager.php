@@ -2,8 +2,6 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use platz1de\EasyEdit\task\queued\QueuedCallbackTask;
-use platz1de\EasyEdit\worker\WorkerAdapter;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
@@ -55,15 +53,8 @@ class LoaderManager
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
 			self::injectChunk($world, $x, $z, $chunk);
+			$world->unloadChunk($x, $z);
 		}
-
-		//reduce load by not setting and unloading on the same tick
-		WorkerAdapter::priority(new QueuedCallbackTask(function () use ($chunks, $world): void {
-			foreach ($chunks as $hash => $chunk) {
-				World::getXZ($hash, $x, $z);
-				$world->unloadChunk($x, $z);
-			}
-		}));
 	}
 
 	/**
