@@ -6,7 +6,6 @@
 
 namespace platz1de\EasyEdit\thread;
 
-use BadMethodCallException;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\thread\input\InputData;
@@ -27,6 +26,7 @@ class EditThread extends Thread
 	 * @var ThreadedLogger
 	 */
 	private $logger;
+	private static EditThread $instance;
 	private int $status = self::STATUS_IDLE;
 	private float $lastResponse = 0.0;
 	private string $inputData = "";
@@ -38,6 +38,7 @@ class EditThread extends Thread
 	 */
 	public function __construct(ThreadedLogger $logger)
 	{
+		self::$instance = $this;
 		$this->logger = $logger;
 	}
 
@@ -91,7 +92,7 @@ class EditThread extends Thread
 	{
 		$thread = self::getCurrentThread();
 		if (!$thread instanceof self) {
-			throw new BadMethodCallException("EditWorker::getInstance is only callable from the edit thread");
+			return self::$instance;
 		}
 		return $thread;
 	}

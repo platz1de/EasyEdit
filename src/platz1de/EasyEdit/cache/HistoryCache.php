@@ -3,9 +3,9 @@
 namespace platz1de\EasyEdit\cache;
 
 use BadMethodCallException;
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\selection\RedoTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 
 class HistoryCache
@@ -38,7 +38,7 @@ class HistoryCache
 		} else {
 			self::$pastCache[$player][] = $id;
 			if (isset(self::$futureCache[$player])) {
-				EasyEdit::getWorker()->sendToThread(CleanStorageTask::from(self::$futureCache[$player]));
+				EditThread::getInstance()->sendToThread(CleanStorageTask::from(self::$futureCache[$player]));
 				self::$futureCache[$player] = [];
 			}
 		}

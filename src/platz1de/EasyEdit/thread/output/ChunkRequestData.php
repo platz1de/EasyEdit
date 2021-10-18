@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
-use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
@@ -68,7 +68,7 @@ class ChunkRequestData extends OutputData
 				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
 
 				if ($chunks === []) {
-					EasyEdit::getWorker()->sendToThread(ChunkInputData::from($chunkData->getBuffer(), $tileData->getBuffer()));
+					EditThread::getInstance()->sendToThread(ChunkInputData::from($chunkData->getBuffer(), $tileData->getBuffer()));
 				} else {
 					$this->prepareNextChunk($chunks, $world, $chunkData, $tileData);
 				}

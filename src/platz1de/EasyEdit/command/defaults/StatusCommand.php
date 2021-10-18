@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\thread\EditAdapter;
@@ -35,7 +34,7 @@ class StatusCommand extends EasyEditCommand
 			$progress = "-";
 		}
 
-		switch (EasyEdit::getWorker()->getStatus()) {
+		switch (EditThread::getInstance()->getStatus()) {
 			case EditThread::STATUS_IDLE:
 				$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
 				break;
@@ -59,7 +58,7 @@ class StatusCommand extends EasyEditCommand
 
 	private static function getColoredTiming(): string
 	{
-		$time = microtime(true) - EasyEdit::getWorker()->getLastResponse();
+		$time = microtime(true) - EditThread::getInstance()->getLastResponse();
 		if ($time < 1) {
 			return TextFormat::GREEN . round($time * 1000) . "ms" . TextFormat::RESET;
 		}

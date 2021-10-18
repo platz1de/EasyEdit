@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\thread;
 use Closure;
 use platz1de\EasyEdit\cache\ClosureCache;
 use platz1de\EasyEdit\cache\HistoryCache;
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\queued\QueuedTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
@@ -19,7 +18,7 @@ class EditAdapter extends Task
 
 	public function onRun(): void
 	{
-		EasyEdit::getWorker()->parseOutput();
+		EditThread::getInstance()->parseOutput();
 	}
 
 	/**
@@ -36,7 +35,7 @@ class EditAdapter extends Task
 	 */
 	public static function queue(QueuedEditTask $task, ?Closure $closure): void
 	{
-		EasyEdit::getWorker()->sendToThread(TaskInputData::fromTask($task));
+		EditThread::getInstance()->sendToThread(TaskInputData::fromTask($task));
 
 		if ($closure === null) {
 			$closure = static function (TaskResultData $result): void {
