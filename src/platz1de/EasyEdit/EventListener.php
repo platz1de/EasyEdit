@@ -77,7 +77,7 @@ class EventListener implements Listener
 					$target = $event->getPlayer()->getTargetBlock(100);
 					if ($target instanceof Block) {
 						//HACK: Touch control sends Itemuse when starting to break a block
-						//This gets triggered when breaking a block which isn't fokused
+						//This gets triggered when breaking a block which isn't focused
 						EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($target, $event): void {
 							if (self::$cooldown < microtime(true)) {
 								Cube::selectPos2($event->getPlayer(), $target->getPosition());
