@@ -17,7 +17,7 @@ class EditTaskResult
 	private array $tiles;
 	private float $time;
 	private int $changed;
-	private int $changeId = -1; //only on main-thread
+	private int $changeId = -1;
 
 	/**
 	 * EditTaskResult constructor.
