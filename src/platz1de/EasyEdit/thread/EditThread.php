@@ -33,7 +33,7 @@ class EditThread extends Thread
 	private string $outputData = "";
 
 	/**
-	 * EditWorker constructor.
+	 * EditThread constructor.
 	 * @param ThreadedLogger $logger
 	 */
 	public function __construct(ThreadedLogger $logger)
@@ -47,7 +47,7 @@ class EditThread extends Thread
 	{
 		gc_enable();
 
-		$this->getLogger()->debug("Started EditWorker");
+		$this->getLogger()->debug("Started EditThread");
 
 		$this->lastResponse = microtime(true);
 
@@ -102,7 +102,7 @@ class EditThread extends Thread
 	 */
 	public function getThreadName(): string
 	{
-		return "EditWorker";
+		return "EasyEdit editing";
 	}
 
 	/**

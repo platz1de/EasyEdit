@@ -20,7 +20,7 @@ blocks-pasted: "{changed} blocks were pasted in {time}s"
 blocks-counted: "{changed} blocks were counted in {time}s"
 
 #Args: {task} {queue} {status} {progress}
-worker-status: "Status of EditWorker:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}"
+thread-status: "Status of EditThread:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}"
 
 benchmark-start: "Started benchmark, this can take up to a minute"
 benchmark-running: "There is already a benchmark running"
