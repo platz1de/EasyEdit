@@ -26,7 +26,6 @@ abstract class EditTask
 {
 	private bool $finished = false;
 
-	protected EditThread $worker;
 	private int $id;
 	private Selection $selection;
 	private Pattern $pattern;
