@@ -10,7 +10,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
 
-class QueuedEditTask implements QueuedTask
+class QueuedEditTask
 {
 	use ReferencedWorldHolder;
 

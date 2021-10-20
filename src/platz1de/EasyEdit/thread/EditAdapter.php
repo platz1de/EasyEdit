@@ -6,7 +6,6 @@ use Closure;
 use platz1de\EasyEdit\cache\ClosureCache;
 use platz1de\EasyEdit\cache\HistoryCache;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
-use platz1de\EasyEdit\task\queued\QueuedTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
@@ -55,9 +54,9 @@ class EditAdapter extends Task
 	}
 
 	/**
-	 * @return QueuedTask|null
+	 * @return QueuedEditTask|null
 	 */
-	public static function getCurrentTask(): ?QueuedTask
+	public static function getCurrentTask(): ?QueuedEditTask
 	{
 		//TODO
 		return null;
