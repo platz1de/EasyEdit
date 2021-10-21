@@ -75,8 +75,6 @@ class PieceManager
 					return false; //more to go
 				}
 
-				//$this->task->finishWith($this->result);
-
 				EditThread::getInstance()->sendOutput(TaskResultData::from($this->selection->getPlayer(), $this->task->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId()));
 			}
 			return true;
