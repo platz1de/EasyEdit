@@ -7,7 +7,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\task\selection\RedoTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
-use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
@@ -54,7 +53,7 @@ class PieceManager
 
 			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
 				if ($data->isSavingChunks()) {
-					EditThread::getInstance()->sendOutput(ResultingChunkData::from($result->getManager()->getWorldName(), $result->getManager()->getChunks(), $result->getTiles()));
+					ResultingChunkData::from($result->getManager()->getWorldName(), $result->getManager()->getChunks(), $result->getTiles());
 				}
 
 				if (isset($this->result)) {
@@ -75,7 +74,7 @@ class PieceManager
 					return false; //more to go
 				}
 
-				EditThread::getInstance()->sendOutput(TaskResultData::from($this->selection->getPlayer(), $this->task->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId()));
+				TaskResultData::from($this->selection->getPlayer(), $this->task->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId());
 			}
 			return true;
 		}

@@ -13,14 +13,13 @@ class ChunkInputData extends InputData
 	/**
 	 * @param string $chunkData
 	 * @param string $tileData
-	 * @return ChunkInputData
 	 */
-	public static function from(string $chunkData, string $tileData): ChunkInputData
+	public static function from(string $chunkData, string $tileData): void
 	{
 		$data = new self();
 		$data->chunkData = $chunkData;
 		$data->tileData = $tileData;
-		return $data;
+		$data->send();
 	}
 
 	public function handle(): void

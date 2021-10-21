@@ -12,13 +12,12 @@ class TaskInputData extends InputData
 
 	/**
 	 * @param QueuedEditTask $task
-	 * @return TaskInputData
 	 */
-	public static function fromTask(QueuedEditTask $task): TaskInputData
+	public static function fromTask(QueuedEditTask $task): void
 	{
 		$data = new self();
 		$data->task = $task;
-		return $data;
+		$data->send();
 	}
 
 	public function handle(): void

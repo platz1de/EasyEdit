@@ -15,13 +15,12 @@ class CleanStorageTask extends InputData
 
 	/**
 	 * @param int[] $storageIds
-	 * @return CleanStorageTask
 	 */
-	public static function from(array $storageIds): CleanStorageTask
+	public static function from(array $storageIds): void
 	{
 		$data = new self();
 		$data->storageIds = $storageIds;
-		return $data;
+		$data->send();
 	}
 
 	public function handle(): void

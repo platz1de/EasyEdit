@@ -58,7 +58,7 @@ abstract class EditTask
 		}
 		$this->data = $data;
 
-		EditThread::getInstance()->sendOutput(ChunkRequestData::from($selection->getNeededChunks($place), $world));
+		ChunkRequestData::from($selection->getNeededChunks($place), $world);
 	}
 
 	public function checkData(): void

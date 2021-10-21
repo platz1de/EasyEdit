@@ -34,7 +34,7 @@ class EditAdapter extends Task
 	 */
 	public static function queue(QueuedEditTask $task, ?Closure $closure): void
 	{
-		EditThread::getInstance()->sendToThread(TaskInputData::fromTask($task));
+		TaskInputData::fromTask($task);
 
 		if ($closure === null) {
 			$closure = static function (TaskResultData $result): void {

@@ -30,9 +30,8 @@ class TaskResultData extends OutputData
 	 * @param int                    $changes
 	 * @param AdditionalDataManager  $dataManager
 	 * @param int                    $changeId
-	 * @return TaskResultData
 	 */
-	public static function from(string $player, string $task, float $time, int $changes, AdditionalDataManager $dataManager, int $changeId): TaskResultData
+	public static function from(string $player, string $task, float $time, int $changes, AdditionalDataManager $dataManager, int $changeId): void
 	{
 		$data = new self();
 		$data->player = $player;
@@ -41,7 +40,7 @@ class TaskResultData extends OutputData
 		$data->changes = $changes;
 		$data->dataManager = $dataManager;
 		$data->changeId = $changeId;
-		return $data;
+		$data->send();
 	}
 
 	public function handle(): void

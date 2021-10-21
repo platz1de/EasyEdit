@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
-use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 
 class ClipBoardManager
@@ -32,7 +31,7 @@ class ClipBoardManager
 			throw new BadMethodCallException("Invalid Task Id -1 given");
 		}
 		if (isset(self::$clipboard[$player])) {
-			EditThread::getInstance()->sendToThread(CleanStorageTask::from([self::$clipboard[$player]]));
+			CleanStorageTask::from([self::$clipboard[$player]]);
 		}
 		self::$clipboard[$player] = $id;
 	}

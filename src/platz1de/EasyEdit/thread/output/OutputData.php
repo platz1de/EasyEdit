@@ -2,10 +2,16 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class OutputData
 {
+	protected function send(): void
+	{
+		EditThread::getInstance()->sendOutput($this);
+	}
+
 	abstract public function handle(): void;
 
 	/**

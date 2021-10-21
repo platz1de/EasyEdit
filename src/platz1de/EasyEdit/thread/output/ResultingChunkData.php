@@ -27,15 +27,14 @@ class ResultingChunkData extends OutputData
 	 * @param string        $world
 	 * @param Chunk[]       $chunks
 	 * @param CompoundTag[] $tiles
-	 * @return ResultingChunkData
 	 */
-	public static function from(string $world, array $chunks, array $tiles): ResultingChunkData
+	public static function from(string $world, array $chunks, array $tiles): void
 	{
 		$data = new self();
 		$data->world = $world;
 		$data->chunkData = $chunks;
 		$data->tileData = $tiles;
-		return $data;
+		$data->send();
 	}
 
 	public function handle(): void
