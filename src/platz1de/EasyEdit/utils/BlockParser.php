@@ -7,7 +7,6 @@ use pocketmine\block\Block;
 use pocketmine\item\LegacyStringToItemParser;
 use pocketmine\item\LegacyStringToItemParserException;
 use pocketmine\item\StringToItemParser;
-use Throwable;
 
 class BlockParser
 {
@@ -37,7 +36,7 @@ class BlockParser
 	{
 		try {
 			$item = LegacyStringToItemParser::getInstance()->parse($string);
-		} catch (Throwable) {
+		} catch (LegacyStringToItemParserException) {
 			//Also accept prefixed blocks
 			if (($item = StringToItemParser::getInstance()->parse(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[0])) === null) {
 				throw new ParseError("Unknown Block " . $string);
