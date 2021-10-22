@@ -3,12 +3,19 @@
 namespace platz1de\EasyEdit\task\queued;
 
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\LinkedBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\task\PieceManager;
+use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\EditTaskResult;
+use platz1de\EasyEdit\task\selection\RedoTask;
+use platz1de\EasyEdit\task\selection\UndoTask;
+use platz1de\EasyEdit\thread\output\ResultingChunkData;
+use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
+use UnexpectedValueException;
 
 class QueuedEditTask
 {
@@ -19,8 +26,14 @@ class QueuedEditTask
 	private Vector3 $place;
 	private string $task;
 	private AdditionalDataManager $data;
-	private PieceManager $executor;
 	private Vector3 $splitOffset;
+	/**
+	 * @var Selection[]
+	 */
+	private array $pieces;
+	private EditTask $currentPiece;
+	private int $totalLength;
+	private EditTaskResult $result;
 
 	/**
 	 * QueuedTask constructor.
@@ -93,21 +106,74 @@ class QueuedEditTask
 
 	public function execute(): void
 	{
-		$this->executor = new PieceManager($this);
-		$this->executor->start();
-	}
+		if ($this->selection instanceof LinkedBlockListSelection) {
+			$temp = $this->selection;
+			$this->selection = $temp->get();
+			if ($this->task === UndoTask::class || $this->task === RedoTask::class) {
+				$temp->clear();
+			}
+			$this->world = $this->selection->getWorldName();
+		}
+		$this->pieces = $this->selection->split($this->getSplitOffset());
+		$this->totalLength = count($this->pieces);
 
-	public function continue(): bool
-	{
-		return $this->executor->continue();
+		if (count($this->pieces) === 1) {
+			$this->getData()->setFinal();
+		}
+		$this->startPiece($this->getData());
 	}
 
 	/**
-	 * @return PieceManager
+	 * @return bool whether all pieces are done
 	 */
-	public function getExecutor(): PieceManager
+	public function continue(): bool
 	{
-		return $this->executor;
+		if ($this->currentPiece->isFinished()) {
+			$result = $this->currentPiece->getResult();
+			$data = $this->currentPiece->getAdditionalData();
+
+			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
+				if ($data->isSavingChunks()) {
+					ResultingChunkData::from($result->getManager()->getWorldName(), $result->getManager()->getChunks(), $result->getTiles());
+				}
+
+				if (isset($this->result)) {
+					$this->result->merge($result);
+				} else {
+					$this->result = $result;
+				}
+
+				$result->free();
+
+				if (count($this->pieces) > 0) {
+					$data->donePiece();
+					if (count($this->pieces) === 1) {
+						$data->setFinal();
+					}
+
+					$this->startPiece($data);
+					return false; //more to go
+				}
+
+				TaskResultData::from($this->selection->getPlayer(), $this->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId());
+			}
+			return true;
+		}
+		return false; //not finished yet
+	}
+
+	/**
+	 * @param AdditionalDataManager $data
+	 */
+	private function startPiece(AdditionalDataManager $data): void
+	{
+		$piece = array_pop($this->pieces);
+		if (!$piece instanceof Selection) {
+			throw new UnexpectedValueException("Tried to start executing without any pieces in stack");
+		}
+
+		$task = $this->getTask();
+		$this->currentPiece = new $task($piece, $this->getPattern(), $this->world, $this->getPlace(), $data, $data->isFirstPiece() ? $this->selection : null);
 	}
 
 	/**
@@ -116,6 +182,30 @@ class QueuedEditTask
 	public function getSplitOffset(): Vector3
 	{
 		return $this->splitOffset;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTotalLength(): int
+	{
+		return $this->totalLength;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLength(): int
+	{
+		return count($this->pieces) + 1;
+	}
+
+	/**
+	 * @return EditTaskResult|null Current result of task, may not be finished yet
+	 */
+	public function getResult(): ?EditTaskResult
+	{
+		return $this->result ?? null;
 	}
 
 	/**
