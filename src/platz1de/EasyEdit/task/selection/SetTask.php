@@ -12,7 +12,6 @@ use platz1de\EasyEdit\task\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\selection\type\SettingNotifier;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 
@@ -50,8 +49,8 @@ class SetTask extends EditTask
 	{
 		$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $selection): void {
 			$block = $handler->getPattern()->getFor($x, $y, $z, $handler->getOrigin(), $selection);
-			if ($block instanceof Block) {
-				$handler->changeBlock($x, $y, $z, $block->getFullId());
+			if ($block !== -1) {
+				$handler->changeBlock($x, $y, $z, $block);
 			}
 		}, $handler->getSelectionContext());
 	}

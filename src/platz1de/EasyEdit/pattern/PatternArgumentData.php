@@ -13,7 +13,7 @@ class PatternArgumentData
 	private bool $yAxis = false;
 	private bool $zAxis = false;
 	private StaticBlock $block;
-	private Block $realBlock;
+	private int $realBlock;
 	/**
 	 * @var int[]
 	 */
@@ -92,9 +92,9 @@ class PatternArgumentData
 	}
 
 	/**
-	 * @return Block
+	 * @return int
 	 */
-	public function getRealBlock(): Block
+	public function getRealBlock(): int
 	{
 		return $this->realBlock;
 	}
@@ -102,7 +102,7 @@ class PatternArgumentData
 	/**
 	 * @return $this
 	 */
-	public function setRealBlock(Block $block): PatternArgumentData
+	public function setRealBlock(int $block): PatternArgumentData
 	{
 		$this->realBlock = $block;
 		return $this;
@@ -204,7 +204,7 @@ class PatternArgumentData
 
 		if (isset($this->realBlock)) {
 			$stream->putBool(true);
-			$stream->putInt($this->realBlock->getFullId());
+			$stream->putInt($this->realBlock);
 		} else {
 			$stream->putBool(false);
 		}
@@ -247,7 +247,7 @@ class PatternArgumentData
 		}
 
 		if ($stream->getBool()) {
-			$result->realBlock = BlockFactory::getInstance()->fromFullBlock($stream->getInt());
+			$result->realBlock = $stream->getInt();
 		}
 
 		for ($i = $stream->getInt(); $i > 0; $i--) {

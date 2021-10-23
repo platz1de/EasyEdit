@@ -16,15 +16,15 @@ class RandomPattern extends Pattern
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $selection
-	 * @return Block|null
+	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
 	{
 		$selected = $this->pieces[array_rand($this->pieces)];
 		if ($selected->isValidAt($x, $y, $z, $iterator, $selection)) {
 			return $selected->getFor($x, $y, $z, $iterator, $selection);
 		}
-		return null;
+		return -1;
 	}
 
 	public function check(): void

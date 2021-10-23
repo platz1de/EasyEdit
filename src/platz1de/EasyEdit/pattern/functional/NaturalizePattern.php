@@ -31,9 +31,9 @@ class NaturalizePattern extends Pattern
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $selection
-	 * @return Block|null
+	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
 	{
 		$i = 1;
 		while ($y + $i < World::Y_MAX && $iterator->getBlockAt($x, $y + $i, $z) !== 0) {

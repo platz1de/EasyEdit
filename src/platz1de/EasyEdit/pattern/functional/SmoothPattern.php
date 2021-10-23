@@ -18,9 +18,9 @@ class SmoothPattern extends Pattern
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $selection
-	 * @return Block|null
+	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
 	{
 		HeightMapCache::load($iterator, $selection);
 
@@ -62,16 +62,16 @@ class SmoothPattern extends Pattern
 			if ($y >= $mid && $y <= $max) {
 				$k = ($y - $mid) / ($max - $mid);
 				$gy = $oMid + round($k * ($oMax - $oMid));
-				return BlockFactory::getInstance()->fromFullBlock($iterator->getBlockAt($x, (int) $gy, $z));
+				return $iterator->getBlockAt($x, (int) $gy, $z);
 			}
 
 			if ($y <= $mid && $y >= $min) {
 				$k = ($y - $mid) / ($min - $mid);
 				$gy = $oMid + round($k * ($oMin - $oMid));
-				return BlockFactory::getInstance()->fromFullBlock($iterator->getBlockAt($x, (int) $gy, $z));
+				return $iterator->getBlockAt($x, (int) $gy, $z);
 			}
 		}
 
-		return VanillaBlocks::AIR();
+		return 0;
 	}
 }

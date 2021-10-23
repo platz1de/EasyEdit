@@ -17,9 +17,9 @@ class NotPattern extends Pattern
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $selection
-	 * @return Block|null
+	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
 	{
 		return $this->pieces[0]->getFor($x, $y, $z, $iterator, $selection);
 	}

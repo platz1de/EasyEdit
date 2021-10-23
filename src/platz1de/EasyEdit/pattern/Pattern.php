@@ -6,7 +6,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
-use pocketmine\block\Block;
 
 class Pattern
 {
@@ -38,16 +37,16 @@ class Pattern
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $selection
-	 * @return Block|null
+	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
 	{
 		foreach ($this->pieces as $piece) {
 			if ($piece->isValidAt($x, $y, $z, $iterator, $selection)) {
 				return $piece->getFor($x, $y, $z, $iterator, $selection);
 			}
 		}
-		return null;
+		return -1;
 	}
 
 	/**

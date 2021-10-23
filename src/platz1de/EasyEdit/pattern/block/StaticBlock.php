@@ -19,9 +19,9 @@ class StaticBlock extends Pattern
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $selection
-	 * @return Block|null
+	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): ?Block
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
 	{
 		return $this->args->getRealBlock();
 	}
@@ -31,7 +31,7 @@ class StaticBlock extends Pattern
 	 */
 	public function getId(): int
 	{
-		return $this->args->getRealBlock()->getId();
+		return $this->args->getRealBlock() >> Block::INTERNAL_METADATA_BITS;
 	}
 
 	/**
@@ -39,7 +39,7 @@ class StaticBlock extends Pattern
 	 */
 	public function getMeta(): int
 	{
-		return $this->args->getRealBlock()->getMeta();
+		return $this->args->getRealBlock() & Block::INTERNAL_METADATA_MASK;
 	}
 
 	public function check(): void
@@ -58,7 +58,7 @@ class StaticBlock extends Pattern
 	 */
 	public static function from(Block $block): StaticBlock
 	{
-		return new static([], PatternArgumentData::create()->setRealBlock($block));
+		return new static([], PatternArgumentData::create()->setRealBlock($block->getFullId()));
 	}
 
 	/**
@@ -67,7 +67,7 @@ class StaticBlock extends Pattern
 	 */
 	public function equals(int $fullBlock): bool
 	{
-		return $fullBlock === $this->args->getRealBlock()->getFullId();
+		return $fullBlock === $this->args->getRealBlock();
 	}
 
 	/**
