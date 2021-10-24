@@ -4,9 +4,8 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\task\queued\QueuedEditTask;
-use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\input\task\CollectStatsTask;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -24,36 +23,34 @@ class StatusCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
-		$manager = EditAdapter::getCurrentTask();
-		if ($manager instanceof QueuedEditTask) {
-			$manager = $manager->getExecutor();
-			$task = $manager->getCurrent()->getTaskName() . ":" . $manager->getCurrent()->getId() . " by " . $manager->getQueued()->getSelection()->getPlayer();
-			$progress = ($manager->getTotalLength() - $manager->getLength()) . "/" . $manager->getTotalLength() . " (" . round(($manager->getTotalLength() - $manager->getLength()) / $manager->getTotalLength() * 100, 1) . "%)";
+		if (EditThread::getInstance()->getStatus() === EditThread::STATUS_CRASHED) {
+			Messages::send($player, "thread-status", [
+				"{task}" => "unknown",
+				"{queue}" => "unknown",
+				"{status}" => TextFormat::RED . "CRASHED" . TextFormat::RESET,
+				"{progress}" => "unknown"
+			]);
 		} else {
-			$task = "none";
-			$progress = "-";
-		}
+			$p = $player->getName();
+			CollectStatsTask::from(function (string $taskName, int $taskId, string $responsiblePlayer, int $totalPieces, int $piecesLeft, int $queueLength) use ($p): void {
+				if ($totalPieces !== -1) {
+					$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();
+					$progress = ($totalPieces - $piecesLeft) . "/" . $totalPieces . " (" . round(($totalPieces - $piecesLeft) / $totalPieces * 100, 1) . "%)";
+					$task = $taskName . ":" . $taskId . " by " . $responsiblePlayer;
+				} else {
+					$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
+					$task = "none";
+					$progress = "-";
+				}
 
-		switch (EditThread::getInstance()->getStatus()) {
-			case EditThread::STATUS_IDLE:
-				$status = TextFormat::GREEN . "OK" . TextFormat::RESET;
-				break;
-			case EditThread::STATUS_PREPARING:
-				$status = TextFormat::AQUA . "PREPARING" . TextFormat::RESET . ": " . self::getColoredTiming();
-				break;
-			case EditThread::STATUS_RUNNING:
-				$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();
-				break;
-			default:
-				return;
+				Messages::send($p, "thread-status", [
+					"{task}" => $task,
+					"{queue}" => (string) $queueLength,
+					"{status}" => $status,
+					"{progress}" => $progress
+				]);
+			});
 		}
-
-		Messages::send($player, "thread-status", [
-			"{task}" => $task,
-			"{queue}" => (string) EditAdapter::getQueueLength(),
-			"{status}" => $status,
-			"{progress}" => $progress
-		]);
 	}
 
 	private static function getColoredTiming(): string

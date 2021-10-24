@@ -5,12 +5,16 @@ namespace platz1de\EasyEdit\thread;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 
+/**
+ * @internal
+ */
 class ThreadData
 {
 	/**
 	 * @var QueuedEditTask[]
 	 */
 	private static array $tasks = [];
+	private static ?QueuedEditTask $task = null;
 	/**
 	 * @var ChunkInputData|null
 	 */
@@ -18,7 +22,6 @@ class ThreadData
 
 	/**
 	 * @return QueuedEditTask|null
-	 * @internal
 	 */
 	public static function getNextTask(): ?QueuedEditTask
 	{
@@ -26,8 +29,23 @@ class ThreadData
 	}
 
 	/**
+	 * @return QueuedEditTask|null
+	 */
+	public static function getTask(): ?QueuedEditTask
+	{
+		return self::$task;
+	}
+
+	/**
+	 * @return int
+	 */
+	public static function getQueueLength(): int
+	{
+		return count(self::$tasks);
+	}
+
+	/**
 	 * @param QueuedEditTask $task
-	 * @internal
 	 */
 	public static function addTask(QueuedEditTask $task): void
 	{
@@ -35,8 +53,15 @@ class ThreadData
 	}
 
 	/**
+	 * @param QueuedEditTask|null $task
+	 */
+	public static function setTask(?QueuedEditTask $task): void
+	{
+		self::$task = $task;
+	}
+
+	/**
 	 * @param ChunkInputData $data
-	 * @internal
 	 */
 	public static function storeData(ChunkInputData $data): void
 	{

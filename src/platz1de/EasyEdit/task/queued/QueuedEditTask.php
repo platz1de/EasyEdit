@@ -236,4 +236,12 @@ class QueuedEditTask
 
 		return new QueuedEditTask(Selection::fastDeserialize($stream->getString()), Pattern::fastDeserialize($stream->getString()), $stream->getString(), $stream->getVector(), $stream->getString(), igbinary_unserialize($stream->getString()), $stream->getVector());
 	}
+
+	/**
+	 * @return EditTask
+	 */
+	public function getCurrentPiece(): EditTask
+	{
+		return $this->currentPiece;
+	}
 }

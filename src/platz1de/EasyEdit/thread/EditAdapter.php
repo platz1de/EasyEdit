@@ -52,22 +52,4 @@ class EditAdapter extends Task
 		//TODO
 		return false;
 	}
-
-	/**
-	 * @return QueuedEditTask|null
-	 */
-	public static function getCurrentTask(): ?QueuedEditTask
-	{
-		//TODO
-		return null;
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function getQueueLength(): int
-	{
-		//TODO
-		return 0;
-	}
 }

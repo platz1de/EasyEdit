@@ -55,6 +55,7 @@ class EditThread extends Thread
 			while (!$this->isKilled) {
 				$this->parseInput();
 				$task = ThreadData::getNextTask();
+				ThreadData::setTask($task);
 				if ($task === null) {
 					$this->wait();
 				} else {
