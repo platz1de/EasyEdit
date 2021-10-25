@@ -57,7 +57,9 @@ class EditThread extends Thread
 				$task = ThreadData::getNextTask();
 				ThreadData::setTask($task);
 				if ($task === null) {
-					$this->wait();
+					$this->synchronized(function (): void {
+						$this->wait();
+					});
 				} else {
 					$task->execute();
 					$this->tick($task);
@@ -74,7 +76,9 @@ class EditThread extends Thread
 	{
 		while (!$task->continue()) {
 			$this->parseInput();
-			$this->wait();
+			$this->synchronized(function (): void {
+				$this->wait();
+			});
 		}
 	}
 
