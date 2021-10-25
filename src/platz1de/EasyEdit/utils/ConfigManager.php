@@ -45,7 +45,7 @@ class ConfigManager
 
 				EasyEdit::getInstance()->getLogger()->notice("Your config was updated to the newest Version");
 			} else {
-				//We can't update for major releases or if a release was skipped
+				//We can't update for major releases
 				copy($config->getPath(), $config->getPath() . ".old");
 				unlink($config->getPath());
 				EasyEdit::getInstance()->saveDefaultConfig();
