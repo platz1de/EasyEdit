@@ -75,10 +75,10 @@ class EditThread extends Thread
 	private function tick(QueuedEditTask $task): void
 	{
 		while (!$task->continue()) {
-			$this->parseInput();
 			$this->synchronized(function (): void {
 				$this->wait();
 			});
+			$this->parseInput();
 		}
 	}
 
