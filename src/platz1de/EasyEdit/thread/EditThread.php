@@ -51,9 +51,10 @@ class EditThread extends Thread
 
 		$this->lastResponse = microtime(true);
 
-		try {
-			while (!$this->isKilled) {
-				$this->parseInput();
+		$sleep = 0;
+		while (!$this->isKilled) {
+			$this->parseInput();
+			if ($this->getStatus() !== self::STATUS_CRASHED) {
 				$task = ThreadData::getNextTask();
 				ThreadData::setTask($task);
 				if ($task === null) {
@@ -61,14 +62,23 @@ class EditThread extends Thread
 						$this->wait();
 					});
 				} else {
-					$task->execute();
-					$this->tick($task);
+					try {
+						$task->execute();
+						$this->tick($task);
+					} catch (Throwable $throwable) {
+						$this->logger->logException($throwable);
+						$this->setStatus(self::STATUS_CRASHED);
+						$sleep = time() + 9;
+					}
+				}
+			} else {
+				$this->synchronized(function (): void {
+					$this->wait(10 * 1000 * 1000);
+				});
+				if($sleep < time()){
+					$this->setStatus(self::STATUS_IDLE);
 				}
 			}
-		} catch (Throwable $throwable) {
-			$this->logger->logException($throwable);
-			$this->setStatus(self::STATUS_CRASHED);
-			//TODO: handle crashed task and attempt restart
 		}
 	}
 
