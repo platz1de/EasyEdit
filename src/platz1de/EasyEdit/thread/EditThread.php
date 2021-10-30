@@ -75,7 +75,7 @@ class EditThread extends Thread
 				$this->synchronized(function (): void {
 					$this->wait(10 * 1000 * 1000);
 				});
-				if($sleep < time()){
+				if ($sleep < time()) {
 					$this->setStatus(self::STATUS_IDLE);
 				}
 			}
