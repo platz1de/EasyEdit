@@ -9,6 +9,7 @@ namespace platz1de\EasyEdit\thread;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\thread\input\InputData;
+use platz1de\EasyEdit\thread\output\CrashReportData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\thread\Thread;
@@ -69,6 +70,7 @@ class EditThread extends Thread
 						$this->logger->logException($throwable);
 						$this->setStatus(self::STATUS_CRASHED);
 						$sleep = time() + 9;
+						CrashReportData::from($throwable, $task->getSelection()->getPlayer());
 					}
 				}
 			} else {
