@@ -1,3 +1,5 @@
+message-version: "1.2.1" #Please don't change this manually
+
 prefix: "§l§aEasy§bEdit §r> "
 
 #Args: {x} {y} {z}
