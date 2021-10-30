@@ -19,7 +19,6 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 use Thread;
 use ThreadedLogger;
-use Throwable;
 use UnexpectedValueException;
 
 abstract class EditTask
@@ -78,43 +77,38 @@ abstract class EditTask
 		$thread = Thread::getCurrentThread();
 		$thread->setStatus(EditThread::STATUS_RUNNING);
 
-		try {
-			if (isset($this->total)) {
-				TaskCache::init($this->total);
-			} elseif ($this->data->isFirstPiece()) {
-				throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
+		if (isset($this->total)) {
+			TaskCache::init($this->total);
+		} elseif ($this->data->isFirstPiece()) {
+			throw new UnexpectedValueException("Initial editing piece passed no selection as parameter");
+		}
+
+		$handler = EditTaskHandler::fromData($this->world, $chunkData->getChunkData(), $chunkData->getTileData(), $this->getUndoBlockList(TaskCache::getFullSelection(), $this->place, $this->world, $this->data), $this->data, $this->pattern);
+
+		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks, Context: " . $handler->getSelectionContext()->getName());
+
+		HeightMapCache::prepare();
+
+		$this->execute($handler, $this->selection, $this->place, $this->data);
+		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written, " . $handler->getChangedTileCount() . " affected tiles)");
+
+		if ($this->data->isSavingUndo()) {
+			StorageModule::collect($handler->getChanges());
+		}
+		$result = new EditTaskResult($this->world, $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
+
+		foreach ($handler->getResult()->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			//separate chunks which are only loaded for patterns
+			if ($this->selection->isChunkOfSelection($x, $z, $this->place)) {
+				$result->addChunk($x, $z, $chunk);
 			}
+		}
 
-			$handler = EditTaskHandler::fromData($this->world, $chunkData->getChunkData(), $chunkData->getTileData(), $this->getUndoBlockList(TaskCache::getFullSelection(), $this->place, $this->world, $this->data), $this->data, $this->pattern);
+		$this->result = $result;
 
-			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " loaded " . $handler->getChunkCount() . " Chunks, Context: " . $handler->getSelectionContext()->getName());
-
-			HeightMapCache::prepare();
-
-			$this->execute($handler, $this->selection, $this->place, $this->data);
-			$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written, " . $handler->getChangedTileCount() . " affected tiles)");
-
-			if ($this->data->isSavingUndo()) {
-				StorageModule::collect($handler->getChanges());
-			}
-			$result = new EditTaskResult($this->world, $handler->getTiles(), microtime(true) - $start, $handler->getChangedBlockCount());
-
-			foreach ($handler->getResult()->getChunks() as $hash => $chunk) {
-				World::getXZ($hash, $x, $z);
-				//separate chunks which are only loaded for patterns
-				if ($this->selection->isChunkOfSelection($x, $z, $this->place)) {
-					$result->addChunk($x, $z, $chunk);
-				}
-			}
-
-			$this->result = $result;
-
-			if ($this->data->isFinalPiece() && $this->data->isSavingUndo()) {
-				$this->changeId = StorageModule::finishCollecting();
-			}
-		} catch (Throwable $exception) {
-			$this->getLogger()->logException($exception);
-			unset($this->result);
+		if ($this->data->isFinalPiece() && $this->data->isSavingUndo()) {
+			$this->changeId = StorageModule::finishCollecting();
 		}
 
 		if ($this->data->isFinalPiece()) {
