@@ -71,7 +71,7 @@ class ChunkRequestData extends OutputData
 					$this->prepareNextChunk($chunks, $world, $chunkData, $tileData);
 				}
 			},
-			function () use ($z, $x): void {
+			function () use ($x, $z): void {
 				throw new UnexpectedValueException("Failed to prepare Chunk " . $x . " " . $z);
 			}
 		);
