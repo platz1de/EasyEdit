@@ -3,11 +3,18 @@
 namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\thread\input\ConfigInputData;
+use pocketmine\utils\Config;
 use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "1.2";
+	private const CONFIG_VERSION = "1.2.1";
+
+	/**
+	 * @var int[]
+	 */
+	private static array $heightIgnored = [];
 
 	public static function load(): void
 	{
@@ -55,5 +62,35 @@ class ConfigManager
 
 			$config->reload();
 		}
+
+		self::$heightIgnored = array_map(static function (string $block): int {
+			return BlockParser::getBlock($block)->getId();
+		}, self::mustGetStringArray($config, "height-ignored-blocks", []));
+
+		ConfigInputData::from(self::$heightIgnored);
+	}
+
+	/**
+	 * @param Config   $config
+	 * @param string   $key
+	 * @param string[] $default
+	 * @return string[]
+	 */
+	private static function mustGetStringArray(Config $config, string $key, array $default): array
+	{
+		$data = $config->get($key);
+		if (!is_array($data) || array_filter($data, 'is_string') !== $data) {
+			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected string array");
+			return $default;
+		}
+		return $data;
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public static function getHeightIgnored(): array
+	{
+		return self::$heightIgnored;
 	}
 }

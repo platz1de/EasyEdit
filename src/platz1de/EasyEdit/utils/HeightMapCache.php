@@ -4,20 +4,14 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
 
 class HeightMapCache
 {
 	//TODO: don't just delete this Blocks
 	/**
-	 * @var int[] these mess up the height calculation in different ways (this will never be complete, only the most important ones)
+	 * @var int[] these mess up the height calculation in different ways
 	 */
-	private static array $ignore = [BlockLegacyIds::AIR,
-		BlockLegacyIds::LOG, BlockLegacyIds::LOG2, BlockLegacyIds::LEAVES, BlockLegacyIds::LEAVES2, //trees
-		BlockLegacyIds::YELLOW_FLOWER, BlockLegacyIds::RED_FLOWER, BlockLegacyIds::TALLGRASS, //flowers and stuff
-		BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA, //fluids
-		BlockLegacyIds::SNOW_LAYER
-	];
+	private static array $ignore;
 
 	private static bool $loaded;
 	/**
@@ -87,5 +81,13 @@ class HeightMapCache
 	public static function prepare(): void
 	{
 		self::$loaded = false;
+	}
+
+	/**
+	 * @param int[] $ignore
+	 */
+	public static function setIgnore(array $ignore): void
+	{
+		self::$ignore = $ignore;
 	}
 }
