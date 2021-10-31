@@ -83,7 +83,7 @@ class ChunkRequestData extends OutputData
 
 		$stream->putInt(count($this->chunks));
 		foreach ($this->chunks as $chunk) {
-			$stream->putInt($chunk);
+			$stream->putLong($chunk);
 		}
 	}
 
@@ -93,7 +93,7 @@ class ChunkRequestData extends OutputData
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$this->chunks[] = $stream->getInt();
+			$this->chunks[] = $stream->getLong();
 		}
 	}
 }
