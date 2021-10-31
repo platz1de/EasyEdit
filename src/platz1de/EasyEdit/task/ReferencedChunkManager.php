@@ -3,9 +3,9 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
+use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\SimpleChunkManager;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class ReferencedChunkManager extends SimpleChunkManager
@@ -41,5 +41,12 @@ class ReferencedChunkManager extends SimpleChunkManager
 				$this->setChunk($x, $z, new Chunk());
 			}
 		}
+	}
+
+	public function __clone(): void
+	{
+		$this->chunks = array_map(static function (Chunk $chunk): Chunk {
+			return clone $chunk;
+		}, $this->chunks);
 	}
 }
