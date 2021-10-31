@@ -156,6 +156,8 @@ class QueuedEditTask
 				}
 
 				TaskResultData::from($this->selection->getPlayer(), $this->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId());
+			} else {
+				throw new UnexpectedValueException("Invalid task result data found");
 			}
 			return true;
 		}
