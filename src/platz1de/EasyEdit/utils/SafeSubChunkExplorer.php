@@ -62,7 +62,7 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	 */
 	public function getBlock(Vector3 $vector): int
 	{
-		return $this->getBlockAt($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorX());
+		return $this->getBlockAt($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorZ());
 	}
 
 	/**
