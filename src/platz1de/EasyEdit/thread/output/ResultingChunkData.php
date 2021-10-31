@@ -66,6 +66,7 @@ class ResultingChunkData extends OutputData
 		$this->world = $stream->getString();
 
 		$count = $stream->getInt();
+		$this->chunkData = [];
 		for ($i = 0; $i < $count; $i++) {
 			$this->chunkData[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserialize($stream->getString());
 		}
