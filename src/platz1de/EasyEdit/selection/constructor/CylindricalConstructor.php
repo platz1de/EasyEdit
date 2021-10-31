@@ -30,15 +30,15 @@ class CylindricalConstructor
 		$radius = ceil($radius);
 		$minX = max($min->getX() - $point->getX(), -$radius);
 		$maxX = min($max->getX() - $point->getX(), $radius);
-		$minY = VectorUtils::enforceHeight($min)->getY();
-		$maxY = VectorUtils::enforceHeight($max)->getY();
+		$minY = max(VectorUtils::enforceHeight($min)->getY() - $point->getY(), 0);
+		$maxY = min(VectorUtils::enforceHeight($max)->getY() - $point->getY(), $height - 1);
 		$minZ = max($min->getZ() - $point->getZ(), -$radius);
 		$maxZ = min($max->getZ() - $point->getZ(), $radius);
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
 				for ($y = $minY; $y <= $maxY; $y++) {
 					if (($x ** 2) + ($z ** 2) <= $radiusSquared) {
-						$closure($point->getX() + $x, $y, $point->getZ() + $z);
+						$closure($point->getX() + $x, $point->getY() + $y, $point->getZ() + $z);
 					}
 				}
 			}
@@ -68,15 +68,15 @@ class CylindricalConstructor
 		$radius = ceil($radius);
 		$minX = max($min->getX() - $point->getX(), -$radius);
 		$maxX = min($max->getX() - $point->getX(), $radius);
-		$minY = VectorUtils::enforceHeight($min)->getY();
-		$maxY = VectorUtils::enforceHeight($max)->getY();
+		$minY = max(VectorUtils::enforceHeight($min)->getY() - $point->getY(), 0);
+		$maxY = min(VectorUtils::enforceHeight($max)->getY() - $point->getY(), $height - 1);
 		$minZ = max($min->getZ() - $point->getZ(), -$radius);
 		$maxZ = min($max->getZ() - $point->getZ(), $radius);
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
 				for ($y = $minY; $y <= $maxY; $y++) {
 					if (($x ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($z ** 2) > $thicknessSquared) {
-						$closure($point->getX() + $x, $y, $point->getZ() + $z);
+						$closure($point->getX() + $x, $point->getY() + $y, $point->getZ() + $z);
 					}
 				}
 			}
