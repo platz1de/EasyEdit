@@ -6,7 +6,6 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
-use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
 
