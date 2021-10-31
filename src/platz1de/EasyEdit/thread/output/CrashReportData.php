@@ -19,7 +19,7 @@ class CrashReportData extends OutputData
 	{
 		$data = new self();
 		$data->message = $throwable->getMessage();
-		$data->player = $throwable->getMessage();
+		$data->player = $player;
 		$data->send();
 	}
 
