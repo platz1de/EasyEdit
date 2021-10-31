@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\pattern\functional;
 
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 
@@ -70,5 +71,13 @@ class SmoothPattern extends Pattern
 		}
 
 		return 0;
+	}
+
+	/**
+	 * @param SelectionContext $context
+	 */
+	public function applySelectionContext(SelectionContext $context): void
+	{
+		$context->includeWalls()->includeVerticals()->includeFilling();
 	}
 }

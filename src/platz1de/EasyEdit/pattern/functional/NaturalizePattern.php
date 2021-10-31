@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\pattern\functional;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
@@ -56,5 +57,13 @@ class NaturalizePattern extends Pattern
 		if (!isset($this->pieces[2])) {
 			$this->pieces[2] = StaticBlock::from(VanillaBlocks::STONE());
 		}
+	}
+
+	/**
+	 * @param SelectionContext $context
+	 */
+	public function applySelectionContext(SelectionContext $context): void
+	{
+		$context->includeWalls()->includeVerticals()->includeFilling();
 	}
 }
