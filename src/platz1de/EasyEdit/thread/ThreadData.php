@@ -19,6 +19,7 @@ class ThreadData
 	 * @var ChunkInputData|null
 	 */
 	private static ?ChunkInputData $data = null;
+	private static bool $stop = false;
 
 	/**
 	 * @return QueuedEditTask|null
@@ -76,5 +77,20 @@ class ThreadData
 		$data = self::$data;
 		self::$data = null;
 		return $data;
+	}
+
+	public static function requirePause(): void
+	{
+		self::$stop = true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function canExecute(): bool
+	{
+		$data = self::$stop;
+		self::$stop = false;
+		return !$data;
 	}
 }

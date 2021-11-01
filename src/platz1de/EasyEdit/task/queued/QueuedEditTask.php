@@ -11,6 +11,7 @@ use platz1de\EasyEdit\task\selection\RedoTask;
 use platz1de\EasyEdit\task\selection\UndoTask;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
+use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
@@ -128,40 +129,51 @@ class QueuedEditTask
 	 */
 	public function continue(): bool
 	{
-		if ($this->currentPiece->isFinished()) {
-			$result = $this->currentPiece->getResult();
-			$data = $this->currentPiece->getAdditionalData();
+		if (ThreadData::canExecute()) {
+			if ($this->currentPiece->isFinished()) {
+				$result = $this->currentPiece->getResult();
+				$data = $this->currentPiece->getAdditionalData();
 
-			if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
-				if ($data->isSavingChunks()) {
-					ResultingChunkData::from($result->getManager()->getWorldName(), $result->getManager()->getChunks(), $result->getTiles());
-				}
-
-				if (isset($this->result)) {
-					$this->result->merge($result);
-				} else {
-					$this->result = $result;
-				}
-
-				$result->free();
-
-				if (count($this->pieces) > 0) {
-					$data->donePiece();
-					if (count($this->pieces) === 1) {
-						$data->setFinal();
+				if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
+					if ($data->isSavingChunks()) {
+						ResultingChunkData::from($result->getManager()->getWorldName(), $result->getManager()->getChunks(), $result->getTiles());
 					}
 
-					$this->startPiece($data);
-					return false; //more to go
-				}
+					if (isset($this->result)) {
+						$this->result->merge($result);
+					} else {
+						$this->result = $result;
+					}
 
-				TaskResultData::from($this->selection->getPlayer(), $this->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId());
-			} else {
-				throw new UnexpectedValueException("Invalid task result data found");
+					$result->free();
+
+					if (count($this->pieces) > 0) {
+						$data->donePiece();
+						if (count($this->pieces) === 1) {
+							$data->setFinal();
+						}
+
+						$this->startPiece($data);
+						return false; //more to go
+					}
+
+					TaskResultData::from($this->selection->getPlayer(), $this->getTask(), $this->result->getTime(), $this->result->getChanged(), $data, $this->currentPiece->getChangeId());
+				} else {
+					throw new UnexpectedValueException("Invalid task result data found");
+				}
+				return true;
 			}
-			return true;
+			return false; //not finished yet
 		}
-		return false; //not finished yet
+
+		$this->currentPiece->forceStop();
+
+		if (!$this->data->isFirstPiece()) {
+			ThreadData::setTask(null);
+			ThreadData::getStoredData(); //clear chunk cache
+			TaskResultData::from($this->selection->getPlayer(), $this->getTask(), $this->result->getTime(), $this->result->getChanged(), $this->data, $this->currentPiece->getChangeId());
+		}
+		return true;
 	}
 
 	/**
@@ -169,6 +181,8 @@ class QueuedEditTask
 	 */
 	private function startPiece(AdditionalDataManager $data): void
 	{
+		ThreadData::canExecute(); //clear cancel requests
+		ThreadData::getStoredData(); //clear chunk cache
 		$piece = array_pop($this->pieces);
 		if (!$piece instanceof Selection) {
 			throw new UnexpectedValueException("Tried to start executing without any pieces in stack");

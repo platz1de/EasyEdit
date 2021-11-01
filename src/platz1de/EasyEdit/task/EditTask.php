@@ -119,6 +119,18 @@ abstract class EditTask
 		$thread->setStatus(EditThread::STATUS_IDLE);
 	}
 
+	public function forceStop(): void
+	{
+		if (!$this->data->isFirstPiece()) {
+			if ($this->data->isSavingUndo()) {
+				$this->changeId = StorageModule::finishCollecting();
+			}
+			TaskCache::clear();
+		}
+		$this->finished = true;
+		EditThread::getInstance()->setStatus(EditThread::STATUS_IDLE);
+	}
+
 	/**
 	 * @return ThreadedLogger
 	 */

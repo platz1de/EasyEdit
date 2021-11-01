@@ -43,13 +43,4 @@ class EditAdapter extends Task
 		}
 		ClosureCache::addToCache($closure);
 	}
-
-	/**
-	 * @return bool
-	 */
-	public static function cancel(): bool
-	{
-		//TODO
-		return false;
-	}
 }
