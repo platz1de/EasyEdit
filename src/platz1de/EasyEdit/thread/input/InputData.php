@@ -7,6 +7,8 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class InputData
 {
+	protected function __construct() { }
+
 	protected function send(): void
 	{
 		EditThread::getInstance()->sendToThread($this);

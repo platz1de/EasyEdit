@@ -7,8 +7,11 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class OutputData
 {
+	protected function __construct() { }
+
 	protected function send(): void
 	{
+		var_dump(static::class);
 		EditThread::getInstance()->sendOutput($this);
 	}
 
