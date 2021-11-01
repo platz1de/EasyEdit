@@ -163,34 +163,36 @@ class EditThread extends Thread
 	private function parseInput(): void
 	{
 		if ($this->inputData !== "") {
-			$stream = new ExtendedBinaryStream($this->inputData);
-			$this->synchronized(function (): void {
+			$this->synchronized(function () use (&$input): void {
+				$input = $this->inputData;
 				$this->inputData = "";
 			});
+			/** @var string $input */
+			$stream = new ExtendedBinaryStream($input);
 
 			while (!$stream->feof()) {
 				$data = InputData::fastDeserialize($stream->getString());
 				$this->getLogger()->debug("Received " . $data::class);
 				$data->handle();
 			}
-
 		}
 	}
 
 	public function parseOutput(): void
 	{
 		if ($this->outputData !== "") {
-			$stream = new ExtendedBinaryStream($this->outputData);
+			$this->synchronized(function () use (&$output): void {
+				$output = $this->outputData;
+				$this->outputData = "";
+			});
+			/** @var string $output */
+			$stream = new ExtendedBinaryStream($output);
 
 			while (!$stream->feof()) {
 				$data = OutputData::fastDeserialize($stream->getString());
 				EasyEdit::getInstance()->getLogger()->debug("Received " . $data::class);
 				$data->handle();
 			}
-
-			$this->synchronized(function (): void {
-				$this->outputData = "";
-			});
 		}
 	}
 
