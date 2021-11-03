@@ -10,7 +10,7 @@ use UnexpectedValueException;
 
 class Messages
 {
-	private const MESSAGE_VERSION = "1.2.1";
+	private const MESSAGE_VERSION = "1.2.2";
 
 	/**
 	 * @var string[]

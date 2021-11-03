@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\HighlightingManager;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
@@ -13,6 +14,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
+use pocketmine\item\Stick;
 use pocketmine\item\TieredTool;
 use pocketmine\item\ToolTier;
 use pocketmine\player\Player;
@@ -32,6 +34,8 @@ class EventListener implements Listener
 		if ($axe instanceof Axe && $axe->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
 			$event->cancel();
 			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPosition());
+		} elseif ($axe instanceof Stick && $axe->getNamedTag()->getByte("isInfoStick", 0) === 1) {
+			BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
 		}
 
 		self::$cooldown = microtime(true) + 0.5;
@@ -58,6 +62,8 @@ class EventListener implements Listener
 					$event->cancel();
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
+			} elseif ($item instanceof Stick && $item->getNamedTag()->getByte("isInfoStick", 0) === 1) {
+				BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
 			}
 		}
 	}

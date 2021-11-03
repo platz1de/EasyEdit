@@ -1,4 +1,4 @@
-message-version: "1.2.1" #Please don't change this manually
+message-version: "1.2.2" #Please don't change this manually
 
 prefix: "§l§aEasy§bEdit §r> "
 
@@ -36,3 +36,6 @@ benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}
 
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} in {time}s"
+
+#Args: {id} {meta} {name} {x} {y} {z}
+block-info: "{name} ({id}:{meta}) at {x} {y} {z}"

@@ -20,6 +20,8 @@ permissions:
   default: op
  easyedit.command.thread:
   default: op
+ easyedit.command.info:
+  default: op
  easyedit.position:
   default: op
  easyedit.brush:
