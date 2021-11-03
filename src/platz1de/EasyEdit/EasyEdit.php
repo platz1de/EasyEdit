@@ -46,6 +46,10 @@ class EasyEdit extends PluginBase
 	{
 		self::$instance = $this;
 
+		if (!is_dir(self::getSchematicPath()) && !mkdir(self::getSchematicPath()) && !is_dir(self::getSchematicPath())) {
+			throw new AssumptionFailedError("Failed to created schematic directory");
+		}
+
 		$thread = new EditThread(Server::getInstance()->getLogger());
 		$thread->start(PTHREADS_INHERIT_INI | PTHREADS_INHERIT_CONSTANTS);
 
