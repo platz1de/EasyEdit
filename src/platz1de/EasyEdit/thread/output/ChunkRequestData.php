@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
+use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
@@ -29,7 +31,12 @@ class ChunkRequestData extends OutputData
 		$data = new self();
 		$data->chunks = $chunks;
 		$data->world = $world;
-		$data->send();
+		if ($world !== "") {
+			$data->send();
+		} else {
+			ThreadData::storeData(ChunkInputData::empty());
+			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to unknown world");
+		}
 	}
 
 	public function handle(): void

@@ -22,6 +22,17 @@ class ChunkInputData extends InputData
 		$data->send();
 	}
 
+	/**
+	 * @return ChunkInputData
+	 */
+	public static function empty(): ChunkInputData
+	{
+		$data = new self();
+		$data->chunkData = "";
+		$data->tileData = "";
+		return $data;
+	}
+
 	public function handle(): void
 	{
 		ThreadData::storeData($this);
