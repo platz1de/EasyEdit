@@ -97,4 +97,12 @@ class EasyEdit extends PluginBase
 	{
 		return self::$instance;
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function getSchematicPath(): string
+	{
+		return self::getInstance()->getDataFolder() . "schematics" . DIRECTORY_SEPARATOR;
+	}
 }
