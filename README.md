@@ -47,6 +47,7 @@ Command | Description | Permission | Aliases/Notice
 //cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
 //hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcylinder
 //count [radius] | Count selected blocks | easyedit.command.count
+//blockinfo | Get a blockinfo stick | easyedit.command.info | //bi
 //status | Check on the EditThread | easyedit.command.thread
 //cancel | Cancel the current task | easyedit.command.thread
 
