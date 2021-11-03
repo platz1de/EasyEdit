@@ -37,6 +37,7 @@ use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
+use pocketmine\utils\AssumptionFailedError;
 
 class EasyEdit extends PluginBase
 {
