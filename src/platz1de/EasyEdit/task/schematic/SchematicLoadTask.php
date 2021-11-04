@@ -6,6 +6,7 @@ use Closure;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -17,7 +18,6 @@ use platz1de\EasyEdit\task\queued\QueuedEditTask;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\SchematicFileAdapter;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
