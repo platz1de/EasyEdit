@@ -10,12 +10,13 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "1.2.1";
+	private const CONFIG_VERSION = "1.2.2";
 
 	/**
 	 * @var int[]
 	 */
 	private static array $heightIgnored = [];
+	private static string $conversionDataSource;
 
 	public static function load(): void
 	{
@@ -79,7 +80,25 @@ class ConfigManager
 			return BlockParser::getBlock($block)->getId();
 		}, self::mustGetStringArray($config, "height-ignored-blocks", []));
 
-		ConfigInputData::from(self::$heightIgnored);
+		self::$conversionDataSource = self::mustGetString($config, "block-convert-data", "");
+
+		ConfigInputData::from(self::$heightIgnored, self::$conversionDataSource);
+	}
+
+	/**
+	 * @param Config $config
+	 * @param string $key
+	 * @param string $default
+	 * @return string
+	 */
+	private static function mustGetString(Config $config, string $key, string $default): string
+	{
+		$data = $config->get($key);
+		if (!is_string($data)) {
+			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected string array");
+			return $default;
+		}
+		return $data;
 	}
 
 	/**
@@ -104,5 +123,13 @@ class ConfigManager
 	public static function getHeightIgnored(): array
 	{
 		return self::$heightIgnored;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getConversionDataSource(): string
+	{
+		return self::$conversionDataSource;
 	}
 }

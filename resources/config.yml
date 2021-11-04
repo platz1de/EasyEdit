@@ -1,5 +1,12 @@
-config-version: "1.2.1" #Please don't change this manually
+config-version: "1.2.2" #Please don't change this manually
 
 #Blocks which get ignored when calculating height (e.g. when smoothing)
 #These get replaced with air when edited
 height-ignored-blocks: [ "air", "wood", "wood2", "leaves", "leaves2", "dandelion", "poppy", "tall_grass", "water", "lava", "snow_layer", "carpet" ]
+
+
+
+#Better don't change this, the following is mainly for transparency
+#Conversion data source, requires specific Format
+#for more information see https://github.com/platz1de/EasyEdit-Data#block-conversionjson
+block-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/block-conversion.json"
