@@ -3,24 +3,20 @@
 namespace platz1de\EasyEdit\schematic;
 
 use platz1de\EasyEdit\thread\EditThread;
+use pocketmine\block\Block;
 use pocketmine\utils\Internet;
 use Throwable;
 
 class BlockConvertor
 {
 	/**
-	 * @var array<int, int>
+	 * @var array<int, array<int, array{int, int}>>
 	 */
-	private static array $idConversions;
-	/**
-	 * @var array<int, array<int, int>>
-	 */
-	private static array $metaConversions;
+	private static array $conversionData;
 
 	public static function load(string $dataSource): void
 	{
-		self::$idConversions = [];
-		self::$metaConversions = [];
+		self::$conversionData = [];
 
 		//This should only be executed on edit thread
 		$result = Internet::getURL($dataSource, 10, [], $err);
@@ -36,6 +32,7 @@ class BlockConvertor
 			$data = json_decode($result->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$replaceData = $data["replace"];
 			$translateData = $data["translate"];
+			$complexData = $data["complex"];
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
@@ -43,15 +40,21 @@ class BlockConvertor
 		}
 
 		foreach ($replaceData as $java => $bedrock) {
-			self::$idConversions[(int) $java] = (int) $bedrock;
+			for ($i = 0; $i < (1 << Block::INTERNAL_METADATA_BITS); $i++) {
+				self::$conversionData[(int) $java][$i] = [(int) $bedrock, $i];
+			}
 		}
 
-		foreach ($translateData as $bedrockId => $values) {
-			$type = [];
+		foreach ($translateData as $javaId => $values) {
 			foreach ($values as $javaMeta => $bedrockMeta) {
-				$type[(int) $javaMeta] = (int) $bedrockMeta;
+				self::$conversionData[(int) $javaId][(int) $javaMeta] = [(int) $javaId, (int) $bedrockMeta];
 			}
-			self::$metaConversions[(int) $bedrockId] = $type;
+		}
+
+		foreach ($complexData as $javaId => $values) {
+			foreach ($values as $javaMeta => $bedrockData) {
+				self::$conversionData[(int) $javaId][(int) $javaMeta] = [(int) $bedrockData[0], (int) $bedrockData[1]];
+			}
 		}
 	}
 
@@ -61,7 +64,6 @@ class BlockConvertor
 	 */
 	public static function convert(int &$id, int &$meta): void
 	{
-		$id = self::$idConversions[$id] ?? $id;
-		$meta = self::$metaConversions[$id][$meta] ?? $meta;
+		[$id, $meta] = self::$conversionData[$id][$meta] ?? [$id, $meta];
 	}
 }
