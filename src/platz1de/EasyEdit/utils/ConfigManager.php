@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
+use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use UnexpectedValueException;
 
@@ -32,8 +33,16 @@ class ConfigManager
 				}
 				fclose($new);
 
+				if (($old = file_get_contents($config->getPath())) === false) {
+					throw new UnexpectedValueException("Couldn't read current data");
+				}
+
 				//Allow different line endings
 				$newConfig = preg_split("/\r\n|\n|\r/", $data);
+				$oldConfig = preg_split("/\r\n|\n|\r/", $old);
+				if ($newConfig === false || $oldConfig === false) {
+					throw new AssumptionFailedError("Failed to split strings");
+				}
 
 				//We can't just use yaml_parse as we want to preserve comments
 				foreach ($config->getAll() as $key => $value) {
@@ -43,8 +52,11 @@ class ConfigManager
 					$position = array_filter($newConfig, static function (string $line) use ($key): bool {
 						return str_starts_with($line, $key . ":");
 					});
+					$oldPosition = array_filter($oldConfig, static function (string $line) use ($key): bool {
+						return str_starts_with($line, $key . ":");
+					});
 					if (count($position) === 1) {
-						$newConfig[key($position)] = $key . ": " . $value;
+						$newConfig[key($position)] = $oldConfig[key($oldPosition)];
 					}
 				}
 
