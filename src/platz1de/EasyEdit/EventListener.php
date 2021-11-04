@@ -62,8 +62,6 @@ class EventListener implements Listener
 					$event->cancel();
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
-			} elseif ($item instanceof Stick && $item->getNamedTag()->getByte("isInfoStick", 0) === 1) {
-				BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
 			}
 		}
 	}
@@ -75,8 +73,8 @@ class EventListener implements Listener
 	public function onUse(PlayerItemUseEvent $event): void
 	{
 		$block = $event->getPlayer()->getTargetBlock(self::CREATIVE_REACH);
+		$item = $event->getItem();
 		if ($block === null || $block->getId() === 0) {
-			$item = $event->getItem();
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 				if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
 					$event->cancel();
@@ -95,6 +93,9 @@ class EventListener implements Listener
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
 			}
+		} elseif ($item instanceof Stick && $item->getNamedTag()->getByte("isInfoStick", 0) === 1) {
+			//We use a raytrace here as some blocks can't be interacted with
+			BlockInfoTool::display($event->getPlayer()->getName(), $block);
 		}
 	}
 
