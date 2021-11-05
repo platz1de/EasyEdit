@@ -38,8 +38,8 @@ class BlockConvertor
 			$replaceData = $data["replace"];
 			$translateData = $data["translate"];
 			$complexData = $data["complex"];
-			$invalidJava = $data["invalid-java"];
-			$invalidBedrock = $data["invalid-bedrock"];
+			$invalidBedrock = $data["to-bedrock"];
+			$invalidJava = $data["to-java"];
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
@@ -70,17 +70,17 @@ class BlockConvertor
 			}
 		}
 
-		//These blocks do not exist in java
-		foreach ($invalidJava as $bedrockId) {
+		//These blocks do not exist in bedrock
+		foreach ($invalidBedrock as $javaId => $replacementId) {
 			for ($i = 0; $i < (1 << Block::INTERNAL_METADATA_BITS); $i++) {
-				self::$conversionTo[(int) $bedrockId][$i] = [0, 0];
+				self::$conversionFrom[(int) $javaId][$i] = [(int) $replacementId, 0];
 			}
 		}
 
-		//These blocks do not exist in bedrock
-		foreach ($invalidBedrock as $javaId) {
+		//These blocks do not exist in java
+		foreach ($invalidJava as $bedrockId => $replacementId) {
 			for ($i = 0; $i < (1 << Block::INTERNAL_METADATA_BITS); $i++) {
-				self::$conversionFrom[(int) $javaId][$i] = [0, 0];
+				self::$conversionTo[(int) $bedrockId][$i] = [(int) $replacementId, 0];
 			}
 		}
 	}
