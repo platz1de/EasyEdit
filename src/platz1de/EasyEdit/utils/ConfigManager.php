@@ -84,7 +84,7 @@ class ConfigManager
 		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
 		self::$javaConversionDataSource = self::mustGetString($config, "java-convert-data", "");
 
-		ConfigInputData::from(self::$heightIgnored, self::$conversionDataSource);
+		ConfigInputData::from(self::$heightIgnored, self::$bedrockConversionDataSource, self::$javaConversionDataSource);
 	}
 
 	/**
