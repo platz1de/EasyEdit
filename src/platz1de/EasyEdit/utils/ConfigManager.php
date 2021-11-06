@@ -126,12 +126,4 @@ class ConfigManager
 	{
 		return self::$heightIgnored;
 	}
-
-	/**
-	 * @return string
-	 */
-	public static function getConversionDataSource(): string
-	{
-		return self::$conversionDataSource;
-	}
 }
