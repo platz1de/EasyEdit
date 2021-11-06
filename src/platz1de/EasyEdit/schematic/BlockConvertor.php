@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\schematic;
 
 use platz1de\EasyEdit\thread\EditThread;
-use pocketmine\block\Block;
+use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\utils\Internet;
 use Throwable;
 
@@ -22,14 +22,15 @@ class BlockConvertor
 	 */
 	private static array $conversionTo;
 
-	public static function load(string $dataSource): void
+	public static function load(string $bedrockSource, string $javaSource): void
 	{
 		self::$conversionFrom = [];
 		self::$conversionTo = [];
 
 		//This should only be executed on edit thread
-		$result = Internet::getURL($dataSource, 10, [], $err);
-		if ($result === null) {
+		$bedrockData = Internet::getURL($bedrockSource, 10, [], $err);
+		$javaData = Internet::getURL($javaSource, 10, [], $err);
+		if ($bedrockData === null || $javaData === null) {
 			EditThread::getInstance()->getLogger()->error("Failed to load conversion data, schematic conversion is not available");
 			if (isset($err)) {
 				EditThread::getInstance()->getLogger()->logException($err);
@@ -38,54 +39,21 @@ class BlockConvertor
 		}
 
 		try {
-			$data = json_decode($result->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$replaceData = $data["replace"];
-			$translateData = $data["translate"];
-			$complexData = $data["complex"];
-			$invalidBedrock = $data["to-bedrock"];
-			$invalidJava = $data["to-java"];
+			$bedrockBlocks = json_decode($bedrockData->getBody(), true, 512, JSON_THROW_ON_ERROR);
+			$javaBlocks = json_decode($javaData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
 			return;
 		}
 
-		//mappings of java block ids to bedrock block ids
-		foreach ($replaceData as $javaId => $bedrockId) {
-			for ($i = 0; $i < (1 << Block::INTERNAL_METADATA_BITS); $i++) {
-				self::$conversionFrom[(int) $javaId][$i] = [(int) $bedrockId, $i];
-				self::$conversionTo[(int) $bedrockId][$i] = [(int) $javaId, $i];
-			}
+		foreach ($bedrockBlocks as $javaStringId => $bedrockStringId) {
+			$idData = BlockParser::fromStringId($javaStringId);
+			self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);;
 		}
-
-		//mappings of java metadata to bedrock metadata
-		foreach ($translateData as $javaId => $values) {
-			foreach ($values as $javaMeta => $bedrockMeta) {
-				self::$conversionFrom[(int) $javaId][(int) $javaMeta] = [(int) $javaId, (int) $bedrockMeta];
-				self::$conversionTo[(int) $javaId][(int) $bedrockMeta] = [(int) $javaId, (int) $javaMeta];
-			}
-		}
-
-		//mappings of java block ids to bedrock block ids with metadata
-		foreach ($complexData as $javaId => $values) {
-			foreach ($values as $javaMeta => $bedrockData) {
-				self::$conversionFrom[(int) $javaId][(int) $javaMeta] = [(int) $bedrockData[0], (int) $bedrockData[1]];
-				self::$conversionTo[(int) $bedrockData[0]][(int) $bedrockData[1]] = [(int) $javaId, (int) $javaMeta];
-			}
-		}
-
-		//These blocks do not exist in bedrock
-		foreach ($invalidBedrock as $javaId => $replacementId) {
-			for ($i = 0; $i < (1 << Block::INTERNAL_METADATA_BITS); $i++) {
-				self::$conversionFrom[(int) $javaId][$i] = [(int) $replacementId, 0];
-			}
-		}
-
-		//These blocks do not exist in java
-		foreach ($invalidJava as $bedrockId => $replacementId) {
-			for ($i = 0; $i < (1 << Block::INTERNAL_METADATA_BITS); $i++) {
-				self::$conversionTo[(int) $bedrockId][$i] = [(int) $replacementId, 0];
-			}
+		foreach ($javaBlocks as $bedrockStringId => $javaStringId) {
+			$idData = BlockParser::fromStringId($bedrockStringId);
+			self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($javaStringId);;
 		}
 	}
 
@@ -105,5 +73,9 @@ class BlockConvertor
 	public static function convertToJava(int &$id, int &$meta): void
 	{
 		[$id, $meta] = self::$conversionTo[$id][$meta] ?? [$id, $meta];
+		if ($id >= (1 << 8)) { //java 1.12 only supports 256 block ids, this also removes the need to add new block ids to the conversion data
+			$id = 0;
+			$meta = 0;
+		}
 	}
 }

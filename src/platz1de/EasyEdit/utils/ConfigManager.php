@@ -16,7 +16,8 @@ class ConfigManager
 	 * @var int[]
 	 */
 	private static array $heightIgnored = [];
-	private static string $conversionDataSource;
+	private static string $bedrockConversionDataSource;
+	private static string $javaConversionDataSource;
 
 	public static function load(): void
 	{
@@ -80,7 +81,8 @@ class ConfigManager
 			return BlockParser::getBlock($block)->getId();
 		}, self::mustGetStringArray($config, "height-ignored-blocks", []));
 
-		self::$conversionDataSource = self::mustGetString($config, "block-convert-data", "");
+		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
+		self::$javaConversionDataSource = self::mustGetString($config, "java-convert-data", "");
 
 		ConfigInputData::from(self::$heightIgnored, self::$conversionDataSource);
 	}
