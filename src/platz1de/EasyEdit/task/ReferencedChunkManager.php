@@ -3,7 +3,9 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
+use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\math\Vector3;
+use pocketmine\world\format\BiomeArray;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\SimpleChunkManager;
 use pocketmine\world\World;
@@ -38,7 +40,7 @@ class ReferencedChunkManager extends SimpleChunkManager
 	{
 		for ($x = $pos1->getX() >> 4; $x <= $pos2->getX() >> 4; $x++) {
 			for ($z = $pos1->getZ() >> 4; $z <= $pos2->getZ() >> 4; $z++) {
-				$this->setChunk($x, $z, new Chunk());
+				$this->setChunk($x, $z, new Chunk([], BiomeArray::fill(BiomeIds::OCEAN), true));
 			}
 		}
 	}
