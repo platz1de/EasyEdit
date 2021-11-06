@@ -71,7 +71,7 @@ class EditTaskHandler
 		$origin = new ReferencedChunkManager($world);
 		$chunks = new ExtendedBinaryStream($chunkData);
 		while (!$chunks->feof()) {
-			$origin->setChunk($chunks->getInt(), $chunks->getInt(), FastChunkSerializer::deserialize($chunks->getString()));
+			$origin->setChunk($chunks->getInt(), $chunks->getInt(), FastChunkSerializer::deserializeTerrain($chunks->getString()));
 		}
 
 		$tiles = new ExtendedBinaryStream($tileData);

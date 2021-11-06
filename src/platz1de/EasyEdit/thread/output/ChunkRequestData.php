@@ -70,7 +70,7 @@ class ChunkRequestData extends OutputData
 						$tileData->putCompound($tile->saveNBT());
 					}
 				}
-				$chunkData->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+				$chunkData->putString(FastChunkSerializer::serializeTerrain($chunk));
 
 				if ($chunks === []) {
 					ChunkInputData::from($chunkData->getBuffer(), $tileData->getBuffer());

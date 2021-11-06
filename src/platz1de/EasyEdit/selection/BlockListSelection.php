@@ -101,7 +101,7 @@ abstract class BlockListSelection extends Selection
 		$count = 0;
 		foreach ($this->manager->getChunks() as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			$chunks->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+			$chunks->putString(FastChunkSerializer::serializeTerrain($chunk));
 			$chunks->putInt($x);
 			$chunks->putInt($z);
 			$count++;
@@ -123,7 +123,7 @@ abstract class BlockListSelection extends Selection
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunk = FastChunkSerializer::deserialize($stream->getString());
+			$chunk = FastChunkSerializer::deserializeTerrain($stream->getString());
 			$this->manager->setChunk($stream->getInt(), $stream->getInt(), $chunk);
 		}
 

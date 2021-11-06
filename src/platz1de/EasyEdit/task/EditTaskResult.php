@@ -112,7 +112,7 @@ class EditTaskResult
 			World::getXZ($hash, $x, $z);
 			$chunks->putInt($x);
 			$chunks->putInt($z);
-			$chunks->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+			$chunks->putString(FastChunkSerializer::serializeTerrain($chunk));
 			$count++;
 		}
 		$stream->putInt($count);
@@ -139,7 +139,7 @@ class EditTaskResult
 		$chunks = [];
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunks[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserialize($stream->getString());
+			$chunks[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserializeTerrain($stream->getString());
 		}
 
 		$tiles = $stream->getCompounds();
