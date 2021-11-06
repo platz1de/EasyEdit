@@ -11,7 +11,6 @@ abstract class OutputData
 
 	protected function send(): void
 	{
-		var_dump(static::class);
 		EditThread::getInstance()->sendOutput($this);
 	}
 
