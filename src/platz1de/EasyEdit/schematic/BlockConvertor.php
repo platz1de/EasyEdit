@@ -7,6 +7,10 @@ use pocketmine\block\Block;
 use pocketmine\utils\Internet;
 use Throwable;
 
+/**
+ * Convertor between java 1.12.2 ids and bedrocks current ids
+ * Only intended for use in McEdit schematic file conversion
+ */
 class BlockConvertor
 {
 	/**
