@@ -132,7 +132,7 @@ class QueuedEditTask
 		if (ThreadData::canExecute()) {
 			if ($this->currentPiece->isFinished()) {
 				$result = $this->currentPiece->getResult();
-				$data = $this->currentPiece->getAdditionalData();
+				$data = $this->data;
 
 				if ($result instanceof EditTaskResult && $data instanceof AdditionalDataManager) {
 					if ($data->isSavingChunks()) {

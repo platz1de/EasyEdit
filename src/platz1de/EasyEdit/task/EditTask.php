@@ -186,14 +186,6 @@ abstract class EditTask
 	}
 
 	/**
-	 * @return null|AdditionalDataManager
-	 */
-	public function getAdditionalData(): ?AdditionalDataManager
-	{
-		return $this->data ?? null;
-	}
-
-	/**
 	 * @return int
 	 */
 	public function getChangeId(): int
