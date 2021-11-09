@@ -35,11 +35,11 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$nbt->setShort("brushSize", (int) ($args[1] ?? 3));
+				$nbt->setFloat("brushSize", (float) ($args[1] ?? 3));
 				$nbt->setString("brushPattern", $args[2] ?? "stone");
 				break;
 			case BrushHandler::BRUSH_SMOOTH:
-				$nbt->setShort("brushSize", (int) ($args[1] ?? 5));
+				$nbt->setFloat("brushSize", (float) ($args[1] ?? 5));
 				break;
 			case BrushHandler::BRUSH_NATURALIZE:
 				try {
@@ -50,7 +50,7 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$nbt->setShort("brushSize", (int) ($args[1] ?? 4));
+				$nbt->setFloat("brushSize", (float) ($args[1] ?? 4));
 				$nbt->setString("topBlock", $args[2] ?? "grass");
 				$nbt->setString("middleBlock", $args[3] ?? "dirt");
 				$nbt->setString("bottomBlock", $args[4] ?? "stone");
@@ -62,7 +62,7 @@ class BrushCommand extends EasyEditCommand
 					$player->sendMessage($exception->getMessage());
 					return;
 				}
-				$nbt->setShort("brushSize", (int) ($args[1] ?? 4));
+				$nbt->setFloat("brushSize", (float) ($args[1] ?? 4));
 				$nbt->setShort("brushHeight", (int) ($args[2] ?? 2));
 				$nbt->setString("brushPattern", $args[3] ?? "stone");
 		}
