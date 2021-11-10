@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\cache\ClosureCache;
-use platz1de\EasyEdit\task\EditTask;
+use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
