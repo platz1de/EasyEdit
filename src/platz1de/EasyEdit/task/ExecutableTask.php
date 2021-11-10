@@ -2,10 +2,13 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class ExecutableTask
 {
+	private int $taskId;
+
 	abstract public function execute(): void;
 
 	/**
@@ -37,9 +40,23 @@ abstract class ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream($data);
 		$type = $stream->getString();
-		/** @var ExecutableTask $selection */
-		$selection = new $type();
-		$selection->parseData($stream);
-		return $selection;
+		/** @var ExecutableTask $task */
+		$task = new $type();
+		$task->parseData($stream);
+		$task->taskId = EditAdapter::getId();
+		return $task;
+	}
+
+	/**
+	 * @return string
+	 */
+	abstract public function getTaskName(): string;
+
+	/**
+	 * @return int
+	 */
+	public function getTaskId(): int
+	{
+		return $this->taskId;
 	}
 }

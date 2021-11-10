@@ -64,7 +64,11 @@ class EditThread extends Thread
 					});
 				} else {
 					try {
+						$this->setStatus(self::STATUS_RUNNING);
+						ThreadData::canExecute(); //clear pending cancel requests
+						$this->getLogger()->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
 						$task->execute();
+						$this->setStatus(self::STATUS_IDLE);
 					} catch (Throwable $throwable) {
 						$this->logger->logException($throwable);
 						$this->setStatus(self::STATUS_CRASHED);
