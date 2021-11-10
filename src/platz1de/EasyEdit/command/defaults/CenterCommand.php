@@ -11,6 +11,8 @@ use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -18,7 +20,7 @@ class CenterCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/center", "Set the center Blocks (1-8)", "easyedit.command.set", "//center [block]", ["/middle"]);
+		parent::__construct("/center", "Set the center Blocks (1-8)", "easyedit.command.set", ["/middle"]);
 	}
 
 	/**
@@ -43,5 +45,17 @@ class CenterCommand extends EasyEditCommand
 		}
 
 		SetTask::queue($selection, new Pattern([new CenterPattern($pattern)]), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true),
+			]
+		];
 	}
 }

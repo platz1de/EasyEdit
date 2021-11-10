@@ -10,13 +10,15 @@ use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 
 class HollowSphereCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/hsphere", "Set a hollow sphere", "easyedit.command.set", "//hsphere <radius> <pattern> [thickness]", ["/hsph", "/hollowsphere"]);
+		parent::__construct("/hsphere", "Set a hollow sphere", "easyedit.command.set", ["/hsph", "/hollowsphere"]);
 	}
 
 	/**
@@ -38,5 +40,20 @@ class HollowSphereCommand extends EasyEditCommand
 		}
 
 		SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]), $pattern, $player->getPosition());
+	}
+
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT),
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT),
+				CommandParameter::standard("thickness", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true)
+			]
+		];
 	}
 }

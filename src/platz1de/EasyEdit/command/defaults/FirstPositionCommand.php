@@ -5,13 +5,15 @@ namespace platz1de\EasyEdit\command\defaults;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\selection\Cube;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 
 class FirstPositionCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/pos1", "Set the first Position", "easyedit.position", "//pos1 [x] [y] [z]", ["/1"]);
+		parent::__construct("/pos1", "Set the first Position", "easyedit.position", ["/1"]);
 	}
 
 	/**
@@ -25,5 +27,20 @@ class FirstPositionCommand extends EasyEditCommand
 		}else{
 			Cube::selectPos1($player, $player->getPosition()->floor());
 		}
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("x", AvailableCommandsPacket::ARG_TYPE_INT),
+				CommandParameter::standard("y", AvailableCommandsPacket::ARG_TYPE_INT),
+				CommandParameter::standard("z", AvailableCommandsPacket::ARG_TYPE_INT),
+			],
+			[]
+		];
 	}
 }

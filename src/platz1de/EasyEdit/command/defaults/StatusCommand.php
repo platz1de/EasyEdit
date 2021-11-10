@@ -6,6 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\task\CollectStatsTask;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -65,5 +66,13 @@ class StatusCommand extends EasyEditCommand
 		}
 
 		return TextFormat::RED . round($time * 1000) . "ms" . TextFormat::RESET;
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [];
 	}
 }

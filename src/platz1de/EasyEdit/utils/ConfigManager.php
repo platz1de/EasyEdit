@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\listener\ToggleableEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
@@ -12,6 +13,7 @@ class ConfigManager
 {
 	private const CONFIG_VERSION = "1.2.2";
 
+	private static bool $commandCompletion;
 	/**
 	 * @var int[]
 	 */
@@ -75,6 +77,11 @@ class ConfigManager
 			}
 
 			$config->reload();
+		}
+
+		self::$commandCompletion = self::mustGetBool($config, "enable-command-completion", true);
+		if (self::$commandCompletion) {
+			ToggleableEventListener::enableCommandSuggestions();
 		}
 
 		self::$heightIgnored = array_map(static function (string $block): int {

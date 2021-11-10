@@ -11,6 +11,8 @@ use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\selection\StackTask;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -18,7 +20,7 @@ class StackCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/stack", "Stack the selected area", "easyedit.command.paste", "//stack <count>");
+		parent::__construct("/stack", "Stack the selected area", "easyedit.command.paste");
 	}
 
 	/**
@@ -39,5 +41,17 @@ class StackCommand extends EasyEditCommand
 		}
 
 		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), $count)), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("count", AvailableCommandsPacket::ARG_TYPE_INT),
+			]
+		];
 	}
 }

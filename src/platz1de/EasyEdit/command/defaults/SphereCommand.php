@@ -7,13 +7,15 @@ use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 
 class SphereCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/sphere", "Set a sphere", "easyedit.command.set", "//sphere <radius> <pattern>", ["/sph"]);
+		parent::__construct("/sphere", "Set a sphere", "easyedit.command.set", ["/sph"]);
 	}
 
 	/**
@@ -35,5 +37,18 @@ class SphereCommand extends EasyEditCommand
 		}
 
 		SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]), $pattern, $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT),
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT)
+			]
+		];
 	}
 }

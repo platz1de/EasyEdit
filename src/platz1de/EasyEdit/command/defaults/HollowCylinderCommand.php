@@ -10,13 +10,15 @@ use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 
 class HollowCylinderCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/hcylinder", "Set a hollow cylinder", "easyedit.command.set", "//hcylinder <radius> <height> <pattern> [thickness]", ["/hcy", "/hollowcylinder"]);
+		parent::__construct("/hcylinder", "Set a hollow cylinder", "easyedit.command.set", ["/hcy", "/hollowcylinder"]);
 	}
 
 	/**
@@ -38,5 +40,20 @@ class HollowCylinderCommand extends EasyEditCommand
 		}
 
 		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT),
+				CommandParameter::standard("height", AvailableCommandsPacket::ARG_TYPE_INT),
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT),
+				CommandParameter::standard("thickness", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true)
+			]
+		];
 	}
 }

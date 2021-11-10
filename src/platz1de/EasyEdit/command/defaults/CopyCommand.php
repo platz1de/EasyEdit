@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\CopyTask;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -34,5 +35,13 @@ class CopyCommand extends EasyEditCommand
 		}
 
 		CopyTask::queue($selection, $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [];
 	}
 }

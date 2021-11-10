@@ -8,6 +8,9 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use pocketmine\world\World;
 use Throwable;
@@ -16,7 +19,7 @@ class ExtendCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", "//extend [count|vertical]", ["/expand"]);
+		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", ["/expand"]);
 	}
 
 	/**
@@ -61,5 +64,20 @@ class ExtendCommand extends EasyEditCommand
 
 		$selection->setPos1($pos1);
 		$selection->setPos2($pos2);
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::enum("action", new CommandEnum("action", ["vertical"]), 0)
+			],
+			[
+				CommandParameter::standard("count", AvailableCommandsPacket::ARG_TYPE_INT)
+			]
+		];
 	}
 }

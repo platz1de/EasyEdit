@@ -6,6 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\utils\MixedUtils;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 
 class BenchmarkCommand extends EasyEditCommand
@@ -48,5 +49,13 @@ class BenchmarkCommand extends EasyEditCommand
 				"{results}" => implode("\n", $resultMsg)
 			]);
 		});
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [];
 	}
 }

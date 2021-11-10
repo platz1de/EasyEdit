@@ -11,6 +11,8 @@ use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -18,7 +20,7 @@ class WallCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/walls", "Set walls of the selected area", "easyedit.command.set", "//walls [pattern]", ["/wall"]);
+		parent::__construct("/walls", "Set walls of the selected area", "easyedit.command.set", ["/wall"]);
 	}
 
 	/**
@@ -43,5 +45,17 @@ class WallCommand extends EasyEditCommand
 		}
 
 		SetTask::queue($selection, new Pattern([new WallPattern($pattern)]), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT)
+			]
+		];
 	}
 }

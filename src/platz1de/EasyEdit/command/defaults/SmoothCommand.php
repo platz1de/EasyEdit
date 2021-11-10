@@ -9,6 +9,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -16,7 +17,7 @@ class SmoothCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/smooth", "Smooth the selected Area", "easyedit.command.set", "//smooth");
+		parent::__construct("/smooth", "Smooth the selected Area", "easyedit.command.set");
 	}
 
 	/**
@@ -34,5 +35,13 @@ class SmoothCommand extends EasyEditCommand
 		}
 
 		SetTask::queue($selection, new Pattern([new SmoothPattern([])]), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [];
 	}
 }

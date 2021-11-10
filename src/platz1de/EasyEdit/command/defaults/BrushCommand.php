@@ -8,6 +8,9 @@ use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\PatternParser;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -15,7 +18,7 @@ class BrushCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/brush", "Create a new Brush", "easyedit.command.brush", "//brush sphere [radius] [pattern]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern]", ["/br"]);
+		parent::__construct("/brush", "Create a new Brush", "easyedit.command.brush", ["/br"]);
 	}
 
 	/**
@@ -74,5 +77,36 @@ class BrushCommand extends EasyEditCommand
 		$item->setLore($lore);
 		$item->setCustomName(TextFormat::GOLD . "Brush");
 		$player->getInventory()->setItem($player->getInventory()->getHeldItemIndex(), $item);
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::enum("type", new CommandEnum("type", ["sphere"]), 0),
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true),
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true)
+			],
+			[
+				CommandParameter::enum("type", new CommandEnum("type", ["smooth"]), 0),
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true)
+			],
+			[
+				CommandParameter::enum("type", new CommandEnum("type", ["naturalize"]), 0),
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true),
+				CommandParameter::standard("topBlock", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true),
+				CommandParameter::standard("middleBlock", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true),
+				CommandParameter::standard("bottomBlock", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true)
+			],
+			[
+				CommandParameter::enum("type", new CommandEnum("type", ["cylinder"]), 0),
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true),
+				CommandParameter::standard("height", AvailableCommandsPacket::ARG_TYPE_INT, 0, true),
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true)
+			]
+		];
 	}
 }

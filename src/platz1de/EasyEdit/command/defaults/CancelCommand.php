@@ -6,6 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\thread\input\task\CancelTaskData;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 
 class CancelCommand extends EasyEditCommand
@@ -28,5 +29,13 @@ class CancelCommand extends EasyEditCommand
 			CancelTaskData::from();
 			Messages::send($player, "task-cancelled");
 		}
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [];
 	}
 }

@@ -12,6 +12,8 @@ use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -19,7 +21,7 @@ class ReplaceCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/replace", "Replace the selected Area", "easyedit.command.set", "//replace <block> <pattern>");
+		parent::__construct("/replace", "Replace the selected Area", "easyedit.command.set");
 	}
 
 	/**
@@ -50,5 +52,18 @@ class ReplaceCommand extends EasyEditCommand
 		}
 
 		SetTask::queue($selection, new Pattern([new BlockPattern($pattern, PatternArgumentData::create()->setBlock($block))]), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("block", AvailableCommandsPacket::ARG_TYPE_RAWTEXT),
+				CommandParameter::standard("pattern", AvailableCommandsPacket::ARG_TYPE_RAWTEXT),
+			]
+		];
 	}
 }

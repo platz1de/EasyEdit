@@ -14,6 +14,8 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\selection\SetTask;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -21,7 +23,7 @@ class ExtinguishCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extinguish", "Extinguish fire", "easyedit.command.set", "//extinguish [radius]");
+		parent::__construct("/extinguish", "Extinguish fire", "easyedit.command.set");
 	}
 
 	/**
@@ -43,5 +45,17 @@ class ExtinguishCommand extends EasyEditCommand
 		}
 
 		SetTask::queue($selection, new Pattern([new BlockPattern([StaticBlock::from(VanillaBlocks::AIR())], PatternArgumentData::create()->setBlock(DynamicBlock::from(VanillaBlocks::FIRE())))]), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("radius", AvailableCommandsPacket::ARG_TYPE_FLOAT, 0, true)
+			]
+		];
 	}
 }

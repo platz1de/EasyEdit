@@ -11,6 +11,8 @@ use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\MoveTask;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 use Throwable;
@@ -19,7 +21,7 @@ class MoveCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/move", "Move the selected area", "easyedit.command.paste", "//move <count>");
+		parent::__construct("/move", "Move the selected area", "easyedit.command.paste");
 	}
 
 	/**
@@ -40,5 +42,18 @@ class MoveCommand extends EasyEditCommand
 		}
 
 		MoveTask::queue(new MovingCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), $amount)), Position::fromObject($selection->getPos1(), $player->getWorld()));
+	}
+
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("amount", AvailableCommandsPacket::ARG_TYPE_INT)
+			]
+		];
 	}
 }

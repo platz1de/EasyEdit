@@ -1,8 +1,9 @@
 <?php
 
-namespace platz1de\EasyEdit;
+namespace platz1de\EasyEdit\listener;
 
 use platz1de\EasyEdit\brush\BrushHandler;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\HighlightingManager;
@@ -20,7 +21,7 @@ use pocketmine\item\ToolTier;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
 
-class EventListener implements Listener
+class DefaultEventListener implements Listener
 {
 	private static float $cooldown = 0;
 	private const CREATIVE_REACH = 5;

@@ -11,6 +11,8 @@ use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\selection\SetTask;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -18,7 +20,7 @@ class NaturalizeCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/naturalize", "Naturalize the selected Area", "easyedit.command.set", "//naturalize [pattern] [pattern] [pattern]");
+		parent::__construct("/naturalize", "Naturalize the selected Area", "easyedit.command.set");
 	}
 
 	/**
@@ -45,5 +47,19 @@ class NaturalizeCommand extends EasyEditCommand
 		}
 
 		SetTask::queue($selection, new Pattern([new NaturalizePattern([$top, $middle, $bottom])]), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [
+			[
+				CommandParameter::standard("topBlock", AvailableCommandsPacket::ARG_TYPE_RAWTEXT),
+				CommandParameter::standard("middleBlock", AvailableCommandsPacket::ARG_TYPE_RAWTEXT),
+				CommandParameter::standard("bottomBlock", AvailableCommandsPacket::ARG_TYPE_RAWTEXT)
+			]
+		];
 	}
 }

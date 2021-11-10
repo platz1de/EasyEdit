@@ -7,6 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\LinkedBlockListSelection;
 use platz1de\EasyEdit\task\selection\PasteTask;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use Throwable;
 
@@ -31,5 +32,13 @@ class PasteCommand extends EasyEditCommand
 		}
 
 		PasteTask::queue(new LinkedBlockListSelection($player->getName(), $player->getWorld()->getFolderName(), $selection), $player->getPosition());
+	}
+
+	/**
+	 * @return CommandParameter[][]
+	 */
+	public function getCommandOverloads(): array
+	{
+		return [];
 	}
 }
