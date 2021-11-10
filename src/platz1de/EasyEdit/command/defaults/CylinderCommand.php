@@ -34,6 +34,6 @@ class CylinderCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0], (int) $args[1]), $pattern, $player->getPosition());
+		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
 	}
 }
