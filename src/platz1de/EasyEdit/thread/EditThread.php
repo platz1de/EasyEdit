@@ -65,7 +65,6 @@ class EditThread extends Thread
 				} else {
 					try {
 						$task->execute();
-						$this->tick($task);
 					} catch (Throwable $throwable) {
 						$this->logger->logException($throwable);
 						$this->setStatus(self::STATUS_CRASHED);
@@ -84,14 +83,12 @@ class EditThread extends Thread
 		}
 	}
 
-	private function tick(QueuedEditTask $task): void
+	public function waitForData(): void
 	{
-		while (!$task->continue()) {
-			$this->synchronized(function (): void {
-				$this->wait();
-			});
+		$this->synchronized(function (): void {
+			$this->wait();
 			$this->parseInput();
-		}
+		});
 	}
 
 	/**
