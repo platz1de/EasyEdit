@@ -90,14 +90,30 @@ class ConfigManager
 	/**
 	 * @param Config $config
 	 * @param string $key
+	 * @param bool   $default
+	 * @return bool
+	 */
+	private static function mustGetBool(Config $config, string $key, bool $default): bool
+	{
+		$data = $config->get($key, $default);
+		if (!is_bool($data)) {
+			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected bool");
+			return $default;
+		}
+		return $data;
+	}
+
+	/**
+	 * @param Config $config
+	 * @param string $key
 	 * @param string $default
 	 * @return string
 	 */
 	private static function mustGetString(Config $config, string $key, string $default): string
 	{
-		$data = $config->get($key);
+		$data = $config->get($key, $default);
 		if (!is_string($data)) {
-			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected string array");
+			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected string");
 			return $default;
 		}
 		return $data;
@@ -111,7 +127,7 @@ class ConfigManager
 	 */
 	private static function mustGetStringArray(Config $config, string $key, array $default): array
 	{
-		$data = $config->get($key);
+		$data = $config->get($key, $default);
 		if (!is_array($data) || array_filter($data, 'is_string') !== $data) {
 			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected string array");
 			return $default;
