@@ -2,12 +2,19 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use Closure;
+use platz1de\EasyEdit\task\editing\EditTask;
+
 class AdditionalDataManager
 {
 	private bool $firstPiece = true;
 	private bool $finalPiece = false;
 	private bool $saveEditedChunks;
 	private bool $saveUndo;
+	/**
+	 * @var Closure(EditTask, int):void
+	 */
+	private Closure $resultHandler;
 
 	/**
 	 * Used in count tasks
@@ -81,5 +88,69 @@ class AdditionalDataManager
 	public function setCountedBlocks(array $countedBlocks): void
 	{
 		$this->countedBlocks = $countedBlocks;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasResultHandler(): bool
+	{
+		return isset($this->resultHandler);
+	}
+
+	/**
+	 * @return Closure(EditTask, int):void
+	 */
+	public function getResultHandler(): Closure
+	{
+		return $this->resultHandler;
+	}
+
+	/**
+	 * @param Closure(EditTask, int):void $resultHandler
+	 */
+	public function setResultHandler(Closure $resultHandler): void
+	{
+		$this->resultHandler = $resultHandler;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function fastSerialize(): string
+	{
+		$stream = new ExtendedBinaryStream();
+		$stream->putBool($this->saveEditedChunks);
+		$stream->putBool($this->saveUndo);
+
+		$count = 0;
+		foreach ($this->countedBlocks as $id => $blockCount) {
+			$stream->putInt($id);
+			$stream->putInt($blockCount);
+			$count++;
+		}
+		$stream->putInt($count);
+
+		return $stream->getBuffer();
+	}
+
+	/**
+	 * @param string $data
+	 * @return AdditionalDataManager
+	 */
+	public static function fastDeserialize(string $data): AdditionalDataManager
+	{
+		$stream = new ExtendedBinaryStream($data);
+		$dataManager = new AdditionalDataManager($stream->getBool(), $stream->getBool());
+		$count = $stream->getInt();
+
+		$counted = [];
+		for ($i = 0; $i < $count; $i++) {
+			/** @noinspection AmbiguousMethodsCallsInArrayMappingInspection */
+			$counted[$stream->getInt()] = $stream->getInt();
+		}
+		$dataManager->setCountedBlocks($counted);
+
+		return $dataManager;
 	}
 }

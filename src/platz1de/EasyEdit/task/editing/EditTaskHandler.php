@@ -1,10 +1,9 @@
 <?php
 
-namespace platz1de\EasyEdit\task;
+namespace platz1de\EasyEdit\task\editing;
 
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
@@ -20,8 +19,6 @@ class EditTaskHandler
 	private SafeSubChunkExplorer $origin; //Read-only
 	private SafeSubChunkExplorer $result; //Write-only
 	private BlockListSelection $changes;
-	private Pattern $pattern;
-	private SelectionContext $selectionContext;
 
 	/**
 	 * @var CompoundTag[]
@@ -39,10 +36,8 @@ class EditTaskHandler
 	 * @param CompoundTag[]          $tiles   CompoundTags of tiles in edited area
 	 * @param BlockListSelection     $changes Saves made changes, used for undoing
 	 * @param AdditionalDataManager  $data
-	 * @param Pattern                $pattern
-	 * @param SelectionContext       $selectionContext
 	 */
-	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, AdditionalDataManager $data, Pattern $pattern, SelectionContext $selectionContext)
+	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, AdditionalDataManager $data)
 	{
 		//TODO: Never use changes as result (eg. copy)
 		$this->origin = new SafeSubChunkExplorer($origin);
@@ -52,8 +47,6 @@ class EditTaskHandler
 		$this->tiles = array_map(static function (CompoundTag $tile): CompoundTag {
 			return clone $tile;
 		}, $tiles);
-		$this->pattern = $pattern;
-		$this->selectionContext = $selectionContext;
 		//TODO: parse data
 	}
 
@@ -63,10 +56,9 @@ class EditTaskHandler
 	 * @param string                $tileData
 	 * @param BlockListSelection    $undo
 	 * @param AdditionalDataManager $data
-	 * @param Pattern               $pattern
 	 * @return EditTaskHandler
 	 */
-	public static function fromData(string $world, string $chunkData, string $tileData, BlockListSelection $undo, AdditionalDataManager $data, Pattern $pattern): EditTaskHandler
+	public static function fromData(string $world, string $chunkData, string $tileData, BlockListSelection $undo, AdditionalDataManager $data): EditTaskHandler
 	{
 		$origin = new ReferencedChunkManager($world);
 		$chunks = new ExtendedBinaryStream($chunkData);
@@ -81,7 +73,7 @@ class EditTaskHandler
 			$tileList[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
-		return new EditTaskHandler($origin, $tileList, $undo, $data, $pattern, $pattern->getSelectionContext());
+		return new EditTaskHandler($origin, $tileList, $undo, $data);
 	}
 
 	/**
@@ -234,21 +226,5 @@ class EditTaskHandler
 	{
 		$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		$this->affectedTiles++;
-	}
-
-	/**
-	 * @return Pattern
-	 */
-	public function getPattern(): Pattern
-	{
-		return $this->pattern;
-	}
-
-	/**
-	 * @return SelectionContext
-	 */
-	public function getSelectionContext(): SelectionContext
-	{
-		return $this->selectionContext;
 	}
 }

@@ -8,30 +8,31 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
+use platz1de\EasyEdit\thread\output\HistoryCacheData;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
-use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use ThreadedLogger;
 
 abstract class EditTask extends ExecutableTask
 {
-	protected string $owner;
-	protected string $world;
-	protected AdditionalDataManager $data;
+	private string $world;
+	private AdditionalDataManager $data;
 
 	/**
-	 * EditTask constructor.
+	 * @param EditTask              $instance
+	 * @param string                $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
+	 * @return void
 	 */
-	public function __construct(string $owner, string $world, AdditionalDataManager $data)
+	public static function initEditTask(EditTask $instance, string $owner, string $world, AdditionalDataManager $data): void
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
-		$this->owner = $owner;
-		$this->world = $world;
-		$this->data = $data;
+		$instance->world = $world;
+		$instance->data = $data;
 	}
 
 	/**
@@ -94,7 +95,15 @@ abstract class EditTask extends ExecutableTask
 
 		if ($this->data->isFinalPiece()) {
 			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : -1;
-			TaskResultData::from($this->owner, static::class, EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $this->data, $changeId);
+			if ($this->data->hasResultHandler()) {
+				$closure = $this->data->getResultHandler();
+				$closure($this, $changeId);
+			} else {
+				HistoryCacheData::from($this->getOwner(), $changeId, false);
+				/** @var class-string<EditTask> $task */
+				$task = static::class;
+				$task::notifyUser($this->getOwner(), EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $this->data);
+			}
 		}
 	}
 
@@ -102,7 +111,12 @@ abstract class EditTask extends ExecutableTask
 	{
 		if (!$this->data->isFirstPiece()) {
 			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : -1;
-			TaskResultData::from($this->owner, static::class, EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $this->data, $changeId);
+			if ($this->data->hasResultHandler()) {
+				$closure = $this->data->getResultHandler();
+				$closure($this, $changeId);
+			} else {
+				HistoryCacheData::from($this->getOwner(), $changeId, false);
+			}
 		}
 	}
 
@@ -120,12 +134,43 @@ abstract class EditTask extends ExecutableTask
 	abstract public function executeEdit(EditTaskHandler $handler): void;
 
 	/**
-	 * @param EditTaskResultCache $result
+	 * @param string                $player
+	 * @param float                 $time
+	 * @param int                   $changed
+	 * @param AdditionalDataManager $data
 	 */
-	public function handleResult(EditTaskResultCache $result): void { }
+	abstract public static function notifyUser(string $player, float $time, int $changed, AdditionalDataManager $data): void;
 
 	/**
 	 * @return BlockListSelection
 	 */
 	abstract public function getUndoBlockList(): BlockListSelection;
+
+	/**
+	 * @return string
+	 */
+	public function getWorld(): string
+	{
+		return $this->world;
+	}
+
+	/**
+	 * @return AdditionalDataManager
+	 */
+	public function getDataManager(): AdditionalDataManager
+	{
+		return $this->data;
+	}
+
+	public function putData(ExtendedBinaryStream $stream): void
+	{
+		$stream->putString($this->world);
+		$stream->putString($this->data->fastSerialize());
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->world = $stream->getString();
+		$this->data = AdditionalDataManager::fastDeserialize($stream->getString());
+	}
 }

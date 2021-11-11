@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task;
+namespace platz1de\EasyEdit\selection;
 
 use UnexpectedValueException;
 

@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit;
 
+use platz1de\EasyEdit\thread\input\MessageInputData;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
@@ -65,6 +66,8 @@ class Messages
 		}
 
 		self::$messages = $messages->getAll();
+
+		MessageInputData::from(self::$messages);
 	}
 
 	/**
@@ -108,5 +111,13 @@ class Messages
 	public static function translate(string $id): string
 	{
 		return self::$messages[$id] ?? TextFormat::RED . "The message " . $id . " was not found, please try deleting your messages.yml";
+	}
+
+	/**
+	 * @param string[] $messages
+	 */
+	public static function setMessageData(array $messages): void
+	{
+		self::$messages = $messages;
 	}
 }

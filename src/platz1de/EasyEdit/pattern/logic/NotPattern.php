@@ -7,7 +7,6 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
-use pocketmine\block\Block;
 
 class NotPattern extends Pattern
 {
@@ -16,12 +15,13 @@ class NotPattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
-		return $this->pieces[0]->getFor($x, $y, $z, $iterator, $selection);
+		return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);
 	}
 
 	/**
@@ -29,12 +29,13 @@ class NotPattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
-		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $selection);
+		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total);
 	}
 
 	public function check(): void

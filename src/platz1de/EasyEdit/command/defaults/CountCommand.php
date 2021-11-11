@@ -7,7 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\task\selection\CountTask;
+use platz1de\EasyEdit\task\editing\selection\CountTask;
 use pocketmine\player\Player;
 use Throwable;
 

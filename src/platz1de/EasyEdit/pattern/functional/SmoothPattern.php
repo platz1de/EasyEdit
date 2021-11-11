@@ -15,12 +15,13 @@ class SmoothPattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
-		HeightMapCache::load($iterator, $selection);
+		HeightMapCache::load($iterator, $current);
 
 		$max = 0;
 		$tMax = 0;
@@ -44,15 +45,15 @@ class SmoothPattern extends Pattern
 		if ($tMax !== 0) {
 			$max /= $tMax;
 		} elseif ($tMin !== 0) {
-			$max = $selection->getCubicEnd()->getY();
+			$max = $current->getCubicEnd()->getY();
 		}
 		if ($tMin !== 0) {
 			$min /= $tMin;
 		}
 		$max = round($max);
 		$min = round($min);
-		$oMax = HeightMapCache::getHighest($x, $z) ?? (int) $selection->getCubicEnd()->getY();
-		$oMin = HeightMapCache::getLowest($x, $z) ?? (int) $selection->getCubicStart()->getY();
+		$oMax = HeightMapCache::getHighest($x, $z) ?? (int) $current->getCubicEnd()->getY();
+		$oMin = HeightMapCache::getLowest($x, $z) ?? (int) $current->getCubicStart()->getY();
 		$oMid = ($oMin + $oMax) / 2;
 		$mid = ($min + $max) / 2;
 

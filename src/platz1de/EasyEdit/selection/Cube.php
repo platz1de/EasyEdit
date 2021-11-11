@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HighlightingManager;
-use platz1de\EasyEdit\utils\TaskCache;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -97,8 +96,9 @@ class Cube extends Selection implements Patterned
 	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
+	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void
+	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		if ($context->isEmpty()) {
 			return;
@@ -109,7 +109,7 @@ class Cube extends Selection implements Patterned
 		} else {
 			if ($context->includesFilling()) {
 				//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
-				CubicConstructor::betweenPoints(Vector3::maxComponents(TaskCache::getFullSelection()->getCubicStart()->add(1, 1, 1), $this->getCubicStart()), Vector3::minComponents(TaskCache::getFullSelection()->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd()), $closure);
+				CubicConstructor::betweenPoints(Vector3::maxComponents($full->getCubicStart()->add(1, 1, 1), $this->getCubicStart()), Vector3::minComponents($full->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd()), $closure);
 			}
 
 			if ($context->includesAllSides()) {
@@ -119,7 +119,7 @@ class Cube extends Selection implements Patterned
 			}
 
 			if ($context->includesCenter()) {
-				CubicConstructor::betweenPoints(Vector3::maxComponents(TaskCache::getFullSelection()->getPos1()->addVector(TaskCache::getFullSelection()->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents(TaskCache::getFullSelection()->getPos1()->addVector(TaskCache::getFullSelection()->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
+				CubicConstructor::betweenPoints(Vector3::maxComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
 			}
 		}
 	}

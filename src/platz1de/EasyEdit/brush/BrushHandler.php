@@ -8,7 +8,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 

@@ -70,8 +70,9 @@ class DynamicBlockListSelection extends BlockListSelection
 	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
+	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void
+	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		CubicConstructor::betweenPoints($this->getPos1()->addVector($place), $this->getPos2()->addVector($place), $closure);
 	}

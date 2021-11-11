@@ -3,8 +3,7 @@
 namespace platz1de\EasyEdit\cache;
 
 use BadMethodCallException;
-use platz1de\EasyEdit\task\selection\RedoTask;
-use platz1de\EasyEdit\task\selection\UndoTask;
+use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 
 class HistoryCache
@@ -69,7 +68,9 @@ class HistoryCache
 		if (self::canUndo($player)) {
 			$undo = array_pop(self::$pastCache[$player]);
 
-			UndoTask::queue($undo);
+			if ($undo !== null) {
+				StaticStoredPasteTask::queue($player, $undo, false, true);
+			}
 		}
 	}
 
@@ -81,7 +82,9 @@ class HistoryCache
 		if (self::canRedo($player)) {
 			$redo = array_pop(self::$futureCache[$player]);
 
-			RedoTask::queue($redo);
+			if ($redo !== null) {
+				StaticStoredPasteTask::queue($player, $redo, false);
+			}
 		}
 	}
 }

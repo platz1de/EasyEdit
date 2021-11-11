@@ -8,7 +8,7 @@ use platz1de\EasyEdit\pattern\functional\SmoothPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use pocketmine\player\Player;
 use Throwable;
 

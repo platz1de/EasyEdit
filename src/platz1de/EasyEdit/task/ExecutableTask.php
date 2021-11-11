@@ -8,6 +8,12 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 abstract class ExecutableTask
 {
 	private int $taskId;
+	private string $owner;
+
+	public function __construct(string $owner)
+	{
+		$this->owner = $owner;
+	}
 
 	abstract public function execute(): void;
 
@@ -28,6 +34,7 @@ abstract class ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putString(static::class);
+		$stream->putString($this->owner);
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -41,7 +48,7 @@ abstract class ExecutableTask
 		$stream = new ExtendedBinaryStream($data);
 		$type = $stream->getString();
 		/** @var ExecutableTask $task */
-		$task = new $type();
+		$task = new $type($stream->getString());
 		$task->parseData($stream);
 		$task->taskId = EditAdapter::getId();
 		return $task;
@@ -58,5 +65,13 @@ abstract class ExecutableTask
 	public function getTaskId(): int
 	{
 		return $this->taskId;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOwner(): string
+	{
+		return $this->owner;
 	}
 }
