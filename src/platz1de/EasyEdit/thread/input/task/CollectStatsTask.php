@@ -4,7 +4,8 @@ namespace platz1de\EasyEdit\thread\input\task;
 
 use Closure;
 use platz1de\EasyEdit\cache\TaskCache;
-use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
+use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\StatsCollectResult;
 use platz1de\EasyEdit\thread\ThreadData;
@@ -24,12 +25,23 @@ class CollectStatsTask extends InputData
 	public function handle(): void
 	{
 		$task = ThreadData::getTask();
-		if ($task instanceof QueuedEditTask) {
-			$piece = $task->getCurrentPiece();
-			StatsCollectResult::from($this->cacheId, $piece->getTaskName(), $piece->getId(), $task->getSelection()->getPlayer(), $task->getTotalLength(), $task->getLength(), ThreadData::getQueueLength());
-		} else {
-			StatsCollectResult::from($this->cacheId, "unknown", -1, "EasyEdit", -1, -1, ThreadData::getQueueLength());
+		$name = "unknown";
+		$id = -1;
+		$player = "EasyEdit";
+		$totalPieces = -1;
+		$piecesLeft = -1;
+		if ($task instanceof ExecutableTask) {
+			$name = $task->getTaskName();
+			$id = $task->getTaskId();
+			$player = $task->getOwner();
+			$totalPieces = 1;
+			$piecesLeft = 1;
+			if ($task instanceof SelectionEditTask) {
+				$totalPieces = $task->getTotalPieces();
+				$piecesLeft = $task->getPiecesLeft();
+			}
 		}
+		StatsCollectResult::from($this->cacheId, $name, $id, $player, $totalPieces, $piecesLeft, ThreadData::getQueueLength());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

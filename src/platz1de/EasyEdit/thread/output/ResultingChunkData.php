@@ -52,7 +52,7 @@ class ResultingChunkData extends OutputData
 			World::getXZ($hash, $x, $z);
 			$chunks->putInt($x);
 			$chunks->putInt($z);
-			$chunks->putString(FastChunkSerializer::serializeWithoutLight($chunk));
+			$chunks->putString(FastChunkSerializer::serializeTerrain($chunk));
 			$count++;
 		}
 		$stream->putInt($count);
@@ -68,7 +68,7 @@ class ResultingChunkData extends OutputData
 		$count = $stream->getInt();
 		$this->chunkData = [];
 		for ($i = 0; $i < $count; $i++) {
-			$this->chunkData[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserialize($stream->getString());
+			$this->chunkData[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserializeTerrain($stream->getString());
 		}
 
 		$this->tileData = $stream->getCompounds();

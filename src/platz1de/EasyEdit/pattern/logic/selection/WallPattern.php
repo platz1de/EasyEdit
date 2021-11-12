@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
-use platz1de\EasyEdit\utils\TaskCache;
 
 class WallPattern extends Pattern
 {
@@ -19,22 +18,23 @@ class WallPattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
 		$thickness = $this->args->getFloat("thickness");
-		if ($selection instanceof Cube) {
-			$min = TaskCache::getFullSelection()->getPos1();
-			$max = TaskCache::getFullSelection()->getPos2();
+		if ($current instanceof Cube) {
+			$min = $total->getPos1();
+			$max = $total->getPos2();
 
 			return ($x - $min->getX() + 1) <= $thickness || ($max->getX() - $x + 1) <= $thickness || ($z - $min->getZ() + 1) <= $thickness || ($max->getZ() + $z - 1) <= $thickness;
 		}
-		if ($selection instanceof Cylinder || $selection instanceof Sphere) {
-			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $thickness) ** 2);
+		if ($current instanceof Cylinder || $current instanceof Sphere) {
+			return (($x - $current->getPoint()->getFloorX()) ** 2) + (($z - $current->getPoint()->getFloorZ()) ** 2) > (($current->getRadius() - $thickness) ** 2);
 		}
-		throw new ParseError("Walls pattern does not support selection of type " . $selection::class);
+		throw new ParseError("Walls pattern does not support selection of type " . $current::class);
 	}
 
 	/**

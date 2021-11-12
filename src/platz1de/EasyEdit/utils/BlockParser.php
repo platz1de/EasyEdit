@@ -45,4 +45,17 @@ class BlockParser
 
 		return $item->getBlock();
 	}
+
+	/**
+	 * @param string $stringId Id in format id:meta
+	 * @return array{int, int} id, meta
+	 */
+	public static function fromStringId(string $stringId): array
+	{
+		$data = explode(":", $stringId);
+		if (!isset($data[1])) {
+			throw new ParseError("Expected string block id, got " . $stringId);
+		}
+		return [(int) $data[0], (int) $data[1]];
+	}
 }

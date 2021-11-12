@@ -8,5 +8,6 @@ height-ignored-blocks: [ "air", "wood", "wood2", "leaves", "leaves2", "dandelion
 
 #Better don't change this, the following is mainly for transparency
 #Conversion data source, requires specific Format
-#for more information see https://github.com/platz1de/EasyEdit-Data#block-conversionjson
-block-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/block-conversion.json"
+#for more information see https://github.com/platz1de/EasyEdit-Data#conversion-maps
+bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock-conversion-map.json"
+java-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/java-conversion-map.json"

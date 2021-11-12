@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\thread;
 
-use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 
 /**
@@ -11,10 +11,10 @@ use platz1de\EasyEdit\thread\input\ChunkInputData;
 class ThreadData
 {
 	/**
-	 * @var QueuedEditTask[]
+	 * @var ExecutableTask[]
 	 */
 	private static array $tasks = [];
-	private static ?QueuedEditTask $task = null;
+	private static ?ExecutableTask $task = null;
 	/**
 	 * @var ChunkInputData|null
 	 */
@@ -22,17 +22,17 @@ class ThreadData
 	private static bool $stop = false;
 
 	/**
-	 * @return QueuedEditTask|null
+	 * @return ExecutableTask|null
 	 */
-	public static function getNextTask(): ?QueuedEditTask
+	public static function getNextTask(): ?ExecutableTask
 	{
 		return array_shift(self::$tasks);
 	}
 
 	/**
-	 * @return QueuedEditTask|null
+	 * @return ExecutableTask|null
 	 */
-	public static function getTask(): ?QueuedEditTask
+	public static function getTask(): ?ExecutableTask
 	{
 		return self::$task;
 	}
@@ -46,17 +46,17 @@ class ThreadData
 	}
 
 	/**
-	 * @param QueuedEditTask $task
+	 * @param ExecutableTask $task
 	 */
-	public static function addTask(QueuedEditTask $task): void
+	public static function addTask(ExecutableTask $task): void
 	{
 		self::$tasks[] = $task;
 	}
 
 	/**
-	 * @param QueuedEditTask|null $task
+	 * @param ExecutableTask|null $task
 	 */
-	public static function setTask(?QueuedEditTask $task): void
+	public static function setTask(?ExecutableTask $task): void
 	{
 		self::$task = $task;
 	}

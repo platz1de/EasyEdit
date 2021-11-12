@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use platz1de\EasyEdit\task\WrongSelectionTypeError;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
@@ -88,8 +87,9 @@ abstract class Selection
 	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
+	 * @param Selection        $full
 	 */
-	abstract public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void;
+	abstract public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void;
 
 	/**
 	 * @return bool

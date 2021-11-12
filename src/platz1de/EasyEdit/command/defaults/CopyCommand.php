@@ -7,7 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\task\selection\CopyTask;
+use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use pocketmine\player\Player;
 use Throwable;
 

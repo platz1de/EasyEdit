@@ -7,7 +7,7 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\CrashReportData;
 use platz1de\EasyEdit\thread\output\OutputData;
@@ -64,13 +64,17 @@ class EditThread extends Thread
 					});
 				} else {
 					try {
+						$this->setStatus(self::STATUS_RUNNING);
+						ThreadData::canExecute(); //clear pending cancel requests
+						EditTaskResultCache::clear();
+						$this->getLogger()->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
 						$task->execute();
-						$this->tick($task);
+						$this->setStatus(self::STATUS_IDLE);
 					} catch (Throwable $throwable) {
 						$this->logger->logException($throwable);
 						$this->setStatus(self::STATUS_CRASHED);
 						$sleep = time() + 9;
-						CrashReportData::from($throwable, $task->getSelection()->getPlayer());
+						CrashReportData::from($throwable, $task->getOwner());
 					}
 				}
 			} else {
@@ -84,14 +88,12 @@ class EditThread extends Thread
 		}
 	}
 
-	private function tick(QueuedEditTask $task): void
+	public function waitForData(): void
 	{
-		while (!$task->continue()) {
-			$this->synchronized(function (): void {
-				$this->wait();
-			});
+		$this->synchronized(function (): void {
+			$this->wait();
 			$this->parseInput();
-		}
+		});
 	}
 
 	/**

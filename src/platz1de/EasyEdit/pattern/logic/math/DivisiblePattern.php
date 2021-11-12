@@ -14,10 +14,11 @@ class DivisiblePattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
 		if ($this->args->checkXAxis() && abs($x) % $this->args->getInt("number") !== 0) {
 			return false;

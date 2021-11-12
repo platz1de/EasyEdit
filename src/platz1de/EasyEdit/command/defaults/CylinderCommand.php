@@ -6,7 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
-use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use pocketmine\player\Player;
 
 class CylinderCommand extends EasyEditCommand
@@ -34,6 +34,6 @@ class CylinderCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0], (int) $args[1]), $pattern, $player->getPosition());
+		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
 	}
 }

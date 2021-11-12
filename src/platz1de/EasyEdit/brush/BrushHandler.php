@@ -8,7 +8,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\task\selection\SetTask;
+use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 
@@ -30,16 +30,16 @@ class BrushHandler
 		if ($target !== null) {
 			switch (self::nameToIdentifier($brush->getString("brushType", ""))) {
 				case self::BRUSH_SPHERE:
-					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new Pattern(PatternParser::parseInternal($brush->getString("brushPattern", "stone"))), $player->getPosition());
+					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), new Pattern(PatternParser::parseInternal($brush->getString("brushPattern", "stone"))), $player->getPosition());
 					break;
 				case self::BRUSH_SMOOTH:
-					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new SmoothPattern([]), $player->getPosition());
+					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), new SmoothPattern([]), $player->getPosition());
 					break;
 				case self::BRUSH_NATURALIZE:
-					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0)), new Pattern([new NaturalizePattern([new Pattern(PatternParser::parseInternal($brush->getString("topBlock", "grass"))), new Pattern(PatternParser::parseInternal($brush->getString("middleBlock", "dirt"))), new Pattern(PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))])]), $player->getPosition());
+					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), new Pattern([new NaturalizePattern([new Pattern(PatternParser::parseInternal($brush->getString("topBlock", "grass"))), new Pattern(PatternParser::parseInternal($brush->getString("middleBlock", "dirt"))), new Pattern(PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))])]), $player->getPosition());
 					break;
 				case self::BRUSH_CYLINDER:
-					SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getShort("brushSize", 0), $brush->getShort("brushHeight", 0)), new Pattern(PatternParser::parseInternal($brush->getString("brushPattern", "stone"))), $player->getPosition());
+					SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), new Pattern(PatternParser::parseInternal($brush->getString("brushPattern", "stone"))), $player->getPosition());
 			}
 		}
 	}

@@ -2,18 +2,18 @@
 
 namespace platz1de\EasyEdit\thread\input;
 
-use platz1de\EasyEdit\task\queued\QueuedEditTask;
+use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class TaskInputData extends InputData
 {
-	private QueuedEditTask $task;
+	private ExecutableTask $task;
 
 	/**
-	 * @param QueuedEditTask $task
+	 * @param ExecutableTask $task
 	 */
-	public static function fromTask(QueuedEditTask $task): void
+	public static function fromTask(ExecutableTask $task): void
 	{
 		$data = new self();
 		$data->task = $task;
@@ -32,6 +32,6 @@ class TaskInputData extends InputData
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->task = QueuedEditTask::fastDeserialize($stream->getString());
+		$this->task = ExecutableTask::fastDeserialize($stream->getString());
 	}
 }

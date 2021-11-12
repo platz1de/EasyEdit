@@ -77,8 +77,9 @@ class MovingCube extends Selection
 	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
+	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context): void
+	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$min = VectorUtils::enforceHeight($this->pos1);

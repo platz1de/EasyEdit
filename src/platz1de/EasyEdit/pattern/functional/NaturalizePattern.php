@@ -17,10 +17,11 @@ class NaturalizePattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): bool
+	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
 		return $iterator->getBlockAt($x, $y, $z) !== 0;
 	}
@@ -30,19 +31,20 @@ class NaturalizePattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
 		$i = 1;
 		while ($y + $i < World::Y_MAX && $iterator->getBlockAt($x, $y + $i, $z) !== 0) {
 			$i++;
 		}
 		return match ($i) {
-			1 => $this->pieces[0]->getFor($x, $y, $z, $iterator, $selection),
-			2, 3 => $this->pieces[1]->getFor($x, $y, $z, $iterator, $selection),
-			default => $this->pieces[2]->getFor($x, $y, $z, $iterator, $selection),
+			1 => $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total),
+			2, 3 => $this->pieces[1]->getFor($x, $y, $z, $iterator, $current, $total),
+			default => $this->pieces[2]->getFor($x, $y, $z, $iterator, $current, $total),
 		};
 	}
 

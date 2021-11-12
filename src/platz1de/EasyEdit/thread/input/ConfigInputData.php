@@ -15,23 +15,25 @@ class ConfigInputData extends InputData
 	 * @var int[]
 	 */
 	private array $heightIgnored;
-	private string $conversionDataSource;
+	private string $bedrockConversionDataSource;
+	private string $javaConversionDataSource;
 
 	/**
 	 * @param int[] $heightIgnored
 	 */
-	public static function from(array $heightIgnored, string $conversionDataSource): void
+	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $javaConversionDataSource): void
 	{
 		$data = new self();
 		$data->heightIgnored = $heightIgnored;
-		$data->conversionDataSource = $conversionDataSource;
+		$data->bedrockConversionDataSource = $bedrockConversionDataSource;
+		$data->javaConversionDataSource = $javaConversionDataSource;
 		$data->send();
 	}
 
 	public function handle(): void
 	{
 		HeightMapCache::setIgnore($this->heightIgnored);
-		BlockConvertor::load($this->conversionDataSource);
+		BlockConvertor::load($this->bedrockConversionDataSource, $this->javaConversionDataSource);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -40,7 +42,8 @@ class ConfigInputData extends InputData
 		foreach ($this->heightIgnored as $id) {
 			$stream->putInt($id);
 		}
-		$stream->putString($this->conversionDataSource);
+		$stream->putString($this->bedrockConversionDataSource);
+		$stream->putString($this->javaConversionDataSource);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -49,6 +52,7 @@ class ConfigInputData extends InputData
 		for ($i = 0; $i < $count; $i++) {
 			$this->heightIgnored[] = $stream->getInt();
 		}
-		$this->conversionDataSource = $stream->getString();
+		$this->bedrockConversionDataSource = $stream->getString();
+		$this->javaConversionDataSource = $stream->getString();
 	}
 }

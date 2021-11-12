@@ -6,7 +6,6 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
-use pocketmine\block\Block;
 
 class RandomPattern extends Pattern
 {
@@ -15,14 +14,15 @@ class RandomPattern extends Pattern
 	 * @param int                  $y
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $selection
+	 * @param Selection            $current
+	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $selection): int
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
 		$selected = $this->pieces[array_rand($this->pieces)];
-		if ($selected->isValidAt($x, $y, $z, $iterator, $selection)) {
-			return $selected->getFor($x, $y, $z, $iterator, $selection);
+		if ($selected->isValidAt($x, $y, $z, $iterator, $current, $total)) {
+			return $selected->getFor($x, $y, $z, $iterator, $current, $total);
 		}
 		return -1;
 	}
