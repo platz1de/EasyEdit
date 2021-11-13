@@ -53,7 +53,7 @@ class BlockConvertor
 		}
 		foreach ($javaBlocks as $bedrockStringId => $javaStringId) {
 			$idData = BlockParser::fromStringId($bedrockStringId);
-			self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($javaStringId);
+			self::$conversionTo[$idData[0]][$idData[1]] = BlockParser::fromStringId($javaStringId);
 		}
 	}
 
