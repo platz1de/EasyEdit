@@ -12,6 +12,7 @@ abstract class ExecutableTask
 
 	public function __construct(string $owner)
 	{
+		$this->taskId = EditAdapter::getId();
 		$this->owner = $owner;
 	}
 
@@ -50,7 +51,6 @@ abstract class ExecutableTask
 		/** @var ExecutableTask $task */
 		$task = new $type($stream->getString());
 		$task->parseData($stream);
-		$task->taskId = EditAdapter::getId();
 		return $task;
 	}
 
