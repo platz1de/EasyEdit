@@ -70,7 +70,7 @@ class StaticStoredPasteTask extends ExecutableTask
 			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
 			StaticPasteTask::notifyUser($task->getOwner(), EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $task->getDataManager());
 		});
-		new StaticPasteTask($this->getOwner(), $selection->getWorldName(), $data, $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+		StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0))->execute();
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

@@ -69,7 +69,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$selection instanceof DynamicBlockListSelection) {
 			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . DynamicBlockListSelection::class);
 		}
-		new DynamicPasteTask($this->getOwner(), $this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
+		DynamicPasteTask::from($this->getOwner(), $this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert)->execute();
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
