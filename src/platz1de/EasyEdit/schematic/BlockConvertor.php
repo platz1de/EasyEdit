@@ -19,10 +19,6 @@ class BlockConvertor
 	 * @var array<int, array<int, array{int, int}>>
 	 */
 	private static array $conversionFrom;
-	/**
-	 * @var array<int, array<int, array{int, int}>>
-	 */
-	private static array $conversionTo;
 
 	/**
 	 * @var array<string, array{int, int}>
@@ -33,19 +29,17 @@ class BlockConvertor
 	 */
 	private static array $paletteTo;
 
-	public static function load(string $bedrockSource, string $javaSource, string $bedrockPaletteSource, string $javaPaletteSource): void
+	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource): void
 	{
 		self::$conversionFrom = [];
-		self::$conversionTo = [];
 		self::$paletteFrom = [];
 		self::$paletteTo = [];
 
 		//This should only be executed on edit thread
 		$bedrockData = Internet::getURL($bedrockSource, 10, [], $err);
-		$javaData = Internet::getURL($javaSource, 10, [], $err);
 		$bedrockPaletteData = Internet::getURL($bedrockPaletteSource, 10, [], $err);
 		$javaPaletteData = Internet::getURL($javaPaletteSource, 10, [], $err);
-		if ($bedrockData === null || $javaData === null || $bedrockPaletteData === null || $javaPaletteData === null) {
+		if ($bedrockData === null || $bedrockPaletteData === null || $javaPaletteData === null) {
 			EditThread::getInstance()->getLogger()->error("Failed to load conversion data, schematic conversion is not available");
 			if (isset($err)) {
 				EditThread::getInstance()->getLogger()->logException($err);
@@ -55,7 +49,6 @@ class BlockConvertor
 
 		try {
 			$bedrockBlocks = json_decode($bedrockData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$javaBlocks = json_decode($javaData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$bedrockPalette = json_decode($bedrockPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$javaPalette = json_decode($javaPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 		} catch (Throwable $e) {
@@ -67,10 +60,6 @@ class BlockConvertor
 		foreach ($bedrockBlocks as $javaStringId => $bedrockStringId) {
 			$idData = BlockParser::fromStringId($javaStringId);
 			self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);
-		}
-		foreach ($javaBlocks as $bedrockStringId => $javaStringId) {
-			$idData = BlockParser::fromStringId($bedrockStringId);
-			self::$conversionTo[$idData[0]][$idData[1]] = BlockParser::fromStringId($javaStringId);
 		}
 		foreach ($bedrockPalette as $javaState => $bedrockStringId) {
 			self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
@@ -88,19 +77,6 @@ class BlockConvertor
 	public static function convertFromJava(int &$id, int &$meta): void
 	{
 		[$id, $meta] = self::$conversionFrom[$id][$meta] ?? [$id, $meta];
-	}
-
-	/**
-	 * @param int $id
-	 * @param int $meta
-	 */
-	public static function convertToJava(int &$id, int &$meta): void
-	{
-		[$id, $meta] = self::$conversionTo[$id][$meta] ?? [$id, $meta];
-		if ($id >= (1 << 8)) { //java 1.12 only supports 256 block ids, this also removes the need to add new block ids to the conversion data
-			$id = 0;
-			$meta = 0;
-		}
 	}
 
 	/**

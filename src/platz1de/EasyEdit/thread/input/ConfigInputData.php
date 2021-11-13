@@ -16,19 +16,17 @@ class ConfigInputData extends InputData
 	 */
 	private array $heightIgnored;
 	private string $bedrockConversionDataSource;
-	private string $javaConversionDataSource;
 	private string $bedrockPaletteDataSource;
 	private string $javaPaletteDataSource;
 
 	/**
 	 * @param int[] $heightIgnored
 	 */
-	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $javaConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource): void
+	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource): void
 	{
 		$data = new self();
 		$data->heightIgnored = $heightIgnored;
 		$data->bedrockConversionDataSource = $bedrockConversionDataSource;
-		$data->javaConversionDataSource = $javaConversionDataSource;
 		$data->bedrockPaletteDataSource = $bedrockPaletteDataSource;
 		$data->javaPaletteDataSource = $javaPaletteDataSource;
 		$data->send();
@@ -37,7 +35,7 @@ class ConfigInputData extends InputData
 	public function handle(): void
 	{
 		HeightMapCache::setIgnore($this->heightIgnored);
-		BlockConvertor::load($this->bedrockConversionDataSource, $this->javaConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource);
+		BlockConvertor::load($this->bedrockConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -47,7 +45,6 @@ class ConfigInputData extends InputData
 			$stream->putInt($id);
 		}
 		$stream->putString($this->bedrockConversionDataSource);
-		$stream->putString($this->javaConversionDataSource);
 		$stream->putString($this->bedrockPaletteDataSource);
 		$stream->putString($this->javaPaletteDataSource);
 	}
@@ -59,7 +56,6 @@ class ConfigInputData extends InputData
 			$this->heightIgnored[] = $stream->getInt();
 		}
 		$this->bedrockConversionDataSource = $stream->getString();
-		$this->javaConversionDataSource = $stream->getString();
 		$this->bedrockPaletteDataSource = $stream->getString();
 		$this->javaPaletteDataSource = $stream->getString();
 	}

@@ -17,7 +17,6 @@ class ConfigManager
 	 */
 	private static array $heightIgnored = [];
 	private static string $bedrockConversionDataSource;
-	private static string $javaConversionDataSource;
 	private static string $bedrockPaletteDataSource;
 	private static string $javaPaletteDataSource;
 
@@ -84,11 +83,10 @@ class ConfigManager
 		}, self::mustGetStringArray($config, "height-ignored-blocks", []));
 
 		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
-		self::$javaConversionDataSource = self::mustGetString($config, "java-convert-data", "");
 		self::$bedrockPaletteDataSource = self::mustGetString($config, "bedrock-palette-data", "");
 		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
 
-		ConfigInputData::from(self::$heightIgnored, self::$bedrockConversionDataSource, self::$javaConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource);
+		ConfigInputData::from(self::$heightIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource);
 	}
 
 	/**
