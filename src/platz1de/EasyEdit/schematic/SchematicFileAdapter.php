@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\schematic;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\schematic\type\McEditSchematic;
 use platz1de\EasyEdit\schematic\type\SchematicType;
 use platz1de\EasyEdit\schematic\type\SpongeSchematic;
@@ -49,5 +50,21 @@ class SchematicFileAdapter
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public static function getSchematicList(): array
+	{
+		$schematics = [];
+		foreach (scandir(EasyEdit::getSchematicPath()) as $file) {
+			foreach (self::$knownExtensions as $extension => $parser) {
+				if (str_ends_with($file, $extension)) {
+					$schematics[] = pathinfo($file, PATHINFO_FILENAME);
+				}
+			}
+		}
+		return $schematics;
 	}
 }

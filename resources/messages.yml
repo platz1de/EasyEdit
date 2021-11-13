@@ -1,4 +1,4 @@
-message-version: "1.2.2" #Please don't change this manually
+message-version: "1.2.3" #Please don't change this manually
 
 prefix: "§l§aEasy§bEdit §r> "
 
@@ -39,3 +39,6 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 
 #Args: {id} {meta} {name} {x} {y} {z}
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}"
+
+#Args: {schematic} {known}
+unknown-schematic: 'Unknown schematic "{schematic}"\nKnown schematics: {known}'

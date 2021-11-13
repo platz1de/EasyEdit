@@ -50,6 +50,7 @@ Command | Description | Permission | Aliases/Notice
 //blockinfo | Get a blockinfo stick | easyedit.command.info | //bi
 //status | Check on the EditThread | easyedit.command.thread
 //cancel | Cancel the current task | easyedit.command.thread
+//loadschematic \<schematicName> | Load a saved schematic | easyedit-command.loadscematic | //load
 
 ## Patterns
 

@@ -17,6 +17,7 @@ use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
 use platz1de\EasyEdit\command\defaults\HollowCylinderCommand;
 use platz1de\EasyEdit\command\defaults\HollowSphereCommand;
 use platz1de\EasyEdit\command\defaults\InsertCommand;
+use platz1de\EasyEdit\command\defaults\LoadSchematicCommand;
 use platz1de\EasyEdit\command\defaults\MoveCommand;
 use platz1de\EasyEdit\command\defaults\NaturalizeCommand;
 use platz1de\EasyEdit\command\defaults\PasteCommand;
@@ -90,7 +91,8 @@ class EasyEdit extends PluginBase
 			new CancelCommand(),
 			new BenchmarkCommand(),
 			new ExtinguishCommand(),
-			new BlockInfoCommand()
+			new BlockInfoCommand(),
+			new LoadSchematicCommand()
 		]);
 
 		//Just for sending block data without using the protocol directly
