@@ -1,4 +1,4 @@
-config-version: "1.2.2" #Please don't change this manually
+config-version: "1.2.3" #Please don't change this manually
 
 #Blocks which get ignored when calculating height (e.g. when smoothing)
 #These get replaced with air when edited
@@ -11,3 +11,5 @@ height-ignored-blocks: [ "air", "wood", "wood2", "leaves", "leaves2", "dandelion
 #for more information see https://github.com/platz1de/EasyEdit-Data#conversion-maps
 bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock-conversion-map.json"
 java-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/java-conversion-map.json"
+bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock_palette.json"
+java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/java_palette.json"

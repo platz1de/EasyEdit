@@ -10,6 +10,8 @@ use Throwable;
 /**
  * Convertor between java 1.12.2 ids and bedrocks current ids
  * Only intended for use in McEdit schematic file conversion
+ *
+ * Convertor between java block states and bedrocks current ids
  */
 class BlockConvertor
 {
@@ -22,15 +24,28 @@ class BlockConvertor
 	 */
 	private static array $conversionTo;
 
-	public static function load(string $bedrockSource, string $javaSource): void
+	/**
+	 * @var array<string, array{int, int}>
+	 */
+	private static array $paletteFrom;
+	/**
+	 * @var array<int, array<int, string>>
+	 */
+	private static array $paletteTo;
+
+	public static function load(string $bedrockSource, string $javaSource, string $bedrockPaletteSource, string $javaPaletteSource): void
 	{
 		self::$conversionFrom = [];
 		self::$conversionTo = [];
+		self::$paletteFrom = [];
+		self::$paletteTo = [];
 
 		//This should only be executed on edit thread
 		$bedrockData = Internet::getURL($bedrockSource, 10, [], $err);
 		$javaData = Internet::getURL($javaSource, 10, [], $err);
-		if ($bedrockData === null || $javaData === null) {
+		$bedrockPaletteData = Internet::getURL($bedrockPaletteSource, 10, [], $err);
+		$javaPaletteData = Internet::getURL($javaPaletteSource, 10, [], $err);
+		if ($bedrockData === null || $javaData === null || $bedrockPaletteData === null || $javaPaletteData === null) {
 			EditThread::getInstance()->getLogger()->error("Failed to load conversion data, schematic conversion is not available");
 			if (isset($err)) {
 				EditThread::getInstance()->getLogger()->logException($err);
@@ -41,6 +56,8 @@ class BlockConvertor
 		try {
 			$bedrockBlocks = json_decode($bedrockData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$javaBlocks = json_decode($javaData->getBody(), true, 512, JSON_THROW_ON_ERROR);
+			$bedrockPalette = json_decode($bedrockPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
+			$javaPalette = json_decode($javaPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
@@ -54,6 +71,13 @@ class BlockConvertor
 		foreach ($javaBlocks as $bedrockStringId => $javaStringId) {
 			$idData = BlockParser::fromStringId($bedrockStringId);
 			self::$conversionTo[$idData[0]][$idData[1]] = BlockParser::fromStringId($javaStringId);
+		}
+		foreach ($bedrockPalette as $javaState => $bedrockStringId) {
+			self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
+		}
+		foreach ($javaPalette as $bedrockStringId => $javaState) {
+			$idData = BlockParser::fromStringId($bedrockStringId);
+			self::$paletteTo[$idData[0]][$idData[1]] = $javaState;
 		}
 	}
 
@@ -77,5 +101,27 @@ class BlockConvertor
 			$id = 0;
 			$meta = 0;
 		}
+	}
+
+	/**
+	 * @param string $state
+	 * @return array{int, int}
+	 */
+	public static function getFromState(string $state): array
+	{
+		if (!isset(self::$paletteFrom[$state])) {
+			EditThread::getInstance()->getLogger()->debug("Requested unknown state " . $state);
+		}
+		return self::$paletteFrom[$state] ?? [0, 0];
+	}
+
+	/**
+	 * @param int $id
+	 * @param int $meta
+	 * @return string
+	 */
+	public static function getState(int $id, int $meta): string
+	{
+		return self::$paletteTo[$id][$meta] ?? self::$paletteTo[0][0];
 	}
 }

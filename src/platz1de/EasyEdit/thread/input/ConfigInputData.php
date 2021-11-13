@@ -17,23 +17,27 @@ class ConfigInputData extends InputData
 	private array $heightIgnored;
 	private string $bedrockConversionDataSource;
 	private string $javaConversionDataSource;
+	private string $bedrockPaletteDataSource;
+	private string $javaPaletteDataSource;
 
 	/**
 	 * @param int[] $heightIgnored
 	 */
-	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $javaConversionDataSource): void
+	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $javaConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource): void
 	{
 		$data = new self();
 		$data->heightIgnored = $heightIgnored;
 		$data->bedrockConversionDataSource = $bedrockConversionDataSource;
 		$data->javaConversionDataSource = $javaConversionDataSource;
+		$data->bedrockPaletteDataSource = $bedrockPaletteDataSource;
+		$data->javaPaletteDataSource = $javaPaletteDataSource;
 		$data->send();
 	}
 
 	public function handle(): void
 	{
 		HeightMapCache::setIgnore($this->heightIgnored);
-		BlockConvertor::load($this->bedrockConversionDataSource, $this->javaConversionDataSource);
+		BlockConvertor::load($this->bedrockConversionDataSource, $this->javaConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -44,6 +48,8 @@ class ConfigInputData extends InputData
 		}
 		$stream->putString($this->bedrockConversionDataSource);
 		$stream->putString($this->javaConversionDataSource);
+		$stream->putString($this->bedrockPaletteDataSource);
+		$stream->putString($this->javaPaletteDataSource);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -54,5 +60,7 @@ class ConfigInputData extends InputData
 		}
 		$this->bedrockConversionDataSource = $stream->getString();
 		$this->javaConversionDataSource = $stream->getString();
+		$this->bedrockPaletteDataSource = $stream->getString();
+		$this->javaPaletteDataSource = $stream->getString();
 	}
 }
