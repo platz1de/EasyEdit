@@ -6,13 +6,16 @@ use Closure;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HighlightingManager;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\world\World;
+use Thread;
 use Throwable;
 use UnexpectedValueException;
 
@@ -35,7 +38,7 @@ class Cube extends Selection implements Patterned
 			$this->pos1 = new Vector3($minX, $minY, $minZ);
 			$this->pos2 = new Vector3($maxX, $maxY, $maxZ);
 
-			if (!$this->piece) {
+			if (!$this->piece && !Thread::getCurrentThread() instanceof EditThread) {
 				$this->close();
 				$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
 			}
