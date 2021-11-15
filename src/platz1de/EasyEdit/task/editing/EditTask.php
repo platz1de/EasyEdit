@@ -14,6 +14,7 @@ use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\utils\MixedUtils;
 use ThreadedLogger;
 
 abstract class EditTask extends ExecutableTask
@@ -102,7 +103,7 @@ abstract class EditTask extends ExecutableTask
 				HistoryCacheData::from($this->getOwner(), $changeId, false);
 				/** @var class-string<EditTask> $task */
 				$task = static::class;
-				$task::notifyUser($this->getOwner(), EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $this->data);
+				$task::notifyUser($this->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $this->data);
 			}
 		}
 	}
@@ -135,11 +136,11 @@ abstract class EditTask extends ExecutableTask
 
 	/**
 	 * @param string                $player
-	 * @param float                 $time
-	 * @param int                   $changed
+	 * @param string                $time
+	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	abstract public static function notifyUser(string $player, float $time, int $changed, AdditionalDataManager $data): void;
+	abstract public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void;
 
 	/**
 	 * @return BlockListSelection

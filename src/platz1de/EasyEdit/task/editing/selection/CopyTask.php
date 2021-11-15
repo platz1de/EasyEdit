@@ -14,6 +14,7 @@ use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\ClipboardCacheData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 
@@ -45,7 +46,7 @@ class CopyTask extends SelectionEditTask
 		$data = new AdditionalDataManager(false, true);
 		$data->setResultHandler(static function (EditTask $task, int $changeId): void {
 			ClipboardCacheData::from($task->getOwner(), $changeId);
-			CopyTask::notifyUser($task->getOwner(), EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $task->getDataManager());
+			CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
 		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), $data, $selection, $place->asVector3(), $selection->getPos1()->multiply(-1)));
 	}
@@ -69,13 +70,13 @@ class CopyTask extends SelectionEditTask
 
 	/**
 	 * @param string                $player
-	 * @param float                 $time
-	 * @param int                   $changed
+	 * @param string                $time
+	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(string $player, float $time, int $changed, AdditionalDataManager $data): void
+	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($player, "blocks-copied", ["{time}" => (string) $time, "{changed}" => (string) $changed]);
+		Messages::send($player, "blocks-copied", ["{time}" => $time, "{changed}" => $changed]);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

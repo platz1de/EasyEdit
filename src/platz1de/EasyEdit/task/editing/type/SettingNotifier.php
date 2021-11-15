@@ -10,12 +10,12 @@ trait SettingNotifier
 {
 	/**
 	 * @param string                $player
-	 * @param float                 $time
-	 * @param int                   $changed
+	 * @param string                $time
+	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(string $player, float $time, int $changed, AdditionalDataManager $data): void
+	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
-		MessageSendData::from($player, Messages::replace("blocks-pasted", ["{time}" => (string) $time, "{changed}" => (string) $changed]));
+		MessageSendData::from($player, Messages::replace("blocks-pasted", ["{time}" => $time, "{changed}" => $changed]));
 	}
 }
