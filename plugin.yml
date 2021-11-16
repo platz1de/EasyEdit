@@ -24,6 +24,8 @@ permissions:
   default: op
  easyedit.command.loadschematic:
   default: op
+ easyedit.command.generate:
+  default: op
  easyedit.position:
   default: op
  easyedit.brush:
