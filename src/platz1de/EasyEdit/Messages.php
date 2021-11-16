@@ -23,7 +23,11 @@ class Messages
 		EasyEdit::getInstance()->saveResource("messages.yml");
 		$messages = new Config(EasyEdit::getInstance()->getDataFolder() . "messages.yml", Config::YAML);
 
-		if (($current = (string) $messages->get("message-version", "1.0")) !== self::MESSAGE_VERSION) {
+		$current = $messages->get("message-version", "1.0");
+		if (!is_string($current)) {
+			throw new UnexpectedValueException("message-version is not a string");
+		}
+		if ($current !== self::MESSAGE_VERSION) {
 			$cMajor = explode(".", $current)[0];
 			$gMajor = explode(".", self::MESSAGE_VERSION)[0];
 

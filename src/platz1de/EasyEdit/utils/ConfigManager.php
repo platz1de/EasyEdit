@@ -24,7 +24,11 @@ class ConfigManager
 	{
 		$config = EasyEdit::getInstance()->getConfig();
 
-		if (($current = (string) $config->get("config-version", "1.0")) !== self::CONFIG_VERSION) {
+		$current = $config->get("config-version", "1.0");
+		if (!is_string($current)) {
+			throw new UnexpectedValueException("config-version is not a string");
+		}
+		if ($current !== self::CONFIG_VERSION) {
 			$cMajor = explode(".", $current)[0];
 			$gMajor = explode(".", self::CONFIG_VERSION)[0];
 
