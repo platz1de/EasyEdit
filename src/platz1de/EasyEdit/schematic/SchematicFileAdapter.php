@@ -58,7 +58,11 @@ class SchematicFileAdapter
 	public static function getSchematicList(): array
 	{
 		$schematics = [];
-		foreach (scandir(EasyEdit::getSchematicPath()) as $file) {
+		$fileList = scandir(EasyEdit::getSchematicPath());
+		if ($fileList === false) {
+			return [];
+		}
+		foreach ($fileList as $file) {
 			foreach (self::$knownExtensions as $extension => $parser) {
 				if (str_ends_with($file, $extension)) {
 					$schematics[] = pathinfo($file, PATHINFO_FILENAME);

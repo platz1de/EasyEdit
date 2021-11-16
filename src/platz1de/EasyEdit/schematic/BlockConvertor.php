@@ -6,6 +6,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\utils\Internet;
 use Throwable;
+use UnexpectedValueException;
 
 /**
  * Convertor between java 1.12.2 ids and bedrocks current ids
@@ -51,6 +52,10 @@ class BlockConvertor
 			$bedrockBlocks = json_decode($bedrockData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$bedrockPalette = json_decode($bedrockPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$javaPalette = json_decode($javaPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+			if (!is_array($bedrockBlocks) || !is_array($bedrockPalette) || !is_array($javaPalette)) {
+				throw new UnexpectedValueException("Conversion data does not represent arrays");
+			}
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
@@ -61,6 +66,7 @@ class BlockConvertor
 			$idData = BlockParser::fromStringId($javaStringId);
 			self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);
 		}
+		/** @var string $javaState */
 		foreach ($bedrockPalette as $javaState => $bedrockStringId) {
 			self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
 		}

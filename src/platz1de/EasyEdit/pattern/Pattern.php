@@ -114,6 +114,7 @@ class Pattern
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$pieces[] = self::fastDeserialize($stream->getString());
 		}
+		/** @var class-string<Pattern> $type */
 		$type = $stream->getString();
 		return new $type($pieces, $args);
 	}
