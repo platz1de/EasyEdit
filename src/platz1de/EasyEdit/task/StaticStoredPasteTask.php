@@ -11,6 +11,7 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\HistoryCacheData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
 
@@ -68,7 +69,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		$undo = $this->isUndo;
 		$data->setResultHandler(static function (EditTask $task, int $changeId) use ($undo): void {
 			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
-			StaticPasteTask::notifyUser($task->getOwner(), EditTaskResultCache::getTime(), EditTaskResultCache::getChanged(), $task->getDataManager());
+			StaticPasteTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
 		StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0))->execute();
 	}
