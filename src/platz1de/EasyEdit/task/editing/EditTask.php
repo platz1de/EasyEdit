@@ -67,7 +67,7 @@ abstract class EditTask extends ExecutableTask
 	{
 		$start = microtime(true);
 
-		$handler = EditTaskHandler::fromData($this->world, $chunkData->getChunkData(), $chunkData->getTileData(), $this->getUndoBlockList(), $this->data);
+		$handler = EditTaskHandler::fromData($this->world, $chunkData->getChunkData(), $chunkData->getTileData(), $this->getUndoBlockList());
 
 		$this->getLogger()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks");
 

@@ -35,9 +35,8 @@ class EditTaskHandler
 	 * @param ReferencedChunkManager $origin  Edited Chunks
 	 * @param CompoundTag[]          $tiles   CompoundTags of tiles in edited area
 	 * @param BlockListSelection     $changes Saves made changes, used for undoing
-	 * @param AdditionalDataManager  $data
 	 */
-	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, AdditionalDataManager $data)
+	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes)
 	{
 		//TODO: Never use changes as result (eg. copy)
 		$this->origin = new SafeSubChunkExplorer($origin);
@@ -47,18 +46,16 @@ class EditTaskHandler
 		$this->tiles = array_map(static function (CompoundTag $tile): CompoundTag {
 			return clone $tile;
 		}, $tiles);
-		//TODO: parse data
 	}
 
 	/**
-	 * @param string                $world
-	 * @param string                $chunkData
-	 * @param string                $tileData
-	 * @param BlockListSelection    $undo
-	 * @param AdditionalDataManager $data
+	 * @param string             $world
+	 * @param string             $chunkData
+	 * @param string             $tileData
+	 * @param BlockListSelection $undo
 	 * @return EditTaskHandler
 	 */
-	public static function fromData(string $world, string $chunkData, string $tileData, BlockListSelection $undo, AdditionalDataManager $data): EditTaskHandler
+	public static function fromData(string $world, string $chunkData, string $tileData, BlockListSelection $undo): EditTaskHandler
 	{
 		$origin = new ReferencedChunkManager($world);
 		$chunks = new ExtendedBinaryStream($chunkData);
@@ -73,7 +70,7 @@ class EditTaskHandler
 			$tileList[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
 		}
 
-		return new EditTaskHandler($origin, $tileList, $undo, $data);
+		return new EditTaskHandler($origin, $tileList, $undo);
 	}
 
 	/**
