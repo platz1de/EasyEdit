@@ -39,9 +39,8 @@ class CopyTask extends SelectionEditTask
 	/**
 	 * @param Selection    $selection
 	 * @param Position     $place
-	 * @param Closure|null $finish
 	 */
-	public static function queue(Selection $selection, Position $place, ?Closure $finish = null): void
+	public static function queue(Selection $selection, Position $place): void
 	{
 		$data = new AdditionalDataManager(false, true);
 		$data->setResultHandler(static function (EditTask $task, int $changeId): void {
