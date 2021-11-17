@@ -4,8 +4,6 @@ namespace platz1de\EasyEdit\pattern;
 
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
 
 class PatternArgumentData
 {

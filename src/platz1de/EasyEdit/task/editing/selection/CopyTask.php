@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use Closure;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;

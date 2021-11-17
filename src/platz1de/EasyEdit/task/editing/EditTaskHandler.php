@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TileUtils;

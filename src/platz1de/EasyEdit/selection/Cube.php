@@ -13,7 +13,6 @@ use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\world\World;
 use Thread;
 use Throwable;
