@@ -32,7 +32,7 @@ class CopyTask extends SelectionEditTask
 	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CopyTask
 	{
 		$instance = new self($owner);
-		SelectionEditTask::initSelection($instance, $owner, $world, $data, $selection, $position, $splitOffset);
+		SelectionEditTask::initSelection($instance, $world, $data, $selection, $position, $splitOffset);
 		return $instance;
 	}
 

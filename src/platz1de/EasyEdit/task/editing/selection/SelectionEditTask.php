@@ -19,7 +19,6 @@ abstract class SelectionEditTask extends EditTask
 
 	/**
 	 * @param SelectionEditTask     $instance
-	 * @param string                $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -27,9 +26,9 @@ abstract class SelectionEditTask extends EditTask
 	 * @param Vector3               $splitOffset
 	 * @return void
 	 */
-	public static function initSelection(SelectionEditTask $instance, string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): void
+	public static function initSelection(SelectionEditTask $instance, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): void
 	{
-		EditTask::initEditTask($instance, $owner, $world, $data);
+		EditTask::initEditTask($instance, $world, $data);
 		$instance->selection = $selection;
 		$instance->position = $position;
 		$instance->splitOffset = $splitOffset;

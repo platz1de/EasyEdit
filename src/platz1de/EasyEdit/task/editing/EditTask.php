@@ -24,12 +24,11 @@ abstract class EditTask extends ExecutableTask
 
 	/**
 	 * @param EditTask              $instance
-	 * @param string                $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @return void
 	 */
-	public static function initEditTask(EditTask $instance, string $owner, string $world, AdditionalDataManager $data): void
+	public static function initEditTask(EditTask $instance, string $world, AdditionalDataManager $data): void
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
 		$instance->world = $world;

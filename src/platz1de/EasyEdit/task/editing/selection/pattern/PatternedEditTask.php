@@ -15,7 +15,6 @@ abstract class PatternedEditTask extends SelectionEditTask
 
 	/**
 	 * @param PatternedEditTask     $instance
-	 * @param string                $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -23,9 +22,9 @@ abstract class PatternedEditTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @param Pattern               $pattern
 	 */
-	public static function initPattern(PatternedEditTask $instance, string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): void
+	public static function initPattern(PatternedEditTask $instance, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): void
 	{
-		SelectionEditTask::initSelection($instance, $owner, $world, $data, $selection, $position, $splitOffset);
+		SelectionEditTask::initSelection($instance, $world, $data, $selection, $position, $splitOffset);
 		$instance->pattern = $pattern;
 	}
 
