@@ -98,7 +98,7 @@ class MovingCube extends Selection
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return VectorUtils::getMin($this->getPos1(), $this->getPos1()->addVector($this->direction));
+		return Vector3::minComponents($this->getPos1(), $this->getPos1()->addVector($this->direction));
 	}
 
 	/**
@@ -107,7 +107,7 @@ class MovingCube extends Selection
 	public function getCubicEnd(): Vector3
 	{
 		//TODO: don't add all blocks in between the positions
-		return VectorUtils::getMax($this->getPos2(), $this->getPos2()->addVector($this->direction));
+		return Vector3::maxComponents($this->getPos2(), $this->getPos2()->addVector($this->direction));
 	}
 
 	/**

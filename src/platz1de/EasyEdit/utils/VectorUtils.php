@@ -35,24 +35,6 @@ class VectorUtils
 	}
 
 	/**
-	 * @param Vector3 ...$vector
-	 * @return Vector3
-	 */
-	public static function getMax(Vector3 ...$vector): Vector3
-	{
-		return new Vector3((float) max(array_map(static function (Vector3 $b) { return $b->getX(); }, $vector)), (float) max(array_map(static function (Vector3 $b) { return $b->getY(); }, $vector)), (float) max(array_map(static function (Vector3 $b) { return $b->getZ(); }, $vector)));
-	}
-
-	/**
-	 * @param Vector3 ...$vector
-	 * @return Vector3
-	 */
-	public static function getMin(Vector3 ...$vector): Vector3
-	{
-		return new Vector3((float) min(array_map(static function (Vector3 $b) { return $b->getX(); }, $vector)), (float) min(array_map(static function (Vector3 $b) { return $b->getY(); }, $vector)), (float) min(array_map(static function (Vector3 $b) { return $b->getZ(); }, $vector)));
-	}
-
-	/**
 	 * @param Vector3 $a
 	 * @param Vector3 $b
 	 * @return Vector3

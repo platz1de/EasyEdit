@@ -42,8 +42,8 @@ class StackedCube extends Selection
 	public function getNeededChunks(Vector3 $place): array
 	{
 		$chunks = [];
-		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());
-		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
+		$start = Vector3::minComponents($this->getCubicStart(), $this->getPos1());
+		$end = Vector3::maxComponents($this->getCubicEnd(), $this->getPos2());
 
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
@@ -61,8 +61,8 @@ class StackedCube extends Selection
 	 */
 	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
 	{
-		$start = VectorUtils::getMin($this->getCubicStart(), $this->getPos1());
-		$end = VectorUtils::getMax($this->getCubicEnd(), $this->getPos2());
+		$start = Vector3::minComponents($this->getCubicStart(), $this->getPos1());
+		$end = Vector3::maxComponents($this->getCubicEnd(), $this->getPos2());
 
 		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
 	}
@@ -103,7 +103,7 @@ class StackedCube extends Selection
 	 */
 	public function getCubicStart(): Vector3
 	{
-		return VectorUtils::getMin($this->getPos1()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+		return Vector3::minComponents($this->getPos1()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**
@@ -111,7 +111,7 @@ class StackedCube extends Selection
 	 */
 	public function getCubicEnd(): Vector3
 	{
-		return VectorUtils::getMax($this->getPos2()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
+		return Vector3::maxComponents($this->getPos2()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
 	}
 
 	/**
