@@ -22,35 +22,58 @@ Feature-rich WorldEditor for PocketMine-MP
 \<argument> - required Argument<br>
 [argument] - optional Argument
 
+Selection:
+
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
 //pos1 [x] [y] [z]| Set the first Position | easyedit.position | //1<br>left click a block in creative with a wooden axe
 //pos2 [x] [y] [z]| Set the first Position | easyedit.position | //2<br>break a block in creative with a wooden axe
+//extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
 //set \<pattern> | Set the selected Area | easyedit.command.set
 //replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
 //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
 //smooth | Smooth the selected Area | easyedit.command.set
-//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.command.brush | //br
-//undo \<count>| Revert your latest change | easyedit.command.undo
-//redo \<count> | Revert your latest undo | easyedit.command.redo
-//copy | Copy the selected Area | easyedit.command.copy
-//paste | Paste the Clipboard | easyedit.command.paste
-//insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
 //center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
 //walls [pattern] | Set walls of the selected area | easyedit.command.set | //wall
 //sides [pattern] | Set sides of the selected area | easyedit.command.set | //side
-//move <count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
-//stack <count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
-//extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
+//move \<count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
+//stack \<count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
+//count [radius] | Count selected blocks | easyedit.command.count
+
+History:
+
+Command | Description | Permission | Aliases/Notice
+---|---|---|---
+//undo \<count>| Revert your latest change | easyedit.command.undo
+//redo \<count> | Revert your latest undo | easyedit.command.redo
+
+Clipboard:
+
+Command | Description | Permission | Aliases/Notice
+---|---|---|---
+//copy | Copy the selected Area | easyedit.command.copy
+//paste | Paste the Clipboard | easyedit.command.paste
+//insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
+//loadschematic \<schematicName> | Load a saved schematic | easyedit-command.loadscematic | //load
+
+Generate:
+
+Command | Description | Permission | Aliases/Notice
+---|---|---|---
 //sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set | //sph
 //hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hsph //hollowsphere
 //cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
 //hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcylinder
-//count [radius] | Count selected blocks | easyedit.command.count
+//noise [type] | Generate with a simple noise function | easyedit.command.generate
+
+Utility:
+
+Command | Description | Permission | Aliases/Notice
+---|---|---|---
+//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.command.brush | //br
 //blockinfo | Get a blockinfo stick | easyedit.command.info | //bi
 //status | Check on the EditThread | easyedit.command.thread
 //cancel | Cancel the current task | easyedit.command.thread
-//loadschematic \<schematicName> | Load a saved schematic | easyedit-command.loadscematic | //load
 
 ## Patterns
 
