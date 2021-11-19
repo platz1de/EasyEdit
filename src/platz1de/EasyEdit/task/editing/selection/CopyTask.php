@@ -12,6 +12,7 @@ use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\ClipboardCacheData;
+use platz1de\EasyEdit\thread\output\MessageSendData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
@@ -36,17 +37,12 @@ class CopyTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param Selection    $selection
-	 * @param Position     $place
+	 * @param Selection $selection
+	 * @param Position  $place
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		$data = new AdditionalDataManager(false, true);
-		$data->setResultHandler(static function (EditTask $task, int $changeId): void {
-			ClipboardCacheData::from($task->getOwner(), $changeId);
-			CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
-		});
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), $data, $selection, $place->asVector3(), $selection->getPos1()->multiply(-1)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), new AdditionalDataManager(false, true), $selection, $place->asVector3(), $selection->getPos1()->multiply(-1)));
 	}
 
 	/**
@@ -74,11 +70,15 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
-		Messages::send($player, "blocks-copied", ["{time}" => $time, "{changed}" => $changed]);
+		MessageSendData::from($player, Messages::replace("blocks-copied", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
+		$this->getDataManager()->setResultHandler(static function (EditTask $task, int $changeId): void {
+			ClipboardCacheData::from($task->getOwner(), $changeId);
+			CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
+		});
 		$full = $this->getTotalSelection();
 		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $full): void {
 			$handler->addToUndo($x, $y, $z, $full->getPos1()->multiply(-1));
