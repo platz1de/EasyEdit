@@ -4,9 +4,8 @@
 
 Feature-rich WorldEditor for PocketMine-MP
 
-**Note: please don't complain about slow chunk updates, this is caused by a minecraft bug present since 1.17
-
-# BlameMojang**
+**Note: please don't complain about slow chunk updates, this is caused by a minecraft bug present since 1.17 #
+BlameMojang**
 
 ## Features
 
