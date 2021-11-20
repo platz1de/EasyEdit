@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
+use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\BiomeArray;
@@ -38,7 +39,6 @@ class StaticBlockListSelection extends BlockListSelection
 		}
 
 		//TODO: offset
-		//TODO: split tiles
 		$pieces = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
@@ -47,6 +47,11 @@ class StaticBlockListSelection extends BlockListSelection
 					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
 						$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ) ?? new Chunk([], BiomeArray::fill(BiomeIds::OCEAN), true));
 						$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ, new Chunk([], BiomeArray::fill(BiomeIds::OCEAN), true));
+					}
+				}
+				foreach ($this->getTiles() as $tile) {
+					if (TileUtils::isBetweenVectors($tile, $piece->getPos1(), $piece->getPos2())) {
+						$piece->addTile($tile);
 					}
 				}
 				$pieces[] = $piece;

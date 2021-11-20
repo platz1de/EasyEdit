@@ -11,6 +11,7 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use UnexpectedValueException;
@@ -63,6 +64,9 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$selection->useOnBlocks(new Vector3(0, 0, 0), function (int $x, int $y, int $z) use ($selection, $rotated): void {
 			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockConvertor::rotate($selection->getIterator()->getBlockAt($x, $y, $z)));
 		}, SelectionContext::full(), $selection);
+		foreach ($selection->getTiles() as $tile) {
+			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));
+		}
 		StorageModule::forceStore($this->saveId, $rotated);
 		MessageSendData::from($this->getOwner(), Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())]));
 	}

@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
@@ -124,7 +125,6 @@ class DynamicBlockListSelection extends BlockListSelection
 			throw new UnexpectedValueException("Pieces are not split able");
 		}
 
-		//TODO: split tiles
 		$pieces = [];
 		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset)->subtractVector($this->getPoint()));
 		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset)->subtractVector($this->getPoint()));
@@ -140,6 +140,11 @@ class DynamicBlockListSelection extends BlockListSelection
 						if ($chunk !== null) {
 							$piece->getManager()->setChunk($chunkX, $chunkZ, clone $chunk);
 						}
+					}
+				}
+				foreach ($this->getTiles() as $tile) {
+					if (TileUtils::isBetweenVectors($tile, $piece->getPos1(), $piece->getPos2())) {
+						$piece->addTile($tile);
 					}
 				}
 				$pieces[] = $piece;

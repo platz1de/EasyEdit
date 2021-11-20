@@ -30,4 +30,39 @@ class TileUtils
 
 		return $compoundTag;
 	}
+
+	/**
+	 * @param CompoundTag $compoundTag
+	 * @param int         $maxX
+	 * @return CompoundTag
+	 */
+	public static function rotateCompound(CompoundTag $compoundTag, int $maxX): CompoundTag
+	{
+		$compoundTag = clone $compoundTag;
+		$prevX = $compoundTag->getInt(Tile::TAG_X);
+		$compoundTag->setInt(Tile::TAG_X, $maxX - $compoundTag->getInt(Tile::TAG_Z));
+		$compoundTag->setInt(Tile::TAG_Z, $prevX);
+
+		//chest relation
+		if ($compoundTag->getTag(Chest::TAG_PAIRX) instanceof IntTag && $compoundTag->getTag(Chest::TAG_PAIRZ) instanceof IntTag) {
+			$prevPairX = $compoundTag->getInt(Chest::TAG_PAIRX);
+			$compoundTag->setInt(Chest::TAG_PAIRX, $maxX - $compoundTag->getInt(Chest::TAG_PAIRZ));
+			$compoundTag->setInt(Chest::TAG_PAIRZ, $prevPairX);
+		}
+
+		return $compoundTag;
+	}
+
+	/**
+	 * @param CompoundTag $compoundTag
+	 * @param Vector3     $min
+	 * @param Vector3     $max
+	 * @return bool
+	 */
+	public static function isBetweenVectors(CompoundTag $compoundTag, Vector3 $min, Vector3 $max): bool
+	{
+		$x = $compoundTag->getInt(Tile::TAG_X);
+		$z = $compoundTag->getInt(Tile::TAG_Z);
+		return $x >= $min->getFloorX() && $x <= $max->getFloorX() && $z >= $min->getFloorZ() && $z <= $max->getFloorZ();
+	}
 }
