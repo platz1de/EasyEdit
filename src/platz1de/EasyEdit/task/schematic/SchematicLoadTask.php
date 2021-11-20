@@ -12,6 +12,7 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\MixedUtils;
 
 class SchematicLoadTask extends ExecutableTask
 {
@@ -54,7 +55,7 @@ class SchematicLoadTask extends ExecutableTask
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();
 		ClipboardCacheData::from($this->getOwner(), $changeId);
-		MessageSendData::from($this->getOwner(), Messages::replace("blocks-copied", ["{time}" => (string) (microtime(true) - $start), "{changed}" => (string) $selection->getIterator()->getWrittenBlockCount()]));
+		MessageSendData::from($this->getOwner(), Messages::replace("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())]));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
