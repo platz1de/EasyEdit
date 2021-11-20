@@ -45,7 +45,7 @@ class StackTask extends SelectionEditTask
 	 */
 	public static function queue(StackedCube $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0)));
 	}
 
 	/**

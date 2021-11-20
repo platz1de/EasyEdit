@@ -42,7 +42,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), new AdditionalDataManager(false, true), $selection, $place->asVector3(), $selection->getPos1()->multiply(-1)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place->asVector3(), $selection->getPos1()->multiply(-1)));
 	}
 
 	/**

@@ -41,7 +41,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0), $pattern));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0), $pattern));
 	}
 
 	/**
