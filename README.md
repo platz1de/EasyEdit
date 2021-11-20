@@ -26,56 +26,56 @@ Selection:
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//pos1 [x] [y] [z]| Set the first Position | easyedit.position | //1<br>left click a block in creative with a wooden axe
-//pos2 [x] [y] [z]| Set the first Position | easyedit.position | //2<br>break a block in creative with a wooden axe
-//extend [count\|vertical] | Extend the selected Area | easyedit.position | //expand<br>Look into the direction you want to extend to
-//set \<pattern> | Set the selected Area | easyedit.command.set
-//replace \<block> \<pattern> | Replace the selected Area | easyedit.command.set
-//naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.command.set
-//smooth | Smooth the selected Area | easyedit.command.set
-//center [block] | Set the center Blocks (1-8) | easyedit.command.set | //middle
-//walls [pattern] | Set walls of the selected area | easyedit.command.set | //wall
-//sides [pattern] | Set sides of the selected area | easyedit.command.set | //side
-//move \<count> | Move the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to move into
-//stack \<count> | Stack the selected area | easyedit.command.paste | Look into the direction you want the selected blocks to stack into
-//count [radius] | Count selected blocks | easyedit.command.count
+//pos1 [x] [y] [z]| Set the first Position | easyedit.select | //1<br>left click a block in creative with a wooden axe
+//pos2 [x] [y] [z]| Set the first Position | easyedit.select | //2<br>break a block in creative with a wooden axe
+//extend [count\|vertical] | Extend the selected Area | easyedit.select | //expand<br>Look into the direction you want to extend to
+//set \<pattern> | Set the selected Area | easyedit.edit
+//replace \<block> \<pattern> | Replace the selected Area | easyedit.edit
+//naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.edit
+//smooth | Smooth the selected Area | easyedit.edit
+//center [block] | Set the center Blocks (1-8) | easyedit.edit | //middle
+//walls [pattern] | Set walls of the selected area | easyedit.edit | //wall
+//sides [pattern] | Set sides of the selected area | easyedit.edit | //side
+//move \<count> | Move the selected area | easyedit.edit | Look into the direction you want the selected blocks to move into
+//stack \<count> | Stack the selected area | easyedit.edit | Look into the direction you want the selected blocks to stack into
+//count [radius] | Count selected blocks | easyedit.select
 
 History:
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//undo \<count>| Revert your latest change | easyedit.command.undo
-//redo \<count> | Revert your latest undo | easyedit.command.redo
+//undo \<count>| Revert your latest change | easyedit.history easyedit.edit
+//redo \<count> | Revert your latest undo | easyedit.history easyedit.edit
 
 Clipboard:
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//copy | Copy the selected Area | easyedit.command.copy
-//cut | Cut the selected Area | easyedit.command.copy | Copies and replaces with air
-//paste | Paste the Clipboard | easyedit.command.paste
-//insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
-//rotate | Rotate the Clipboard | easyedit.command.copy | Rotates by 90 Degrees
-//loadschematic \<schematicName> | Load a saved schematic | easyedit-command.loadscematic | //load
+//copy | Copy the selected Area | easyedit.clipboard
+//cut | Cut the selected Area | easyedit.clipboard easyedit.edit | Copies and replaces with air
+//paste | Paste the Clipboard | easyedit.clipboard easyedit.edit
+//insert | Insert the Clipboard | easyedit.clipboard easyedit.edit | Paste only into air blocks
+//rotate | Rotate the Clipboard | easyedit.clipboard | Rotates by 90 Degrees
+//loadschematic \<schematicName> | Load a saved schematic | easyedit.readdisk easyedit.clipboard | //load
 
-Generate:
+Generation:
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//sphere \<radius> \<pattern> | Set a sphere | easyedit.command.set | //sph
-//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.command.set | //hsph //hollowsphere
-//cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.command.set | //cy
-//hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.command.set | //hcy //hollowcylinder
-//noise [type] | Generate with a simple noise function | easyedit.command.generate
+//sphere \<radius> \<pattern> | Set a sphere | easyedit.generate easyedit.edit | //sph
+//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.generate easyedit.edit | //hsph //hollowsphere
+//cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.generate easyedit.edit | //cy
+//hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.generate easyedit.edit | //hcy //hollowcylinder
+//noise [type] | Generate with a simple noise function | easyedit.generate easyedit.edit
 
 Utility:
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.command.brush | //br
-//blockinfo | Get a blockinfo stick | easyedit.command.info | //bi
-//status | Check on the EditThread | easyedit.command.thread
-//cancel | Cancel the current task | easyedit.command.thread
+//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.brush <br> (To use: easyedit.edit)| //br
+//blockinfo | Get a blockinfo stick | easyedit.util | //bi
+//status | Check on the EditThread | easyedit.manage
+//cancel | Cancel the current task | easyedit.manage
 
 ## Patterns
 

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\utils\MixedUtils;
@@ -12,7 +13,7 @@ class BenchmarkCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/benchmark", "Start a benchmark", "easyedit.command.thread");
+		parent::__construct("/benchmark", "Start a benchmark", [KnownPermissions::PERMISSION_MANAGE]);
 	}
 
 	/**

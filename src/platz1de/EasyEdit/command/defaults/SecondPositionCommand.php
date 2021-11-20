@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\Cube;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -11,7 +12,7 @@ class SecondPositionCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/pos2", "Set the second Position", "easyedit.position", "//pos2 [x] [y] [z]", ["/2"]);
+		parent::__construct("/pos2", "Set the second Position", [KnownPermissions::PERMISSION_SELECT], "//pos2 [x] [y] [z]", ["/2"]);
 	}
 
 	/**

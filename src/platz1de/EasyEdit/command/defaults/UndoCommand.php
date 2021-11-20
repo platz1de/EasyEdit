@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\cache\HistoryCache;
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use pocketmine\player\Player;
 
@@ -11,7 +12,7 @@ class UndoCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/undo", "Revert your latest change", "easyedit.command.undo", "//undo <count>");
+		parent::__construct("/undo", "Revert your latest change", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT], "//undo <count>");
 	}
 
 	/**

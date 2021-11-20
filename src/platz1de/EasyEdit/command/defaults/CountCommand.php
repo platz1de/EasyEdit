@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
@@ -15,7 +16,7 @@ class CountCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/count", "Count selected blocks", "easyedit.command.count", "//count [radius]");
+		parent::__construct("/count", "Count selected blocks", [KnownPermissions::PERMISSION_SELECT], "//count [radius]");
 	}
 
 	/**

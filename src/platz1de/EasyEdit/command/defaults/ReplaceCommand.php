@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\ParseError;
@@ -19,7 +20,7 @@ class ReplaceCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/replace", "Replace the selected Area", "easyedit.command.set", "//replace <block> <pattern>");
+		parent::__construct("/replace", "Replace the selected Area", [KnownPermissions::PERMISSION_EDIT], "//replace <block> <pattern>");
 	}
 
 	/**

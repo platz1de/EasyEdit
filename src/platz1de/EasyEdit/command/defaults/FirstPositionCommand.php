@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\Cube;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -11,7 +12,7 @@ class FirstPositionCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/pos1", "Set the first Position", "easyedit.position", "//pos1 [x] [y] [z]", ["/1"]);
+		parent::__construct("/pos1", "Set the first Position", [KnownPermissions::PERMISSION_SELECT], "//pos1 [x] [y] [z]", ["/1"]);
 	}
 
 	/**

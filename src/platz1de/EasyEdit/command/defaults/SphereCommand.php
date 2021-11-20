@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Sphere;
@@ -13,7 +14,7 @@ class SphereCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/sphere", "Set a sphere", "easyedit.command.set", "//sphere <radius> <pattern>", ["/sph"]);
+		parent::__construct("/sphere", "Set a sphere", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//sphere <radius> <pattern>", ["/sph"]);
 	}
 
 	/**

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
@@ -13,7 +14,7 @@ class InsertCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/insert", "Insert the Clipboard", "easyedit.command.paste");
+		parent::__construct("/insert", "Insert the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

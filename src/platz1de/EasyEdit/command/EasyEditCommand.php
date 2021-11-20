@@ -11,13 +11,25 @@ use pocketmine\plugin\PluginOwned;
 
 abstract class EasyEditCommand extends Command implements PluginOwned
 {
-	public function __construct(string $name, string $description, string $permission, string $usage = null, array $aliases = [])
+	/**
+	 * @var string[]
+	 */
+	private array $permissions;
+
+	/**
+	 * @param string      $name
+	 * @param string      $description
+	 * @param string[]    $permissions
+	 * @param string|null $usage
+	 * @param string[]    $aliases
+	 */
+	public function __construct(string $name, string $description, array $permissions, string $usage = null, array $aliases = [])
 	{
 		if ($usage === null) {
 			$usage = "/" . $name;
 		}
 		parent::__construct($name, $description, $usage, $aliases);
-		$this->setPermission($permission);
+		$this->permissions = $permissions;
 	}
 
 	/**
@@ -28,8 +40,13 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args): void
 	{
-		if (!$sender instanceof Player || !$this->testPermission($sender)) {
+		if (!$sender instanceof Player) {
 			return;
+		}
+		foreach ($this->permissions as $permission) {
+			if (!$this->testPermission($sender, $permission)) {
+				return;
+			}
 		}
 
 		CommandManager::processCommand($this, $args, $sender);

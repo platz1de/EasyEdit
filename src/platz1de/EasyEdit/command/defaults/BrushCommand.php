@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\PatternParser;
 use pocketmine\item\VanillaItems;
@@ -15,7 +16,7 @@ class BrushCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/brush", "Create a new Brush", "easyedit.command.brush", "//brush sphere [radius] [pattern]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern]", ["/br"]);
+		parent::__construct("/brush", "Create a new Brush", [KnownPermissions::PERMISSION_BRUSH], "//brush sphere [radius] [pattern]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern]", ["/br"]);
 	}
 
 	/**

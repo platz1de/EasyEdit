@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
@@ -21,7 +22,7 @@ class ExtinguishCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extinguish", "Extinguish fire", "easyedit.command.set", "//extinguish [radius]");
+		parent::__construct("/extinguish", "Extinguish fire", [KnownPermissions::PERMISSION_EDIT], "//extinguish [radius]");
 	}
 
 	/**

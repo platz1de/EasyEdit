@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
@@ -13,7 +14,7 @@ class CylinderCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/cylinder", "Set a cylinder", "easyedit.command.set", "//cylinder <radius> <height> <pattern>", ["/cy"]);
+		parent::__construct("/cylinder", "Set a cylinder", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//cylinder <radius> <height> <pattern>", ["/cy"]);
 	}
 
 	/**

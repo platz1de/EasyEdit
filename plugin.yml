@@ -4,29 +4,30 @@ api: 4.0.0
 version: 1.2.0-dev
 author: platz1de
 permissions:
- easyedit.command.set:
-  default: op
- easyedit.command.undo:
-  default: op
- easyedit.command.redo:
-  default: op
- easyedit.command.copy:
-  default: op
- easyedit.command.paste:
-  default: op
- easyedit.command.brush:
-  default: op
- easyedit.command.count:
-  default: op
- easyedit.command.thread:
-  default: op
- easyedit.command.info:
-  default: op
- easyedit.command.loadschematic:
-  default: op
- easyedit.command.generate:
-  default: op
- easyedit.position:
-  default: op
- easyedit.brush:
-  default: op
+  easyedit.edit:
+    default: op
+    description: "Allows the user to edit blocks"
+  easyedit.generate:
+    default: op
+    description: "Allows the user to generate blocks"
+  easyedit.history:
+    default: op
+    description: "Allows the user to use the edit history"
+  easyedit.clipboard:
+    default: op
+    description: "Allows the user to use the clipboard"
+  easyedit.readdisk:
+    default: op
+    description: "Allows the user to load schematics from disk"
+  easyedit.manage:
+    default: op
+    description: "Allows the user to manage plugin internals"
+  easyedit.select:
+    default: op
+    description: "Allows the user to select positions"
+  easyedit.brush:
+    default: op
+    description: "Allows the user to use brushes"
+  easyedit.util:
+    default: op
+    description: "Allows the user to use utility tools"

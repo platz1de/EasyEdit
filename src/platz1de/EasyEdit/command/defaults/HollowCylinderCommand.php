@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
@@ -16,7 +17,7 @@ class HollowCylinderCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/hcylinder", "Set a hollow cylinder", "easyedit.command.set", "//hcylinder <radius> <height> <pattern> [thickness]", ["/hcy", "/hollowcylinder"]);
+		parent::__construct("/hcylinder", "Set a hollow cylinder", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//hcylinder <radius> <height> <pattern> [thickness]", ["/hcy", "/hollowcylinder"]);
 	}
 
 	/**

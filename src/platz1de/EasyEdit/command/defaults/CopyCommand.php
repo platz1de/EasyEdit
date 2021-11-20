@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
@@ -15,7 +16,7 @@ class CopyCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/copy", "Copy the selected Area", "easyedit.command.copy");
+		parent::__construct("/copy", "Copy the selected Area", [KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
@@ -18,7 +19,7 @@ class StackCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/stack", "Stack the selected area", "easyedit.command.paste", "//stack <count>");
+		parent::__construct("/stack", "Stack the selected area", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//stack <count>");
 	}
 
 	/**

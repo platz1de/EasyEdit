@@ -3,6 +3,8 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\ParseError;
@@ -18,7 +20,7 @@ class CenterCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/center", "Set the center Blocks (1-8)", "easyedit.command.set", "//center [block]", ["/middle"]);
+		parent::__construct("/center", "Set the center Blocks (1-8)", [KnownPermissions::PERMISSION_EDIT], "//center [block]", ["/middle"]);
 	}
 
 	/**

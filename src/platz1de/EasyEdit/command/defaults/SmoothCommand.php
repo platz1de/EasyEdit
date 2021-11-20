@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\SmoothPattern;
 use platz1de\EasyEdit\pattern\Pattern;
@@ -16,7 +17,7 @@ class SmoothCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/smooth", "Smooth the selected Area", "easyedit.command.set", "//smooth");
+		parent::__construct("/smooth", "Smooth the selected Area", [KnownPermissions::PERMISSION_EDIT], "//smooth");
 	}
 
 	/**

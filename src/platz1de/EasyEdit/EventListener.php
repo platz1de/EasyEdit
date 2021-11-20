@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\brush\BrushHandler;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\HighlightingManager;
@@ -31,7 +32,7 @@ class EventListener implements Listener
 	public function onBreak(BlockBreakEvent $event): void
 	{
 		$axe = $event->getItem();
-		if ($axe instanceof Axe && $axe->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission("easyedit.position")) {
+		if ($axe instanceof Axe && $axe->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 			$event->cancel();
 			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPosition());
 		} elseif ($axe instanceof Stick && $axe->getNamedTag()->getByte("isInfoStick", 0) === 1) {
@@ -55,10 +56,10 @@ class EventListener implements Listener
 
 			$item = $event->getItem();
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
-				if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
+				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
 					Cube::selectPos2($event->getPlayer(), $event->getBlock()->getPosition());
-				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
+				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_BRUSH) && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT)) {
 					$event->cancel();
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
@@ -76,7 +77,7 @@ class EventListener implements Listener
 		$item = $event->getItem();
 		if ($block === null || $block->getId() === 0) {
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
-				if ($item instanceof Axe && $event->getPlayer()->hasPermission("easyedit.position")) {
+				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
 					$target = $event->getPlayer()->getTargetBlock(100);
 					if ($target instanceof Block) {
@@ -88,7 +89,7 @@ class EventListener implements Listener
 							}
 						}));
 					}
-				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission("easyedit.brush")) {
+				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_BRUSH) && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT)) {
 					$event->cancel();
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}

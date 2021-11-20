@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\task\CollectStatsTask;
@@ -13,7 +14,7 @@ class StatusCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/status", "Check on the EditThread", "easyedit.command.thread");
+		parent::__construct("/status", "Check on the EditThread", [KnownPermissions::PERMISSION_MANAGE]);
 	}
 
 	/**

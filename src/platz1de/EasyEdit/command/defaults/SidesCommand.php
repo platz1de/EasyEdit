@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\ParseError;
@@ -18,7 +19,7 @@ class SidesCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/sides", "Set sides of the selected area", "easyedit.command.set", "//sides [pattern]", ["/side"]);
+		parent::__construct("/sides", "Set sides of the selected area", [KnownPermissions::PERMISSION_EDIT], "//sides [pattern]", ["/side"]);
 	}
 
 	/**

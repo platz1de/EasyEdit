@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
@@ -16,7 +17,7 @@ class ExtendCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extend", "Extend the selected Area", "easyedit.position", "//extend [count|vertical]", ["/expand"]);
+		parent::__construct("/extend", "Extend the selected Area", [KnownPermissions::PERMISSION_SELECT], "//extend [count|vertical]", ["/expand"]);
 	}
 
 	/**

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
@@ -13,7 +14,7 @@ class LoadSchematicCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/loadschematic", "Load a saved schematic", "easyedit.command.loadschematic", "//loadschematic <schematicName>", ["/load"]);
+		parent::__construct("/loadschematic", "Load a saved schematic", [KnownPermissions::PERMISSION_READDISK, KnownPermissions::PERMISSION_CLIPBOARD], "//loadschematic <schematicName>", ["/load"]);
 	}
 
 	/**

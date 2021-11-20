@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
@@ -14,7 +15,7 @@ class NoiseCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/noise", "Generate with a simple noise function", "easyedit.command.generate", "//noise [type]");
+		parent::__construct("/noise", "Generate with a simple noise function", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//noise [type]");
 	}
 
 	/**
