@@ -1,4 +1,4 @@
-message-version: "1.2.4" #Please don't change this manually
+message-version: "1.2.5" #Please don't change this manually
 
 prefix: "§l§aEasy§bEdit §r> "
 
@@ -25,8 +25,8 @@ blocks-pasted: "{changed} blocks were pasted in {time}s"
 blocks-counted: "{changed} blocks were counted in {time}s"
 blocks-rotated: "{changed} blocks were rotated in {time}s"
 
-#Args: {task} {queue} {status} {progress}
-thread-status: "Status of EditThread:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}"
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Status of EditThread:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}\nStored selections: {storage}\nThread memory: {mem_current}MB ({mem_max}MB)"
 
 benchmark-start: "Started benchmark, this can take up to a minute"
 benchmark-running: "There is already a benchmark running"

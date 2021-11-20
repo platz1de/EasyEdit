@@ -106,4 +106,12 @@ class StorageModule
 	{
 		unset(self::$storage[$id]);
 	}
+
+	/**
+	 * @return int
+	 */
+	public static function getSize(): int
+	{
+		return count(self::$storage);
+	}
 }

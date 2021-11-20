@@ -17,6 +17,9 @@ class StatsCollectResult extends OutputData
 	private int $totalPieces;
 	private int $piecesLeft;
 	private int $queueLength;
+	private int $storageSize;
+	private int $currentMemory;
+	private int $realMemory;
 
 	/**
 	 * @param int    $cacheId
@@ -26,8 +29,11 @@ class StatsCollectResult extends OutputData
 	 * @param int    $totalPieces
 	 * @param int    $piecesLeft
 	 * @param int    $queueLength
+	 * @param int    $storageSize
+	 * @param int    $currentMemory
+	 * @param int    $realMemory
 	 */
-	public static function from(int $cacheId, string $taskName, int $taskId, string $responsiblePlayer, int $totalPieces, int $piecesLeft, int $queueLength): void
+	public static function from(int $cacheId, string $taskName, int $taskId, string $responsiblePlayer, int $totalPieces, int $piecesLeft, int $queueLength, int $storageSize, int $currentMemory, int $realMemory): void
 	{
 		$data = new self();
 		$data->cacheId = $cacheId;
@@ -37,12 +43,15 @@ class StatsCollectResult extends OutputData
 		$data->totalPieces = $totalPieces;
 		$data->piecesLeft = $piecesLeft;
 		$data->queueLength = $queueLength;
+		$data->storageSize = $storageSize;
+		$data->currentMemory = $currentMemory;
+		$data->realMemory = $realMemory;
 		$data->send();
 	}
 
 	public function handle(): void
 	{
-		TaskCache::get($this->cacheId)($this->taskName, $this->taskId, $this->responsiblePlayer, $this->totalPieces, $this->piecesLeft, $this->queueLength);
+		TaskCache::get($this->cacheId)($this->taskName, $this->taskId, $this->responsiblePlayer, $this->totalPieces, $this->piecesLeft, $this->queueLength, $this->storageSize, $this->currentMemory, $this->realMemory);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -54,6 +63,9 @@ class StatsCollectResult extends OutputData
 		$stream->putInt($this->totalPieces);
 		$stream->putInt($this->piecesLeft);
 		$stream->putInt($this->queueLength);
+		$stream->putInt($this->storageSize);
+		$stream->putInt($this->currentMemory);
+		$stream->putInt($this->realMemory);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -65,5 +77,8 @@ class StatsCollectResult extends OutputData
 		$this->totalPieces = $stream->getInt();
 		$this->piecesLeft = $stream->getInt();
 		$this->queueLength = $stream->getInt();
+		$this->storageSize = $stream->getInt();
+		$this->currentMemory = $stream->getInt();
+		$this->realMemory = $stream->getInt();
 	}
 }

@@ -33,7 +33,7 @@ class StatusCommand extends EasyEditCommand
 			]);
 		} else {
 			$p = $player->getName();
-			CollectStatsTask::from(function (string $taskName, int $taskId, string $responsiblePlayer, int $totalPieces, int $piecesLeft, int $queueLength) use ($p): void {
+			CollectStatsTask::from(function (string $taskName, int $taskId, string $responsiblePlayer, int $totalPieces, int $piecesLeft, int $queueLength, int $storageSize, int $currentMemory, int $realMemory) use ($p): void {
 				if ($totalPieces !== -1) {
 					$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();
 					$progress = ($totalPieces - $piecesLeft) . "/" . $totalPieces . " (" . round(($totalPieces - $piecesLeft) / $totalPieces * 100, 1) . "%)";
@@ -44,11 +44,14 @@ class StatusCommand extends EasyEditCommand
 					$progress = "-";
 				}
 
-				Messages::send($p, "thread-status", [
+				Messages::send($p, "thread-stats", [
 					"{task}" => $task,
 					"{queue}" => (string) $queueLength,
 					"{status}" => $status,
-					"{progress}" => $progress
+					"{progress}" => $progress,
+					"{storage}" => (string) $storageSize,
+					"{mem_current}" => (string) round(($currentMemory / 1024) / 1024, 2),
+					"{mem_max}" => (string) round(($realMemory / 1024) / 1024, 2)
 				]);
 			});
 		}

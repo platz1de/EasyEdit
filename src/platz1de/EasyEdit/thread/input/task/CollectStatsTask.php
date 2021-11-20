@@ -7,6 +7,7 @@ use platz1de\EasyEdit\cache\TaskCache;
 use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\InputData;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\StatsCollectResult;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -41,7 +42,7 @@ class CollectStatsTask extends InputData
 				$piecesLeft = $task->getPiecesLeft();
 			}
 		}
-		StatsCollectResult::from($this->cacheId, $name, $id, $player, $totalPieces, $piecesLeft, ThreadData::getQueueLength());
+		StatsCollectResult::from($this->cacheId, $name, $id, $player, $totalPieces, $piecesLeft, ThreadData::getQueueLength(), StorageModule::getSize(), memory_get_usage(), memory_get_usage(true));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
