@@ -12,3 +12,4 @@ height-ignored-blocks: [ "air", "wood", "wood2", "leaves", "leaves2", "dandelion
 bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock-conversion-map.json"
 bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock_palette.json"
 java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/java_palette.json"
+rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/rotation-data.json"

@@ -18,24 +18,26 @@ class ConfigInputData extends InputData
 	private string $bedrockConversionDataSource;
 	private string $bedrockPaletteDataSource;
 	private string $javaPaletteDataSource;
+	private string $rotationDataSource;
 
 	/**
 	 * @param int[] $heightIgnored
 	 */
-	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource): void
+	public static function from(array $heightIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource, string $rotationDataSource): void
 	{
 		$data = new self();
 		$data->heightIgnored = $heightIgnored;
 		$data->bedrockConversionDataSource = $bedrockConversionDataSource;
 		$data->bedrockPaletteDataSource = $bedrockPaletteDataSource;
 		$data->javaPaletteDataSource = $javaPaletteDataSource;
+		$data->rotationDataSource = $rotationDataSource;
 		$data->send();
 	}
 
 	public function handle(): void
 	{
 		HeightMapCache::setIgnore($this->heightIgnored);
-		BlockConvertor::load($this->bedrockConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource);
+		BlockConvertor::load($this->bedrockConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource, $this->rotationDataSource);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -47,6 +49,7 @@ class ConfigInputData extends InputData
 		$stream->putString($this->bedrockConversionDataSource);
 		$stream->putString($this->bedrockPaletteDataSource);
 		$stream->putString($this->javaPaletteDataSource);
+		$stream->putString($this->rotationDataSource);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -58,5 +61,6 @@ class ConfigInputData extends InputData
 		$this->bedrockConversionDataSource = $stream->getString();
 		$this->bedrockPaletteDataSource = $stream->getString();
 		$this->javaPaletteDataSource = $stream->getString();
+		$this->rotationDataSource = $stream->getString();
 	}
 }

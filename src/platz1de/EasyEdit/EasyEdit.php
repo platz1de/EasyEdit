@@ -24,6 +24,7 @@ use platz1de\EasyEdit\command\defaults\NoiseCommand;
 use platz1de\EasyEdit\command\defaults\PasteCommand;
 use platz1de\EasyEdit\command\defaults\RedoCommand;
 use platz1de\EasyEdit\command\defaults\ReplaceCommand;
+use platz1de\EasyEdit\command\defaults\RotateCommand;
 use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\SetCommand;
 use platz1de\EasyEdit\command\defaults\SidesCommand;
@@ -94,7 +95,8 @@ class EasyEdit extends PluginBase
 			new ExtinguishCommand(),
 			new BlockInfoCommand(),
 			new LoadSchematicCommand(),
-			new NoiseCommand()
+			new NoiseCommand(),
+			new RotateCommand()
 		]);
 
 		//Just for sending block data without using the protocol directly

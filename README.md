@@ -54,6 +54,7 @@ Command | Description | Permission | Aliases/Notice
 //copy | Copy the selected Area | easyedit.command.copy
 //paste | Paste the Clipboard | easyedit.command.paste
 //insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
+//rotate | Rotate the Clipboard | easyedit.command.copy | Rotates by 90 Degrees
 //loadschematic \<schematicName> | Load a saved schematic | easyedit-command.loadscematic | //load
 
 Generate:

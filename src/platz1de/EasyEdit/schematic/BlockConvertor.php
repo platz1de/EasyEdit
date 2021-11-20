@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\schematic;
 
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
+use pocketmine\block\Block;
 use pocketmine\utils\Internet;
 use Throwable;
 use UnexpectedValueException;
@@ -29,8 +30,12 @@ class BlockConvertor
 	 * @var array<int, array<int, string>>
 	 */
 	private static array $paletteTo;
+	/**
+	 * @var array<int, int>
+	 */
+	private static array $rotationData;
 
-	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource): void
+	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource, string $rotationSource): void
 	{
 		self::$conversionFrom = [];
 		self::$paletteFrom = [];
@@ -40,7 +45,8 @@ class BlockConvertor
 		$bedrockData = Internet::getURL($bedrockSource, 10, [], $err);
 		$bedrockPaletteData = Internet::getURL($bedrockPaletteSource, 10, [], $err);
 		$javaPaletteData = Internet::getURL($javaPaletteSource, 10, [], $err);
-		if ($bedrockData === null || $bedrockPaletteData === null || $javaPaletteData === null) {
+		$rotationData = Internet::getURL($rotationSource, 10, [], $err);
+		if ($bedrockData === null || $bedrockPaletteData === null || $javaPaletteData === null || $rotationData === null) {
 			EditThread::getInstance()->getLogger()->error("Failed to load conversion data, schematic conversion is not available");
 			if (isset($err)) {
 				EditThread::getInstance()->getLogger()->logException($err);
@@ -52,8 +58,9 @@ class BlockConvertor
 			$bedrockBlocks = json_decode($bedrockData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$bedrockPalette = json_decode($bedrockPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$javaPalette = json_decode($javaPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
+			$rotations = json_decode($rotationData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
-			if (!is_array($bedrockBlocks) || !is_array($bedrockPalette) || !is_array($javaPalette)) {
+			if (!is_array($bedrockBlocks) || !is_array($bedrockPalette) || !is_array($javaPalette) || !is_array($rotations)) {
 				throw new UnexpectedValueException("Conversion data does not represent arrays");
 			}
 		} catch (Throwable $e) {
@@ -73,6 +80,11 @@ class BlockConvertor
 		foreach ($javaPalette as $bedrockStringId => $javaState) {
 			$idData = BlockParser::fromStringId($bedrockStringId);
 			self::$paletteTo[$idData[0]][$idData[1]] = $javaState;
+		}
+		foreach ($rotations as $preRotationId => $pastRotationId) {
+			$idData = BlockParser::fromStringId($preRotationId);
+			$rotatedIdData = BlockParser::fromStringId($pastRotationId);
+			self::$rotationData[$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $rotatedIdData[0] << Block::INTERNAL_METADATA_BITS | $rotatedIdData[1];
 		}
 	}
 
@@ -105,5 +117,14 @@ class BlockConvertor
 	public static function getState(int $id, int $meta): string
 	{
 		return self::$paletteTo[$id][$meta] ?? self::$paletteTo[0][0];
+	}
+
+	/**
+	 * @param int $id
+	 * @return int
+	 */
+	public static function rotate(int $id): int
+	{
+		return self::$rotationData[$id] ?? $id;
 	}
 }

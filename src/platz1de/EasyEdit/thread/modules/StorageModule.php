@@ -91,6 +91,15 @@ class StorageModule
 	}
 
 	/**
+	 * @param int                $id
+	 * @param BlockListSelection $selection
+	 */
+	public static function forceStore(int $id, BlockListSelection $selection): void
+	{
+		self::$storage[$id] = $selection;
+	}
+
+	/**
 	 * @param int $id
 	 */
 	public static function cleanStored(int $id): void
