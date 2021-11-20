@@ -5,7 +5,8 @@
 Feature-rich WorldEditor for PocketMine-MP
 
 **Note: please don't complain about slow chunk updates, this is caused by a minecraft bug present since 1.17
-#BlameMojang**
+
+# BlameMojang**
 
 ## Features
 
@@ -52,6 +53,7 @@ Clipboard:
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
 //copy | Copy the selected Area | easyedit.command.copy
+//cut | Cut the selected Area | easyedit.command.copy | Copies and replaces with air
 //paste | Paste the Clipboard | easyedit.command.paste
 //insert | Insert the Clipboard | easyedit.command.paste | Paste only into air blocks
 //rotate | Rotate the Clipboard | easyedit.command.copy | Rotates by 90 Degrees
