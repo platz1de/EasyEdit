@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\pattern;
 
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class PatternArgumentData

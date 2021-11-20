@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\pattern\logic\selection;
 
-use platz1de\EasyEdit\pattern\ParseError;
+use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Cylinder;

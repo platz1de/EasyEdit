@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use platz1de\EasyEdit\pattern\ParseError;
+use platz1de\EasyEdit\pattern\parser\ParseError;
 use pocketmine\block\Block;
 use pocketmine\item\LegacyStringToItemParser;
 use pocketmine\item\LegacyStringToItemParserException;

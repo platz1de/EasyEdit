@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\pattern\block;
 
+use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
-use platz1de\EasyEdit\pattern\WrongPatternUsageException;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;

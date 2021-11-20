@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\pattern;
+namespace platz1de\EasyEdit\pattern\parser;
 
 class WrongPatternUsageException extends ParseError
 {
