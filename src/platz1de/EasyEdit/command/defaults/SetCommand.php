@@ -32,7 +32,7 @@ class SetCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = PatternParser::parseInput($args[0], $player);
+			$pattern = PatternParser::parseInputCombined($args, 0, $player);
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

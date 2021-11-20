@@ -29,7 +29,7 @@ class SidesCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$pattern = PatternParser::parseInputArgument($args[0] ?? "stone", $player);
+			$pattern = PatternParser::parseInputArgumentCombined($args, 0, $player, "stone");
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

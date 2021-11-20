@@ -31,7 +31,7 @@ class BrushCommand extends EasyEditCommand
 		switch ($type) {
 			case BrushHandler::BRUSH_SPHERE:
 				try {
-					PatternParser::parseInput($args[2] ?? "stone", $player);
+					PatternParser::parseInputCombined($args, 2, $player, "stone");
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;
@@ -58,7 +58,7 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_CYLINDER:
 				try {
-					PatternParser::parseInput($args[3] ?? "stone", $player);
+					PatternParser::parseInputCombined($args, 3, $player, "stone");
 				} catch (ParseError $exception) {
 					$player->sendMessage($exception->getMessage());
 					return;

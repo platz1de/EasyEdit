@@ -34,6 +34,26 @@ class PatternParser
 	}
 
 	/**
+	 * Parses player input (mostly commands), allows spaces
+	 * @param string[]    $args
+	 * @param int         $start
+	 * @param Player      $player
+	 * @param string|null $default
+	 * @return Pattern
+	 */
+	public static function parseInputCombined(array $args, int $start, Player $player, string $default = null): Pattern
+	{
+		$pattern = implode("", array_slice($args, $start));
+		if ($pattern === "") {
+			if ($default === null) {
+				throw new ParseError("No pattern given");
+			}
+			$pattern = $default;
+		}
+		return self::parseInput($pattern, $player);
+	}
+
+	/**
 	 * Parses player input as argument for other patterns, needed for helper commands like replace
 	 * @param string $pattern
 	 * @param Player $player
@@ -42,6 +62,26 @@ class PatternParser
 	public static function parseInputArgument(string $pattern, Player $player): array
 	{
 		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern));
+	}
+
+	/**
+	 * Parses player input as argument for other patterns, needed for helper commands like replace, allows spaces
+	 * @param string[]    $args
+	 * @param int         $start
+	 * @param Player      $player
+	 * @param string|null $default
+	 * @return Pattern[]
+	 */
+	public static function parseInputArgumentCombined(array $args, int $start, Player $player, string $default = null): array
+	{
+		$pattern = implode("", array_slice($args, $start));
+		if ($pattern === "") {
+			if ($default === null) {
+				throw new ParseError("No pattern given");
+			}
+			$pattern = $default;
+		}
+		return self::parseInputArgument($pattern, $player);
 	}
 
 	/**
