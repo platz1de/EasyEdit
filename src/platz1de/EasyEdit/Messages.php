@@ -40,7 +40,8 @@ class Messages
 				fclose($new);
 
 				//Allow different line endings
-				$newConfig = preg_split("/\r\n|\n|\r/", $data);
+				preg_match_all("/(.*)(?:\r\n|\n|\r|$)/", $data, $newConfig);
+				$newConfig = $newConfig[1];
 
 				//We can't just use yaml_parse as we want to preserve comments
 				foreach ($messages->getAll() as $key => $value) {
