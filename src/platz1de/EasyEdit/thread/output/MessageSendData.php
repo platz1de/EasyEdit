@@ -21,6 +21,7 @@ class MessageSendData extends OutputData
 		$data = new self();
 		$data->player = $player;
 		$data->message = $message;
+		$data->prefix = $prefix;
 		$data->send();
 	}
 
