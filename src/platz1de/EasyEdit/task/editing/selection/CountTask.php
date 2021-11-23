@@ -74,7 +74,7 @@ class CountTask extends SelectionEditTask
 		foreach ($data->getCountedBlocks() as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
-		MessageSendData::from($player, $msg);
+		MessageSendData::from($player, $msg, false);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
