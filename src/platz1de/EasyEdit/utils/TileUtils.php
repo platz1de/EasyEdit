@@ -12,20 +12,22 @@ class TileUtils
 {
 	/**
 	 * @param CompoundTag $compoundTag
-	 * @param Vector3     $offset
+	 * @param int         $x
+	 * @param int         $y
+	 * @param int         $z
 	 * @return CompoundTag
 	 */
-	public static function offsetCompound(CompoundTag $compoundTag, Vector3 $offset): CompoundTag
+	public static function offsetCompound(CompoundTag $compoundTag, int $x, int $y, int $z): CompoundTag
 	{
 		$compoundTag = clone $compoundTag;
-		$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X) + $offset->getFloorX());
-		$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $offset->getFloorY());
-		$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $offset->getFloorZ());
+		$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X) + $x);
+		$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $y);
+		$compoundTag->setInt(Tile::TAG_Z, $compoundTag->getInt(Tile::TAG_Z) + $z);
 
 		//chest relation
 		if ($compoundTag->getTag(Chest::TAG_PAIRX) instanceof IntTag && $compoundTag->getTag(Chest::TAG_PAIRZ) instanceof IntTag) {
-			$compoundTag->setInt(Chest::TAG_PAIRX, $compoundTag->getInt(Chest::TAG_PAIRX) + $offset->getFloorX());
-			$compoundTag->setInt(Chest::TAG_PAIRZ, $compoundTag->getInt(Chest::TAG_PAIRZ) + $offset->getFloorZ());
+			$compoundTag->setInt(Chest::TAG_PAIRX, $compoundTag->getInt(Chest::TAG_PAIRX) + $x);
+			$compoundTag->setInt(Chest::TAG_PAIRZ, $compoundTag->getInt(Chest::TAG_PAIRZ) + $z);
 		}
 
 		return $compoundTag;

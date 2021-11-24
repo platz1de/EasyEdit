@@ -8,7 +8,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\block\tile\Tile;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
@@ -192,25 +191,26 @@ class EditTaskHandler
 
 		//This currently blocks tiles being set before changing the block properly
 		if (isset($this->tiles[World::blockHash($ox, $oy, $oz)])) {
-			$this->addTile(TileUtils::offsetCompound($this->tiles[World::blockHash($ox, $oy, $oz)], new Vector3($x - $ox, $y - $oy, $z - $oz)));
+			$this->addTile(TileUtils::offsetCompound($this->tiles[World::blockHash($ox, $oy, $oz)], $x - $ox, $y - $oy, $z - $oz));
 			$this->affectedTiles++;
 		}
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $y
-	 * @param int     $z
-	 * @param Vector3 $offset
-	 *
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @param int $ox
+	 * @param int $oy
+	 * @param int $oz
 	 * @deprecated
 	 */
-	public function addToUndo(int $x, int $y, int $z, Vector3 $offset): void
+	public function addToUndo(int $x, int $y, int $z, int $ox, int $oy, int $oz): void
 	{
-		$this->changes->addBlock($x + $offset->getFloorX(), $y + $offset->getFloorY(), $z + $offset->getFloorZ(), $this->getBlock($x, $y, $z));
+		$this->changes->addBlock($x + $ox, $y + $oy, $z + $oz, $this->getBlock($x, $y, $z));
 
 		if (isset($this->originalTiles[World::blockHash($x, $y, $z)])) {
-			$this->changes->addTile(TileUtils::offsetCompound($this->originalTiles[World::blockHash($x, $y, $z)], $offset));
+			$this->changes->addTile(TileUtils::offsetCompound($this->originalTiles[World::blockHash($x, $y, $z)], $ox, $oy, $oz));
 			$this->affectedTiles++;
 		}
 	}

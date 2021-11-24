@@ -81,9 +81,12 @@ class CopyTask extends SelectionEditTask
 				CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 			});
 		}
-		$full = $this->getTotalSelection();
-		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $full): void {
-			$handler->addToUndo($x, $y, $z, $full->getPos1()->multiply(-1));
+		$offset = $this->getTotalSelection()->getPos1()->multiply(-1);
+		$ox = $offset->getFloorX();
+		$oy = $offset->getFloorY();
+		$oz = $offset->getFloorZ();
+		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($oz, $oy, $ox, $handler): void {
+			$handler->addToUndo($x, $y, $z, $ox, $oy, $oz);
 		}, SelectionContext::full(), $this->getTotalSelection());
 	}
 }
