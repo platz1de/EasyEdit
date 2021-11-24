@@ -7,7 +7,6 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -32,7 +31,7 @@ class HollowCylinderCommand extends EasyEditCommand
 		}
 
 		try {
-			$pattern = new Pattern([new SidesPattern(PatternParser::parseInputArgument($args[2], $player), PatternArgumentData::create()->setFloat("thickness", (float) ($args[3] ?? 1.0)))]);
+			$pattern = SidesPattern::from([PatternParser::parseInput($args[2], $player)], PatternArgumentData::create()->setFloat("thickness", (float) ($args[3] ?? 1.0)));
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;

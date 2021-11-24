@@ -8,7 +8,6 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
@@ -43,6 +42,6 @@ class ExtinguishCommand extends EasyEditCommand
 			}
 		}
 
-		SetTask::queue($selection, new Pattern([new BlockPattern([StaticBlock::from(VanillaBlocks::AIR())], PatternArgumentData::create()->setBlock(DynamicBlock::from(VanillaBlocks::FIRE())))]), $player->getPosition());
+		SetTask::queue($selection, BlockPattern::from([StaticBlock::fromBlock(VanillaBlocks::AIR())], PatternArgumentData::create()->setBlock(DynamicBlock::fromBlock(VanillaBlocks::FIRE()))), $player->getPosition());
 	}
 }

@@ -8,7 +8,6 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -29,7 +28,7 @@ class SidesCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		try {
-			$pattern = PatternParser::parseInputArgumentCombined($args, 0, $player, "stone");
+			$pattern = PatternParser::parseInputCombined($args, 0, $player, "stone");
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;
@@ -43,6 +42,6 @@ class SidesCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new SidesPattern($pattern)]), $player->getPosition());
+		SetTask::queue($selection, SidesPattern::from([$pattern]), $player->getPosition());
 	}
 }

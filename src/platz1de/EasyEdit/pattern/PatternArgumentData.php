@@ -13,6 +13,7 @@ class PatternArgumentData
 	private bool $zAxis = false;
 	private StaticBlock $block;
 	private int $realBlock;
+	private int $weight = 100;
 	/**
 	 * @var int[]
 	 */
@@ -184,6 +185,22 @@ class PatternArgumentData
 	}
 
 	/**
+	 * @return int
+	 */
+	public function getWeight(): int
+	{
+		return $this->weight;
+	}
+
+	/**
+	 * @param int $weight
+	 */
+	public function setWeight(int $weight): void
+	{
+		$this->weight = $weight;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function fastSerialize(): string
@@ -207,6 +224,8 @@ class PatternArgumentData
 		} else {
 			$stream->putBool(false);
 		}
+
+		$stream->putInt($this->weight);
 
 		$stream->putInt(count($this->intData));
 		foreach ($this->intData as $name => $int) {
@@ -248,6 +267,8 @@ class PatternArgumentData
 		if ($stream->getBool()) {
 			$result->realBlock = $stream->getInt();
 		}
+
+		$result->weight = $stream->getInt();
 
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$result->intData[$stream->getString()] = $stream->getInt();

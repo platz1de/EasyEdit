@@ -4,24 +4,28 @@ namespace platz1de\EasyEdit\pattern\parser;
 
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\pattern\parser\reader\BlockReader;
-use platz1de\EasyEdit\pattern\parser\reader\PatternConstructReader;
-use platz1de\EasyEdit\pattern\parser\reader\PieceReader;
+use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
+use platz1de\EasyEdit\pattern\functional\SmoothPattern;
+use platz1de\EasyEdit\pattern\logic\math\DivisiblePattern;
+use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
+use platz1de\EasyEdit\pattern\logic\math\OddPattern;
+use platz1de\EasyEdit\pattern\logic\NotPattern;
+use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
+use platz1de\EasyEdit\pattern\logic\relation\AroundPattern;
+use platz1de\EasyEdit\pattern\logic\relation\BelowPattern;
+use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
+use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
+use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
+use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternArgumentData;
+use platz1de\EasyEdit\pattern\PatternConstruct;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\player\Player;
 use Throwable;
 
 class PatternParser
 {
-	/**
-	 * @var class-string<PieceReader>[]
-	 */
-	private static array $parsers = [
-		BlockReader::class,
-		PatternConstructReader::class
-	];
-
 	/**
 	 * Parses player input (mostly commands)
 	 * @param string $pattern
@@ -30,7 +34,7 @@ class PatternParser
 	 */
 	public static function parseInput(string $pattern, Player $player): Pattern
 	{
-		return new Pattern(self::parseInputArgument($pattern, $player));
+		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern));
 	}
 
 	/**
@@ -54,79 +58,129 @@ class PatternParser
 	}
 
 	/**
-	 * Parses player input as argument for other patterns, needed for helper commands like replace
-	 * @param string $pattern
-	 * @param Player $player
-	 * @return Pattern[]
-	 */
-	public static function parseInputArgument(string $pattern, Player $player): array
-	{
-		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern));
-	}
-
-	/**
-	 * Parses player input as argument for other patterns, needed for helper commands like replace, allows spaces
-	 * @param string[]    $args
-	 * @param int         $start
-	 * @param Player      $player
-	 * @param string|null $default
-	 * @return Pattern[]
-	 */
-	public static function parseInputArgumentCombined(array $args, int $start, Player $player, string $default = null): array
-	{
-		$pattern = implode("", array_slice($args, $start));
-		if ($pattern === "") {
-			if ($default === null) {
-				throw new ParseError("No pattern given");
-			}
-			$pattern = $default;
-		}
-		return self::parseInputArgument($pattern, $player);
-	}
-
-	/**
 	 * Parses internal saved patterns
 	 * @param string $pattern
-	 * @return Pattern[]
-	 * @throws ParseError
+	 * @return Pattern
 	 */
-	public static function parseInternal(string $pattern): array
+	public static function parseInternal(string $pattern): Pattern
 	{
 		try {
 			//basically magic
-			preg_match_all("/\((?:[^()]|(?R))+\)|[^(),\s]+(?R)|[^(),\s]+/", $pattern, $matches);
+			preg_match_all("/(?:\((?:[^()]+|(?R))+\)|[^(),\s]+)+/", $pattern, $matches);
 			$pieces = [];
+			foreach ($matches[0] as $piece) {
+				$pieces[] = self::parseLogical($piece);
+			}
+			return Pattern::from($pieces);
+		} catch (Throwable $exception) {
+			throw new ParseError($exception->getMessage(), false); //the difference is purely internally
+		}
+	}
+
+	/**
+	 * @param string $pattern
+	 * @return Pattern
+	 */
+	private static function parseLogical(string $pattern): Pattern
+	{
+		//more magic
+		preg_match_all("/(?:\((?:[^()]+|(?R))+\)|[^().\s]+)+/", $pattern, $matches);
+		$pieces = [];
+		try {
 			foreach ($matches[0] as $piece) {
 				$pieces[] = self::parsePiece($piece);
 			}
-			return $pieces;
-		} catch (Throwable $exception) {
-			throw new ParseError($exception->getMessage(), null, false); //the difference is purely internally
+		} catch (ParseError $exception) {
+			throw new ParseError("Failed to parse piece " . $pattern . PHP_EOL . $exception->getMessage(), false);
 		}
+		return PatternConstruct::from($pieces);
 	}
 
 	/**
 	 * @param string $input
-	 * @param int    $offset
 	 * @return Pattern
 	 */
-	public static function parsePiece(string $input, int $offset = 1): Pattern
+	private static function parsePiece(string $input): Pattern
 	{
-		if ($input === "") {
+		preg_match("/(?:([^%(]*)%)?(.*)/", $input, $weightData, PREG_UNMATCHED_AS_NULL);
+
+		$weight = $weightData[1] ?? 100;
+		$patternString = $weightData[2];
+
+		if ($patternString === null) {
 			throw new ParseError("No pattern given");
 		}
 
-		foreach (self::$parsers as $parser) {
-			try {
-				return $parser::readPiece($input);
-			} catch (ParseError $exception) {
-				if ($exception->isPriority()) {
-					throw $exception->offset($offset);
-				}
+		//blocks have priority
+		try {
+			$invert = false; //this would be always false
+			$pattern = StaticBlock::fromBlock(BlockParser::getBlock($patternString));
+		} catch (ParseError) {
+			//This still allows old syntax, starting with #
+			//I have no idea what phpstorm is doing here
+			//TODO: find a better expression without things phpstorm doesn't like
+			/** @noinspection all */
+			if (!((bool) preg_match("/#?([^()]*)(?:\(((?R)+)\))?/", $patternString, $matches))) {
+				throw new ParseError($patternString . " does not follow pattern rules");
+			}
+
+			if (($invert = str_starts_with($matches[1], "!"))) {
+				$matches[1] = substr($matches[1], 1);
+			}
+
+			if ($matches[1] === "") {
+				$pattern = self::parseInternal($matches[2]);
+			} else {
+				$pattern = self::getPattern($matches[1], isset($matches[2]) ? [self::parseInternal($matches[2])] : []);
 			}
 		}
 
-		throw new ParseError("Failed to parse piece " . $input);
+		$pattern->setWeight($weight);
+		return $invert ? NotPattern::from([$pattern]) : $pattern;
+	}
+
+	/**
+	 * @param string    $pattern
+	 * @param Pattern[] $children
+	 * @return Pattern
+	 */
+	private static function getPattern(string $pattern, array $children = []): Pattern
+	{
+		$args = explode(";", $pattern);
+		switch (array_shift($args)) {
+			case "not":
+				return NotPattern::from($children);
+			case "even":
+				return EvenPattern::from($children, PatternArgumentData::create()->parseAxes($args));
+			case "odd":
+				return OddPattern::from($children, PatternArgumentData::create()->parseAxes($args));
+			case "divisible":
+				return DivisiblePattern::from($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) ($args[0] ?? -1)));
+			case "block":
+				return BlockPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
+			case "above":
+				return AbovePattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
+			case "below":
+				return BelowPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
+			case "around":
+				return AroundPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
+			case "nat":
+			case "naturalized":
+				return NaturalizePattern::from($children);
+			case "smooth":
+				return SmoothPattern::from([]);
+			case "walls":
+			case "wall":
+				return WallPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0)));
+			case "sides":
+			case "side":
+				return SidesPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0)));
+			case "center":
+			case "middle":
+				return CenterPattern::from($children);
+		}
+
+		throw new ParseError("Unknown Pattern " . $pattern, true);
 	}
 
 	/**
@@ -137,13 +191,13 @@ class PatternParser
 	public static function getBlockType(string $string, ?Player $player = null): StaticBlock
 	{
 		if ($player instanceof Player && $string === "hand") {
-			return StaticBlock::from($player->getInventory()->getItemInHand()->getBlock());
+			return StaticBlock::fromBlock($player->getInventory()->getItemInHand()->getBlock());
 		}
 
 		if (BlockParser::isStatic($string)) {
-			return StaticBlock::from(BlockParser::getBlock($string));
+			return StaticBlock::fromBlock(BlockParser::getBlock($string));
 		}
 
-		return DynamicBlock::from(BlockParser::getBlock($string));
+		return DynamicBlock::fromBlock(BlockParser::getBlock($string));
 	}
 }

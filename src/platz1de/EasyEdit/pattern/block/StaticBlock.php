@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\block\Block;
+use pocketmine\utils\AssumptionFailedError;
 use Throwable;
 
 class StaticBlock extends Pattern
@@ -57,9 +58,13 @@ class StaticBlock extends Pattern
 	 * @param Block $block
 	 * @return StaticBlock
 	 */
-	public static function from(Block $block): StaticBlock
+	public static function fromBlock(Block $block): StaticBlock
 	{
-		return new static([], PatternArgumentData::create()->setRealBlock($block->getFullId()));
+		$pattern = self::from([], PatternArgumentData::create()->setRealBlock($block->getFullId()));
+		if (!$pattern instanceof self) {
+			throw new AssumptionFailedError("StaticBlock was wrapped into a parent pattern while creating instance");
+		}
+		return $pattern;
 	}
 
 	/**

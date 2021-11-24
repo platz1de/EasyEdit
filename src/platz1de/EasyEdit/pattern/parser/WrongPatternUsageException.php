@@ -9,6 +9,6 @@ class WrongPatternUsageException extends ParseError
 	 */
 	public function __construct(string $message)
 	{
-		parent::__construct("Wrong Pattern Usage: " . $message, null, false);
+		parent::__construct("Wrong Pattern Usage: " . $message, false);
 	}
 }

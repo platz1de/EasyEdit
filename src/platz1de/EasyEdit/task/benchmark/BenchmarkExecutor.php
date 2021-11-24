@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\task\benchmark;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
 use platz1de\EasyEdit\pattern\logic\math\OddPattern;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
+use platz1de\EasyEdit\pattern\PatternConstruct;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
@@ -56,7 +56,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$setData->setResultHandler(static function (EditTask $task, int $changeId) { });
 
 		//Task #1 - set static
-		SetTask::from($this->world, $this->world, $setData, $testCube, $pos, new Vector3(0, 0, 0), StaticBlock::from(VanillaBlocks::STONE()))->execute();
+		SetTask::from($this->world, $this->world, $setData, $testCube, $pos, new Vector3(0, 0, 0), StaticBlock::fromBlock(VanillaBlocks::STONE()))->execute();
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
@@ -65,7 +65,7 @@ class BenchmarkExecutor extends ExecutableTask
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
-		$pattern = new Pattern([new EvenPattern([new EvenPattern([StaticBlock::from(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([StaticBlock::from(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::from(VanillaBlocks::DIRT())], PatternArgumentData::create()->useYAxis()), new EvenPattern([StaticBlock::from(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), new OddPattern([StaticBlock::from(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::from(VanillaBlocks::STONE())]);
+		$pattern = PatternConstruct::from([EvenPattern::from([PatternConstruct::from([EvenPattern::from([StaticBlock::fromBlock(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), OddPattern::from([StaticBlock::fromBlock(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::fromBlock(VanillaBlocks::DIRT())])], PatternArgumentData::create()->useYAxis()), EvenPattern::from([StaticBlock::fromBlock(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), OddPattern::from([StaticBlock::fromBlock(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::fromBlock(VanillaBlocks::STONE())]);
 		SetTask::from($this->world, $this->world, $complexData, $testCube, $pos, new Vector3(0, 0, 0), $pattern)->execute();
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();

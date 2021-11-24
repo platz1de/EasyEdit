@@ -2,10 +2,12 @@
 
 namespace platz1de\EasyEdit\pattern;
 
+use Exception;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use pocketmine\utils\AssumptionFailedError;
 
 class Pattern
 {
@@ -16,11 +18,30 @@ class Pattern
 	protected PatternArgumentData $args;
 
 	/**
+	 * @param Pattern[]                $pieces
+	 * @param PatternArgumentData|null $args
+	 * @return Pattern
+	 */
+	public static function from(array $pieces, ?PatternArgumentData $args = null): Pattern
+	{
+		if ((static::class === __CLASS__) && count($pieces) === 1) {
+			return $pieces[0];
+		}
+
+		if (count($pieces) === 1 && $pieces[0]::class === __CLASS__) {
+			$pieces = $pieces[0]->pieces;
+		}
+
+		$name = static::class;
+		return new $name($pieces, $args);
+	}
+
+	/**
 	 * Pattern constructor.
 	 * @param Pattern[]                $pieces
 	 * @param PatternArgumentData|null $args
 	 */
-	final public function __construct(array $pieces, ?PatternArgumentData $args = null)
+	final private function __construct(array $pieces, ?PatternArgumentData $args = null)
 	{
 		$this->pieces = $pieces;
 		$this->args = $args ?? new PatternArgumentData();
@@ -42,9 +63,22 @@ class Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
+		$sum = array_sum(array_map(static function (Pattern $pattern): int {
+			return $pattern->getWeight();
+		}, $this->pieces));
+		try {
+			$rand = random_int(0, max($sum, 100));
+		} catch (Exception) {
+			throw new AssumptionFailedError("Failed to generate random integer");
+		}
+
 		foreach ($this->pieces as $piece) {
-			if ($piece->isValidAt($x, $y, $z, $iterator, $current, $total)) {
-				return $piece->getFor($x, $y, $z, $iterator, $current, $total);
+			$rand -= $piece->getWeight();
+			if ($rand <= 0) {
+				if ($piece->isValidAt($x, $y, $z, $iterator, $current, $total)) {
+					return $piece->getFor($x, $y, $z, $iterator, $current, $total);
+				}
+				break; //only select one
 			}
 		}
 		return -1;
@@ -62,6 +96,22 @@ class Pattern
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
 		return true;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getWeight(): int
+	{
+		return $this->args->getWeight();
+	}
+
+	/**
+	 * @param int $weight
+	 */
+	public function setWeight(int $weight): void
+	{
+		$this->args->setWeight($weight);
 	}
 
 	/**

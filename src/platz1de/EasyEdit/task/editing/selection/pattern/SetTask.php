@@ -60,9 +60,11 @@ class SetTask extends PatternedEditTask
 		$selection = $this->getCurrentSelection();
 		$pattern = $this->getPattern();
 		$selection->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $pattern, $selection): void {
-			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection());
-			if ($block !== -1) {
-				$handler->changeBlock($x, $y, $z, $block);
+			if ($pattern->isValidAt($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection())) {
+				$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection());
+				if ($block !== -1) {
+					$handler->changeBlock($x, $y, $z, $block);
+				}
 			}
 		}, $pattern->getSelectionContext(), $this->getTotalSelection());
 	}

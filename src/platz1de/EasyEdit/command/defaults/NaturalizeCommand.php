@@ -8,7 +8,6 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -45,6 +44,6 @@ class NaturalizeCommand extends EasyEditCommand
 			return;
 		}
 
-		SetTask::queue($selection, new Pattern([new NaturalizePattern([$top, $middle, $bottom])]), $player->getPosition());
+		SetTask::queue($selection, NaturalizePattern::from([$top, $middle, $bottom]), $player->getPosition());
 	}
 }
