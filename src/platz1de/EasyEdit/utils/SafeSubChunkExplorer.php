@@ -74,7 +74,7 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	public function getBlockAt(int $x, int $y, int $z): int
 	{
 		$this->readCount++;
-		$y = (int) min(World::Y_MAX - 1, max(0, $y));
+		$y = min(World::Y_MAX - 1, max(0, $y));
 		$this->moveTo($x, $y, $z);
 		return $this->getCurrent()->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
 	}
@@ -97,7 +97,7 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	public function setBlockAt(int $x, int $y, int $z, int $block): void
 	{
 		$this->writeCount++;
-		$y = (int) min(World::Y_MAX - 1, max(0, $y));
+		$y = min(World::Y_MAX - 1, max(0, $y));
 		$this->moveTo($x, $y, $z);
 		$this->getCurrent()->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 	}
