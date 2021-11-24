@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\cache\HistoryCache;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class HistoryCacheData extends OutputData
@@ -18,6 +19,10 @@ class HistoryCacheData extends OutputData
 	 */
 	public static function from(string $player, int $changeId, bool $isUndo): void
 	{
+		if ($changeId === -1) {
+			EditThread::getInstance()->getLogger()->debug("Not saving history");
+			return;
+		}
 		$data = new self();
 		$data->player = $player;
 		$data->changeId = $changeId;
