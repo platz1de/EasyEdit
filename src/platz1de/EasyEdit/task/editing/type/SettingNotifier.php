@@ -16,6 +16,6 @@ trait SettingNotifier
 	 */
 	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
-		MessageSendData::from($player, Messages::replace("blocks-pasted", ["{time}" => $time, "{changed}" => $changed]));
+		MessageSendData::from($player, Messages::replace("blocks-set", ["{time}" => $time, "{changed}" => $changed]));
 	}
 }
