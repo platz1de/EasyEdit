@@ -90,4 +90,12 @@ class HeightMapCache
 	{
 		self::$ignore = $ignore;
 	}
+
+	/**
+	 * @return int[]
+	 */
+	public static function getIgnore(): array
+	{
+		return self::$ignore;
+	}
 }
