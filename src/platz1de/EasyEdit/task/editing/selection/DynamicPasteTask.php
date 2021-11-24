@@ -12,7 +12,9 @@ use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\TileUtils;
+use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 
@@ -72,9 +74,10 @@ class DynamicPasteTask extends SelectionEditTask
 		$selection = $this->current;
 		$place = $this->getPosition()->subtractVector($selection->getPoint());
 		if ($this->insert) {
-			$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $selection, $place): void {
+			$ignore = HeightMapCache::getIgnore();
+			$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($ignore, $handler, $selection, $place): void {
 				$block = $selection->getIterator()->getBlockAt($x - $place->getFloorX(), $y - $place->getFloorY(), $z - $place->getFloorZ());
-				if (Selection::processBlock($block) && $handler->getBlock($x, $y, $z) === 0) {
+				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, SelectionContext::full(), $this->getTotalSelection());
