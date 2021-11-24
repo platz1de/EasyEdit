@@ -35,6 +35,7 @@ Command | Description | Permission | Aliases/Notice
 //sides [pattern] | Set sides of the selected area | easyedit.edit | //side
 //move \<count> | Move the selected area | easyedit.edit | Look into the direction you want the selected blocks to move into
 //stack \<count> | Stack the selected area | easyedit.edit | Look into the direction you want the selected blocks to stack into
+//istack \<count> | Stack the selected area without overwriting existing terrain | easyedit.edit
 //count [radius] | Count selected blocks | easyedit.select
 
 History:
