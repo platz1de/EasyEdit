@@ -10,12 +10,12 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "1.2.4";
+	private const CONFIG_VERSION = "1.2.5";
 
 	/**
 	 * @var int[]
 	 */
-	private static array $heightIgnored = [];
+	private static array $terrainIgnored = [];
 	private static string $bedrockConversionDataSource;
 	private static string $bedrockPaletteDataSource;
 	private static string $javaPaletteDataSource;
@@ -83,16 +83,16 @@ class ConfigManager
 			$config->reload();
 		}
 
-		self::$heightIgnored = array_map(static function (string $block): int {
+		self::$terrainIgnored = array_map(static function (string $block): int {
 			return BlockParser::getBlock($block)->getId();
-		}, self::mustGetStringArray($config, "height-ignored-blocks", []));
+		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
 
 		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
 		self::$bedrockPaletteDataSource = self::mustGetString($config, "bedrock-palette-data", "");
 		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
 		self::$rotationDataSource = self::mustGetString($config, "rotation-data", "");
 
-		ConfigInputData::from(self::$heightIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource);
+		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource);
 	}
 
 	/**
@@ -146,8 +146,8 @@ class ConfigManager
 	/**
 	 * @return int[]
 	 */
-	public static function getHeightIgnored(): array
+	public static function getTerrainIgnored(): array
 	{
-		return self::$heightIgnored;
+		return self::$terrainIgnored;
 	}
 }
