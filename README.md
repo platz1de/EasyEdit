@@ -76,64 +76,62 @@ Command | Description | Permission | Aliases/Notice
 
 ## Patterns
 
-Patterns allow the creation of complex editing rules.
-
-Usage of Patterns: patternName;arg1;arg2...(block1,block2...)
-
 ### Block Patterns
 
 Block Patterns are just blocks, they just consist out of the name of the block or its numeric ID
 
-Examples:
+Examples:<br>
 
 - stone
 - 4
-- command_block
+- red_wool
 - stone:1
 
-  The keyword "hand" represents the block you hold in your hand (or air for items/nothing) and can be used like normal
-  blocks
+The keyword "hand" represents the block you hold in your hand (or air for items/nothing) and can be used like normal blocks
 
 ### Random Pattern
 
-The Random Pattern as it name suggests selects a random Pattern
+The Random Pattern as it name suggests selects a random Pattern<br>
+The patterns are separated by a comma and can be used in any order
 
-Example:
+Examples:<br>
+```dirt,stone,air```<br>
+```red_wool,green_wool,yellow_wool,orange_wool```
 
-```
-random(dirt,stone,air)
-```
+### Weighted Patterns
 
-It can also be used with Logic Patterns, note that it only selects once, if the pattern is not valid nothing is changed
+When one pattern should be more likely than another, the weighted notation can be used: <br>
+```propability%pattern```
 
-It also works nested:
+Example: <br>
+```70%dirt,30%grass```
 
-```
-random(random(stone,stone:1,stone:2),random(dirt,grass))
-```
+If the sum of given percentages is smaller than 100, there is a chance to not change anything:<br>
+```10%stone,10%dirt``` - 80% of the selected area will not be affected
+
+If the sum of given percentages is greater than 100, given probabilities are scaled accordingly:<br>
+```150%stone,50%dirt``` - 75% will be set to stone, 25% will be set to dirt
+
+## Complex Patterns
+
+Complex patterns follow strict rules and as such allow the creation of complex structures
+
+Usage of Complex Patterns: patternName;arg1;arg2...(subPattern1,subPattern2...)
+
+Complex patterns can be chained together with dots to create a logic construct: <br>
+```block;stone(dirt).grass``` - Replace all stone blocks with dirt and everything else with grass
+
+Chained constructs are executed from left to right until a valid block is found, otherwise the block will stay unaffected
+
+They can also be used with the default comma notation and are selected randomly, or in combination: <br>
+```stone,block;stone(dirt).grass,wool``` - Places either stone, wool or following the pattern described above
 
 ### Logic Patterns
 
-These Patterns allow control over the usage of Blocks
+These Patterns allow control over when to set certain blocks
 
-If one Pattern is not valid, the next one is being used (separated by a comma)
-
-Example:
-
-```
-block;stone(dirt),around;stone(grass)
-```
-
--> stone and blocks next to stone get replaced with dirt/grass, otherwise nothing happens
-
-They can also be nested:
-
-```
-block;stone(around;dirt(grass)),air
-```
-
--> stone blocks which also have dirt blocks next to them get replaced with grass, other stone blocks stay as they are,
-non-stone blocks are set to air
+These are especially useful in complex structures or even nested: <br>
+```odd;x(odd;z(black_wool).white_wool).odd;z(white_wool).black_wool``` - A 2d checkers pattern
 
 \<argument> - required Argument<br>
 [argument] - optional Argument<br>
@@ -154,7 +152,7 @@ sides;\[thickness](patterns) | Executes Patterns if the block is one of the side
 
 ### Functional Patterns
 
-These Patterns have an own use
+These Patterns have a unique use and are mostly used for the default commands
 
 \<argument> - required Argument<br>
 [argument] - optional Argument<br>
