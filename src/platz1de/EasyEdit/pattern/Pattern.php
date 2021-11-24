@@ -63,6 +63,9 @@ class Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
+		if (count($this->pieces) === 1 && $this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total)) {
+			return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);
+		}
 		$sum = array_sum(array_map(static function (Pattern $pattern): int {
 			return $pattern->getWeight();
 		}, $this->pieces));
