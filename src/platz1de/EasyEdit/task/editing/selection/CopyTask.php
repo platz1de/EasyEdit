@@ -75,10 +75,12 @@ class CopyTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
-		$this->getDataManager()->setResultHandler(static function (EditTask $task, int $changeId): void {
-			ClipboardCacheData::from($task->getOwner(), $changeId);
-			CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
-		});
+		if (!$this->getDataManager()->hasResultHandler()) {
+			$this->getDataManager()->setResultHandler(static function (EditTask $task, int $changeId): void {
+				ClipboardCacheData::from($task->getOwner(), $changeId);
+				CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
+			});
+		}
 		$full = $this->getTotalSelection();
 		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $full): void {
 			$handler->addToUndo($x, $y, $z, $full->getPos1()->multiply(-1));
