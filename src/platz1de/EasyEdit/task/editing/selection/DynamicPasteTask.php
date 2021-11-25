@@ -73,17 +73,20 @@ class DynamicPasteTask extends SelectionEditTask
 	{
 		$selection = $this->current;
 		$place = $this->getPosition()->subtractVector($selection->getPoint());
+		$ox = $place->getFloorX();
+		$oy = $place->getFloorY();
+		$oz = $place->getFloorZ();
 		if ($this->insert) {
 			$ignore = HeightMapCache::getIgnore();
-			$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($ignore, $handler, $selection, $place): void {
-				$block = $selection->getIterator()->getBlockAt($x - $place->getFloorX(), $y - $place->getFloorY(), $z - $place->getFloorZ());
+			$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
+				$block = $selection->getIterator()->getBlockAt($x - $ox, $y - $oy, $z - $oz);
 				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, SelectionContext::full(), $this->getTotalSelection());
 		} else {
-			$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($handler, $selection, $place): void {
-				$block = $selection->getIterator()->getBlockAt($x - $place->getFloorX(), $y - $place->getFloorY(), $z - $place->getFloorZ());
+			$selection->useOnBlocks($place, function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
+				$block = $selection->getIterator()->getBlockAt($x - $ox, $y - $oy, $z - $oz);
 				if (Selection::processBlock($block)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
