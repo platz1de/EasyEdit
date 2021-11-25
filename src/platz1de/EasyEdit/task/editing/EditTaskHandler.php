@@ -165,7 +165,7 @@ class EditTaskHandler
 	 */
 	public function changeBlock(int $x, int $y, int $z, int $block): void
 	{
-		$this->changes->addBlock($x, $y, $z, $this->getBlock($x, $y, $z));
+		$this->changes->addBlock($x, $y, $z, $this->origin->getBlockAt($x, $y, $z));
 
 		//This currently blocks tiles being set before changing the block properly
 		if (isset($this->tiles[World::blockHash($x, $y, $z)])) {
@@ -187,7 +187,7 @@ class EditTaskHandler
 	 */
 	public function copyBlock(int $x, int $y, int $z, int $ox, int $oy, int $oz): void
 	{
-		$this->changeBlock($x, $y, $z, $this->getBlock($ox, $oy, $oz));
+		$this->changeBlock($x, $y, $z, $this->origin->getBlockAt($ox, $oy, $oz));
 
 		//This currently blocks tiles being set before changing the block properly
 		if (isset($this->tiles[World::blockHash($ox, $oy, $oz)])) {
@@ -207,7 +207,7 @@ class EditTaskHandler
 	 */
 	public function addToUndo(int $x, int $y, int $z, int $ox, int $oy, int $oz): void
 	{
-		$this->changes->addBlock($x + $ox, $y + $oy, $z + $oz, $this->getBlock($x, $y, $z));
+		$this->changes->addBlock($x + $ox, $y + $oy, $z + $oz, $this->origin->getBlockAt($x, $y, $z));
 
 		if (isset($this->originalTiles[World::blockHash($x, $y, $z)])) {
 			$this->changes->addTile(TileUtils::offsetCompound($this->originalTiles[World::blockHash($x, $y, $z)], $ox, $oy, $oz));
