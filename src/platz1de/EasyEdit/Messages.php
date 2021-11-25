@@ -44,6 +44,7 @@ class Messages
 				$newConfig = $newConfig[1];
 
 				//We can't just use yaml_parse as we want to preserve comments
+				/** @var string $value */
 				foreach ($messages->getAll() as $key => $value) {
 					if ($key === "message-version") {
 						continue;
@@ -52,11 +53,11 @@ class Messages
 						return str_starts_with($line, $key . ":");
 					});
 					if (count($position) === 1) {
-						$newConfig[key($position)] = $key . ': "' . $value . '"';
+						$newConfig[key($position)] = $key . ': "' . str_replace(["\n", '"'], ["ARG_NEWLINE", '\"'], $value) . '"';
 					}
 				}
 
-				file_put_contents($messages->getPath(), implode(PHP_EOL, $newConfig));
+				file_put_contents($messages->getPath(), str_replace("ARG_NEWLINE", '\n', implode(PHP_EOL, $newConfig)));
 
 				EasyEdit::getInstance()->getLogger()->notice("Your messages were updated to the newest Version");
 			} else {
