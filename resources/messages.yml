@@ -1,4 +1,5 @@
 message-version: "1.2.6" #Please don't change this manually
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
 
@@ -16,7 +17,8 @@ no-task: "No task is currently running"
 task-cancelled: "Current task was cancelled"
 
 #Args: {message}
-task-crash: "§cYour task crashed, please report this!\n{message}"
+task-crash: "§cYour task crashed, please report this!
+{message}"
 
 #Args: {time} {changed}
 blocks-set: "{changed} blocks were set in {time}s"
@@ -27,14 +29,24 @@ blocks-rotated: "{changed} blocks were rotated in {time}s"
 blocks-cut: "{changed} blocks were cut in {time}s"
 
 #Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
-thread-stats: "Status of EditThread:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}\nStored selections: {storage}\nThread memory: {mem_current}MB ({mem_max}MB)"
+thread-stats: "Status of EditThread:
+Status: {status}
+Current Task: {task}
+Progress: {progress}
+Queued tasks: {queue}
+Stored selections: {storage}
+Thread memory: {mem_current}MB ({mem_max}MB)"
 
 benchmark-start: "Started benchmark, this can take up to a minute"
 benchmark-running: "There is already a benchmark running"
 benchmark-cancel: "Benchmarks can't be cancelled"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
-benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}%)\nMinimal TPS: {tps_min} ({load_max}%)\nExecuted {tasks} tasks in {time}s:\n{results}"
+benchmark-finished: "Your benchmark results:
+Average TPS: {tps_avg} ({load_avg}%)
+Minimal TPS: {tps_min} ({load_max}%)
+Executed {tasks} tasks in {time}s:
+{results}"
 
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} in {time}s"
@@ -43,4 +55,4 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}"
 
 #Args: {schematic} {known}
-unknown-schematic: 'Unknown schematic "{schematic}"\nKnown schematics: {known}'
+unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
