@@ -10,6 +10,7 @@ class KnownPermissions
 	public const PERMISSION_HISTORY_OTHER = "easyedit.history.other";
 	public const PERMISSION_CLIPBOARD = "easyedit.clipboard";
 	public const PERMISSION_READDISK = "easyedit.readdisk";
+	public const PERMISSION_WRITEDISK = "easyedit.writedisk";
 	public const PERMISSION_MANAGE = "easyedit.manage";
 	public const PERMISSION_SELECT = "easyedit.select";
 	public const PERMISSION_BRUSH = "easyedit.brush";

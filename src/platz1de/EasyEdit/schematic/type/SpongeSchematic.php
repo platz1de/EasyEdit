@@ -76,4 +76,52 @@ class SpongeSchematic extends SchematicType
 
 		//TODO: tiles and entities
 	}
+
+	public static function writeFromSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
+	{
+		$nbt->setInt("Version", 3);
+		$nbt->setInt("DataVersion", 1343); //1.12.2
+		$metaData = new CompoundTag();
+		$metaData->setInt("WEOffsetX", -$target->getPoint()->getFloorX());
+		$metaData->setInt("WEOffsetY", -$target->getPoint()->getFloorY());
+		$metaData->setInt("WEOffsetZ", -$target->getPoint()->getFloorZ());
+		$nbt->setTag("Metadata", $metaData);
+		//$nbt->setIntArray("Offset", [-$target->getPoint()->getFloorX(), -$target->getPoint()->getFloorY(), -$target->getPoint()->getFloorZ()]);
+		$xSize = $target->getSize()->getFloorX();
+		$ySize = $target->getSize()->getFloorY();
+		$zSize = $target->getSize()->getFloorZ();
+		$nbt->setShort("Width", $xSize);
+		$nbt->setShort("Height", $ySize);
+		$nbt->setShort("Length", $zSize);
+
+		$blockData = new BinaryStream();
+		$palette = [];
+
+		for ($y = 0; $y < $ySize; ++$y) {
+			for ($z = 0; $z < $zSize; ++$z) {
+				for ($x = 0; $x < $xSize; ++$x) {
+					$block = $target->getIterator()->getBlockAt($x, $y, $z);
+
+					if (!isset($palette[$block])) {
+						$palette[$block] = count($palette);
+					}
+
+					$blockData->putUnsignedVarInt($palette[$block]);
+				}
+			}
+		}
+
+		$paletteData = new CompoundTag();
+		foreach ($palette as $id => $index) {
+			$paletteData->setInt(BlockConvertor::getState($id >> Block::INTERNAL_METADATA_BITS, $id & Block::INTERNAL_METADATA_MASK), $index);
+		}
+
+		$blocks = new CompoundTag();
+		$blocks->setByteArray("Data", $blockData->getBuffer());
+		$blocks->setTag("Palette", $paletteData);
+
+		$nbt->setTag("Blocks", $blocks);
+
+		//TODO: tiles and entities
+	}
 }
