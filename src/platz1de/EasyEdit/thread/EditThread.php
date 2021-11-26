@@ -214,13 +214,11 @@ class EditThread extends Thread
 	 */
 	public function sendToThread(InputData $data): void
 	{
-		$stream = new ExtendedBinaryStream($this->inputData);
-
-		$stream->putString($data->fastSerialize());
-
-		$input = $stream->getBuffer();
-		$this->synchronized(function () use ($input): void {
-			$this->inputData = $input;
+		$add = $data->fastSerialize();
+		$this->synchronized(function () use ($add): void {
+			$stream = new ExtendedBinaryStream($this->inputData);
+			$stream->putString($add);
+			$this->inputData = $stream->getBuffer();
 
 			$this->notify();
 		});
@@ -232,13 +230,11 @@ class EditThread extends Thread
 	 */
 	public function sendOutput(OutputData $data): void
 	{
-		$stream = new ExtendedBinaryStream($this->outputData);
-
-		$stream->putString($data->fastSerialize());
-
-		$output = $stream->getBuffer();
-		$this->synchronized(function () use ($output): void {
-			$this->outputData = $output;
+		$add = $data->fastSerialize();
+		$this->synchronized(function () use ($add): void {
+			$stream = new ExtendedBinaryStream($this->outputData);
+			$stream->putString($add);
+			$this->outputData = $stream->getBuffer();
 		});
 	}
 }
