@@ -13,13 +13,26 @@ use UnexpectedValueException;
 
 class SpongeSchematic extends SchematicType
 {
+	/**
+	 * Version 1: Initial version
+	 * Version 2: Entity support, needs DataVersion field
+	 * Version 3: 3D biomes, new Palette location
+	 */
+	public const FORMAT_VERSION = "Version";
+	public const METADATA = "Metadata";
+	public const BLOCK_DATA_LEGACY = "BlockData";
+	public const PALETTE = "Palette";
+	public const DATA = "Data";
+	public const DATA_BLOCKS = "Blocks";
+	public const UNUSED_DATA_VERSION = "DataVersion";
+
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
-		$version = $nbt->getInt("Version", 1);
+		$version = $nbt->getInt(self::FORMAT_VERSION, 1);
 		$offset = new Vector3(0, 0, 0);
-		$metaData = $nbt->getCompoundTag("Metadata");
+		$metaData = $nbt->getCompoundTag(self::METADATA);
 		if ($metaData !== null) {
-			$offset = new Vector3(-$nbt->getInt("WEOffsetX", 0), -$nbt->getInt("WEOffsetY", 0), -$nbt->getInt("WEOffsetZ", 0));
+			$offset = new Vector3(-$nbt->getInt(McEditSchematic::OFFSET_X, 0), -$nbt->getInt(McEditSchematic::OFFSET_Y, 0), -$nbt->getInt(McEditSchematic::OFFSET_Z, 0));
 		}
 		//TODO: check why this is behaving weird (offsets seem to be wrong)
 		/*else {
@@ -29,9 +42,9 @@ class SpongeSchematic extends SchematicType
 			}
 			$offset = new Vector3(-$offset[0], -$offset[1], -$offset[2]));
 		}*/
-		$xSize = $nbt->getShort("Width");
-		$ySize = $nbt->getShort("Height");
-		$zSize = $nbt->getShort("Length");
+		$xSize = $nbt->getShort(self::TAG_WIDTH);
+		$ySize = $nbt->getShort(self::TAG_HEIGHT);
+		$zSize = $nbt->getShort(self::TAG_LENGTH);
 		$target->setPoint($offset);
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
@@ -40,16 +53,16 @@ class SpongeSchematic extends SchematicType
 		switch ($version) {
 			case 1:
 			case 2:
-				$blockDataRaw = $nbt->getByteArray("BlockData");
-				$paletteData = $nbt->getCompoundTag("Palette");
+				$blockDataRaw = $nbt->getByteArray(self::BLOCK_DATA_LEGACY);
+				$paletteData = $nbt->getCompoundTag(self::PALETTE);
 				break;
 			case 3:
-				$blocks = $nbt->getCompoundTag("Blocks");
+				$blocks = $nbt->getCompoundTag(self::DATA_BLOCKS);
 				if ($blocks === null) {
 					throw new UnexpectedValueException("Blocks tag missing");
 				}
-				$blockDataRaw = $blocks->getByteArray("Data");
-				$paletteData = $blocks->getCompoundTag("Palette");
+				$blockDataRaw = $blocks->getByteArray(self::DATA);
+				$paletteData = $blocks->getCompoundTag(self::PALETTE);
 				break;
 			default:
 				throw new UnexpectedValueException("Unknown schematic version");
@@ -79,20 +92,20 @@ class SpongeSchematic extends SchematicType
 
 	public static function writeFromSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
-		$nbt->setInt("Version", 3);
-		$nbt->setInt("DataVersion", 1343); //1.12.2
+		$nbt->setInt(self::FORMAT_VERSION, 3);
+		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
-		$metaData->setInt("WEOffsetX", -$target->getPoint()->getFloorX());
-		$metaData->setInt("WEOffsetY", -$target->getPoint()->getFloorY());
-		$metaData->setInt("WEOffsetZ", -$target->getPoint()->getFloorZ());
-		$nbt->setTag("Metadata", $metaData);
+		$metaData->setInt(McEditSchematic::OFFSET_X, -$target->getPoint()->getFloorX());
+		$metaData->setInt(McEditSchematic::OFFSET_Y, -$target->getPoint()->getFloorY());
+		$metaData->setInt(McEditSchematic::OFFSET_Z, -$target->getPoint()->getFloorZ());
+		$nbt->setTag(self::METADATA, $metaData);
 		//$nbt->setIntArray("Offset", [-$target->getPoint()->getFloorX(), -$target->getPoint()->getFloorY(), -$target->getPoint()->getFloorZ()]);
 		$xSize = $target->getSize()->getFloorX();
 		$ySize = $target->getSize()->getFloorY();
 		$zSize = $target->getSize()->getFloorZ();
-		$nbt->setShort("Width", $xSize);
-		$nbt->setShort("Height", $ySize);
-		$nbt->setShort("Length", $zSize);
+		$nbt->setShort(self::TAG_WIDTH, $xSize);
+		$nbt->setShort(self::TAG_HEIGHT, $ySize);
+		$nbt->setShort(self::TAG_LENGTH, $zSize);
 
 		$blockData = new BinaryStream();
 		$palette = [];
@@ -117,10 +130,10 @@ class SpongeSchematic extends SchematicType
 		}
 
 		$blocks = new CompoundTag();
-		$blocks->setByteArray("Data", $blockData->getBuffer());
-		$blocks->setTag("Palette", $paletteData);
+		$blocks->setByteArray(self::DATA, $blockData->getBuffer());
+		$blocks->setTag(self::PALETTE, $paletteData);
 
-		$nbt->setTag("Blocks", $blocks);
+		$nbt->setTag(self::DATA_BLOCKS, $blocks);
 
 		//TODO: tiles and entities
 	}
