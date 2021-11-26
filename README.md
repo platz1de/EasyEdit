@@ -8,11 +8,12 @@ Feature-rich WorldEditor for PocketMine-MP
 
 - async editing prevents server lag
 - large variety of commands
-- selection splitting reduces effect of editing
+- selection splitting reduces memory consumption
 - support for unique Patterns
 - selection axe & brushes
 - undo & redo your actions
 - tile support
+- load & save java selections (load MCEdit & Sponge format, save to Sponge)
 
 ## Commands
 
