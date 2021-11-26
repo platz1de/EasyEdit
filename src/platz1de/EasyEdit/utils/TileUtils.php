@@ -46,6 +46,7 @@ class TileUtils
 		$compoundTag->setInt(Tile::TAG_Z, $prevX);
 
 		//chest relation
+		//TODO: keep item order
 		if ($compoundTag->getTag(Chest::TAG_PAIRX) instanceof IntTag && $compoundTag->getTag(Chest::TAG_PAIRZ) instanceof IntTag) {
 			$prevPairX = $compoundTag->getInt(Chest::TAG_PAIRX);
 			$compoundTag->setInt(Chest::TAG_PAIRX, $maxX - $compoundTag->getInt(Chest::TAG_PAIRZ));
