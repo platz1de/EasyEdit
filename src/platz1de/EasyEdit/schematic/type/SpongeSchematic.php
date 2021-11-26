@@ -34,7 +34,7 @@ class SpongeSchematic extends SchematicType
 		$zSize = $nbt->getShort("Length");
 		$target->setPoint($offset);
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
-		$target->setPos2(new Vector3($xSize, $ySize, $zSize));
+		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
 		$target->getManager()->load($target->getPos1(), $target->getPos2());
 
 		switch ($version) {
