@@ -13,11 +13,10 @@ class McEditSchematic extends SchematicType
 {
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
-		//TODO: WEOffset
 		$xSize = $nbt->getShort("Width");
 		$ySize = $nbt->getShort("Height");
 		$zSize = $nbt->getShort("Length");
-		$target->setPoint(new Vector3(0, 0, 0));
+		$target->setPoint(new Vector3(-$nbt->getInt("WEOffsetX", 0), -$nbt->getInt("WEOffsetY", 0), -$nbt->getInt("WEOffsetZ", 0)));
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, $ySize, $zSize));
 		$target->getManager()->load($target->getPos1(), $target->getPos2());

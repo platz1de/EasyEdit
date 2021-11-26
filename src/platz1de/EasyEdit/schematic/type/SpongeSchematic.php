@@ -15,12 +15,23 @@ class SpongeSchematic extends SchematicType
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
 		$version = $nbt->getInt("Version", 1);
-		//TODO: Metadata
-		//TODO: Offset
+		$offset = new Vector3(0, 0, 0);
+		$metaData = $nbt->getCompoundTag("Metadata");
+		if ($metaData !== null) {
+			$offset = new Vector3(-$nbt->getInt("WEOffsetX", 0), -$nbt->getInt("WEOffsetY", 0), -$nbt->getInt("WEOffsetZ", 0));
+		}
+		//TODO: check why this is behaving weird (offsets seem to be wrong)
+		/*else {
+			$offset = $nbt->getIntArray("Offset", [0, 0, 0]);
+			foreach ($offset as $i => $v) {
+				$offset[$i] = \pocketmine\utils\Binary::signInt($v);
+			}
+			$offset = new Vector3(-$offset[0], -$offset[1], -$offset[2]));
+		}*/
 		$xSize = $nbt->getShort("Width");
 		$ySize = $nbt->getShort("Height");
 		$zSize = $nbt->getShort("Length");
-		$target->setPoint(new Vector3(0, 0, 0));
+		$target->setPoint($offset);
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, $ySize, $zSize));
 		$target->getManager()->load($target->getPos1(), $target->getPos2());
