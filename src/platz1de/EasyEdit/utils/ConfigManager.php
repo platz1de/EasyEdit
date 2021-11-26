@@ -10,13 +10,14 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "1.2.6";
+	private const CONFIG_VERSION = "1.2.7";
 
 	/**
 	 * @var int[]
 	 */
 	private static array $terrainIgnored = [];
 	private static bool $allowOtherHistory;
+	private static bool $sendDebug;
 	private static string $bedrockConversionDataSource;
 	private static string $bedrockPaletteDataSource;
 	private static string $javaPaletteDataSource;
@@ -90,12 +91,14 @@ class ConfigManager
 
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
 
+		self::$sendDebug = self::mustGetBool($config, "send-debug", true);
+
 		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
 		self::$bedrockPaletteDataSource = self::mustGetString($config, "bedrock-palette-data", "");
 		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
 		self::$rotationDataSource = self::mustGetString($config, "rotation-data", "");
 
-		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource);
+		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$sendDebug);
 	}
 
 	/**
@@ -160,5 +163,21 @@ class ConfigManager
 	public static function isAllowingOtherHistory(): bool
 	{
 		return self::$allowOtherHistory;
+	}
+
+	/**
+	 * @return void
+	 */
+	public static function sendDebug(bool $send): void
+	{
+		self::$sendDebug = $send;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isSendingDebug(): bool
+	{
+		return self::$sendDebug ?? true;
 	}
 }

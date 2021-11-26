@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\thread\input;
 
 use platz1de\EasyEdit\schematic\BlockConvertor;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 
@@ -19,11 +20,12 @@ class ConfigInputData extends InputData
 	private string $bedrockPaletteDataSource;
 	private string $javaPaletteDataSource;
 	private string $rotationDataSource;
+	private bool $sendDebug;
 
 	/**
 	 * @param int[] $terrainIgnored
 	 */
-	public static function from(array $terrainIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource, string $rotationDataSource): void
+	public static function from(array $terrainIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource, string $rotationDataSource, bool $sendDebug): void
 	{
 		$data = new self();
 		$data->terrainIgnored = $terrainIgnored;
@@ -31,6 +33,7 @@ class ConfigInputData extends InputData
 		$data->bedrockPaletteDataSource = $bedrockPaletteDataSource;
 		$data->javaPaletteDataSource = $javaPaletteDataSource;
 		$data->rotationDataSource = $rotationDataSource;
+		$data->sendDebug = $sendDebug;
 		$data->send();
 	}
 
@@ -38,6 +41,7 @@ class ConfigInputData extends InputData
 	{
 		HeightMapCache::setIgnore($this->terrainIgnored);
 		BlockConvertor::load($this->bedrockConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource, $this->rotationDataSource);
+		ConfigManager::sendDebug($this->sendDebug);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -50,6 +54,7 @@ class ConfigInputData extends InputData
 		$stream->putString($this->bedrockPaletteDataSource);
 		$stream->putString($this->javaPaletteDataSource);
 		$stream->putString($this->rotationDataSource);
+		$stream->putBool($this->sendDebug);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -62,5 +67,6 @@ class ConfigInputData extends InputData
 		$this->bedrockPaletteDataSource = $stream->getString();
 		$this->javaPaletteDataSource = $stream->getString();
 		$this->rotationDataSource = $stream->getString();
+		$this->sendDebug = $stream->getBool();
 	}
 }

@@ -6,11 +6,11 @@
 
 namespace platz1de\EasyEdit\thread;
 
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\CrashReportData;
 use platz1de\EasyEdit\thread\output\OutputData;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\thread\Thread;
 use ThreadedLogger;
@@ -67,7 +67,7 @@ class EditThread extends Thread
 						$this->setStatus(self::STATUS_RUNNING);
 						ThreadData::canExecute(); //clear pending cancel requests
 						EditTaskResultCache::clear();
-						$this->getLogger()->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
+						$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
 						$task->execute();
 						$this->setStatus(self::STATUS_IDLE);
 					} catch (Throwable $throwable) {
@@ -102,6 +102,17 @@ class EditThread extends Thread
 	public function getLogger(): ThreadedLogger
 	{
 		return $this->logger;
+	}
+
+	/**
+	 * @param string $message
+	 * @return void
+	 */
+	public function debug(string $message): void
+	{
+		if (ConfigManager::isSendingDebug()) {
+			$this->logger->debug($message);
+		}
 	}
 
 	/**
@@ -174,7 +185,7 @@ class EditThread extends Thread
 
 			while (!$stream->feof()) {
 				$data = InputData::fastDeserialize($stream->getString());
-				$this->getLogger()->debug("Received " . $data::class);
+				$this->debug("Received IN: " . $data::class);
 				$data->handle();
 			}
 		}
@@ -192,7 +203,7 @@ class EditThread extends Thread
 
 			while (!$stream->feof()) {
 				$data = OutputData::fastDeserialize($stream->getString());
-				EasyEdit::getInstance()->getLogger()->debug("Received " . $data::class);
+				$this->debug("Received OUT: " . $data::class);
 				$data->handle();
 			}
 		}
