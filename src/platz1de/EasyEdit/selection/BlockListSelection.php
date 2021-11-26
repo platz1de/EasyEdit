@@ -58,6 +58,9 @@ abstract class BlockListSelection extends Selection
 	 */
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void
 	{
+		if ($id === 0xD90) {
+			return;
+		}
 		if ($id === 0) {
 			$id = 0xD90; //structure_void
 		}
