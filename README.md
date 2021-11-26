@@ -42,8 +42,10 @@ History:
 
 Command | Description | Permission | Aliases/Notice
 ---|---|---|---
-//undo \<count>| Revert your latest change | easyedit.history easyedit.edit
-//redo \<count> | Revert your latest undo | easyedit.history easyedit.edit
+//undo [count] | Revert your latest change | easyedit.history easyedit.edit
+//undo \<target> [count] | Revert targets latest change | easyedit.history easyedit.edit easyedit.edit.other | Can be disabled via config
+//redo [count] | Revert your latest undo | easyedit.history easyedit.edit
+//redo \<target> [count] | Revert targets latest undo | easyedit.history easyedit.edit easyedit.edit.other | Can be disabled via config
 
 Clipboard:
 
