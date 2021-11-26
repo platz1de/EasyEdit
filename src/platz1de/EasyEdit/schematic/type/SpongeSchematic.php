@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\utils\BinaryStream;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -36,26 +37,39 @@ class SpongeSchematic extends SchematicType
 		$target->setPos2(new Vector3($xSize, $ySize, $zSize));
 		$target->getManager()->load($target->getPos1(), $target->getPos2());
 
-		$blockData = $nbt->getByteArray("BlockData");
-		$paletteData = $nbt->getCompoundTag("Palette");
+		switch ($version) {
+			case 1:
+			case 2:
+				$blockDataRaw = $nbt->getByteArray("BlockData");
+				$paletteData = $nbt->getCompoundTag("Palette");
+				break;
+			case 3:
+				$blocks = $nbt->getCompoundTag("Blocks");
+				if ($blocks === null) {
+					throw new UnexpectedValueException("Blocks tag missing");
+				}
+				$blockDataRaw = $blocks->getByteArray("Data");
+				$paletteData = $blocks->getCompoundTag("Palette");
+				break;
+			default:
+				throw new UnexpectedValueException("Unknown schematic version");
+		}
 		if ($paletteData === null) {
 			throw new UnexpectedValueException("Schematic is missing palette");
 		}
 		$palette = [];
-
 		foreach ($paletteData->getValue() as $name => $id) {
 			$palette[$id->getValue()] = BlockConvertor::getFromState($name);
 		}
 
-		$i = 0;
+		$blockData = new BinaryStream($blockDataRaw);
+
 		for ($y = 0; $y < $ySize; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
-					$index = ord($blockData[$i]);
-					[$id, $meta] = $palette[$index];
+					[$id, $meta] = $palette[$blockData->getUnsignedVarInt()];
 
 					$target->addBlock($x, $y, $z, ($id << Block::INTERNAL_METADATA_BITS) | $meta);
-					$i++;
 				}
 			}
 		}
