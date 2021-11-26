@@ -10,12 +10,13 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "1.2.5";
+	private const CONFIG_VERSION = "1.2.6";
 
 	/**
 	 * @var int[]
 	 */
 	private static array $terrainIgnored = [];
+	private static bool $allowOtherHistory;
 	private static string $bedrockConversionDataSource;
 	private static string $bedrockPaletteDataSource;
 	private static string $javaPaletteDataSource;
@@ -87,6 +88,8 @@ class ConfigManager
 			return BlockParser::getBlock($block)->getId();
 		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
 
+		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
+
 		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
 		self::$bedrockPaletteDataSource = self::mustGetString($config, "bedrock-palette-data", "");
 		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
@@ -149,5 +152,13 @@ class ConfigManager
 	public static function getTerrainIgnored(): array
 	{
 		return self::$terrainIgnored;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isAllowingOtherHistory(): bool
+	{
+		return self::$allowOtherHistory;
 	}
 }

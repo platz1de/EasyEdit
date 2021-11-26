@@ -1,4 +1,7 @@
-config-version: "1.2.5" #Please don't change this manually
+config-version: "1.2.6" #Please don't change this manually
+
+#Whether to allow user with "easyedit.history.other" permission to undo/redo other people's actions
+allow-history-other: true
 
 #Blocks which get ignored when calculating terrain height (e.g. when smoothing) or inserting selection
 #These get replaced with air when edited

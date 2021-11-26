@@ -13,6 +13,9 @@ permissions:
   easyedit.history:
     default: op
     description: "Allows the user to use the edit history"
+  easyedit.history.other:
+    default: op
+    description: "Allows the user to use the edit history of other people"
   easyedit.clipboard:
     default: op
     description: "Allows the user to use the clipboard"

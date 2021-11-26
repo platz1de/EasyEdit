@@ -61,12 +61,13 @@ class HistoryCache
 	}
 
 	/**
+	 * @param string $target
 	 * @param string $player
 	 */
-	public static function undoStep(string $player): void
+	public static function undoStep(string $target, string $player): void
 	{
-		if (self::canUndo($player)) {
-			$undo = array_pop(self::$pastCache[$player]);
+		if (self::canUndo($target)) {
+			$undo = array_pop(self::$pastCache[$target]);
 
 			if ($undo !== null) {
 				StaticStoredPasteTask::queue($player, $undo, false, true);
@@ -75,12 +76,13 @@ class HistoryCache
 	}
 
 	/**
+	 * @param string $target
 	 * @param string $player
 	 */
-	public static function redoStep(string $player): void
+	public static function redoStep(string $target, string $player): void
 	{
-		if (self::canRedo($player)) {
-			$redo = array_pop(self::$futureCache[$player]);
+		if (self::canRedo($target)) {
+			$redo = array_pop(self::$futureCache[$target]);
 
 			if ($redo !== null) {
 				StaticStoredPasteTask::queue($player, $redo, false);
