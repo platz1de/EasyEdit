@@ -91,9 +91,11 @@ class EditThread extends Thread
 	public function waitForData(): void
 	{
 		$this->synchronized(function (): void {
-			$this->wait();
-			$this->parseInput();
+			if ($this->inputData === "") {
+				$this->wait();
+			}
 		});
+		$this->parseInput();
 	}
 
 	/**
