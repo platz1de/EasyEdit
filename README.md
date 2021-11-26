@@ -58,6 +58,7 @@ Command | Description | Permission | Aliases/Notice
 //insert | Insert the Clipboard | easyedit.clipboard easyedit.edit | Paste only into air blocks
 //rotate | Rotate the Clipboard | easyedit.clipboard | Rotates by 90 Degrees
 //loadschematic \<schematicName> | Load a saved schematic | easyedit.readdisk easyedit.clipboard | //load
+//saveschematic \<schematicName> | Save your clipboard into a schematic | easyedit.writedisk easyedit.clipboard | //save
 
 Generation:
 
