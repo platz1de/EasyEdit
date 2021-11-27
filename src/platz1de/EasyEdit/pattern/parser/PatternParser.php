@@ -147,40 +147,22 @@ class PatternParser
 	private static function getPattern(string $pattern, array $children = []): Pattern
 	{
 		$args = explode(";", $pattern);
-		switch (array_shift($args)) {
-			case "not":
-				return NotPattern::from($children);
-			case "even":
-				return EvenPattern::from($children, PatternArgumentData::create()->parseAxes($args));
-			case "odd":
-				return OddPattern::from($children, PatternArgumentData::create()->parseAxes($args));
-			case "divisible":
-				return DivisiblePattern::from($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) ($args[0] ?? -1)));
-			case "block":
-				return BlockPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
-			case "above":
-				return AbovePattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
-			case "below":
-				return BelowPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
-			case "around":
-				return AroundPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? ""));
-			case "nat":
-			case "naturalized":
-				return NaturalizePattern::from($children);
-			case "smooth":
-				return SmoothPattern::from([]);
-			case "walls":
-			case "wall":
-				return WallPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0)));
-			case "sides":
-			case "side":
-				return SidesPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0)));
-			case "center":
-			case "middle":
-				return CenterPattern::from($children);
-		}
-
-		throw new ParseError("Unknown Pattern " . $pattern, true);
+		return match (array_shift($args)) {
+			"not" => NotPattern::from($children),
+			"even" => EvenPattern::from($children, PatternArgumentData::create()->parseAxes($args)),
+			"odd" => OddPattern::from($children, PatternArgumentData::create()->parseAxes($args)),
+			"divisible" => DivisiblePattern::from($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) ($args[0] ?? -1))),
+			"block" => BlockPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
+			"above" => AbovePattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
+			"below" => BelowPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
+			"around" => AroundPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
+			"nat", "naturalized" => NaturalizePattern::from($children),
+			"smooth" => SmoothPattern::from([]),
+			"walls", "wall" => WallPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
+			"sides", "side" => SidesPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
+			"center", "middle" => CenterPattern::from($children),
+			default => throw new ParseError("Unknown Pattern " . $pattern, true)
+		};
 	}
 
 	/**
