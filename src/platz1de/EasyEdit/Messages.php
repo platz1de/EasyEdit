@@ -71,7 +71,9 @@ class Messages
 			$messages->reload();
 		}
 
-		self::$messages = $messages->getAll();
+		/** @var string[] $data */
+		$data = $messages->getAll();
+		self::$messages = $data;
 
 		MessageInputData::from(self::$messages);
 	}

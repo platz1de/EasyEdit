@@ -40,8 +40,8 @@ class BenchmarkManager
 	}
 
 	/**
-	 * @param string $worldName
-	 * @param array  $results
+	 * @param string                           $worldName
+	 * @param array<array{string, float, int}> $results
 	 * @internal
 	 */
 	public static function benchmarkCallback(string $worldName, array $results): void

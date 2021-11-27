@@ -178,11 +178,11 @@ class EditThread extends Thread
 	private function parseInput(): void
 	{
 		if ($this->inputData !== "") {
+			$input = "";
 			$this->synchronized(function () use (&$input): void {
 				$input = $this->inputData;
 				$this->inputData = "";
 			});
-			/** @var string $input */
 			$stream = new ExtendedBinaryStream($input);
 
 			while (!$stream->feof()) {
@@ -196,11 +196,11 @@ class EditThread extends Thread
 	public function parseOutput(): void
 	{
 		if ($this->outputData !== "") {
+			$output = "";
 			$this->synchronized(function () use (&$output): void {
 				$output = $this->outputData;
 				$this->outputData = "";
 			});
-			/** @var string $output */
 			$stream = new ExtendedBinaryStream($output);
 
 			while (!$stream->feof()) {

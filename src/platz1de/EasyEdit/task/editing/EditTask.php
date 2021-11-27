@@ -121,14 +121,6 @@ abstract class EditTask extends ExecutableTask
 	}
 
 	/**
-	 * @return ThreadedLogger
-	 */
-	public function getLogger(): ThreadedLogger
-	{
-		return EditThread::getInstance()->getLogger();
-	}
-
-	/**
 	 * @param EditTaskHandler $handler
 	 */
 	abstract public function executeEdit(EditTaskHandler $handler): void;

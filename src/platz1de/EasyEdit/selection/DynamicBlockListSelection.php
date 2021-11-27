@@ -8,7 +8,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -36,7 +35,7 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @param Position $place
+	 * @param Vector3 $place
 	 * @return int[]
 	 */
 	public function getNeededChunks(Vector3 $place): array

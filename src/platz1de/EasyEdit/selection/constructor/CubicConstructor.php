@@ -77,19 +77,19 @@ class CubicConstructor
 		$zStart = $start;
 		$zEnd = $end;
 
-		if (in_array(Facing::DOWN, $sides)) {
+		if (in_array(Facing::DOWN, $sides, true)) {
 			$xStart = $xStart->up();
 			$zStart = $zStart->up();
 		}
-		if (in_array(Facing::UP, $sides)) {
+		if (in_array(Facing::UP, $sides, true)) {
 			$xEnd = $xEnd->down();
 			$zEnd = $zEnd->down();
 		}
 
-		if (in_array(Facing::NORTH, $sides)) {
+		if (in_array(Facing::NORTH, $sides, true)) {
 			$xStart = $xStart->south();
 		}
-		if (in_array(Facing::SOUTH, $sides)) {
+		if (in_array(Facing::SOUTH, $sides, true)) {
 			$xEnd = $xEnd->north();
 		}
 
