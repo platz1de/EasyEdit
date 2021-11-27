@@ -38,6 +38,7 @@ Command | Description | Permission | Aliases/Notice
 //stack \<count> | Stack the selected area | easyedit.edit | Look into the direction you want the selected blocks to stack into
 //istack \<count> | Stack the selected area without overwriting existing terrain | easyedit.edit
 //count [radius] | Count selected blocks | easyedit.select
+//extinguish [radius] | Extinguish fire | easyedit.edit | //ext
 
 History:
 
@@ -78,6 +79,7 @@ Command | Description | Permission | Aliases/Notice
 //blockinfo | Get a blockinfo stick | easyedit.util | //bi
 //status | Check on the EditThread | easyedit.manage
 //cancel | Cancel the current task | easyedit.manage
+//benchmark | Start a benchmark | easyedit.manage | This will create a temporary world and edit a few preset actions
 
 ## Patterns
 

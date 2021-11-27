@@ -3,40 +3,40 @@
 namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\command\CommandManager;
-use platz1de\EasyEdit\command\defaults\BenchmarkCommand;
-use platz1de\EasyEdit\command\defaults\BlockInfoCommand;
-use platz1de\EasyEdit\command\defaults\BrushCommand;
-use platz1de\EasyEdit\command\defaults\CancelCommand;
-use platz1de\EasyEdit\command\defaults\CenterCommand;
-use platz1de\EasyEdit\command\defaults\CopyCommand;
-use platz1de\EasyEdit\command\defaults\CountCommand;
-use platz1de\EasyEdit\command\defaults\CutCommand;
-use platz1de\EasyEdit\command\defaults\CylinderCommand;
-use platz1de\EasyEdit\command\defaults\ExtendCommand;
-use platz1de\EasyEdit\command\defaults\ExtinguishCommand;
-use platz1de\EasyEdit\command\defaults\FirstPositionCommand;
-use platz1de\EasyEdit\command\defaults\HollowCylinderCommand;
-use platz1de\EasyEdit\command\defaults\HollowSphereCommand;
-use platz1de\EasyEdit\command\defaults\InsertCommand;
-use platz1de\EasyEdit\command\defaults\LoadSchematicCommand;
-use platz1de\EasyEdit\command\defaults\MoveCommand;
-use platz1de\EasyEdit\command\defaults\NaturalizeCommand;
-use platz1de\EasyEdit\command\defaults\NoiseCommand;
-use platz1de\EasyEdit\command\defaults\PasteCommand;
-use platz1de\EasyEdit\command\defaults\RedoCommand;
-use platz1de\EasyEdit\command\defaults\ReplaceCommand;
-use platz1de\EasyEdit\command\defaults\RotateCommand;
-use platz1de\EasyEdit\command\defaults\SaveSchematicCommand;
-use platz1de\EasyEdit\command\defaults\SecondPositionCommand;
-use platz1de\EasyEdit\command\defaults\SetCommand;
-use platz1de\EasyEdit\command\defaults\SidesCommand;
-use platz1de\EasyEdit\command\defaults\SmoothCommand;
-use platz1de\EasyEdit\command\defaults\SphereCommand;
-use platz1de\EasyEdit\command\defaults\StackCommand;
-use platz1de\EasyEdit\command\defaults\StackInsertCommand;
-use platz1de\EasyEdit\command\defaults\StatusCommand;
-use platz1de\EasyEdit\command\defaults\UndoCommand;
-use platz1de\EasyEdit\command\defaults\WallCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\CopyCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\CutCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\InsertCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\LoadSchematicCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\PasteCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\RotateCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\SaveSchematicCommand;
+use platz1de\EasyEdit\command\defaults\generation\CylinderCommand;
+use platz1de\EasyEdit\command\defaults\generation\HollowCylinderCommand;
+use platz1de\EasyEdit\command\defaults\generation\HollowSphereCommand;
+use platz1de\EasyEdit\command\defaults\generation\NoiseCommand;
+use platz1de\EasyEdit\command\defaults\generation\SphereCommand;
+use platz1de\EasyEdit\command\defaults\history\RedoCommand;
+use platz1de\EasyEdit\command\defaults\history\UndoCommand;
+use platz1de\EasyEdit\command\defaults\selection\CenterCommand;
+use platz1de\EasyEdit\command\defaults\selection\CountCommand;
+use platz1de\EasyEdit\command\defaults\selection\ExtendCommand;
+use platz1de\EasyEdit\command\defaults\selection\ExtinguishCommand;
+use platz1de\EasyEdit\command\defaults\selection\FirstPositionCommand;
+use platz1de\EasyEdit\command\defaults\selection\MoveCommand;
+use platz1de\EasyEdit\command\defaults\selection\NaturalizeCommand;
+use platz1de\EasyEdit\command\defaults\selection\ReplaceCommand;
+use platz1de\EasyEdit\command\defaults\selection\SecondPositionCommand;
+use platz1de\EasyEdit\command\defaults\selection\SetCommand;
+use platz1de\EasyEdit\command\defaults\selection\SidesCommand;
+use platz1de\EasyEdit\command\defaults\selection\SmoothCommand;
+use platz1de\EasyEdit\command\defaults\selection\StackCommand;
+use platz1de\EasyEdit\command\defaults\selection\StackInsertCommand;
+use platz1de\EasyEdit\command\defaults\selection\WallCommand;
+use platz1de\EasyEdit\command\defaults\utility\BenchmarkCommand;
+use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
+use platz1de\EasyEdit\command\defaults\utility\BrushCommand;
+use platz1de\EasyEdit\command\defaults\utility\CancelCommand;
+use platz1de\EasyEdit\command\defaults\utility\StatusCommand;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\CompoundTile;
@@ -69,40 +69,49 @@ class EasyEdit extends PluginBase
 		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
 
 		CommandManager::registerCommands([
-			new SetCommand(),
+			//Selection
 			new FirstPositionCommand(),
 			new SecondPositionCommand(),
-			new UndoCommand(),
-			new RedoCommand(),
-			new CopyCommand(),
-			new PasteCommand(),
-			new ReplaceCommand(),
-			new InsertCommand(),
-			new CenterCommand(),
 			new ExtendCommand(),
-			new MoveCommand(),
-			new SphereCommand(),
-			new HollowSphereCommand(),
-			new StackCommand(),
-			new BrushCommand(),
+			new SetCommand(),
+			new ReplaceCommand(),
 			new NaturalizeCommand(),
 			new SmoothCommand(),
-			new CylinderCommand(),
-			new HollowCylinderCommand(),
+			new CenterCommand(),
 			new WallCommand(),
 			new SidesCommand(),
+			new MoveCommand(),
+			new StackCommand(),
+			new StackInsertCommand(),
 			new CountCommand(),
+			new ExtinguishCommand(),
+
+			//History
+			new UndoCommand(),
+			new RedoCommand(),
+
+			//Clipboard
+			new CopyCommand(),
+			new CutCommand(),
+			new PasteCommand(),
+			new InsertCommand(),
+			new RotateCommand(),
+			new LoadSchematicCommand(),
+			new SaveSchematicCommand(),
+
+			//Generation
+			new SphereCommand(),
+			new HollowSphereCommand(),
+			new CylinderCommand(),
+			new HollowCylinderCommand(),
+			new NoiseCommand(),
+
+			//Utility
+			new BrushCommand(),
+			new BlockInfoCommand(),
 			new StatusCommand(),
 			new CancelCommand(),
 			new BenchmarkCommand(),
-			new ExtinguishCommand(),
-			new BlockInfoCommand(),
-			new LoadSchematicCommand(),
-			new NoiseCommand(),
-			new RotateCommand(),
-			new CutCommand(),
-			new StackInsertCommand(),
-			new SaveSchematicCommand()
 		]);
 
 		//Just for sending block data without using the protocol directly
