@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit;
 use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\defaults\clipboard\CopyCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\CutCommand;
+use platz1de\EasyEdit\command\defaults\clipboard\FlipCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\InsertCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\LoadSchematicCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\PasteCommand;
@@ -96,6 +97,7 @@ class EasyEdit extends PluginBase
 			new PasteCommand(),
 			new InsertCommand(),
 			new RotateCommand(),
+			new FlipCommand(),
 			new LoadSchematicCommand(),
 			new SaveSchematicCommand(),
 

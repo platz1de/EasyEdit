@@ -1,4 +1,4 @@
-message-version: "1.2.7" #Please don't change this manually
+message-version: "1.2.8" #Please don't change this manually
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
@@ -25,6 +25,7 @@ blocks-copied: "{changed} blocks were copied in {time}s"
 blocks-pasted: "{changed} blocks were pasted in {time}s"
 blocks-counted: "{changed} blocks were counted in {time}s"
 blocks-rotated: "{changed} blocks were rotated in {time}s"
+blocks-flipped: "{changed} blocks were flipped in {time}s"
 blocks-cut: "{changed} blocks were cut in {time}s"
 
 #Args: {time} {changed} {name}

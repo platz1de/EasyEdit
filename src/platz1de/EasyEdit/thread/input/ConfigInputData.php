@@ -20,12 +20,13 @@ class ConfigInputData extends InputData
 	private string $bedrockPaletteDataSource;
 	private string $javaPaletteDataSource;
 	private string $rotationDataSource;
+	private string $flipDataSource;
 	private bool $sendDebug;
 
 	/**
 	 * @param int[] $terrainIgnored
 	 */
-	public static function from(array $terrainIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource, string $rotationDataSource, bool $sendDebug): void
+	public static function from(array $terrainIgnored, string $bedrockConversionDataSource, string $bedrockPaletteDataSource, string $javaPaletteDataSource, string $rotationDataSource, string $flipDataSource, bool $sendDebug): void
 	{
 		$data = new self();
 		$data->terrainIgnored = $terrainIgnored;
@@ -33,6 +34,7 @@ class ConfigInputData extends InputData
 		$data->bedrockPaletteDataSource = $bedrockPaletteDataSource;
 		$data->javaPaletteDataSource = $javaPaletteDataSource;
 		$data->rotationDataSource = $rotationDataSource;
+		$data->flipDataSource = $flipDataSource;
 		$data->sendDebug = $sendDebug;
 		$data->send();
 	}
@@ -40,7 +42,7 @@ class ConfigInputData extends InputData
 	public function handle(): void
 	{
 		HeightMapCache::setIgnore($this->terrainIgnored);
-		BlockConvertor::load($this->bedrockConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource, $this->rotationDataSource);
+		BlockConvertor::load($this->bedrockConversionDataSource, $this->bedrockPaletteDataSource, $this->javaPaletteDataSource, $this->rotationDataSource, $this->flipDataSource);
 		ConfigManager::sendDebug($this->sendDebug);
 	}
 
@@ -54,6 +56,7 @@ class ConfigInputData extends InputData
 		$stream->putString($this->bedrockPaletteDataSource);
 		$stream->putString($this->javaPaletteDataSource);
 		$stream->putString($this->rotationDataSource);
+		$stream->putString($this->flipDataSource);
 		$stream->putBool($this->sendDebug);
 	}
 
@@ -67,6 +70,7 @@ class ConfigInputData extends InputData
 		$this->bedrockPaletteDataSource = $stream->getString();
 		$this->javaPaletteDataSource = $stream->getString();
 		$this->rotationDataSource = $stream->getString();
+		$this->flipDataSource = $stream->getString();
 		$this->sendDebug = $stream->getBool();
 	}
 }

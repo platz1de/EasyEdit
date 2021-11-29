@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\Tile;
+use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -51,6 +52,43 @@ class TileUtils
 			$prevPairX = $compoundTag->getInt(Chest::TAG_PAIRX);
 			$compoundTag->setInt(Chest::TAG_PAIRX, $maxX - $compoundTag->getInt(Chest::TAG_PAIRZ));
 			$compoundTag->setInt(Chest::TAG_PAIRZ, $prevPairX);
+		}
+
+		return $compoundTag;
+	}
+
+	/**
+	 * @param int         $axis
+	 * @param CompoundTag $compoundTag
+	 * @param int         $maxX
+	 * @return CompoundTag
+	 */
+	public static function flipCompound(int $axis, CompoundTag $compoundTag, int $maxX): CompoundTag
+	{
+		$compoundTag = clone $compoundTag;
+		switch ($axis) {
+			case Axis::X:
+				$compoundTag->setInt(Tile::TAG_X, $maxX - $compoundTag->getInt(Tile::TAG_X));
+				break;
+			case Axis::Z:
+				$compoundTag->setInt(Tile::TAG_Z, $maxX - $compoundTag->getInt(Tile::TAG_Z));
+				break;
+			case Axis::Y:
+				$compoundTag->setInt(Tile::TAG_Y, $maxX - $compoundTag->getInt(Tile::TAG_Y));
+				break;
+		}
+
+		//chest relation
+		//TODO: keep item order
+		if ($compoundTag->getTag(Chest::TAG_PAIRX) instanceof IntTag && $compoundTag->getTag(Chest::TAG_PAIRZ) instanceof IntTag) {
+			switch ($axis) {
+				case Axis::X:
+					$compoundTag->setInt(Chest::TAG_PAIRX, $maxX - $compoundTag->getInt(Chest::TAG_PAIRX));
+					break;
+				case Axis::Z:
+					$compoundTag->setInt(Chest::TAG_PAIRZ, $maxX - $compoundTag->getInt(Chest::TAG_PAIRZ));
+					break;
+			}
 		}
 
 		return $compoundTag;

@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -62,7 +63,9 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$rotated->getManager()->load($rotated->getPos1(), $rotated->getPos2());
 		$rotated->setPoint(new Vector3($selection->getPos2()->getZ() - $selection->getPoint()->getZ(), $selection->getPoint()->getY(), $selection->getPoint()->getX()));
 		$selection->useOnBlocks(new Vector3(0, 0, 0), function (int $x, int $y, int $z) use ($selection, $rotated): void {
-			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockConvertor::rotate($selection->getIterator()->getBlockAt($x, $y, $z)));
+			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
+			Selection::processBlock($block);
+			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockConvertor::rotate($block));
 		}, SelectionContext::full(), $selection);
 		foreach ($selection->getTiles() as $tile) {
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));

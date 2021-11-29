@@ -1,4 +1,4 @@
-config-version: "1.2.7" #Please don't change this manually
+config-version: "1.2.8" #Please don't change this manually
 
 #Whether to allow user with "easyedit.history.other" permission to undo/redo other people's actions
 allow-history-other: true
@@ -19,3 +19,4 @@ bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/
 bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock_palette.json"
 java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/java_palette.json"
 rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/rotation-data.json"
+flip-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/flip-data.json"

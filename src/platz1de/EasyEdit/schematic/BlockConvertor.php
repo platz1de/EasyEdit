@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\schematic;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\Block;
+use pocketmine\math\Axis;
 use pocketmine\utils\Internet;
 use Throwable;
 use UnexpectedValueException;
@@ -34,19 +35,26 @@ class BlockConvertor
 	 * @var array<int, int>
 	 */
 	private static array $rotationData;
+	/**
+	 * @var array<int, array<int, int>>
+	 */
+	private static array $flipData;
 
-	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource, string $rotationSource): void
+	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource, string $rotationSource, string $flipSource): void
 	{
 		self::$conversionFrom = [];
 		self::$paletteFrom = [];
 		self::$paletteTo = [];
+		self::$rotationData = [];
+		self::$flipData = [];
 
 		//This should only be executed on edit thread
 		$bedrockData = Internet::getURL($bedrockSource, 10, [], $err);
 		$bedrockPaletteData = Internet::getURL($bedrockPaletteSource, 10, [], $err);
 		$javaPaletteData = Internet::getURL($javaPaletteSource, 10, [], $err);
 		$rotationData = Internet::getURL($rotationSource, 10, [], $err);
-		if ($bedrockData === null || $bedrockPaletteData === null || $javaPaletteData === null || $rotationData === null) {
+		$flipData = Internet::getURL($flipSource, 10, [], $err);
+		if ($bedrockData === null || $bedrockPaletteData === null || $javaPaletteData === null || $rotationData === null || $flipData === null) {
 			EditThread::getInstance()->getLogger()->error("Failed to load conversion data, schematic conversion is not available");
 			if (isset($err)) {
 				EditThread::getInstance()->getLogger()->logException($err);
@@ -59,8 +67,9 @@ class BlockConvertor
 			$bedrockPalette = json_decode($bedrockPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$javaPalette = json_decode($javaPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 			$rotations = json_decode($rotationData->getBody(), true, 512, JSON_THROW_ON_ERROR);
+			$flips = json_decode($flipData->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
-			if (!is_array($bedrockBlocks) || !is_array($bedrockPalette) || !is_array($javaPalette) || !is_array($rotations)) {
+			if (!is_array($bedrockBlocks) || !is_array($bedrockPalette) || !is_array($javaPalette) || !is_array($rotations) || !is_array($flips)) {
 				throw new UnexpectedValueException("Conversion data does not represent arrays");
 			}
 		} catch (Throwable $e) {
@@ -85,6 +94,19 @@ class BlockConvertor
 			$idData = BlockParser::fromStringId($preRotationId);
 			$rotatedIdData = BlockParser::fromStringId($pastRotationId);
 			self::$rotationData[$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $rotatedIdData[0] << Block::INTERNAL_METADATA_BITS | $rotatedIdData[1];
+		}
+		foreach ($flips as $axisName => $axisFlips) {
+			$axis = match ($axisName) {
+				"xAxis" => Axis::X,
+				"yAxis" => Axis::Y,
+				"zAxis" => Axis::Z,
+				default => throw new UnexpectedValueException("Unknown axis name $axisName")
+			};
+			foreach ($axisFlips as $preFlipId => $pastFlipId) {
+				$idData = BlockParser::fromStringId($preFlipId);
+				$flippedIdData = BlockParser::fromStringId($pastFlipId);
+				self::$flipData[$axis][$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $flippedIdData[0] << Block::INTERNAL_METADATA_BITS | $flippedIdData[1];
+			}
 		}
 	}
 
@@ -126,5 +148,15 @@ class BlockConvertor
 	public static function rotate(int $id): int
 	{
 		return self::$rotationData[$id] ?? $id;
+	}
+
+	/**
+	 * @param int $axis
+	 * @param int $id
+	 * @return int
+	 */
+	public static function flip(int $axis, int $id): int
+	{
+		return self::$flipData[$axis][$id] ?? $id;
 	}
 }

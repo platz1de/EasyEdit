@@ -10,7 +10,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "1.2.7";
+	private const CONFIG_VERSION = "1.2.8";
 
 	/**
 	 * @var int[]
@@ -22,6 +22,7 @@ class ConfigManager
 	private static string $bedrockPaletteDataSource;
 	private static string $javaPaletteDataSource;
 	private static string $rotationDataSource;
+	private static string $flipDataSource;
 
 	public static function load(): void
 	{
@@ -97,8 +98,9 @@ class ConfigManager
 		self::$bedrockPaletteDataSource = self::mustGetString($config, "bedrock-palette-data", "");
 		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
 		self::$rotationDataSource = self::mustGetString($config, "rotation-data", "");
+		self::$flipDataSource = self::mustGetString($config, "flip-data", "");
 
-		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$sendDebug);
+		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$sendDebug);
 	}
 
 	/**
