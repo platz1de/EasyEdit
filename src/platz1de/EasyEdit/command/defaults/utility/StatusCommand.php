@@ -60,11 +60,11 @@ class StatusCommand extends EasyEditCommand
 	private static function getColoredTiming(): string
 	{
 		$time = microtime(true) - EditThread::getInstance()->getLastResponse();
-		if ($time < 1) {
+		if ($time < 10) {
 			return TextFormat::GREEN . round($time * 1000) . "ms" . TextFormat::RESET;
 		}
 
-		if ($time < 10) {
+		if ($time < 60) {
 			return TextFormat::GOLD . round($time * 1000) . "ms" . TextFormat::RESET;
 		}
 
