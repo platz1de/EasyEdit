@@ -29,7 +29,8 @@ class BenchmarkCommand extends EasyEditCommand
 
 		Messages::send($player, "benchmark-start");
 
-		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($player): void {
+		$executor = $player->getName();
+		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($executor): void {
 			$i = 0;
 			$resultMsg = array_map(static function (array $data) use (&$i): string {
 				return Messages::replace("benchmark-result", [
@@ -39,7 +40,7 @@ class BenchmarkCommand extends EasyEditCommand
 					"{blocks}" => MixedUtils::humanReadable($data[2])
 				]);
 			}, $results);
-			Messages::send($player, "benchmark-finished", [
+			Messages::send($executor, "benchmark-finished", [
 				"{tps_avg}" => (string) round($tpsAvg, 2),
 				"{tps_min}" => (string) $tpsMin,
 				"{load_avg}" => (string) round($loadAvg, 2),
