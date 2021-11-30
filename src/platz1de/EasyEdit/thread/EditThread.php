@@ -8,6 +8,7 @@ namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\InputData;
+use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\CrashReportData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -205,8 +206,13 @@ class EditThread extends Thread
 
 			while (!$stream->feof()) {
 				$data = OutputData::fastDeserialize($stream->getString());
-				$this->debug("Received OUT: " . $data::class);
-				$data->handle();
+				if ($data instanceof ChunkRequestData) {
+					EditAdapter::waitForTick($data);
+				} else {
+					$start = microtime(true);
+					$data->handle();
+					$this->debug("Handled OUT: " . $data::class . " in " . (microtime(true) - $start) . "s");
+				}
 			}
 		}
 	}
