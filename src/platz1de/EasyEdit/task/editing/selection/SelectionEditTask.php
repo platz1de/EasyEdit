@@ -7,6 +7,8 @@ use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
+use pocketmine\world\format\Chunk;
+use pocketmine\world\World;
 
 abstract class SelectionEditTask extends EditTask
 {
@@ -51,6 +53,22 @@ abstract class SelectionEditTask extends EditTask
 				return; //task was cancelled
 			}
 		}
+	}
+
+	/**
+	 * @param Chunk[] $chunks
+	 * @return Chunk[]
+	 */
+	public function filterChunks(array $chunks): array
+	{
+		foreach ($chunks as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			//separate chunks which are only loaded for patterns
+			if (!$this->current->isChunkOfSelection($x, $z, $this->position)) {
+				unset($chunks[$hash]);
+			}
+		}
+		return $chunks;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

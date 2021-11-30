@@ -15,7 +15,7 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\MixedUtils;
-use ThreadedLogger;
+use pocketmine\world\format\Chunk;
 
 abstract class EditTask extends ExecutableTask
 {
@@ -80,17 +80,8 @@ abstract class EditTask extends ExecutableTask
 		}
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 
-		//foreach ($handler->getResult()->getChunks() as $hash => $chunk) {
-		//	World::getXZ($hash, $x, $z);
-		//	//separate chunks which are only loaded for patterns
-		//	if ($this->selection->isChunkOfSelection($x, $z, $this->place)) {
-		//		$result->addChunk($x, $z, $chunk);
-		//	}
-		//}
-
-		//TODO: filter pattern chunks
 		if ($this->data->isSavingChunks()) {
-			ResultingChunkData::from($this->world, $handler->getResult()->getChunks(), $handler->getTiles());
+			ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles());
 		}
 
 		if ($this->data->isFinalPiece()) {
@@ -132,6 +123,15 @@ abstract class EditTask extends ExecutableTask
 	 * @param AdditionalDataManager $data
 	 */
 	abstract public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void;
+
+	/**
+	 * @param Chunk[] $chunks
+	 * @return Chunk[]
+	 */
+	public function filterChunks(array $chunks): array
+	{
+		return $chunks;
+	}
 
 	/**
 	 * @return BlockListSelection
