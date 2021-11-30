@@ -14,9 +14,10 @@ send-debug: false
 
 #Better don't change this, the following is mainly for transparency
 #Conversion data source, requires specific Format
-#for more information see https://github.com/platz1de/EasyEdit-Data
-bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock-conversion-map.json"
-bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/bedrock_palette.json"
-java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/java_palette.json"
-rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/rotation-data.json"
-flip-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/master/flip-data.json"
+#for more information see https://github.com/platz1de/EasyEdit-Data/tree/format-v2.0
+#If you want to use your own data, the simplest way is to fork the data repository and modify some values
+bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/bedrock-conversion-map.json"
+bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/bedrock_palette.json"
+java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/java_palette.json"
+rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/rotation-data.json"
+flip-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/flip-data.json"
