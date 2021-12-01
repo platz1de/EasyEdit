@@ -63,8 +63,7 @@ class Messages
 			} else {
 				//We can't update for major releases
 				copy($messages->getPath(), $messages->getPath() . ".old");
-				unlink($messages->getPath());
-				EasyEdit::getInstance()->saveDefaultConfig();
+				EasyEdit::getInstance()->saveResource("messages.yml", true);
 
 				EasyEdit::getInstance()->getLogger()->warning("Your messages were replaced with a newer Version");
 			}
