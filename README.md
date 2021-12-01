@@ -6,14 +6,18 @@ Feature-rich WorldEditor for PocketMine-MP
 
 ## Features
 
-- async editing prevents server lag
 - large variety of commands
-- selection splitting reduces memory consumption
+- High performance:
+    - async editing, allowing the server to run normally while editing in the background
+    - low memory consumption by splitting your actions into multiple smaller edits
 - support for unique Patterns
+    - set blocks in effectively infinite ways
+    - see [Pattern Documentation](#Patterns)
 - selection axe & brushes
 - undo & redo your actions
 - tile support
 - load & save java selections (load MCEdit & Sponge format, save to Sponge)
+- rotate & flip support
 
 ## Commands
 
