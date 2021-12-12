@@ -68,7 +68,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		$flipped->getManager()->load($flipped->getPos1(), $flipped->getPos2());
 		switch ($this->axis) {
 			case Axis::X:
-				$flipped->setPoint(new Vector3($selection->getPos2()->getX() - $selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
+				$flipped->setPoint(new Vector3(-$selection->getPos2()->getX() - $selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
 				$selection->useOnBlocks(new Vector3(0, 0, 0), function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
@@ -79,7 +79,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				}
 				break;
 			case Axis::Y:
-				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), $selection->getPos2()->getY() - $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
+				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), -$selection->getPos2()->getY() - $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
 				$selection->useOnBlocks(new Vector3(0, 0, 0), function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
@@ -90,7 +90,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				}
 				break;
 			case Axis::Z:
-				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPos2()->getZ() - $selection->getPoint()->getZ()));
+				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), $selection->getPoint()->getY(), -$selection->getPos2()->getZ() - $selection->getPoint()->getZ()));
 				$selection->useOnBlocks(new Vector3(0, 0, 0), function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);

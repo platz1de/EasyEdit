@@ -22,7 +22,7 @@ class McEditSchematic extends SchematicType
 		$xSize = $nbt->getShort(self::TAG_WIDTH);
 		$ySize = $nbt->getShort(self::TAG_HEIGHT);
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
-		$target->setPoint(new Vector3(-$nbt->getInt(self::OFFSET_X, 0), -$nbt->getInt(self::OFFSET_Y, 0), -$nbt->getInt(self::OFFSET_Z, 0)));
+		$target->setPoint(new Vector3($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0), $nbt->getInt(self::OFFSET_Z, 0)));
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, $ySize, $zSize));
 		$target->getManager()->load($target->getPos1(), $target->getPos2());

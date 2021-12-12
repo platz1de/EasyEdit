@@ -32,7 +32,7 @@ class SpongeSchematic extends SchematicType
 		$offset = new Vector3(0, 0, 0);
 		$metaData = $nbt->getCompoundTag(self::METADATA);
 		if ($metaData !== null) {
-			$offset = new Vector3(-$nbt->getInt(McEditSchematic::OFFSET_X, 0), -$nbt->getInt(McEditSchematic::OFFSET_Y, 0), -$nbt->getInt(McEditSchematic::OFFSET_Z, 0));
+			$offset = new Vector3($nbt->getInt(McEditSchematic::OFFSET_X, 0), $nbt->getInt(McEditSchematic::OFFSET_Y, 0), $nbt->getInt(McEditSchematic::OFFSET_Z, 0));
 		}
 		//TODO: check why this is behaving weird (offsets seem to be wrong)
 		/*else {
@@ -95,9 +95,9 @@ class SpongeSchematic extends SchematicType
 		$nbt->setInt(self::FORMAT_VERSION, 3);
 		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
-		$metaData->setInt(McEditSchematic::OFFSET_X, -$target->getPoint()->getFloorX());
-		$metaData->setInt(McEditSchematic::OFFSET_Y, -$target->getPoint()->getFloorY());
-		$metaData->setInt(McEditSchematic::OFFSET_Z, -$target->getPoint()->getFloorZ());
+		$metaData->setInt(McEditSchematic::OFFSET_X, $target->getPoint()->getFloorX());
+		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->getFloorY());
+		$metaData->setInt(McEditSchematic::OFFSET_Z, $target->getPoint()->getFloorZ());
 		$nbt->setTag(self::METADATA, $metaData);
 		//$nbt->setIntArray("Offset", [-$target->getPoint()->getFloorX(), -$target->getPoint()->getFloorY(), -$target->getPoint()->getFloorZ()]);
 		$xSize = $target->getSize()->getFloorX();

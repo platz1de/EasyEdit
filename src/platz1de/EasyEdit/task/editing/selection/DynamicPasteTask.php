@@ -72,7 +72,7 @@ class DynamicPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
-		$place = $this->getPosition()->subtractVector($selection->getPoint());
+		$place = $this->getPosition()->addVector($selection->getPoint());
 		$ox = $place->getFloorX();
 		$oy = $place->getFloorY();
 		$oz = $place->getFloorZ();
@@ -103,7 +103,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->subtractVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->subtractVector($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->addVector($this->selection->getPoint()));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
