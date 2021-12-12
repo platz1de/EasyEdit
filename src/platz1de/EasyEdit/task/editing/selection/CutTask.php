@@ -25,6 +25,8 @@ class CutTask extends ExecutableTask
 	private string $world;
 	private Selection $selection;
 	private Vector3 $position;
+	private CopyTask $executor1;
+	private SetTask $executor2;
 
 	/**
 	 * @param string    $owner
@@ -65,13 +67,15 @@ class CutTask extends ExecutableTask
 		$copyData->setResultHandler(static function (EditTask $task, int $changeId): void {
 			ClipboardCacheData::from($task->getOwner(), $changeId);
 		});
-		CopyTask::from($this->getOwner(), $this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1))->execute();
+		$this->executor1 = CopyTask::from($this->getOwner(), $this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1));
+		$this->executor1->execute();
 		$setData = new AdditionalDataManager(true, true);
 		$setData->setResultHandler(static function (EditTask $task, int $changeId): void {
 			HistoryCacheData::from($task->getOwner(), $changeId, false);
 			CutTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		SetTask::from($this->getOwner(), $this->world, $setData, $this->selection, $this->position, new Vector3(0, 0, 0), StaticBlock::from([], PatternArgumentData::create()->setRealBlock(0)))->execute();
+		$this->executor2 = SetTask::from($this->getOwner(), $this->world, $setData, $this->selection, $this->position, new Vector3(0, 0, 0), StaticBlock::from([], PatternArgumentData::create()->setRealBlock(0)));
+		$this->executor2->execute();
 	}
 
 	/**
@@ -83,6 +87,11 @@ class CutTask extends ExecutableTask
 	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
 		MessageSendData::from($player, Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed]));
+	}
+
+	public function getProgress(): float
+	{
+		return ($this->executor1->getProgress() + (isset($this->executor2) ? $this->executor2->getProgress() : 0)) / 2;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

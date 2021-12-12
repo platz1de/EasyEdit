@@ -20,6 +20,7 @@ class StaticStoredPasteTask extends ExecutableTask
 	private int $saveId;
 	private bool $keep;
 	private bool $isUndo;
+	private StaticPasteTask $executor;
 
 	/**
 	 * @param string $owner
@@ -71,7 +72,13 @@ class StaticStoredPasteTask extends ExecutableTask
 			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
 			StaticPasteTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0))->execute();
+		$this->executor = StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+		$this->executor->execute();
+	}
+
+	public function getProgress(): float
+	{
+		return $this->executor->getProgress();
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

@@ -62,6 +62,11 @@ class SchematicSaveTask extends ExecutableTask
 		MessageSendData::from($this->getOwner(), Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)]));
 	}
 
+	public function getProgress(): float
+	{
+		return 0; //No splitting
+	}
+
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->schematicPath);

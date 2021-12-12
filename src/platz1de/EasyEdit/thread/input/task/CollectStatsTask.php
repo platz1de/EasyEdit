@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\thread\input\task;
 
 use Closure;
 use platz1de\EasyEdit\cache\TaskCache;
-use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -29,20 +28,14 @@ class CollectStatsTask extends InputData
 		$name = "unknown";
 		$id = -1;
 		$player = "EasyEdit";
-		$totalPieces = -1;
-		$piecesLeft = -1;
+		$progress = 0;
 		if ($task instanceof ExecutableTask) {
 			$name = $task->getTaskName();
 			$id = $task->getTaskId();
 			$player = $task->getOwner();
-			$totalPieces = 1;
-			$piecesLeft = 1;
-			if ($task instanceof SelectionEditTask) {
-				$totalPieces = $task->getTotalPieces();
-				$piecesLeft = $task->getPiecesLeft();
-			}
+			$progress = $task->getProgress();
 		}
-		StatsCollectResult::from($this->cacheId, $name, $id, $player, $totalPieces, $piecesLeft, ThreadData::getQueueLength(), StorageModule::getSize(), memory_get_usage(), memory_get_usage(true));
+		StatsCollectResult::from($this->cacheId, $name, $id, $player, $progress, ThreadData::getQueueLength(), StorageModule::getSize(), memory_get_usage(), memory_get_usage(true));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

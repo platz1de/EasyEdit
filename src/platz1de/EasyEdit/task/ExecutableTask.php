@@ -60,6 +60,11 @@ abstract class ExecutableTask
 	abstract public function getTaskName(): string;
 
 	/**
+	 * @return float
+	 */
+	abstract public function getProgress(): float;
+
+	/**
 	 * @return int
 	 */
 	public function getTaskId(): int

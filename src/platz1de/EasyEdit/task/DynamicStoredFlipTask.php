@@ -107,6 +107,11 @@ class DynamicStoredFlipTask extends ExecutableTask
 		MessageSendData::from($this->getOwner(), Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())]));
 	}
 
+	public function getProgress(): float
+	{
+		return 0; //No splitting
+	}
+
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt($this->saveId);

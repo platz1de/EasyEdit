@@ -126,4 +126,9 @@ abstract class SelectionEditTask extends EditTask
 	{
 		return $this->piecesLeft;
 	}
+
+	public function getProgress(): float
+	{
+		return ($this->totalPieces - $this->piecesLeft) / $this->totalPieces;
+	}
 }

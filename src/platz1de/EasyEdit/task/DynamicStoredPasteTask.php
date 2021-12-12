@@ -19,6 +19,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	private Vector3 $position;
 	private bool $keep;
 	private bool $insert;
+	private DynamicPasteTask $executor;
 
 	/**
 	 * @param string  $owner
@@ -69,7 +70,13 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$selection instanceof DynamicBlockListSelection) {
 			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . DynamicBlockListSelection::class);
 		}
-		DynamicPasteTask::from($this->getOwner(), $this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert)->execute();
+		$this->executor = DynamicPasteTask::from($this->getOwner(), $this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
+		$this->executor->execute();
+	}
+
+	public function getProgress(): float
+	{
+		return $this->executor->getProgress();
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
