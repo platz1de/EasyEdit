@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\utils;
 
 use pocketmine\entity\Location;
-use pocketmine\world\World;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class VectorUtils
 {
@@ -51,5 +51,10 @@ class VectorUtils
 	public static function enforceHeight(Vector3 $vector): Vector3
 	{
 		return new Vector3($vector->getX(), min(World::Y_MAX - 1, max(0, $vector->getY())), $vector->getZ());
+	}
+
+	public static function isVectorInBoundaries(Vector3 $vector, Vector3 $min, Vector3 $max): bool
+	{
+		return $vector->getX() >= $min->getX() && $vector->getX() <= $max->getX() && $vector->getY() >= $min->getY() && $vector->getY() <= $max->getY() && $vector->getZ() >= $min->getZ() && $vector->getZ() <= $max->getZ();
 	}
 }

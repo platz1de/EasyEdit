@@ -115,7 +115,7 @@ class CubicConstructor
 	 */
 	public static function single(Vector3 $block, Closure $closure, Vector3 $min = null, Vector3 $max = null): void
 	{
-		if (($min === null || ($min->getX() <= $block->getX() && $min->getY() <= $block->getY() && $min->getZ() <= $block->getZ())) && ($max === null || ($max->getX() >= $block->getX() && $max->getY() >= $block->getY() && $max->getZ() >= $block->getZ()))) {
+		if (($min === null || $max === null || VectorUtils::isVectorInBoundaries($block, $min, $max))) {
 			$closure($block->getX(), $block->getY(), $block->getZ());
 		}
 	}
