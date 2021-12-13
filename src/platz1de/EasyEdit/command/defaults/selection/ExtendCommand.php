@@ -8,6 +8,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\World;
@@ -43,20 +44,11 @@ class ExtendCommand extends EasyEditCommand
 			$pos2 = new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ());
 		} else {
 			$count = (int) ($args[0] ?? 1);
-			$yaw = $player->getLocation()->getYaw();
-			$pitch = $player->getLocation()->getPitch();
-			if ($pitch >= 45) {
-				$pos1 = $pos1->down($count);
-			} elseif ($pitch <= -45) {
-				$pos2 = $pos2->up($count);
-			} elseif ($yaw >= 315 || $yaw < 45) {
-				$pos2 = $pos2->south($count);
-			} elseif ($yaw < 135) {
-				$pos1 = $pos1->west($count);
-			} elseif ($yaw < 225) {
-				$pos1 = $pos1->north($count);
+			$offset = VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), $count);
+			if ($count < 0 xor $offset->abs()->equals($offset)) {
+				$pos2 = $pos2->addVector($offset);
 			} else {
-				$pos2 = $pos2->east($count);
+				$pos1 = $pos1->addVector($offset);
 			}
 		}
 
