@@ -58,10 +58,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = StorageModule::getStored($this->saveId);
-		if (!$selection instanceof DynamicBlockListSelection) {
-			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . DynamicBlockListSelection::class);
-		}
+		$selection = StorageModule::mustGetDynamic($this->saveId);
 		$flipped = new DynamicBlockListSelection($selection->getPlayer());
 		$flipped->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$flipped->setPos2(new Vector3($selection->getPos2()->getX(), $selection->getPos2()->getY(), $selection->getPos2()->getZ()));

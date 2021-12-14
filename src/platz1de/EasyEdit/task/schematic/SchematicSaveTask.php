@@ -54,10 +54,7 @@ class SchematicSaveTask extends ExecutableTask
 	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = StorageModule::getStored($this->saveId);
-		if (!$selection instanceof DynamicBlockListSelection) {
-			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . DynamicBlockListSelection::class);
-		}
+		$selection = StorageModule::mustGetDynamic($this->saveId);
 		SchematicFileAdapter::createFromSelection($this->schematicPath, $selection);
 		MessageSendData::from($this->getOwner(), Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)]));
 	}

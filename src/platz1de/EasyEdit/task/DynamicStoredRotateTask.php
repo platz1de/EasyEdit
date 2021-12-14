@@ -53,10 +53,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = StorageModule::getStored($this->saveId);
-		if (!$selection instanceof DynamicBlockListSelection) {
-			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . DynamicBlockListSelection::class);
-		}
+		$selection = StorageModule::mustGetDynamic($this->saveId);
 		$rotated = new DynamicBlockListSelection($selection->getPlayer());
 		$rotated->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$rotated->setPos2(new Vector3($selection->getPos2()->getZ(), $selection->getPos2()->getY(), $selection->getPos2()->getX()));

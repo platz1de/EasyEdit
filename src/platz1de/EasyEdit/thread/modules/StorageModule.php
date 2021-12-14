@@ -91,6 +91,32 @@ class StorageModule
 	}
 
 	/**
+	 * @param int $id
+	 * @return StaticBlockListSelection
+	 */
+	public static function mustGetStatic(int $id): StaticBlockListSelection
+	{
+		$selection = self::getStored($id);
+		if ($selection instanceof StaticBlockListSelection) {
+			return $selection;
+		}
+		throw new UnexpectedValueException("Invalid selection of type " . $selection::class . " saved at id " . $id . ", expected " . StaticBlockListSelection::class);
+	}
+
+	/**
+	 * @param int $id
+	 * @return DynamicBlockListSelection
+	 */
+	public static function mustGetDynamic(int $id): DynamicBlockListSelection
+	{
+		$selection = self::getStored($id);
+		if ($selection instanceof DynamicBlockListSelection) {
+			return $selection;
+		}
+		throw new UnexpectedValueException("Invalid selection of type " . $selection::class . " saved at id " . $id . ", expected " . DynamicBlockListSelection::class);
+	}
+
+	/**
 	 * @param int                $id
 	 * @param BlockListSelection $selection
 	 */

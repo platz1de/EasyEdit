@@ -59,12 +59,9 @@ class StaticStoredPasteTask extends ExecutableTask
 
 	public function execute(): void
 	{
-		$selection = StorageModule::getStored($this->saveId);
+		$selection = StorageModule::mustGetStatic($this->saveId);
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
-		}
-		if (!$selection instanceof StaticBlockListSelection) {
-			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . StaticBlockListSelection::class);
 		}
 		$data = new AdditionalDataManager(true, true);
 		$undo = $this->isUndo;

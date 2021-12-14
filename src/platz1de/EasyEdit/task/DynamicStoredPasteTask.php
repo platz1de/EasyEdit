@@ -63,12 +63,9 @@ class DynamicStoredPasteTask extends ExecutableTask
 
 	public function execute(): void
 	{
-		$selection = StorageModule::getStored($this->saveId);
+		$selection = StorageModule::mustGetDynamic($this->saveId);
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
-		}
-		if (!$selection instanceof DynamicBlockListSelection) {
-			throw new UnexpectedValueException("Storage at id " . $this->saveId . " contained " . get_class($selection) . " expected " . DynamicBlockListSelection::class);
 		}
 		$this->executor = DynamicPasteTask::from($this->getOwner(), $this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
 		$this->executor->execute();
