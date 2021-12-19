@@ -43,6 +43,7 @@ Command | Description | Permission | Aliases/Notice
 //istack \<count> | Stack the selected area without overwriting existing terrain | easyedit.edit
 //count [radius] | Count selected blocks | easyedit.select
 //extinguish [radius] | Extinguish fire | easyedit.edit | //ext
+//view | View the selected area | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures)
 
 History:
 

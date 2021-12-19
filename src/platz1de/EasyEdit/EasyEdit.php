@@ -32,6 +32,7 @@ use platz1de\EasyEdit\command\defaults\selection\SidesCommand;
 use platz1de\EasyEdit\command\defaults\selection\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\selection\StackCommand;
 use platz1de\EasyEdit\command\defaults\selection\StackInsertCommand;
+use platz1de\EasyEdit\command\defaults\selection\ViewCommand;
 use platz1de\EasyEdit\command\defaults\selection\WallCommand;
 use platz1de\EasyEdit\command\defaults\utility\BenchmarkCommand;
 use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
@@ -86,6 +87,7 @@ class EasyEdit extends PluginBase
 			new StackInsertCommand(),
 			new CountCommand(),
 			new ExtinguishCommand(),
+			new ViewCommand(),
 
 			//History
 			new UndoCommand(),

@@ -6,6 +6,9 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
+use pocketmine\network\mcpe\protocol\types\BlockPosition;
+use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\world\Position;
@@ -117,5 +120,52 @@ class HighlightingManager
 				}
 			}
 		}
+	}
+
+	/**
+	 * Highlight a cube using structure blocks
+	 *
+	 * @param string  $player
+	 * @param World   $world
+	 * @param Vector3 $dataHolder
+	 * @param Vector3 $min
+	 * @param Vector3 $max
+	 * @return int
+	 */
+	public static function showStructureView(string $player, World $world, Vector3 $dataHolder, Vector3 $min, Vector3 $max): int
+	{
+		if (!isset(self::$staticDataHolders[$player])) {
+			self::$staticDataHolders[$player] = [];
+		}
+
+		self::$staticDataHolders[$player][self::$id] = Position::fromObject($dataHolder->floor(), $world);
+		self::$staticData[self::$id] = CompoundTag::create()
+			->setString("id", "StructureBlock")
+			->setString("structureName", "clipboard")
+			->setString("dataField", "")
+			->setInt("xStructureOffset", $min->getFloorX() - $dataHolder->getFloorX())
+			->setInt("yStructureOffset", $min->getFloorY() - $dataHolder->getFloorY())
+			->setInt("zStructureOffset", $min->getFloorZ() - $dataHolder->getFloorZ())
+			->setInt("xStructureSize", $max->getFloorX() - $min->getFloorX() + 1)
+			->setInt("yStructureSize", $max->getFloorY() - $min->getFloorY() + 1)
+			->setInt("zStructureSize", $max->getFloorZ() - $min->getFloorZ() + 1)
+			->setInt("data", 5)
+			->setByte("rotation", 0)
+			->setByte("mirror", 0)
+			->setFloat("integrity", 100.0)
+			->setLong("seed", 0)
+			->setByte("ignoreEntities", 1)
+			->setByte("includePlayers", 0)
+			->setByte("removeBlocks", 0)
+			->setByte("showBoundingBox", 0)
+			->setByte("isMovable", 0)
+			->setByte("isPowered", 0);
+
+		self::sendStaticHolder($player, self::$id);
+
+		if (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
+			$p->getNetworkSession()->sendDataPacket(ContainerOpenPacket::blockInv($p->getNetworkSession()->getInvManager()->getCurrentWindowId(), WindowTypes::STRUCTURE_EDITOR, new BlockPosition($dataHolder->getFloorX(), $dataHolder->getFloorY(), $dataHolder->getFloorZ())));
+		}
+		return self::$id++;
 	}
 }
