@@ -45,25 +45,13 @@ class HighlightingManager
 
 		self::$staticDataHolders[$player][self::$id] = Position::fromObject($dataHolder->floor(), $world);
 		self::$staticData[self::$id] = CompoundTag::create()
-			->setString("structureName", "selection")
-			->setString("dataField", "")
 			->setInt("xStructureOffset", $pos1->getFloorX() - $dataHolder->getFloorX())
 			->setInt("yStructureOffset", $pos1->getFloorY() - $dataHolder->getFloorY())
 			->setInt("zStructureOffset", $pos1->getFloorZ() - $dataHolder->getFloorZ())
 			->setInt("xStructureSize", $pos2->getFloorX() - $pos1->getFloorX() + 1)
 			->setInt("yStructureSize", $pos2->getFloorY() - $pos1->getFloorY() + 1)
 			->setInt("zStructureSize", $pos2->getFloorZ() - $pos1->getFloorZ() + 1)
-			->setInt("data", 5)
-			->setByte("rotation", 0)
-			->setByte("mirror", 0)
-			->setFloat("integrity", 100.0)
-			->setLong("seed", 0)
-			->setByte("ignoreEntities", 1)
-			->setByte("includePlayers", 0)
-			->setByte("removeBlocks", 0)
-			->setByte("showBoundingBox", 1)
-			->setByte("isMovable", 1)
-			->setByte("isPowered", 0);
+			->setByte("showBoundingBox", 1);
 
 		self::sendStaticHolder($player, self::$id);
 
