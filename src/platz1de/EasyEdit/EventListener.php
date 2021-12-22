@@ -13,6 +13,7 @@ use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\Shovel;
 use pocketmine\item\Stick;
@@ -109,5 +110,10 @@ class EventListener implements Listener
 				HighlightingManager::resendAll($playerName);
 			}));
 		}
+	}
+
+	public function onJoin(PlayerJoinEvent $event): void
+	{
+		HighlightingManager::resendAll($event->getPlayer()->getName());
 	}
 }
