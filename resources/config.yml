@@ -1,7 +1,11 @@
-config-version: "2.0" #Please don't change this manually
+config-version: "2.0.1" #Please don't change this manually
 
 #Whether to allow user with "easyedit.history.other" permission to undo/redo other people's actions
 allow-history-other: true
+
+#Remaps usages of 3 or more slashes to 2 slashes, allowing usage of minecraft autocomplete
+#Disable this if you have commands requiring 3 slashes
+remap-commands: true
 
 #Blocks which get ignored when calculating terrain height (e.g. when smoothing) or inserting selection
 #These get replaced with air when edited

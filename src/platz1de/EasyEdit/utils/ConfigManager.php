@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\listener\RemapEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
@@ -10,7 +11,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0";
+	private const CONFIG_VERSION = "2.0.1";
 
 	/**
 	 * @var int[]
@@ -91,6 +92,10 @@ class ConfigManager
 		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
 
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
+
+		if (self::mustGetBool($config, "remap-commands", false)) {
+			RemapEventListener::init();
+		}
 
 		self::$sendDebug = self::mustGetBool($config, "send-debug", true);
 
