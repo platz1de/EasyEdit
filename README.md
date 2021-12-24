@@ -175,3 +175,12 @@ Pattern | Description
 ---|---
 smooth | makes your terrain smoother
 naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3)
+
+## Blame Mojang
+
+Minecraft Bedrock is just terrible at a lot of things, we can't do anything about it.
+
+### Delayed chunk updates
+Chunks are not updated immediately, this produces ugly xray like effects even if we sent everything needed
+### Command Handling
+Commands starting with a slash are handled terribly. The autocompletion just adds another slash every time and never shows the correct arguments making argument autocompletion impossible. For some non-apparent reason client side commands with an extra slash before them (like //help or //?) throw a client sided error and never send any packets to the server.
