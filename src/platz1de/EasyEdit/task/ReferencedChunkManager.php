@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
+use Closure;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\math\Vector3;
@@ -30,6 +31,14 @@ class ReferencedChunkManager extends SimpleChunkManager
 	public function getChunks(): array
 	{
 		return $this->chunks;
+	}
+
+	/**
+	 * @param Closure $closure
+	 */
+	public function filterChunks(Closure $closure): void
+	{
+		$this->chunks = $closure($this->chunks);
 	}
 
 	/**

@@ -60,6 +60,14 @@ abstract class Selection
 	abstract public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool;
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool whether the chunk should be cached to aid in later executions
+	 */
+	abstract public function shouldBeCached(int $x, int $z, Vector3 $place): bool;
+
+	/**
 	 * @return Vector3
 	 */
 	public function getCubicStart(): Vector3

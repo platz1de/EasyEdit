@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
+use Closure;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
@@ -40,8 +41,7 @@ abstract class EditTask extends ExecutableTask
 	 */
 	public function requestChunks(array $chunks): bool
 	{
-		ChunkRequestData::from($chunks, $this->world);
-		ChunkCollector::clean();
+		ChunkCollector::request($chunks);
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			if ($this->checkData()) {
 				return true;
@@ -56,6 +56,7 @@ abstract class EditTask extends ExecutableTask
 	{
 		if (ChunkCollector::hasReceivedInput()) {
 			$this->run();
+			ChunkCollector::clean($this->getCacheClosure());
 			return true;
 		}
 		return false;
@@ -124,12 +125,24 @@ abstract class EditTask extends ExecutableTask
 	abstract public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void;
 
 	/**
+	 * Filters actually edited chunks
 	 * @param Chunk[] $chunks
 	 * @return Chunk[]
 	 */
 	public function filterChunks(array $chunks): array
 	{
 		return $chunks;
+	}
+
+	/**
+	 * Filters chunks to stay cached
+	 * @return Closure
+	 */
+	public function getCacheClosure(): Closure
+	{
+		return static function (array $chunks): array {
+			return []; //no cache
+		};
 	}
 
 	/**

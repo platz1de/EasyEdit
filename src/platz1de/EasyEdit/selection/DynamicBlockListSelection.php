@@ -67,6 +67,20 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function shouldBeCached(int $x, int $z, Vector3 $place): bool
+	{
+		$start = $this->getCubicStart()->addVector($place)->addVector($this->getPoint());
+		$end = $this->getCubicEnd()->addVector($place)->addVector($this->getPoint());
+
+		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && ($z === $end->getZ() >> 4 || $z === ($end->getZ() >> 4) + 1);
+	}
+
+	/**
 	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context

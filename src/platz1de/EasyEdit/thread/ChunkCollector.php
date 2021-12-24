@@ -3,8 +3,10 @@
 namespace platz1de\EasyEdit\thread;
 
 use BadMethodCallException;
+use Closure;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
+use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
@@ -18,7 +20,7 @@ class ChunkCollector
 	/**
 	 * @var CompoundTag[]
 	 */
-	private static array $tiles;
+	private static array $tiles = [];
 
 	/**
 	 * @param string $world
@@ -26,6 +28,25 @@ class ChunkCollector
 	public static function init(string $world): void
 	{
 		self::$manager = new ReferencedChunkManager($world);
+	}
+
+	/**
+	 * @param int[] $chunks
+	 */
+	public static function request(array $chunks): void
+	{
+		if (self::$manager === null) {
+			throw new BadMethodCallException("Collector was never initialized");
+		}
+
+		foreach ($chunks as $key => $chunk) {
+			World::getXZ($chunk, $x, $z);
+			if (self::$manager->getChunk($x, $z) !== null) {
+				unset($chunks[$key]);
+			}
+		}
+
+		ChunkRequestData::from($chunks, self::$manager->getWorldName());
 	}
 
 	/**
@@ -78,10 +99,14 @@ class ChunkCollector
 		return self::$tiles;
 	}
 
-	public static function clean(): void
+	/**
+	 * @param Closure $closure
+	 */
+	public static function clean(Closure $closure): void
 	{
 		self::$ready = false;
-		self::$manager?->cleanChunks();
+		self::$manager?->filterChunks($closure);
+		EditThread::getInstance()->debug("Cached " . count(self::$manager?->getChunks() ?? []) . " chunks");
 		self::$tiles = [];
 	}
 

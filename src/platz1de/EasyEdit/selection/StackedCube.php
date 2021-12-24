@@ -68,6 +68,18 @@ class StackedCube extends Selection
 	}
 
 	/**
+	 * @param int     $x
+	 * @param int     $z
+	 * @param Vector3 $place
+	 * @return bool
+	 */
+	public function shouldBeCached(int $x, int $z, Vector3 $place): bool
+	{
+		// TODO: Implement shouldBeCached() method.
+		return false;
+	}
+
+	/**
 	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
