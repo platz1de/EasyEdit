@@ -42,7 +42,7 @@ abstract class EditTask extends ExecutableTask
 	{
 		ChunkRequestData::from($chunks, $this->world);
 		ChunkCollector::clean();
-		while (ThreadData::canExecute()) {
+		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			if ($this->checkData()) {
 				return true;
 			}

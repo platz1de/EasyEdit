@@ -147,6 +147,14 @@ class EditThread extends Thread
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function allowsExecution(): bool
+	{
+		return !$this->isKilled;
+	}
+
+	/**
 	 * @return int
 	 */
 	public function getStatus(): int
@@ -244,5 +252,11 @@ class EditThread extends Thread
 			$stream->putString($add);
 			$this->outputData = $stream->getBuffer();
 		});
+	}
+
+	public function quit(): void
+	{
+		ThreadData::requirePause();
+		parent::quit();
 	}
 }
