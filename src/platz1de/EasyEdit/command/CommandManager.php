@@ -49,4 +49,23 @@ class CommandManager
 	{
 		return self::$commands;
 	}
+
+	/**
+	 * @param string $command
+	 * @return bool
+	 */
+	public static function isKnownCommand(string $command): bool
+	{
+		foreach (self::$commands as $cmd) {
+			if (strtolower($cmd->getName()) === strtolower($command)) {
+				return true;
+			}
+			foreach ($cmd->getAliases() as $alias) {
+				if (strtolower($alias) === strtolower($command)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

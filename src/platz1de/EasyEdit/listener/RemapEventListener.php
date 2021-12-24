@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\listener;
 
+use platz1de\EasyEdit\command\CommandManager;
 use pocketmine\event\Listener;
 use pocketmine\event\server\CommandEvent;
 
@@ -15,6 +16,9 @@ class RemapEventListener implements Listener
 
 	public function onCommand(CommandEvent $event): void
 	{
-		$event->setCommand(preg_replace("/^\/+/", "/", $event->getCommand()) ?? "");
+		preg_match("/^\/*(\S*)/", $event->getCommand(), $matches);
+		if (CommandManager::isKnownCommand("/" . $matches[1])) {
+			$event->setCommand(preg_replace("/^\/+/", "/", $event->getCommand()) ?? "");
+		}
 	}
 }
