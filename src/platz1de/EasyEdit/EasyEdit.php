@@ -39,6 +39,7 @@ use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
 use platz1de\EasyEdit\command\defaults\utility\BrushCommand;
 use platz1de\EasyEdit\command\defaults\utility\CancelCommand;
 use platz1de\EasyEdit\command\defaults\utility\StatusCommand;
+use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\CompoundTile;
@@ -68,7 +69,7 @@ class EasyEdit extends PluginBase
 
 		$this->getScheduler()->scheduleRepeatingTask(new EditAdapter(), 1);
 
-		Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
+		DefaultEventListener::init();
 
 		CommandManager::registerCommands([
 			//Selection
