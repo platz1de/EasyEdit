@@ -52,20 +52,20 @@ class CommandManager
 
 	/**
 	 * @param string $command
-	 * @return bool
+	 * @return EasyEditCommand|null
 	 */
-	public static function isKnownCommand(string $command): bool
+	public static function getKnownCommand(string $command): ?EasyEditCommand
 	{
 		foreach (self::$commands as $cmd) {
 			if (strtolower($cmd->getName()) === strtolower($command)) {
-				return true;
+				return $cmd;
 			}
 			foreach ($cmd->getAliases() as $alias) {
 				if (strtolower($alias) === strtolower($command)) {
-					return true;
+					return $cmd;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 }

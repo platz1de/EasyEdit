@@ -76,4 +76,9 @@ class BrushCommand extends EasyEditCommand
 		$item->setCustomName(TextFormat::GOLD . "Brush");
 		$player->getInventory()->setItem($player->getInventory()->getHeldItemIndex(), $item);
 	}
+
+	public function getCompactHelp(): string
+	{
+		return "//brush sphere [radius] [pattern] - Create a spherical brush\n//brush smooth [radius] - Create a smoothing brush\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Create a naturalizing brush\n//brush cylinder [radius] [height] [pattern] - Create a cylindrical brush";
+	}
 }

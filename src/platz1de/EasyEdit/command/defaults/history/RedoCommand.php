@@ -39,4 +39,9 @@ class RedoCommand extends EasyEditCommand
 			HistoryCache::redoStep($target, $player->getName());
 		}
 	}
+
+	public function getCompactHelp(): string
+	{
+		return "//redo [player] [count] - Revert your latest undo";
+	}
 }

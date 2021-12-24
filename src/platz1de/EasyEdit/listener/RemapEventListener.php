@@ -17,7 +17,7 @@ class RemapEventListener implements Listener
 	public function onCommand(CommandEvent $event): void
 	{
 		preg_match("/^\/*(\S*)/", $event->getCommand(), $matches);
-		if (CommandManager::isKnownCommand("/" . $matches[1])) {
+		if (CommandManager::getKnownCommand("/" . $matches[1]) !== null) {
 			$event->setCommand(preg_replace("/^\/+/", "/", $event->getCommand()) ?? "");
 		}
 	}

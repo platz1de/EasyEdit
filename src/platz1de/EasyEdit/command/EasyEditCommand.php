@@ -5,9 +5,11 @@ namespace platz1de\EasyEdit\command;
 use platz1de\EasyEdit\EasyEdit;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\lang\Translatable;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
+use UnexpectedValueException;
 
 abstract class EasyEditCommand extends Command implements PluginOwned
 {
@@ -64,5 +66,16 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	public function getOwningPlugin(): Plugin
 	{
 		return EasyEdit::getInstance();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCompactHelp(): string
+	{
+		if ($this->getUsage() instanceof Translatable || $this->getDescription() instanceof Translatable) {
+			throw new UnexpectedValueException("EasyEdit commands should not use translatable usages or descriptions");
+		}
+		return $this->getUsage() . " - " . $this->getDescription();
 	}
 }

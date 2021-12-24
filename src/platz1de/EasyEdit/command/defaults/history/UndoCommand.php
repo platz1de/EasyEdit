@@ -39,4 +39,9 @@ class UndoCommand extends EasyEditCommand
 			HistoryCache::undoStep($target, $player->getName());
 		}
 	}
+
+	public function getCompactHelp(): string
+	{
+		return "//undo [player] [count] - Revert your latest change";
+	}
 }
