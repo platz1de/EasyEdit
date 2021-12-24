@@ -47,31 +47,6 @@ class EditTaskHandler
 	}
 
 	/**
-	 * @param string             $world
-	 * @param string             $chunkData
-	 * @param string             $tileData
-	 * @param BlockListSelection $undo
-	 * @return EditTaskHandler
-	 */
-	public static function fromData(string $world, string $chunkData, string $tileData, BlockListSelection $undo): EditTaskHandler
-	{
-		$origin = new ReferencedChunkManager($world);
-		$chunks = new ExtendedBinaryStream($chunkData);
-		while (!$chunks->feof()) {
-			$origin->setChunk($chunks->getInt(), $chunks->getInt(), FastChunkSerializer::deserializeTerrain($chunks->getString()));
-		}
-
-		$tiles = new ExtendedBinaryStream($tileData);
-		$tileList = [];
-		while (!$tiles->feof()) {
-			$tile = $tiles->getCompound();
-			$tileList[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
-		}
-
-		return new EditTaskHandler($origin, $tileList, $undo);
-	}
-
-	/**
 	 * @return int
 	 */
 	public function getChunkCount(): int

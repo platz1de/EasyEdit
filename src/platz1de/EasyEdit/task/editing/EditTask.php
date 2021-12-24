@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\ExecutableTask;
+use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\HistoryCacheData;
@@ -41,7 +41,7 @@ abstract class EditTask extends ExecutableTask
 	public function requestChunks(array $chunks): bool
 	{
 		ChunkRequestData::from($chunks, $this->world);
-		ThreadData::getStoredData(); //clear chunk cache
+		ChunkCollector::clean();
 		while (ThreadData::canExecute()) {
 			if ($this->checkData()) {
 				return true;
@@ -54,19 +54,18 @@ abstract class EditTask extends ExecutableTask
 
 	public function checkData(): bool
 	{
-		$data = ThreadData::getStoredData();
-		if ($data !== null) {
-			$this->run($data);
+		if (ChunkCollector::hasReceivedInput()) {
+			$this->run();
 			return true;
 		}
 		return false;
 	}
 
-	public function run(ChunkInputData $chunkData): void
+	public function run(): void
 	{
 		$start = microtime(true);
 
-		$handler = EditTaskHandler::fromData($this->world, $chunkData->getChunkData(), $chunkData->getTileData(), $this->getUndoBlockList());
+		$handler = new EditTaskHandler(ChunkCollector::getChunks(), ChunkCollector::getTiles(), $this->getUndoBlockList());
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks");
 

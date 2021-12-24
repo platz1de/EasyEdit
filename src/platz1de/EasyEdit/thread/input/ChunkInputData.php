@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\thread\input;
 
-use platz1de\EasyEdit\thread\ThreadData;
+use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ChunkInputData extends InputData
@@ -35,7 +35,7 @@ class ChunkInputData extends InputData
 
 	public function handle(): void
 	{
-		ThreadData::storeData($this);
+		ChunkCollector::collectInput($this);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

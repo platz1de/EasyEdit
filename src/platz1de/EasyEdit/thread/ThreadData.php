@@ -15,10 +15,6 @@ class ThreadData
 	 */
 	private static array $tasks = [];
 	private static ?ExecutableTask $task = null;
-	/**
-	 * @var ChunkInputData|null
-	 */
-	private static ?ChunkInputData $data = null;
 	private static bool $stop = false;
 
 	/**
@@ -59,24 +55,6 @@ class ThreadData
 	public static function setTask(?ExecutableTask $task): void
 	{
 		self::$task = $task;
-	}
-
-	/**
-	 * @param ChunkInputData $data
-	 */
-	public static function storeData(ChunkInputData $data): void
-	{
-		self::$data = $data;
-	}
-
-	/**
-	 * @return ChunkInputData|null
-	 */
-	public static function getStoredData(): ?ChunkInputData
-	{
-		$data = self::$data;
-		self::$data = null;
-		return $data;
 	}
 
 	public static function requirePause(): void
