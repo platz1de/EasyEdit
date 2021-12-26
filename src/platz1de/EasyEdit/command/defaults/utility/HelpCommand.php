@@ -28,11 +28,11 @@ class HelpCommand extends EasyEditCommand
 			$page = 1;
 		}
 		if (($page - 1) * self::COMMANDS_PER_PAGE >= count($commands)) {
-			$page = ceil(count($commands) / self::COMMANDS_PER_PAGE);
+			$page = (int) ceil(count($commands) / self::COMMANDS_PER_PAGE);
 		}
 		$show = array_slice($commands, ($page - 1) * self::COMMANDS_PER_PAGE, self::COMMANDS_PER_PAGE);
 		Messages::send($player, "command-list", ["{commands}" => implode("\n", array_map(static function (EasyEditCommand $command): string {
 			return $command->getCompactHelp();
-		}, $show)), "{start}" => ($page - 1) * self::COMMANDS_PER_PAGE + 1, "{end}" => ($page - 1) * self::COMMANDS_PER_PAGE + count($show), "{total}" => count($commands)]);
+		}, $show)), "{start}" => (string) (($page - 1) * self::COMMANDS_PER_PAGE + 1), "{end}" => (string) (($page - 1) * self::COMMANDS_PER_PAGE + count($show)), "{total}" => (string) count($commands)]);
 	}
 }
