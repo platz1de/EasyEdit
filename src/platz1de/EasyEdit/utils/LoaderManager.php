@@ -97,7 +97,7 @@ class LoaderManager
 			unset($this->blockCache[$chunkHash], $this->changedBlocks[$chunkHash]);
 
 			foreach ($this->getChunkListeners($x, $z) as $loader) {
-				//In 1.16 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
+				//In 1.16 Mojang really ruined Chunk updates, normal block rendering is delayed by about 1-5 seconds
 				if ($loader instanceof Player && $preparedInjections !== []) {
 					foreach ($preparedInjections as $injection) {
 						//Hack to allow instant block setting, costly network wise
