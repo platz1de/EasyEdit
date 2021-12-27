@@ -69,6 +69,7 @@ abstract class SelectionEditTask extends EditTask
 	 */
 	public function filterChunks(array $chunks): array
 	{
+		//TODO: Remove this once we properly support readonly and writeonly chunks
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
 			//separate chunks which are only loaded for patterns
@@ -76,7 +77,7 @@ abstract class SelectionEditTask extends EditTask
 				unset($chunks[$hash]);
 			}
 		}
-		return $chunks;
+		return parent::filterChunks($chunks);
 	}
 
 	/**

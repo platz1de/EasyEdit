@@ -8,6 +8,7 @@ use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\SubChunk;
 use pocketmine\world\utils\SubChunkExplorer;
+use pocketmine\world\utils\SubChunkExplorerStatus;
 use pocketmine\world\World;
 
 class SafeSubChunkExplorer extends SubChunkExplorer
@@ -24,6 +25,21 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	public function __construct(ReferencedChunkManager $world)
 	{
 		parent::__construct($world);
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @return int
+	 */
+	public function moveTo(int $x, int $y, int $z): int
+	{
+		$return = parent::moveTo($x, $y, $z);
+		if ($return === SubChunkExplorerStatus::MOVED) {
+			$this->currentChunk->setTerrainDirty();
+		}
+		return $return;
 	}
 
 	/**

@@ -134,6 +134,12 @@ abstract class EditTask extends ExecutableTask
 	 */
 	public function filterChunks(array $chunks): array
 	{
+		foreach ($chunks as $hash => $chunk) {
+			if (!$chunk->isTerrainDirty()) {
+				unset($chunks[$hash]);
+			}
+			$chunk->clearTerrainDirtyFlags();
+		}
 		return $chunks;
 	}
 
