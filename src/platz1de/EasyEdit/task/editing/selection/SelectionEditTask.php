@@ -8,6 +8,7 @@ use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
@@ -43,6 +44,9 @@ abstract class SelectionEditTask extends EditTask
 		$pieces = $this->selection->split($this->splitOffset);
 		$this->totalPieces = count($pieces);
 		$this->piecesLeft = count($pieces);
+		if (VectorUtils::product($this->selection->getSize()) < 262144) {
+			$this->getDataManager()->useFastSet();
+		}
 		ChunkCollector::init($this->getWorld());
 		foreach ($pieces as $key => $piece) {
 			if ($key === array_key_last($pieces)) {

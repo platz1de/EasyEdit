@@ -46,6 +46,15 @@ class VectorUtils
 
 	/**
 	 * @param Vector3 $vector
+	 * @return float
+	 */
+	public static function product(Vector3 $vector): float
+	{
+		return $vector->getX() * $vector->getY() * $vector->getZ();
+	}
+
+	/**
+	 * @param Vector3 $vector
 	 * @return Vector3
 	 */
 	public static function enforceHeight(Vector3 $vector): Vector3

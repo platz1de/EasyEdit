@@ -4,13 +4,14 @@ namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\InjectingSubChunkExplorer;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TileUtils;
+use platz1de\EasyEdit\utils\UpdateSubChunkBlocksInjector;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class EditTaskHandler
 {
@@ -34,11 +35,15 @@ class EditTaskHandler
 	 * @param CompoundTag[]          $tiles   CompoundTags of tiles in edited area
 	 * @param BlockListSelection     $changes Saves made changes, used for undoing
 	 */
-	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes)
+	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, bool $isFastSet)
 	{
 		//TODO: Never use changes as result (eg. copy)
 		$this->origin = new SafeSubChunkExplorer($origin);
-		$this->result = new SafeSubChunkExplorer(clone $origin);
+		if ($isFastSet) {
+			$this->result = new InjectingSubChunkExplorer(clone $origin);
+		} else {
+			$this->result = new SafeSubChunkExplorer(clone $origin);
+		}
 		$this->changes = $changes;
 		$this->originalTiles = $tiles;
 		$this->tiles = array_map(static function (CompoundTag $tile): CompoundTag {
@@ -93,6 +98,23 @@ class EditTaskHandler
 	public function getResult(): ReferencedChunkManager
 	{
 		return $this->result->getManager();
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function prepareInjectionData(): array
+	{
+		if (!$this->result instanceof InjectingSubChunkExplorer) {
+			throw new UnexpectedValueException("Handler wasn't caching for injection of result");
+		}
+		$injections = $this->result->getInjections();
+		$return = [];
+		foreach ($injections[0] as $hash => $injection) {
+			World::getBlockXYZ($hash, $x, $y, $z);
+			$return[$hash] = UpdateSubChunkBlocksInjector::getDataFrom($x, $y, $z, $injections[1][$hash], $injection->getBuffer());
+		}
+		return $return;
 	}
 
 	/**

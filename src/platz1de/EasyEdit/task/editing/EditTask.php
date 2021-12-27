@@ -8,7 +8,6 @@ use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\HistoryCacheData;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\ThreadData;
@@ -66,9 +65,9 @@ abstract class EditTask extends ExecutableTask
 	{
 		$start = microtime(true);
 
-		$handler = new EditTaskHandler(ChunkCollector::getChunks(), ChunkCollector::getTiles(), $this->getUndoBlockList());
+		$handler = new EditTaskHandler(ChunkCollector::getChunks(), ChunkCollector::getTiles(), $this->getUndoBlockList(), $this->data->isUsingFastSet());
 
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks");
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($this->data->isUsingFastSet() ? "true" : "false"));
 
 		HeightMapCache::prepare();
 
@@ -81,7 +80,11 @@ abstract class EditTask extends ExecutableTask
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 
 		if ($this->data->isSavingChunks()) {
-			ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles());
+			if ($this->data->isUsingFastSet()) {
+				ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles(), $handler->prepareInjectionData());
+			} else {
+				ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles());
+			}
 		}
 
 		if ($this->data->isFinalPiece()) {

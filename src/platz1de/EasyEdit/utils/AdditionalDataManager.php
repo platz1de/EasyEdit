@@ -11,6 +11,7 @@ class AdditionalDataManager
 	private bool $finalPiece = false;
 	private bool $saveEditedChunks;
 	private bool $saveUndo;
+	private bool $useFastSet = false;
 	/**
 	 * @var Closure(EditTask, int):void
 	 */
@@ -72,6 +73,19 @@ class AdditionalDataManager
 	public function isSavingUndo(): bool
 	{
 		return $this->saveUndo;
+	}
+
+	public function useFastSet(): void
+	{
+		$this->useFastSet = true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isUsingFastSet(): bool
+	{
+		return $this->useFastSet;
 	}
 
 	/**

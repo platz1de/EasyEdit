@@ -22,6 +22,10 @@ class ResultingChunkData extends OutputData
 	 * @var CompoundTag[]
 	 */
 	private array $tileData;
+	/**
+	 * @var string[]
+	 */
+	private array $injections = [];
 
 	/**
 	 * @param string        $world
@@ -37,9 +41,25 @@ class ResultingChunkData extends OutputData
 		$data->send();
 	}
 
+	/**
+	 * @param string        $world
+	 * @param Chunk[]       $chunks
+	 * @param CompoundTag[] $tiles
+	 * @param string[]      $injections UpdateSubChunkBlocksPacket data
+	 */
+	public static function withInjection(string $world, array $chunks, array $tiles, array $injections): void
+	{
+		$data = new self();
+		$data->world = $world;
+		$data->chunkData = $chunks;
+		$data->tileData = $tiles;
+		$data->injections = $injections;
+		$data->send();
+	}
+
 	public function handle(): void
 	{
-		LoaderManager::setChunks($this->getWorld(), $this->getChunks(), $this->getTiles());
+		LoaderManager::setChunks($this->getWorld(), $this->getChunks(), $this->getTiles(), $this->getInjections());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -59,6 +79,12 @@ class ResultingChunkData extends OutputData
 		$stream->put($chunks->getBuffer());
 
 		$stream->putCompounds($this->tileData);
+
+		$stream->putInt(count($this->injections));
+		foreach ($this->injections as $hash => $injection) {
+			$stream->putInt($hash);
+			$stream->putString($injection);
+		}
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -72,6 +98,11 @@ class ResultingChunkData extends OutputData
 		}
 
 		$this->tileData = $stream->getCompounds();
+
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$this->injections[$stream->getInt()] = $stream->getString();
+		}
 	}
 
 	/**
@@ -88,5 +119,13 @@ class ResultingChunkData extends OutputData
 	public function getTiles(): array
 	{
 		return $this->tileData;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getInjections(): array
+	{
+		return $this->injections;
 	}
 }

@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\player\Player;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\World;
@@ -36,9 +37,10 @@ class LoaderManager
 	 * @param World         $world
 	 * @param Chunk[]       $chunks
 	 * @param CompoundTag[] $tiles
+	 * @param string[]      $injections
 	 * @return void
 	 */
-	public static function setChunks(World $world, array $chunks, array $tiles): void
+	public static function setChunks(World $world, array $chunks, array $tiles, array $injections): void
 	{
 		foreach ($tiles as $tile) {
 			$tile = TileFactory::getInstance()->createFromData($world, $tile);
@@ -50,23 +52,30 @@ class LoaderManager
 			}
 		}
 
+		$preparedInjections = [];
+		foreach ($injections as $hash => $injection) {
+			World::getBlockXYZ($hash, $x, $y, $z);
+			$preparedInjections[$x][$z][$y] = $injection;
+		}
+
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			self::injectChunk($world, $x, $z, $chunk);
+			self::injectChunk($world, $x, $z, $chunk, $preparedInjections[$x][$z] ?? []);
 			$world->unloadChunk($x, $z);
 		}
 	}
 
 	/**
 	 * Implementation of World::setChunk without loading unnecessary Chunks which get overwritten anyways
-	 * @param World $world
-	 * @param int   $x
-	 * @param int   $z
-	 * @param Chunk $chunk
+	 * @param World    $world
+	 * @param int      $x
+	 * @param int      $z
+	 * @param Chunk    $chunk
+	 * @param string[] $preparedInjections
 	 * @see          World::setChunk()
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
-	public static function injectChunk(World $world, int $x, int $z, Chunk $chunk): void
+	public static function injectChunk(World $world, int $x, int $z, Chunk $chunk, array $preparedInjections): void
 	{
 		$chunkHash = World::chunkHash($x, $z);
 
@@ -82,17 +91,23 @@ class LoaderManager
 
 		$chunk->setTerrainDirty();
 
-		(function () use ($z, $x, $chunkHash, $chunk): void {
+		(function () use ($preparedInjections, $z, $x, $chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
 
 			unset($this->blockCache[$chunkHash], $this->changedBlocks[$chunkHash]);
 
 			foreach ($this->getChunkListeners($x, $z) as $loader) {
-				$loader->onChunkChanged($x, $z, $chunk);
+				//In 1.16 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
+				if ($loader instanceof Player && $preparedInjections !== []) {
+					foreach ($preparedInjections as $injection) {
+						//Hack to allow instant block setting, costly network wise
+						$loader->getNetworkSession()->sendDataPacket(UpdateSubChunkBlocksInjector::create($injection));
+					}
+				} else {
+					$loader->onChunkChanged($x, $z, $chunk);
+				}
 			}
 		})->call($world);
-
-		//TODO: In 1.16 Mojang really ruined Chunk updates, block rendering is delayed by about 1-5 seconds
 	}
 
 	/**
