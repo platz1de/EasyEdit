@@ -56,7 +56,6 @@ class UpdateSubChunkBlocksInjector extends DataPacket implements ClientboundPack
 		return $result;
 	}
 
-
 	protected function decodePayload(PacketSerializer $in): void
 	{
 		throw new BadMethodCallException("Injectors should never be decoded");
