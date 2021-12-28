@@ -11,12 +11,13 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.1";
+	private const CONFIG_VERSION = "2.0.2";
 
 	/**
 	 * @var int[]
 	 */
 	private static array $terrainIgnored = [];
+	private static float $toolCooldown;
 	private static bool $allowOtherHistory;
 	private static bool $sendDebug;
 	private static string $bedrockConversionDataSource;
@@ -91,6 +92,8 @@ class ConfigManager
 			return BlockParser::getBlock($block)->getId();
 		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
 
+		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
+
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
 
 		if (self::mustGetBool($config, "remap-commands", false)) {
@@ -119,6 +122,22 @@ class ConfigManager
 		$data = $config->get($key, $default);
 		if (!is_bool($data)) {
 			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected bool");
+			return $default;
+		}
+		return $data;
+	}
+
+	/**
+	 * @param Config $config
+	 * @param string $key
+	 * @param float  $default
+	 * @return float
+	 */
+	private static function mustGetFloat(Config $config, string $key, float $default): float
+	{
+		$data = $config->get($key, $default);
+		if (!is_float($data) && !is_int($data)) { //also accept ints
+			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected float");
 			return $default;
 		}
 		return $data;
@@ -173,7 +192,7 @@ class ConfigManager
 	}
 
 	/**
-	 * @return void
+	 * @param bool $send
 	 */
 	public static function sendDebug(bool $send): void
 	{
@@ -186,5 +205,13 @@ class ConfigManager
 	public static function isSendingDebug(): bool
 	{
 		return self::$sendDebug ?? true;
+	}
+
+	/**
+	 * @return float
+	 */
+	public static function getToolCooldown(): float
+	{
+		return self::$toolCooldown;
 	}
 }

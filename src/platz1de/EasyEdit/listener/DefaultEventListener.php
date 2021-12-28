@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\utils\BlockInfoTool;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\HighlightingManager;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
@@ -43,7 +44,7 @@ class DefaultEventListener implements Listener
 			BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
 		}
 
-		self::$cooldown = microtime(true) + 0.5;
+		self::$cooldown = microtime(true) + ConfigManager::getToolCooldown();
 	}
 
 	/**
@@ -53,7 +54,7 @@ class DefaultEventListener implements Listener
 	{
 		if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
 			if (self::$cooldown < microtime(true)) {
-				self::$cooldown = microtime(true) + 0.5;
+				self::$cooldown = microtime(true) + ConfigManager::getToolCooldown();
 			} else {
 				return;
 			}
