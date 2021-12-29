@@ -6,6 +6,7 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\InventoryManager;
 use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
@@ -151,8 +152,8 @@ class HighlightingManager
 
 		self::sendStaticHolder($player, self::$id);
 
-		if (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
-			$p->getNetworkSession()->sendDataPacket(ContainerOpenPacket::blockInv($p->getNetworkSession()->getInvManager()->getCurrentWindowId(), WindowTypes::STRUCTURE_EDITOR, new BlockPosition($dataHolder->getFloorX(), $dataHolder->getFloorY(), $dataHolder->getFloorZ())));
+		if (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player && ($inv = $p->getNetworkSession()->getInvManager()) instanceof InventoryManager) {
+			$p->getNetworkSession()->sendDataPacket(ContainerOpenPacket::blockInv($inv->getCurrentWindowId(), WindowTypes::STRUCTURE_EDITOR, new BlockPosition($dataHolder->getFloorX(), $dataHolder->getFloorY(), $dataHolder->getFloorZ())));
 		}
 		return self::$id++;
 	}
