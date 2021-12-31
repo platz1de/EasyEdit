@@ -39,7 +39,7 @@ class Cube extends Selection implements Patterned
 
 			if (!$this->piece && !Thread::getCurrentThread() instanceof EditThread) {
 				$this->close();
-				$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
+				$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld()->getFolderName(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
 			}
 		}
 	}
