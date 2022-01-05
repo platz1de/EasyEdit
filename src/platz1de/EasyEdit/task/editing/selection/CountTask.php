@@ -80,7 +80,7 @@ class CountTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$blocks = $this->getDataManager()->getCountedBlocks();
-		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, &$blocks): void {
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler, &$blocks): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($blocks[$id])) {
 				$blocks[$id]++;

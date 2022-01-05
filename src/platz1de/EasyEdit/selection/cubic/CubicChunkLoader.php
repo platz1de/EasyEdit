@@ -3,16 +3,14 @@
 namespace platz1de\EasyEdit\selection\cubic;
 
 use platz1de\EasyEdit\selection\Patterned;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 trait CubicChunkLoader
 {
 	/**
-	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Vector3 $place): array
+	public function getNeededChunks(): array
 	{
 		$chunks = [];
 		$start = $this->getCubicStart();
@@ -32,12 +30,11 @@ trait CubicChunkLoader
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	public function isChunkOfSelection(int $x, int $z): bool
 	{
 		$start = $this->getCubicStart();
 		$end = $this->getCubicEnd();
@@ -46,12 +43,11 @@ trait CubicChunkLoader
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function shouldBeCached(int $x, int $z, Vector3 $place): bool
+	public function shouldBeCached(int $x, int $z): bool
 	{
 		if ($this instanceof Patterned) {
 			$start = $this->getCubicStart();

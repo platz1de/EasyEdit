@@ -82,7 +82,7 @@ class Noise3DTask extends SelectionEditTask
 		$selection = $this->getCurrentSelection();
 		$size = $selection->getSize()->subtract(1, 1, 1);
 		$noise = $this->noise->getFastNoise3D($size->getFloorX(), $size->getFloorY(), $size->getFloorZ(), 1, 1, 1, $selection->getPos1()->getFloorX(), $selection->getPos1()->getFloorY(), $selection->getPos1()->getFloorZ());
-		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->getFloorX()][$z - $selection->getPos1()->getFloorZ()][$y - $selection->getPos1()->getFloorY()] > $this->threshold) {
 				$handler->changeBlock($x, $y, $z, BlockLegacyIds::STONE << Block::INTERNAL_METADATA_BITS);
 			} else {

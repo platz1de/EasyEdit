@@ -36,10 +36,9 @@ class StackedCube extends Selection
 	}
 
 	/**
-	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Vector3 $place): array
+	public function getNeededChunks(): array
 	{
 		$chunks = [];
 		$start = Vector3::minComponents($this->getCubicStart(), $this->getPos1());
@@ -54,12 +53,11 @@ class StackedCube extends Selection
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	public function isChunkOfSelection(int $x, int $z): bool
 	{
 		$start = Vector3::minComponents($this->getCubicStart(), $this->getPos1());
 		$end = Vector3::maxComponents($this->getCubicEnd(), $this->getPos2());
@@ -68,24 +66,22 @@ class StackedCube extends Selection
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function shouldBeCached(int $x, int $z, Vector3 $place): bool
+	public function shouldBeCached(int $x, int $z): bool
 	{
 		// TODO: Implement shouldBeCached() method.
 		return false;
 	}
 
 	/**
-	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		CubicConstructor::betweenPoints($this->getCubicStart(), $this->getCubicEnd(), $closure);
 	}

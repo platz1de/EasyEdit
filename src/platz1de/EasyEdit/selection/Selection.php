@@ -19,6 +19,7 @@ abstract class Selection
 	protected Vector3 $selected2;
 	protected string $player;
 	protected bool $piece;
+	protected bool $initialized = false;
 
 	/**
 	 * Selection constructor.
@@ -46,26 +47,28 @@ abstract class Selection
 	}
 
 	/**
-	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	abstract public function getNeededChunks(Vector3 $place): array;
+	abstract public function getNeededChunks(): array;
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool whether the chunk is in part of selected area (this doesn't check if it is actually affected)
 	 */
-	abstract public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool;
+	abstract public function isChunkOfSelection(int $x, int $z): bool;
+
+	public function getPos1(): Vector3
+	{
+		return $this->pos1;
+	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool whether the chunk should be cached to aid in later executions
 	 */
-	abstract public function shouldBeCached(int $x, int $z, Vector3 $place): bool;
+	abstract public function shouldBeCached(int $x, int $z): bool;
 
 	/**
 	 * @return Vector3
@@ -92,12 +95,11 @@ abstract class Selection
 	}
 
 	/**
-	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
 	 */
-	abstract public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void;
+	abstract public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void;
 
 	/**
 	 * @return bool
@@ -153,11 +155,14 @@ abstract class Selection
 	}
 
 	/**
-	 * @return Vector3
+	 * @param Vector3 $place
 	 */
-	public function getPos1(): Vector3
+	public function init(Vector3 $place): void
 	{
-		return $this->pos1;
+		if ($this->initialized) {
+			throw new UnexpectedValueException("Selection was already init");
+		}
+		$this->initialized = true;
 	}
 
 	/**
