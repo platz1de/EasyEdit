@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\ReferencedWorldHolder;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\world\World;
 use UnexpectedValueException;
 
 abstract class Selection
@@ -116,15 +116,8 @@ abstract class Selection
 	protected function update(): void
 	{
 		if ($this->isValid()) {
-			$minX = min($this->pos1->getX(), $this->pos2->getX());
-			$maxX = max($this->pos1->getX(), $this->pos2->getX());
-			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), World::Y_MIN);
-			$maxY = min(max($this->pos1->getY(), $this->pos2->getY()), World::Y_MAX - 1);
-			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
-			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
-
-			$this->pos1 = new Vector3($minX, $minY, $minZ);
-			$this->pos2 = new Vector3($maxX, $maxY, $maxZ);
+			$this->pos1 = VectorUtils::enforceHeight(Vector3::minComponents($this->pos1, $this->pos2));
+			$this->pos2 = VectorUtils::enforceHeight(Vector3::maxComponents($this->pos1, $this->pos2));
 		}
 	}
 
