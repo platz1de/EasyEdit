@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\command\defaults\selection\CenterCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
