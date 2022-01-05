@@ -58,7 +58,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$rotated->setPos2(new Vector3($selection->getPos2()->getZ(), $selection->getPos2()->getY(), $selection->getPos2()->getX()));
 		$rotated->getManager()->load($rotated->getPos1(), $rotated->getPos2());
 		$rotated->setPoint(new Vector3(-$selection->getPos2()->getZ() - $selection->getPoint()->getZ(), $selection->getPoint()->getY(), $selection->getPoint()->getX()));
-		$selection->setPoint(new Vector3(0, 0, 0));
+		$selection->setPoint(Vector3::zero());
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $rotated): void {
 			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 			Selection::processBlock($block);

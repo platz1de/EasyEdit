@@ -63,7 +63,7 @@ class Noise3DTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0), $octaves, $persistence, $expansion, $threshold));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $octaves, $persistence, $expansion, $threshold));
 	}
 
 	/**

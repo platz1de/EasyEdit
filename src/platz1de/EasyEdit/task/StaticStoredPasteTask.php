@@ -69,7 +69,7 @@ class StaticStoredPasteTask extends ExecutableTask
 			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
 			StaticPasteTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		$this->executor = StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+		$this->executor = StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
 		$this->executor->execute();
 	}
 

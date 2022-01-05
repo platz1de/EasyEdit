@@ -44,7 +44,7 @@ class ExtendCommand extends EasyEditCommand
 			$pos2 = new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ());
 		} else {
 			$count = (int) ($args[0] ?? 1);
-			$offset = VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0), $count);
+			$offset = VectorUtils::moveVectorInSight($player->getLocation(), Vector3::zero(), $count);
 			if ($count < 0 xor $offset->abs()->equals($offset)) {
 				$pos2 = $pos2->addVector($offset);
 			} else {

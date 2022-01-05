@@ -24,7 +24,7 @@ class StackedCube extends Selection
 	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null)
 	{
 		parent::__construct($player, $world, $pos1, $pos2);
-		$this->direction = $direction ?? new Vector3(0, 0, 0);
+		$this->direction = $direction ?? Vector3::zero();
 	}
 
 	/**

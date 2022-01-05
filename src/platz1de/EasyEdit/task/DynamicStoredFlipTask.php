@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\command\defaults\selection\CenterCommand;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -66,7 +67,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		switch ($this->axis) {
 			case Axis::X:
 				$flipped->setPoint(new Vector3(-$selection->getPos2()->getX() - $selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
-				$selection->setPoint(new Vector3(0, 0, 0));
+				$selection->setPoint(Vector3::zero());
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
@@ -78,7 +79,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				break;
 			case Axis::Y:
 				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), -$selection->getPos2()->getY() - $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
-				$selection->setPoint(new Vector3(0, 0, 0));
+				$selection->setPoint(Vector3::zero());
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
@@ -90,7 +91,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				break;
 			case Axis::Z:
 				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), $selection->getPoint()->getY(), -$selection->getPos2()->getZ() - $selection->getPoint()->getZ()));
-				$selection->setPoint(new Vector3(0, 0, 0));
+				$selection->setPoint(Vector3::zero());
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
