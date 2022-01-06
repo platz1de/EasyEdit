@@ -209,7 +209,7 @@ abstract class Selection
 
 	/**
 	 * Splits the selection into smaller parts
-	 * lower the impact of Chunk loading
+	 * lowers the impact of Chunk loading
 	 * @param Vector3 $offset
 	 * @return Selection[]
 	 */
