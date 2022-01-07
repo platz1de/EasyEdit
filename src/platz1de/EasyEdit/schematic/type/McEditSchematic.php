@@ -24,7 +24,7 @@ class McEditSchematic extends SchematicType
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
 		$target->setPoint(new Vector3($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0), $nbt->getInt(self::OFFSET_Z, 0)));
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
-		$target->setPos2(new Vector3($xSize, $ySize, $zSize));
+		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
 		$target->getManager()->load($target->getPos1(), $target->getPos2());
 
 		//"AddBlocks" allows ids over 255

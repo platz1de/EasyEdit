@@ -26,7 +26,7 @@ class DynamicBlockListSelection extends BlockListSelection
 	public function __construct(string $player, ?Vector3 $place = null, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
-			$pos2 = $pos2->subtractVector($pos1);
+			$pos2 = $pos2->subtractVector($pos1)->up(World::Y_MIN);
 		}
 		parent::__construct($player, "", new Vector3(0, World::Y_MIN, 0), $pos2 ?? null, $piece);
 		if ($pos1 instanceof Vector3 && $place instanceof Vector3) {
