@@ -26,21 +26,10 @@ class Cube extends Selection implements Patterned
 
 	public function update(): void
 	{
-		if ($this->isValid()) {
-			$minX = min($this->pos1->getX(), $this->pos2->getX());
-			$maxX = max($this->pos1->getX(), $this->pos2->getX());
-			$minY = max(min($this->pos1->getY(), $this->pos2->getY()), World::Y_MIN);
-			$maxY = min(max($this->pos1->getY(), $this->pos2->getY()), World::Y_MAX - 1);
-			$minZ = min($this->pos1->getZ(), $this->pos2->getZ());
-			$maxZ = max($this->pos1->getZ(), $this->pos2->getZ());
-
-			$this->pos1 = new Vector3($minX, $minY, $minZ);
-			$this->pos2 = new Vector3($maxX, $maxY, $maxZ);
-
-			if (!$this->piece && !Thread::getCurrentThread() instanceof EditThread) {
-				$this->close();
-				$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
-			}
+		parent::update();
+		if (!$this->piece && $this->isValid() && !Thread::getCurrentThread() instanceof EditThread) {
+			$this->close();
+			$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld()->getFolderName(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
 		}
 	}
 
@@ -95,12 +84,11 @@ class Cube extends Selection implements Patterned
 	}
 
 	/**
-	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		if ($context->isEmpty()) {
 			return;

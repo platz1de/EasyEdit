@@ -14,7 +14,12 @@ use UnexpectedValueException;
 
 class StaticBlockListSelection extends BlockListSelection
 {
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
+	/**
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
+	 * @param Selection        $full
+	 */
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		CubicConstructor::betweenPoints($this->getPos1(), $this->getPos2(), $closure);
 	}

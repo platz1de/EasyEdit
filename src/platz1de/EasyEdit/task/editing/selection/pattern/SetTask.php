@@ -41,7 +41,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0), $pattern));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
 	}
 
 	/**
@@ -59,7 +59,7 @@ class SetTask extends PatternedEditTask
 	{
 		$selection = $this->getCurrentSelection();
 		$pattern = $this->getPattern();
-		$selection->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $pattern, $selection): void {
+		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $pattern, $selection): void {
 			if ($pattern->isValidAt($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection())) {
 				$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection());
 				if ($block !== -1) {

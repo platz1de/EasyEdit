@@ -43,7 +43,7 @@ class StaticPasteTask extends SelectionEditTask
 	 */
 	public static function queue(StaticBlockListSelection $selection): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, new Vector3(0, 0, 0), new Vector3(0, 0, 0)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**
@@ -57,7 +57,7 @@ class StaticPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
-		$selection->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $selection): void {
+		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $selection): void {
 			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);

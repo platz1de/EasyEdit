@@ -85,7 +85,7 @@ class CopyTask extends SelectionEditTask
 		$ox = $offset->getFloorX();
 		$oy = $offset->getFloorY();
 		$oz = $offset->getFloorZ();
-		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($oz, $oy, $ox, $handler): void {
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($oz, $oy, $ox, $handler): void {
 			$handler->addToUndo($x, $y, $z, $ox, $oy, $oz);
 		}, SelectionContext::full(), $this->getTotalSelection());
 	}

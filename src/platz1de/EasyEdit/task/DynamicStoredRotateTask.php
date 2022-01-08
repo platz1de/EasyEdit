@@ -15,7 +15,6 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
-use UnexpectedValueException;
 
 class DynamicStoredRotateTask extends ExecutableTask
 {
@@ -59,7 +58,8 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$rotated->setPos2(new Vector3($selection->getPos2()->getZ(), $selection->getPos2()->getY(), $selection->getPos2()->getX()));
 		$rotated->getManager()->load($rotated->getPos1(), $rotated->getPos2());
 		$rotated->setPoint(new Vector3(-$selection->getPos2()->getZ() - $selection->getPoint()->getZ(), $selection->getPoint()->getY(), $selection->getPoint()->getX()));
-		$selection->useOnBlocks(new Vector3(0, 0, 0), function (int $x, int $y, int $z) use ($selection, $rotated): void {
+		$selection->setPoint(Vector3::zero());
+		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $rotated): void {
 			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 			Selection::processBlock($block);
 			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockConvertor::rotate($block));

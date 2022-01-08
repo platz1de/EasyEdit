@@ -34,7 +34,7 @@ class FlipCommand extends EasyEditCommand
 			return;
 		}
 
-		$vector = VectorUtils::moveVectorInSight($player->getLocation(), new Vector3(0, 0, 0));
+		$vector = VectorUtils::moveVectorInSight($player->getLocation(), Vector3::zero());
 		$axis = match ($vector->getX() . ":" . $vector->getY() . ":" . $vector->getZ()) {
 			"1:0:0", "-1:0:0" => Axis::X,
 			"0:1:0", "0:-1:0" => Axis::Y,

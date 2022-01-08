@@ -29,7 +29,7 @@ class SpongeSchematic extends SchematicType
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
 		$version = $nbt->getInt(self::FORMAT_VERSION, 1);
-		$offset = new Vector3(0, 0, 0);
+		$offset = Vector3::zero();
 		$metaData = $nbt->getCompoundTag(self::METADATA);
 		if ($metaData !== null) {
 			$offset = new Vector3($nbt->getInt(McEditSchematic::OFFSET_X, 0), $nbt->getInt(McEditSchematic::OFFSET_Y, 0), $nbt->getInt(McEditSchematic::OFFSET_Z, 0));

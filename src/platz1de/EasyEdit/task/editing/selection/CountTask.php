@@ -41,7 +41,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), new Vector3(0, 0, 0)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**
@@ -80,7 +80,7 @@ class CountTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$blocks = $this->getDataManager()->getCountedBlocks();
-		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, &$blocks): void {
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler, &$blocks): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($blocks[$id])) {
 				$blocks[$id]++;

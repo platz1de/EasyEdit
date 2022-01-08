@@ -24,7 +24,7 @@ class MovingCube extends Selection
 	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null)
 	{
 		parent::__construct($player, $world, $pos1, $pos2);
-		$this->direction = $direction ?? new Vector3(0, 0, 0);
+		$this->direction = $direction ?? Vector3::zero();
 	}
 
 	/**
@@ -36,10 +36,9 @@ class MovingCube extends Selection
 	}
 
 	/**
-	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Vector3 $place): array
+	public function getNeededChunks(): array
 	{
 		$chunks = [];
 		//TODO: Remove duplicates
@@ -57,12 +56,11 @@ class MovingCube extends Selection
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	public function isChunkOfSelection(int $x, int $z): bool
 	{
 		$start = $this->getCubicStart();
 		$end = $this->getCubicEnd();
@@ -79,19 +77,18 @@ class MovingCube extends Selection
 	 * @param Vector3 $place
 	 * @return bool
 	 */
-	public function shouldBeCached(int $x, int $z, Vector3 $place): bool
+	public function shouldBeCached(int $x, int $z): bool
 	{
 		// TODO: Implement shouldBeCached() method.
 		return false;
 	}
 
 	/**
-	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
 	{
 		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
 		$min = VectorUtils::enforceHeight($this->pos1);

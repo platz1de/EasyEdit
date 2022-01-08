@@ -61,7 +61,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$setData->setResultHandler(static function (EditTask $task, int $changeId) { });
 
 		//Task #1 - set static
-		$this->setSimpleBenchmark = SetTask::from($this->world, $this->world, $setData, $testCube, $pos, new Vector3(0, 0, 0), StaticBlock::fromBlock(VanillaBlocks::STONE()));
+		$this->setSimpleBenchmark = SetTask::from($this->world, $this->world, $setData, $testCube, $pos, Vector3::zero(), StaticBlock::fromBlock(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->execute();
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
@@ -72,7 +72,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternConstruct::from([EvenPattern::from([PatternConstruct::from([EvenPattern::from([StaticBlock::fromBlock(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), OddPattern::from([StaticBlock::fromBlock(VanillaBlocks::STONE())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::fromBlock(VanillaBlocks::DIRT())])], PatternArgumentData::create()->useYAxis()), EvenPattern::from([StaticBlock::fromBlock(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), OddPattern::from([StaticBlock::fromBlock(VanillaBlocks::DIRT())], PatternArgumentData::create()->useXAxis()->useZAxis()), StaticBlock::fromBlock(VanillaBlocks::STONE())]);
-		$this->setComplexBenchmark = SetTask::from($this->world, $this->world, $complexData, $testCube, $pos, new Vector3(0, 0, 0), $pattern);
+		$this->setComplexBenchmark = SetTask::from($this->world, $this->world, $complexData, $testCube, $pos, Vector3::zero(), $pattern);
 		$this->setComplexBenchmark->execute();
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();

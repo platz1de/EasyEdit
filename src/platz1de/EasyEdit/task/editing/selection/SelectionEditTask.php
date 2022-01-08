@@ -53,7 +53,8 @@ abstract class SelectionEditTask extends EditTask
 				$this->getDataManager()->setFinal();
 			}
 			$this->current = $piece;
-			if ($this->requestChunks($piece->getNeededChunks($this->position))) {
+			$piece->init($this->getPosition());
+			if ($this->requestChunks($piece->getNeededChunks())) {
 				$this->getDataManager()->donePiece();
 				$this->piecesLeft--;
 			} else {
@@ -73,7 +74,7 @@ abstract class SelectionEditTask extends EditTask
 		foreach ($chunks as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
 			//separate chunks which are only loaded for patterns
-			if (!$this->current->isChunkOfSelection($x, $z, $this->position)) {
+			if (!$this->current->isChunkOfSelection($x, $z)) {
 				unset($chunks[$hash]);
 			}
 		}

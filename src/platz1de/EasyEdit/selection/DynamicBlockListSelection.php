@@ -26,7 +26,7 @@ class DynamicBlockListSelection extends BlockListSelection
 	public function __construct(string $player, ?Vector3 $place = null, ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, bool $piece = false)
 	{
 		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
-			$pos2 = $pos2->subtractVector($pos1);
+			$pos2 = $pos2->subtractVector($pos1)->up(World::Y_MIN);
 		}
 		parent::__construct($player, "", new Vector3(0, World::Y_MIN, 0), $pos2 ?? null, $piece);
 		if ($pos1 instanceof Vector3 && $place instanceof Vector3) {
@@ -35,13 +35,12 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @param Vector3 $place
 	 * @return int[]
 	 */
-	public function getNeededChunks(Vector3 $place): array
+	public function getNeededChunks(): array
 	{
-		$start = $this->getCubicStart()->addVector($place)->addVector($this->getPoint());
-		$end = $this->getCubicEnd()->addVector($place)->addVector($this->getPoint());
+		$start = $this->getCubicStart()->addVector($this->getPoint());
+		$end = $this->getCubicEnd()->addVector($this->getPoint());
 
 		$chunks = [];
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
@@ -53,42 +52,46 @@ class DynamicBlockListSelection extends BlockListSelection
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function isChunkOfSelection(int $x, int $z, Vector3 $place): bool
+	public function isChunkOfSelection(int $x, int $z): bool
 	{
-		$start = $this->getCubicStart()->addVector($place)->addVector($this->getPoint());
-		$end = $this->getCubicEnd()->addVector($place)->addVector($this->getPoint());
+		$start = $this->getCubicStart()->addVector($this->getPoint());
+		$end = $this->getCubicEnd()->addVector($this->getPoint());
 
 		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
-	public function shouldBeCached(int $x, int $z, Vector3 $place): bool
+	public function shouldBeCached(int $x, int $z): bool
 	{
-		$start = $this->getCubicStart()->addVector($place)->addVector($this->getPoint());
-		$end = $this->getCubicEnd()->addVector($place)->addVector($this->getPoint());
+		$start = $this->getCubicStart()->addVector($this->getPoint());
+		$end = $this->getCubicEnd()->addVector($this->getPoint());
 
 		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && ($z === $end->getZ() >> 4 || $z === ($end->getZ() >> 4) + 1);
 	}
 
 	/**
-	 * @param Vector3          $place
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
 	 */
-	public function useOnBlocks(Vector3 $place, Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
 	{
-		CubicConstructor::betweenPoints($this->getPos1()->addVector($place), $this->getPos2()->addVector($place), $closure);
+		CubicConstructor::betweenPoints($this->getPos1()->addVector($this->getPoint()), $this->getPos2()->addVector($this->getPoint()), $closure);
+	}
+
+	public function init(Vector3 $place): void
+	{
+		parent::init($place);
+		$this->pos1 = $this->pos1->addVector($place);
+		$this->pos2 = $this->pos2->addVector($place);
 	}
 
 	/**

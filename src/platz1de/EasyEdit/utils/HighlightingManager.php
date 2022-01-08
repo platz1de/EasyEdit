@@ -12,13 +12,11 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\player\Player;
 use pocketmine\Server;
-use pocketmine\world\Position;
-use pocketmine\world\World;
 
 class HighlightingManager
 {
 	/**
-	 * @var array<string, array<int, Position>>
+	 * @var array<string, array<int, ReferencedPosition>>
 	 */
 	private static array $staticDataHolders = [];
 	/**
@@ -32,19 +30,19 @@ class HighlightingManager
 	 * Highlight a cube using structure blocks
 	 *
 	 * @param string  $player
-	 * @param World   $world
+	 * @param string  $world
 	 * @param Vector3 $pos1
 	 * @param Vector3 $pos2
 	 * @param Vector3 $dataHolder
 	 * @return int
 	 */
-	public static function highlightStaticCube(string $player, World $world, Vector3 $pos1, Vector3 $pos2, Vector3 $dataHolder): int
+	public static function highlightStaticCube(string $player, string $world, Vector3 $pos1, Vector3 $pos2, Vector3 $dataHolder): int
 	{
 		if (!isset(self::$staticDataHolders[$player])) {
 			self::$staticDataHolders[$player] = [];
 		}
 
-		self::$staticDataHolders[$player][self::$id] = Position::fromObject($dataHolder->floor(), $world);
+		self::$staticDataHolders[$player][self::$id] = new ReferencedPosition($dataHolder->floor(), $world);
 		self::$staticData[self::$id] = CompoundTag::create()
 			->setInt("xStructureOffset", $pos1->getFloorX() - $dataHolder->getFloorX())
 			->setInt("yStructureOffset", $pos1->getFloorY() - $dataHolder->getFloorY())
@@ -78,8 +76,8 @@ class HighlightingManager
 	{
 		if (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
 			//Minecraft doesn't delete BlockData if the original Block shouldn't have some or whole chunks get sent
-			PacketUtils::sendFakeBlock(self::$staticDataHolders[$player][$id], self::$staticDataHolders[$player][$id]->getWorld(), $p, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS);
-			PacketUtils::resendBlock(self::$staticDataHolders[$player][$id], self::$staticDataHolders[$player][$id]->getWorld(), $p);
+			PacketUtils::sendFakeBlock(self::$staticDataHolders[$player][$id], $p->getWorld(), $p, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS);
+			PacketUtils::resendBlock(self::$staticDataHolders[$player][$id], $p->getWorld(), $p);
 		}
 	}
 
@@ -102,7 +100,7 @@ class HighlightingManager
 	{
 		if (isset(self::$staticDataHolders[$player]) && (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player)) {
 			foreach (self::$staticDataHolders[$player] as $id => $pos) {
-				if ($pos->getWorld() === $p->getWorld()) {
+				if ($pos->getWorldName() === $p->getWorld()->getFolderName()) {
 					self::sendStaticHolder($player, $id);
 				} else {
 					self::removeStaticHolder($player, $id);

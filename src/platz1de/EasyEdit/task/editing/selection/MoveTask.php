@@ -45,7 +45,7 @@ class MoveTask extends SelectionEditTask
 	 */
 	public static function queue(MovingCube $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**
@@ -60,7 +60,7 @@ class MoveTask extends SelectionEditTask
 	{
 		$selection = $this->current;
 		$direction = $selection->getDirection();
-		$selection->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($handler, $direction): void {
+		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->changeBlock($x, $y, $z, 0);
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z);
 		}, SelectionContext::full(), $this->getTotalSelection());

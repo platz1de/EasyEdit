@@ -63,7 +63,7 @@ class Noise3DTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), new Vector3(0, 0, 0), $octaves, $persistence, $expansion, $threshold));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $octaves, $persistence, $expansion, $threshold));
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Noise3DTask extends SelectionEditTask
 		$selection = $this->getCurrentSelection();
 		$size = $selection->getSize()->subtract(1, 1, 1);
 		$noise = $this->noise->getFastNoise3D($size->getFloorX(), $size->getFloorY(), $size->getFloorZ(), 1, 1, 1, $selection->getPos1()->getFloorX(), $selection->getPos1()->getFloorY(), $selection->getPos1()->getFloorZ());
-		$this->getCurrentSelection()->useOnBlocks($this->getPosition(), function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->getFloorX()][$z - $selection->getPos1()->getFloorZ()][$y - $selection->getPos1()->getFloorY()] > $this->threshold) {
 				$handler->changeBlock($x, $y, $z, BlockLegacyIds::STONE << Block::INTERNAL_METADATA_BITS);
 			} else {
