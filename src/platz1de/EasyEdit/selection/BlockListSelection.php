@@ -35,8 +35,8 @@ abstract class BlockListSelection extends Selection
 	{
 		parent::__construct($player, $world, $pos1, $pos2, $piece);
 		$this->manager = new ReferencedChunkManager($world);
-		if ($pos1 instanceof Vector3 && $pos2 instanceof Vector3) {
-			$this->getManager()->load($pos1, $pos2);
+		if (isset($this->pos1, $this->pos2)) {
+			$this->getManager()->load($this->pos1, $this->pos2);
 		}
 		$this->iterator = new SafeSubChunkExplorer($this->manager);
 	}
