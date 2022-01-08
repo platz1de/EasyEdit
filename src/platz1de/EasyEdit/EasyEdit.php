@@ -39,6 +39,7 @@ use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
 use platz1de\EasyEdit\command\defaults\utility\BrushCommand;
 use platz1de\EasyEdit\command\defaults\utility\CancelCommand;
 use platz1de\EasyEdit\command\defaults\utility\HelpCommand;
+use platz1de\EasyEdit\command\defaults\utility\LineCommand;
 use platz1de\EasyEdit\command\defaults\utility\StatusCommand;
 use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\thread\EditAdapter;
@@ -115,6 +116,7 @@ class EasyEdit extends PluginBase
 			//Utility
 			new HelpCommand(),
 			new BrushCommand(),
+			new LineCommand(),
 			new BlockInfoCommand(),
 			new StatusCommand(),
 			new CancelCommand(),
