@@ -55,6 +55,9 @@ class InjectingSubChunkExplorer extends SafeSubChunkExplorer
 	 */
 	public function getInjections(): array
 	{
+		if (!isset($this->currentIndex)) {
+			return [[], []];
+		}
 		$this->injections[$this->currentIndex] = $this->currentInjection;
 		$this->blockCounts[$this->currentIndex] = $this->currentBlockCount;
 		return [$this->injections, $this->blockCounts];
