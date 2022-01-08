@@ -23,7 +23,15 @@ class StaticBlock extends Pattern
 	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, \platz1de\EasyEdit\selection\Selection $total): int
+	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
+	{
+		return $this->args->getRealBlock();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get(): int
 	{
 		return $this->args->getRealBlock();
 	}
