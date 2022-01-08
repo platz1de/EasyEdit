@@ -16,6 +16,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\world\format\Chunk;
+use pocketmine\world\World;
 
 abstract class EditTask extends ExecutableTask
 {
@@ -58,6 +59,35 @@ abstract class EditTask extends ExecutableTask
 			ChunkCollector::clean($this->getCacheClosure());
 			return true;
 		}
+		return false;
+	}
+
+	/**
+	 * @param int[] $chunks
+	 * Requests chunks while staying in the same execution
+	 * Warning: Tasks calling this need to terminate when returning false immediately
+	 * This method doesn't do memory management itself, instead this is the responsibility of the caller
+	 */
+	public function requestRuntimeChunks(EditTaskHandler $handler, array $chunks): bool
+	{
+		ChunkCollector::clean(static function (array $chunks): array {
+			return $chunks; //cache all
+		});
+		ChunkCollector::request($chunks);
+		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+			if (ChunkCollector::hasReceivedInput()) {
+				foreach ($chunks as $hash) {
+					World::getXZ($hash, $x, $z);
+					if (($c = $handler->getOrigin()->getManager()->getChunk($x, $z)) === null) {
+						continue;
+					}
+					$handler->getResult()->setChunk($x, $z, clone $c);
+				}
+				return true;
+			}
+			EditThread::getInstance()->waitForData();
+		}
+		$this->forceStop();
 		return false;
 	}
 
