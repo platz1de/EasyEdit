@@ -79,6 +79,7 @@ class LineTask extends EditTask
 			$this->blocks[] = $pos;
 		}
 		if($current !== null) {
+			$this->getDataManager()->setFinal();
             $this->requestChunks([$current]);
         }
 		ChunkCollector::clear();
