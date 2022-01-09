@@ -34,6 +34,9 @@ class ResultingChunkData extends OutputData
 	 */
 	public static function from(string $world, array $chunks, array $tiles): void
 	{
+		if ($chunks === []) {
+			return;
+		}
 		$data = new self();
 		$data->world = $world;
 		$data->chunkData = $chunks;
@@ -49,6 +52,9 @@ class ResultingChunkData extends OutputData
 	 */
 	public static function withInjection(string $world, array $chunks, array $tiles, array $injections): void
 	{
+		if ($chunks === [] && $injections === []) {
+			return;
+		}
 		$data = new self();
 		$data->world = $world;
 		$data->chunkData = $chunks;
