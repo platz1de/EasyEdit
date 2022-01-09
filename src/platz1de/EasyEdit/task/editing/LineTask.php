@@ -65,6 +65,7 @@ class LineTask extends EditTask
 
 	public function execute(): void
 	{
+		$this->getDataManager()->useFastSet();
 		ChunkCollector::init($this->getWorld());
 		$current = null;
 		//offset points to not yield blocks beyond the endings
