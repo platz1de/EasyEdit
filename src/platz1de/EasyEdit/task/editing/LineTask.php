@@ -28,7 +28,7 @@ class LineTask extends EditTask
 
 	/**
 	 * @var Vector3[]
-	 * These are 16 blocks in the worst case
+	 * These are 48 blocks in the worst case
 	 */
 	private array $blocks = [];
 
