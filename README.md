@@ -83,7 +83,7 @@ Command | Description | Permission | Aliases/Notice
 ---|---|---|---
 //commands [page] | List all EasyEdit commands | - | //h //cmd
 //brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.brush <br> (To use: easyedit.edit)| //br
-//line <x> <y> <z> \[pattern] | Draw a line | easyedit.edit easyedit.generate
+//line \<x> \<y> \<z> \[pattern] | Draw a line | easyedit.edit easyedit.generate
 //blockinfo | Get a blockinfo stick | easyedit.util | //bi
 //status | Check on the EditThread | easyedit.manage
 //cancel | Cancel the current task | easyedit.manage
