@@ -13,6 +13,9 @@ class Messages
 {
 	private const MESSAGE_VERSION = "2.0.1";
 
+	//TODO: All command strings should be translatable
+	public const RESOURCE_WARNING = TextFormat::RED . "RESOURCE HEAVY" . TextFormat::RESET;
+
 	/**
 	 * @var string[]
 	 */
