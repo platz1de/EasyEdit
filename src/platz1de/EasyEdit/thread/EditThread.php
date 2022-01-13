@@ -65,7 +65,9 @@ class EditThread extends Thread
 				ThreadData::setTask($task);
 				if ($task === null) {
 					$this->synchronized(function (): void {
-						$this->wait();
+						if ($this->inputData === "") {
+						    $this->wait();
+						}
 					});
 				} else {
 					try {
@@ -84,7 +86,9 @@ class EditThread extends Thread
 				}
 			} else {
 				$this->synchronized(function (): void {
-					$this->wait(10 * 1000 * 1000);
+					if ($this->inputData === "") {
+					    $this->wait(10 * 1000 * 1000);
+					}
 				});
 				if ($sleep < time()) {
 					$this->setStatus(self::STATUS_IDLE);
