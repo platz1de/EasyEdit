@@ -55,7 +55,11 @@ class EditThread extends Thread
 
 		$sleep = 0;
 		while (!$this->isKilled) {
-			$this->parseInput();
+			try {
+				$this->parseInput(); //This can easily throw an exception when cancelling in an unexpected moment
+			} catch (Throwable $throwable) {
+				$this->logger->logException($throwable);
+			}
 			if ($this->getStatus() !== self::STATUS_CRASHED) {
 				$task = ThreadData::getNextTask();
 				ThreadData::setTask($task);
