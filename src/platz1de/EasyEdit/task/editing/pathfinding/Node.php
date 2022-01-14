@@ -14,7 +14,7 @@ class Node
 	public int $parentHash;
 	public float $h;
 
-	public function __construct(int $x, int $y, int $z, ?Node $parent, int $sx, int $sy, int $sz, bool $allowDiagonal)
+	public function __construct(int $x, int $y, int $z, ?Node $parent, int $sx, int $sy, int $sz)
 	{
 		$this->x = $x;
 		$this->y = $y;

@@ -89,7 +89,7 @@ class PathfindingTask extends EditTask
 		$endY = $this->end->getFloorY();
 		$endZ = $this->end->getFloorZ();
 
-		$open->insert(new Node($this->start->getFloorX(), $this->start->getFloorY(), $this->start->getFloorZ(), null, $endX, $endY, $endZ, $this->allowDiagonal));
+		$open->insert(new Node($this->start->getFloorX(), $this->start->getFloorY(), $this->start->getFloorZ(), null, $endX, $endY, $endZ));
 		while ($checked++ < 1000000) { //hardcoded limit of 1M blocks for now
 			/** @var Node $current */
 			$current = $open->extract();
@@ -127,7 +127,7 @@ class PathfindingTask extends EditTask
 									$collection[$hash]->checkG($current);
 									continue;
 								}
-								$open->insert($collection[$hash] = new Node($x, $y, $z, $current, $endX, $endY, $endZ, $this->allowDiagonal));
+								$open->insert($collection[$hash] = new Node($x, $y, $z, $current, $endX, $endY, $endZ));
 							}
 						}
 					}
@@ -141,7 +141,7 @@ class PathfindingTask extends EditTask
 							$collection[$hash]->checkG($current);
 							continue;
 						}
-						$open->insert($collection[$hash] = new Node($x, $y, $z, $current, $endX, $endY, $endZ, $this->allowDiagonal));
+						$open->insert($collection[$hash] = new Node($x, $y, $z, $current, $endX, $endY, $endZ));
 					}
 				}
 			}
@@ -167,8 +167,8 @@ class PathfindingTask extends EditTask
 
 	public function getProgress(): float
 	{
-		$current = $this->blocks[0] ?? $this->start;
-		return $current->distance($this->start) / $this->start->distance($this->end);
+		//TODO
+		return 0;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

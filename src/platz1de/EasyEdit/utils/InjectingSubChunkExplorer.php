@@ -22,6 +22,9 @@ class InjectingSubChunkExplorer extends SafeSubChunkExplorer
 	private array $blockCounts = [];
 	private int $currentBlockCount = 0;
 
+	/**
+	 * @phpstan-return SubChunkExplorerStatus::*
+	 */
 	public function moveTo(int $x, int $y, int $z): int
 	{
 		$return = parent::moveTo($x, $y, $z);

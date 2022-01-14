@@ -87,11 +87,10 @@ abstract class SelectionEditTask extends EditTask
 	public function getCacheClosure(): Closure
 	{
 		$selection = $this->current;
-		$position = $this->position;
-		return static function (array $chunks) use ($selection, $position): array {
+		return static function (array $chunks) use ($selection): array {
 			foreach ($chunks as $hash => $chunk) {
 				World::getXZ($hash, $x, $z);
-				if (!$selection->shouldBeCached($x, $z, $position)) {
+				if (!$selection->shouldBeCached($x, $z)) {
 					unset($chunks[$hash]);
 				}
 			}

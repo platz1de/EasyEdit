@@ -28,16 +28,13 @@ class SafeSubChunkExplorer extends SubChunkExplorer
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
-	 * @return int
+	 * @phpstan-return SubChunkExplorerStatus::*
 	 */
 	public function moveTo(int $x, int $y, int $z): int
 	{
 		$return = parent::moveTo($x, $y, $z);
 		if ($return === SubChunkExplorerStatus::MOVED) {
-			$this->currentChunk->setTerrainDirty();
+			$this->currentChunk?->setTerrainDirty();
 		}
 		return $return;
 	}

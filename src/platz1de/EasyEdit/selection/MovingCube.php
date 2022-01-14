@@ -72,9 +72,8 @@ class MovingCube extends Selection
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $z
-	 * @param Vector3 $place
+	 * @param int $x
+	 * @param int $z
 	 * @return bool
 	 */
 	public function shouldBeCached(int $x, int $z): bool

@@ -47,6 +47,7 @@ abstract class ExecutableTask
 	public static function fastDeserialize(string $data): ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream($data);
+		/** @var class-string<ExecutableTask> $type */
 		$type = $stream->getString();
 		/** @var ExecutableTask $task */
 		$task = new $type($stream->getString());
