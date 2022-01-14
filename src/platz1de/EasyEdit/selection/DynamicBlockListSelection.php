@@ -11,7 +11,7 @@ use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
-class DynamicBlockListSelection extends BlockListSelection
+class DynamicBlockListSelection extends ChunkManagedBlockList
 {
 	private Vector3 $point;
 

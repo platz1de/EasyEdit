@@ -12,7 +12,7 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
-class StaticBlockListSelection extends BlockListSelection
+class StaticBlockListSelection extends ChunkManagedBlockList
 {
 	/**
 	 * @param Closure          $closure
