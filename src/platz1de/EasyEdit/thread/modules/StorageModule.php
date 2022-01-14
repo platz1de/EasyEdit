@@ -6,7 +6,6 @@ use BadMethodCallException;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\utils\LoaderManager;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -41,16 +40,7 @@ class StorageModule
 		if (self::$collected === null) {
 			self::$collected = $piece;
 		} else {
-			foreach ($piece->getManager()->getChunks() as $hash => $chunk) {
-				World::getXZ($hash, $x, $z);
-				//TODO: only create Chunks which are really needed
-				if (LoaderManager::isChunkUsed($chunk)) {
-					self::$collected->getManager()->setChunk($x, $z, $chunk);
-				}
-			}
-			foreach ($piece->getTiles() as $tile) {
-				self::$collected->addTile($tile);
-			}
+			self::$collected->merge($piece);
 		}
 	}
 

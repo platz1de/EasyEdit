@@ -2,8 +2,10 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use BadMethodCallException;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\io\FastChunkSerializer;
@@ -68,6 +70,11 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		return $this->iterator;
 	}
 
+	public function getBlockCount(): int
+	{
+		return $this->iterator->getWrittenBlockCount();
+	}
+
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
@@ -106,5 +113,25 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	{
 		parent::free();
 		$this->manager->cleanChunks();
+	}
+
+	/**
+	 * @param BlockListSelection $selection
+	 */
+	public function merge(BlockListSelection $selection): void
+	{
+		if (!$selection instanceof self) {
+			throw new BadMethodCallException("Can't merge block lists of different types");
+		}
+
+		parent::merge($selection);
+
+		foreach ($selection->getManager()->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			//TODO: only create Chunks which are really needed
+			if (LoaderManager::isChunkUsed($chunk)) {
+				$this->getManager()->setChunk($x, $z, $chunk);
+			}
+		}
 	}
 }

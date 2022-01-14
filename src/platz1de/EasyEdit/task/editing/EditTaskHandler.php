@@ -64,7 +64,7 @@ class EditTaskHandler
 	 */
 	public function getChangedBlockCount(): int
 	{
-		return $this->changes->getIterator()->getWrittenBlockCount(); //hack to return copied blocks too
+		return $this->changes->getBlockCount(); //hack to return copied blocks too
 	}
 
 	/**
@@ -72,7 +72,7 @@ class EditTaskHandler
 	 */
 	public function getWrittenBlockCount(): int
 	{
-		return $this->origin->getWrittenBlockCount() + $this->result->getWrittenBlockCount() + $this->changes->getIterator()->getWrittenBlockCount();
+		return $this->origin->getWrittenBlockCount() + $this->result->getWrittenBlockCount() + $this->changes->getBlockCount();
 	}
 
 	/**

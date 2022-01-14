@@ -42,6 +42,8 @@ abstract class BlockListSelection extends Selection
 		return $this->tiles;
 	}
 
+	abstract public function getBlockCount(): int;
+
 	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
@@ -63,5 +65,15 @@ abstract class BlockListSelection extends Selection
 	public function free(): void
 	{
 		$this->tiles = [];
+	}
+
+	/**
+	 * @param BlockListSelection $selection
+	 */
+	public function merge(BlockListSelection $selection): void
+	{
+		foreach ($selection->getTiles() as $tile) {
+			$this->addTile($tile);
+		}
 	}
 }
