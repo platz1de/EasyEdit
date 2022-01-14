@@ -12,6 +12,8 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class HighlightingManager
 {
