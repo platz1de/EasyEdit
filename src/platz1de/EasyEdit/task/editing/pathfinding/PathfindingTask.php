@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\task\editing\pathfinding;
 
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -150,14 +150,11 @@ class PathfindingTask extends EditTask
 	}
 
 	/**
-	 * @return StaticBlockListSelection
+	 * @return BinaryBlockListStream
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		//TODO: an actual undo list
-		$s = Vector3::minComponents($this->start, $this->end)->subtract(100, 100, 100);
-		$e = Vector3::maxComponents($this->start, $this->end)->add(100, 100, 100);
-		return new StaticBlockListSelection($this->getOwner(), $this->getWorld(), $s, $e);
+		return new BinaryBlockListStream($this->getOwner(), $this->getWorld());
 	}
 
 	public function getTaskName(): string

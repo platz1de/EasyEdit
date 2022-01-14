@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
@@ -10,8 +9,6 @@ use pocketmine\world\World;
 
 abstract class BlockListSelection extends Selection
 {
-	use CubicChunkLoader;
-
 	/**
 	 * @var CompoundTag[]
 	 */

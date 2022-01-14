@@ -6,6 +6,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\StaticPasteTask;
+use platz1de\EasyEdit\task\editing\selection\StreamPasteTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\HistoryCacheData;
@@ -13,14 +14,13 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
-use UnexpectedValueException;
 
 class StaticStoredPasteTask extends ExecutableTask
 {
 	private int $saveId;
 	private bool $keep;
 	private bool $isUndo;
-	private StaticPasteTask $executor;
+	private StaticPasteTask|StreamPasteTask $executor;
 
 	/**
 	 * @param string $owner
@@ -69,7 +69,11 @@ class StaticStoredPasteTask extends ExecutableTask
 			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
 			StaticPasteTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		$this->executor = StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+		if ($selection instanceof StaticBlockListSelection) {
+			$this->executor = StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+		} else {
+			$this->executor = StreamPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+		}
 		$this->executor->execute();
 	}
 

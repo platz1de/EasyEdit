@@ -3,14 +3,12 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
@@ -97,12 +95,11 @@ class LineTask extends EditTask
 	}
 
 	/**
-	 * @return StaticBlockListSelection
+	 * @return BinaryBlockListStream
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		//TODO: optimize
-		return new StaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->start, $this->end);
+		return new BinaryBlockListStream($this->getOwner(), $this->getWorld());
 	}
 
 	public function getTaskName(): string

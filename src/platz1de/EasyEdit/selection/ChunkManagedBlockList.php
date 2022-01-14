@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
@@ -13,6 +14,8 @@ use pocketmine\world\World;
 
 abstract class ChunkManagedBlockList extends BlockListSelection
 {
+	use CubicChunkLoader;
+
 	private ReferencedChunkManager $manager;
 	private SafeSubChunkExplorer $iterator;
 
