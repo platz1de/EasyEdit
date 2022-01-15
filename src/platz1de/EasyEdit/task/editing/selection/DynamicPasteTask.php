@@ -34,16 +34,16 @@ class DynamicPasteTask extends SelectionEditTask
 	protected bool $insert;
 
 	/**
-	 * @param string                $owner
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
-	 * @param bool                  $insert
+	 * @param string                    $owner
+	 * @param string                    $world
+	 * @param AdditionalDataManager     $data
+	 * @param DynamicBlockListSelection $selection
+	 * @param Vector3                   $position
+	 * @param Vector3                   $splitOffset
+	 * @param bool                      $insert
 	 * @return DynamicPasteTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): DynamicPasteTask
+	public static function from(string $owner, string $world, AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): DynamicPasteTask
 	{
 		$instance = new self($owner);
 		SelectionEditTask::initSelection($instance, $world, $data, $selection, $position, $splitOffset);

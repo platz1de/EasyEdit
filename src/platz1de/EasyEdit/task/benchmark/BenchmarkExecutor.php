@@ -83,7 +83,7 @@ class BenchmarkExecutor extends ExecutableTask
 			$results[] = ["copy", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			EditTaskResultCache::clear();
 
-			$copied = StorageModule::getStored($changeId);
+			$copied = StorageModule::mustGetDynamic($changeId);
 			StorageModule::cleanStored($changeId);
 
 			$pasteData = new AdditionalDataManager(true, false);

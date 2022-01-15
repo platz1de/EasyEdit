@@ -23,15 +23,15 @@ class StaticPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                $owner
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
+	 * @param string                   $owner
+	 * @param string                   $world
+	 * @param AdditionalDataManager    $data
+	 * @param StaticBlockListSelection $selection
+	 * @param Vector3                  $position
+	 * @param Vector3                  $splitOffset
 	 * @return StaticPasteTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): StaticPasteTask
+	public static function from(string $owner, string $world, AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset): StaticPasteTask
 	{
 		$instance = new self($owner);
 		SelectionEditTask::initSelection($instance, $world, $data, $selection, $position, $splitOffset);
