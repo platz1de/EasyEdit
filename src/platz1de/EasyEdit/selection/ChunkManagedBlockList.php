@@ -93,8 +93,6 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		}
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
-
-
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
