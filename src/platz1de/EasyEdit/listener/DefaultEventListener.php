@@ -8,7 +8,7 @@ use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\ConfigManager;
-use platz1de\EasyEdit\utils\HighlightingManager;
+use platz1de\EasyEdit\world\HighlightingManager;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityTeleportEvent;

@@ -1,9 +1,9 @@
 <?php
 
-namespace platz1de\EasyEdit\utils;
+namespace platz1de\EasyEdit\world;
 
-use pocketmine\world\World;
 use pocketmine\Server;
+use pocketmine\world\World;
 use UnexpectedValueException;
 
 trait ReferencedWorldHolder

@@ -6,7 +6,7 @@ use Exception;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 use pocketmine\utils\AssumptionFailedError;
 
 class Pattern

@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\ReferencedWorldHolder;
 use platz1de\EasyEdit\utils\VectorUtils;
+use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
 

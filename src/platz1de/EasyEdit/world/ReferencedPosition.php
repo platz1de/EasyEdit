@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\utils;
+namespace platz1de\EasyEdit\world;
 
 use pocketmine\math\Vector3;
 

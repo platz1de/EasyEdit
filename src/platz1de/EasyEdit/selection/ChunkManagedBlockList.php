@@ -7,7 +7,7 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;

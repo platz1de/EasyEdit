@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\thread\input;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\HeightMapCache;
+use platz1de\EasyEdit\world\HeightMapCache;
 
 /**
  * Some config values are needed on the edit thread

@@ -4,10 +4,10 @@ namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
-use platz1de\EasyEdit\utils\InjectingSubChunkExplorer;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\utils\UpdateSubChunkBlocksInjector;
+use platz1de\EasyEdit\world\InjectingSubChunkExplorer;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;

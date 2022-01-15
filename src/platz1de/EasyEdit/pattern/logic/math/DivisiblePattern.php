@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\pattern\logic\math;
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 
 class DivisiblePattern extends Pattern
 {

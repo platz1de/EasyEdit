@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\utils;
+namespace platz1de\EasyEdit\world;
 
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;

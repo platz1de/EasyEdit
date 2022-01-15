@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\pattern\functional;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\utils\HeightMapCache;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\HeightMapCache;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 
 class SmoothPattern extends Pattern
 {

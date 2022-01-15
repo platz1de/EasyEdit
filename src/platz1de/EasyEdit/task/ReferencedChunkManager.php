@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\task;
 
 use Closure;
-use platz1de\EasyEdit\utils\ReferencedWorldHolder;
+use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\BiomeArray;

@@ -1,7 +1,8 @@
 <?php
 
-namespace platz1de\EasyEdit\utils;
+namespace platz1de\EasyEdit\world;
 
+use platz1de\EasyEdit\utils\PacketUtils;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\math\Vector3;

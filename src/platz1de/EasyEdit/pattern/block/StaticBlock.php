@@ -7,7 +7,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 use pocketmine\block\Block;
 use pocketmine\utils\AssumptionFailedError;
 use Throwable;

@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\cache\TaskCache;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\ReferencedWorldHolder;
+use platz1de\EasyEdit\world\ReferencedWorldHolder;
 
 class StatsCollectResult extends OutputData
 {

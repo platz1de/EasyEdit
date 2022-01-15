@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\pattern;
 
 use Exception;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 use pocketmine\utils\AssumptionFailedError;
 
 final class PatternConstruct extends Pattern

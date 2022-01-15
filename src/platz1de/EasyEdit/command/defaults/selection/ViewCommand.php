@@ -7,7 +7,7 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\utils\HighlightingManager;
+use platz1de\EasyEdit\world\HighlightingManager;
 use pocketmine\player\Player;
 use Throwable;
 

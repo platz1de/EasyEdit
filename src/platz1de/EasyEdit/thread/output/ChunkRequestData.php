@@ -7,7 +7,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\utils\ReferencedWorldHolder;
+use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;

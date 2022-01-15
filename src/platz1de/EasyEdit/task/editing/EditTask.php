@@ -13,8 +13,8 @@ use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\HeightMapCache;
 use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
