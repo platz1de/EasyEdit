@@ -116,8 +116,9 @@ abstract class Selection
 	protected function update(): void
 	{
 		if ($this->isValid()) {
+			$pos = $this->pos1;
 			$this->pos1 = VectorUtils::enforceHeight(Vector3::minComponents($this->pos1, $this->pos2));
-			$this->pos2 = VectorUtils::enforceHeight(Vector3::maxComponents($this->pos1, $this->pos2));
+			$this->pos2 = VectorUtils::enforceHeight(Vector3::maxComponents($pos, $this->pos2));
 		}
 	}
 
