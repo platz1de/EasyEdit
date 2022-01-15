@@ -88,7 +88,7 @@ class ResultingChunkData extends OutputData
 
 		$stream->putInt(count($this->injections));
 		foreach ($this->injections as $hash => $injection) {
-			$stream->putInt($hash);
+			$stream->putLong($hash);
 			$stream->putString($injection);
 		}
 	}
@@ -107,7 +107,7 @@ class ResultingChunkData extends OutputData
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$this->injections[$stream->getInt()] = $stream->getString();
+			$this->injections[$stream->getLong()] = $stream->getString();
 		}
 	}
 
