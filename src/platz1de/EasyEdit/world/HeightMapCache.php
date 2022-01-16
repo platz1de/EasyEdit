@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\world;
 
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
+use pocketmine\world\World;
 
 class HeightMapCache
 {
@@ -15,13 +16,10 @@ class HeightMapCache
 
 	private static bool $loaded;
 	/**
-	 * @var int[][]
+	 * @var int[][][] starting height -> thickness (downwards)
 	 */
-	private static array $highest = [];
-	/**
-	 * @var int[][]
-	 */
-	private static array $lowest = [];
+	private static array $heightMap = [];
+	private static array $reverseHeightMap = [];
 
 	/**
 	 * @param SafeSubChunkExplorer $iterator
@@ -34,23 +32,20 @@ class HeightMapCache
 			$max = $selection->getCubicEnd()->add(1, 1, 1);
 			for ($x = $min->getFloorX(); $x <= $max->getX(); $x++) {
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
-					$y = $min->getFloorY();
-					while ($y <= $max->getFloorY() && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
-						$y++;
+					$y = $max->getFloorY();
+					if (!in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+						$y = World::Y_MAX - 1;
 					}
-					if ($y < $max->getY()) {
-						self::$lowest[$x][$z] = $y;
-					} else {
-						self::$lowest[$x][$z] = null;
-					}
-
-					while ($y <= $max->getFloorY() && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
-						$y++;
-					}
-					if ($y < $max->getY()) {
-						self::$highest[$x][$z] = $y - 1;
-					} else {
-						self::$highest[$x][$z] = null;
+					while ($y >= $min->getFloorY()) {
+						while ($y >= $min->getFloorY() && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+							$y--;
+						}
+						$c = $y;
+						while ($y >= $min->getFloorY() && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+							$y--;
+						}
+						self::$heightMap[$x][$z][$c] = $c - $y + 1;
+						self::$heightMap[$x][$z][$y] = $c - $y + 1;
 					}
 				}
 			}
@@ -60,27 +55,42 @@ class HeightMapCache
 
 	/**
 	 * @param int $x
+	 * @param int $y
 	 * @param int $z
-	 * @return int|null
+	 * @return int blocks upwards until next air-like block
 	 */
-	public static function getHighest(int $x, int $z): ?int
+	public static function searchUpwards(int $x, int $y, int $z): int
 	{
-		return self::$highest[$x][$z];
+		$local = self::$heightMap[$x][$z];
+		$search = $y;
+		while ($search < World::Y_MAX && !isset($local[$search])) {
+			$search++;
+		}
+		$depth = $search - $y + 1;
+		return $depth > 0 ? $depth : 0;
 	}
 
 	/**
 	 * @param int $x
+	 * @param int $y
 	 * @param int $z
-	 * @return int|null
+	 * @return int blocks downwards until next air-like block
 	 */
-	public static function getLowest(int $x, int $z): ?int
+	public static function searchDownwards(int $x, int $y, int $z): int
 	{
-		return self::$lowest[$x][$z];
+		$local = self::$reverseHeightMap[$x][$z];
+		$search = $y;
+		while ($search < World::Y_MAX && !isset($local[$search])) {
+			$search++;
+		}
+		$depth = $y - $search + 1;
+		return $depth > 0 ? $depth : 0;
 	}
 
 	public static function prepare(): void
 	{
 		self::$loaded = false;
+		self::$heightMap = [];
 	}
 
 	/**

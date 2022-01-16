@@ -6,9 +6,10 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\world\World;
 
 class NaturalizePattern extends Pattern
 {
@@ -23,7 +24,7 @@ class NaturalizePattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
-		return $iterator->getBlockAt($x, $y, $z) !== 0;
+		return !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore(), true);
 	}
 
 	/**
@@ -37,11 +38,8 @@ class NaturalizePattern extends Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
-		$i = 1;
-		while ($y + $i < World::Y_MAX && $iterator->getBlockAt($x, $y + $i, $z) !== 0) {
-			$i++;
-		}
-		return match ($i) {
+		HeightMapCache::load($iterator, $current);
+		return match (HeightMapCache::searchUpwards($x, $y, $z)) {
 			1 => $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total),
 			2, 3 => $this->pieces[1]->getFor($x, $y, $z, $iterator, $current, $total),
 			default => $this->pieces[2]->getFor($x, $y, $z, $iterator, $current, $total),

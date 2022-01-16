@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\pattern\functional;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\SafeSubChunkExplorer;
 
 class SmoothPattern extends Pattern
@@ -21,7 +20,8 @@ class SmoothPattern extends Pattern
 	 */
 	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
-		HeightMapCache::load($iterator, $current);
+		//TODO
+		/*HeightMapCache::load($iterator, $current);
 
 		$max = 0;
 		$tMax = 0;
@@ -69,7 +69,7 @@ class SmoothPattern extends Pattern
 				$gy = $oMid + round($k * ($oMin - $oMid));
 				return $iterator->getBlockAt($x, (int) $gy, $z);
 			}
-		}
+		}*/
 
 		return 0;
 	}
