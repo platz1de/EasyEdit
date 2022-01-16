@@ -24,7 +24,6 @@ class BenchmarkManager
 	 */
 	public static function start(Closure $closure, bool $deleteWorldAfter = true): void
 	{
-		//TODO: I broke this again...
 		if (self::$running) {
 			throw new UnexpectedValueException("Benchmark is already running");
 		}
