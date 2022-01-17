@@ -66,7 +66,7 @@ class EditThread extends Thread
 				if ($task === null) {
 					$this->synchronized(function (): void {
 						if ($this->inputData === "") {
-						    $this->wait();
+							$this->wait();
 						}
 					});
 				} else {
@@ -87,7 +87,7 @@ class EditThread extends Thread
 			} else {
 				$this->synchronized(function (): void {
 					if ($this->inputData === "") {
-					    $this->wait(10 * 1000 * 1000);
+						$this->wait(10 * 1000 * 1000);
 					}
 				});
 				if ($sleep < time()) {
