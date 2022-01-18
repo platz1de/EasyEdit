@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\pattern\parser;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
-use platz1de\EasyEdit\pattern\functional\SmoothPattern;
 use platz1de\EasyEdit\pattern\logic\math\DivisiblePattern;
 use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
 use platz1de\EasyEdit\pattern\logic\math\OddPattern;
@@ -157,7 +156,6 @@ class PatternParser
 			"below" => BelowPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
 			"around" => AroundPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
 			"nat", "naturalized" => NaturalizePattern::from($children),
-			"smooth" => SmoothPattern::from([]),
 			"walls", "wall" => WallPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
 			"sides", "side" => SidesPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
 			"center", "middle" => CenterPattern::from($children),
