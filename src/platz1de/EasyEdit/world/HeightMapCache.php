@@ -45,7 +45,7 @@ class HeightMapCache
 							$y--;
 						}
 						self::$heightMap[$x][$z][$c] = $c - $y + 1;
-						self::$heightMap[$x][$z][$y] = $c - $y + 1;
+						self::$reverseHeightMap[$x][$z][$y] = $c - $y + 1;
 					}
 				}
 			}
