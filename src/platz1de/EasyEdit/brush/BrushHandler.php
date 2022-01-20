@@ -8,6 +8,7 @@ use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
+use platz1de\EasyEdit\task\editing\selection\SmoothTask;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 
@@ -32,7 +33,7 @@ class BrushHandler
 					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone")), $player->getPosition());
 					break;
 				case self::BRUSH_SMOOTH:
-					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), SmoothPattern::from([]), $player->getPosition());
+					SmoothTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), $player->getPosition());
 					break;
 				case self::BRUSH_NATURALIZE:
 					SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), NaturalizePattern::from([PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone"))]), $player->getPosition());
