@@ -175,7 +175,6 @@ patterns - children patterns, can be separated by a comma
 
 Pattern | Description
 ---|---
-smooth | makes your terrain smoother
 naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3)
 
 ## Blame Mojang
