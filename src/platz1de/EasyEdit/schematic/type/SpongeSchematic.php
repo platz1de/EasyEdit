@@ -32,7 +32,7 @@ class SpongeSchematic extends SchematicType
 		$offset = new Vector3(0, 0, 0);
 		$metaData = $nbt->getCompoundTag(self::METADATA);
 		if ($metaData !== null) {
-			$offset = new Vector3(-$nbt->getInt(McEditSchematic::OFFSET_X, 0), -$nbt->getInt(McEditSchematic::OFFSET_Y, 0), -$nbt->getInt(McEditSchematic::OFFSET_Z, 0));
+			$offset = new Vector3(-$metaData->getInt(McEditSchematic::OFFSET_X, 0), -$metaData->getInt(McEditSchematic::OFFSET_Y, 0), -$metaData->getInt(McEditSchematic::OFFSET_Z, 0));
 		}
 		//TODO: check why this is behaving weird (offsets seem to be wrong)
 		/*else {
