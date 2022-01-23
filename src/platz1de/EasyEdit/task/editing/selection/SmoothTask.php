@@ -118,7 +118,7 @@ class SmoothTask extends SelectionEditTask
 					break;
 				}
 			}
-			if ($i === 3) {
+			if (($i ?? 0) === 3) {
 				//no blocks found, setting from neighbours
 				foreach ((new Vector3($x, $y, $z))->sidesAroundAxis(Axis::Y) as $side) {
 					if (($block = $handler->getBlock($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())) !== 0) {
@@ -128,6 +128,7 @@ class SmoothTask extends SelectionEditTask
 				}
 				return;
 			}
+			$i = 0;
 			while ($i < ($multiplier === 1 ? World::Y_MAX : $y)) {
 				if ($map[$y + $multiplier * ($i + 1)] <= $map[$y + $multiplier * $i]) {
 					break;
@@ -151,7 +152,7 @@ class SmoothTask extends SelectionEditTask
 			$anchor = $multiplier === 1 ? max($nMax, $oMax) : min($nMax, $oMax);
 
 			$position = ($anchor - $y + $multiplier * 1) / ($anchor - $nMin + $multiplier * 1);
-			$target = round($anchor + $multiplier * $position * ($anchor - $oMin));
+			$target = (int) round($anchor + $multiplier * $position * ($anchor - $oMin));
 
 			if ($map[$target] < 1) {
 				return; //avoid populating with air due to merging anchor points
@@ -163,6 +164,7 @@ class SmoothTask extends SelectionEditTask
 
 	/**
 	 * @param int[] $map
+	 * @return int[]
 	 */
 	private function modifyDepthMap(array $map): array
 	{
