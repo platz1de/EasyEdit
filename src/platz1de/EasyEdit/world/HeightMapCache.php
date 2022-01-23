@@ -8,7 +8,6 @@ use pocketmine\world\World;
 
 class HeightMapCache
 {
-	//TODO: don't just delete this Blocks
 	/**
 	 * @var int[] these mess up the height calculation in different ways
 	 */
