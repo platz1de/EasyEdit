@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\world;
 
+use BadMethodCallException;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\world\World;
@@ -46,12 +47,12 @@ class HeightMapCache
 			for ($x = $min->getFloorX(); $x <= $max->getX(); $x++) {
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
 					$y = World::Y_MAX - 1;
-					while ($y >= World::Y_MIN) {
-						while ($y >= World::Y_MIN && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+					while ($y > World::Y_MIN) {
+						while ($y > World::Y_MIN && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 							$y--;
 						}
 						$c = $y;
-						while ($y >= World::Y_MIN && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+						while ($y > World::Y_MIN && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 							$y--;
 						}
 						self::$heightMap[$x][$z][$c] = $c - $y + 1;
