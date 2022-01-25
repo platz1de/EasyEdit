@@ -82,6 +82,7 @@ class EditThread extends Thread
 						$this->setStatus(self::STATUS_CRASHED);
 						$sleep = time() + 9;
 						CrashReportData::from($throwable, $task->getOwner());
+						ChunkCollector::clear();
 					}
 				}
 			} else {
