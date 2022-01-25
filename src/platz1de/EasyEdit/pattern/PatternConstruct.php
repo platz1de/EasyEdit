@@ -23,7 +23,7 @@ final class PatternConstruct extends Pattern
 		return parent::from($pieces, $args);
 	}
 
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
 		foreach ($this->pieces as $piece) {
 			try {

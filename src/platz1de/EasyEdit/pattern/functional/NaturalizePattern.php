@@ -36,10 +36,10 @@ class NaturalizePattern extends Pattern
 	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
 		HeightMapCache::load($iterator, $current);
-		return match (HeightMapCache::searchUpwards($x, $y, $z)) {
+		return match (HeightMapCache::searchAirUpwards($x, $y, $z)) {
 			1 => $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total),
 			2, 3 => $this->pieces[1]->getFor($x, $y, $z, $iterator, $current, $total),
 			default => $this->pieces[2]->getFor($x, $y, $z, $iterator, $current, $total),

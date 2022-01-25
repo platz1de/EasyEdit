@@ -69,6 +69,14 @@ abstract class BlockListSelection extends Selection
 	 */
 	public function merge(BlockListSelection $selection): void
 	{
+		if($selection->getPos1()->getY() < $this->getPos1()->getY())
+        {
+            $this->setPos1($this->getPos1()->withComponents(null, $selection->getPos1()->getY(), null));
+        }
+		if($selection->getPos2()->getY() > $this->getPos2()->getY())
+		{
+			$this->setPos2($this->getPos2()->withComponents(null, $selection->getPos2()->getY(), null));
+		}
 		foreach ($selection->getTiles() as $tile) {
 			$this->addTile($tile);
 		}

@@ -59,13 +59,20 @@ class SetTask extends PatternedEditTask
 	{
 		$selection = $this->getCurrentSelection();
 		$pattern = $this->getPattern();
-		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $pattern, $selection): void {
+		$minY = $selection->getPos1()->getFloorY();
+		$maxY = $selection->getPos2()->getFloorY();
+		$selection->useOnBlocks(function (int $x, int $y, int $z) use (&$maxY, &$minY, $handler, $pattern, $selection): void {
 			if ($pattern->isValidAt($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection())) {
 				$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection());
 				if ($block !== -1) {
 					$handler->changeBlock($x, $y, $z, $block);
+					$minY = min($minY, $y);
+					$maxY = max($maxY, $y);
 				}
 			}
 		}, $pattern->getSelectionContext(), $this->getTotalSelection());
+		$undo = $handler->getChanges();
+		$undo->setPos1($undo->getPos1()->withComponents(null, $minY, null));
+		$undo->setPos2($undo->getPos2()->withComponents(null, $maxY, null));
 	}
 }

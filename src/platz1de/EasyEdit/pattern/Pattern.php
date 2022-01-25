@@ -54,14 +54,14 @@ class Pattern
 
 	/**
 	 * @param int                  $x
-	 * @param int                  $y
+	 * @param int                  $y may be changed by patterns
 	 * @param int                  $z
 	 * @param SafeSubChunkExplorer $iterator
 	 * @param Selection            $current
 	 * @param Selection            $total
 	 * @return int
 	 */
-	public function getFor(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
 		if (count($this->pieces) === 1 && $this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total)) {
 			return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);

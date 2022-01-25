@@ -69,7 +69,7 @@ class HeightMapCache
 	 * @param int $z
 	 * @return int blocks upwards until next air-like block
 	 */
-	public static function searchUpwards(int $x, int $y, int $z): int
+	public static function searchAirUpwards(int $x, int $y, int $z): int
 	{
 		self::moveTo($x, $z);
 		$search = $y;
@@ -86,15 +86,84 @@ class HeightMapCache
 	 * @param int $z
 	 * @return int blocks downwards until next air-like block
 	 */
-	public static function searchDownwards(int $x, int $y, int $z): int
+	public static function searchAirDownwards(int $x, int $y, int $z): int
+	{
+		self::moveTo($x, $z);
+		$search = $y;
+		while ($search >= World::Y_MIN && !isset(self::$currentReverse[$search])) {
+			$search--;
+		}
+		$depth = $y - $search + 1;
+		return $depth > 0 ? $depth : 0;
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @return bool
+	 */
+	public static function isSolid(int $x, int $y, int $z): bool
+	{
+		$down = self::searchAirDownwards($x, $y, $z);
+		return $down <= self::$currentReverse[$y - $down + 1];
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @return int blocks upwards until next solid block
+	 */
+	public static function searchSolidUpwards(int $x, int $y, int $z): int
 	{
 		self::moveTo($x, $z);
 		$search = $y;
 		while ($search < World::Y_MAX && !isset(self::$currentReverse[$search])) {
 			$search++;
 		}
-		$depth = $y - $search + 1;
+		$depth = $search - $y;
 		return $depth > 0 ? $depth : 0;
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @return int blocks downwards until next solid block
+	 */
+	public static function searchSolidDownwards(int $x, int $y, int $z): int
+	{
+		self::moveTo($x, $z);
+		$search = $y;
+		while ($search >= World::Y_MIN && !isset(self::$current[$search])) {
+			$search--;
+		}
+		$depth = $y - $search;
+		return $depth > 0 ? $depth : 0;
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 */
+	public static function moveUpwards(int $x, int $y, int $z): void
+	{
+		self::moveTo($x, $z);
+		if (!isset(self::$current[$y])) {
+			throw new BadMethodCallException("Can only move topmost blocks upwards");
+		}
+		$old = self::$current[$y];
+		unset(self::$heightMap[$x][$z][$y]);
+		$diff = 1;
+		if (isset(self::$currentReverse[$y + 1])) {
+			$diff = self::$currentReverse[$y + 1];
+			unset(self::$reverseHeightMap[$x][$z][$y + 1]);
+		}
+		self::$heightMap[$x][$z][$y + $diff] = $old + $diff;
+		self::$reverseHeightMap[$x][$z][$y - $old + 1] = $old + $diff;
+		self::$currentX = null; //invalidate
 	}
 
 	/**
