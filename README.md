@@ -176,6 +176,7 @@ patterns - children patterns, can be separated by a comma
 Pattern | Description
 ---|---
 naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3)
+gravity(\[pattern]) | makes your blocks fall down until they reach the ground
 
 ## Blame Mojang
 
