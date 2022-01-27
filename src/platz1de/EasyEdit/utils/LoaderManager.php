@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use pocketmine\block\tile\Tile;
 use pocketmine\block\tile\TileFactory;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 use pocketmine\world\format\Chunk;
@@ -62,6 +64,14 @@ class LoaderManager
 			World::getXZ($hash, $x, $z);
 			self::injectChunk($world, $x, $z, $chunk, $preparedInjections[$x][$z] ?? []);
 			$world->unloadChunk($x, $z);
+		}
+
+		if ($injections !== []) {
+			foreach ($tiles as $tile) {
+				foreach ($world->getChunkPlayers($tile->getInt(Tile::TAG_X) >> 4, $tile->getInt(Tile::TAG_Z) >> 4) as $player) {
+					PacketUtils::resendBlock(new Vector3($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z)), $world, $player);
+				}
+			}
 		}
 	}
 
