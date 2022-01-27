@@ -3,12 +3,16 @@
 namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\schematic\BlockConvertor;
+use platz1de\EasyEdit\schematic\TileConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\Block;
+use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\BinaryStream;
 use pocketmine\world\World;
+use Throwable;
 use UnexpectedValueException;
 
 class SpongeSchematic extends SchematicType
@@ -24,7 +28,11 @@ class SpongeSchematic extends SchematicType
 	public const PALETTE = "Palette";
 	public const DATA = "Data";
 	public const DATA_BLOCKS = "Blocks";
+	public const BLOCK_ENTITY_DATA = "BlockEntities";
 	public const UNUSED_DATA_VERSION = "DataVersion";
+	public const ENTITY_POSITION = "Pos"; //also used for tile entities
+	public const ENTITY_ID = "Id"; //also used for tile entities
+	public const ENTITY_EXTRA_DATA = "Data"; //also used for tile entities
 
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
@@ -55,6 +63,7 @@ class SpongeSchematic extends SchematicType
 			case 2:
 				$blockDataRaw = $nbt->getByteArray(self::BLOCK_DATA_LEGACY);
 				$paletteData = $nbt->getCompoundTag(self::PALETTE);
+				$tiles = $nbt->getListTag(self::BLOCK_ENTITY_DATA);
 				break;
 			case 3:
 				$blocks = $nbt->getCompoundTag(self::DATA_BLOCKS);
@@ -63,6 +72,7 @@ class SpongeSchematic extends SchematicType
 				}
 				$blockDataRaw = $blocks->getByteArray(self::DATA);
 				$paletteData = $blocks->getCompoundTag(self::PALETTE);
+				$tiles = $blocks->getListTag(self::BLOCK_ENTITY_DATA);
 				break;
 			default:
 				throw new UnexpectedValueException("Unknown schematic version");
@@ -87,7 +97,33 @@ class SpongeSchematic extends SchematicType
 			}
 		}
 
-		//TODO: tiles and entities
+		if ($tiles !== null && $tiles->getTagType() === NBT::TAG_Compound) {
+			try {
+				/** @var CompoundTag $tile */
+				foreach ($tiles as $tile) {
+					$id = $tile->getString(self::ENTITY_ID);
+					$pos = $tile->getIntArray(self::ENTITY_POSITION);
+					$position = new Vector3($pos[0], $pos[1], $pos[2]);
+					if ($version === 3) {
+						$data = $tile->getCompoundTag(self::ENTITY_EXTRA_DATA);
+					} else {
+						$tile->removeTag(self::ENTITY_ID, self::ENTITY_POSITION);
+						$data = $tile;
+					}
+					if (!$data instanceof CompoundTag) {
+						throw new UnexpectedValueException("Tile entity data is not a compound tag");
+					}
+					$data->setString(Tile::TAG_ID, $id);
+					$data->setInt(Tile::TAG_X, $position->getFloorX());
+					$data->setInt(Tile::TAG_Y, $position->getFloorY());
+					$data->setInt(Tile::TAG_Z, $position->getFloorZ());
+					TileConvertor::toBedrock($data, $target);
+				}
+			} catch (Throwable $e) {
+				throw new UnexpectedValueException("Schematic contains malformed tiles: " . $e->getMessage());
+			}
+		}
+		//TODO: entities
 	}
 
 	public static function writeFromSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
