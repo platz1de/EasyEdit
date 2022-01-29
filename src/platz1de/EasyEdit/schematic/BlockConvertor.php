@@ -120,10 +120,11 @@ class BlockConvertor
 	}
 
 	/**
-	 * @param string $state
+	 * @param string         $state
+	 * @param ConvertorCache $cache
 	 * @return array{int, int}
 	 */
-	public static function getFromState(string $state): array
+	public static function getFromState(string $state, ConvertorCache $cache): array
 	{
 		if (!isset(self::$paletteFrom[$state])) {
 			EditThread::getInstance()->getLogger()->debug("Requested unknown state " . $state);

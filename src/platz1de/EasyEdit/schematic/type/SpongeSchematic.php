@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\schematic\BlockConvertor;
+use platz1de\EasyEdit\schematic\ConvertorCache;
 use platz1de\EasyEdit\schematic\TileConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\Block;
@@ -80,9 +81,11 @@ class SpongeSchematic extends SchematicType
 		if ($paletteData === null) {
 			throw new UnexpectedValueException("Schematic is missing palette");
 		}
+
+		$cache = new ConvertorCache();
 		$palette = [];
 		foreach ($paletteData->getValue() as $name => $id) {
-			$palette[$id->getValue()] = BlockConvertor::getFromState($name);
+			$palette[$id->getValue()] = BlockConvertor::getFromState($name, $cache);
 		}
 
 		$blockData = new BinaryStream($blockDataRaw);
@@ -117,7 +120,7 @@ class SpongeSchematic extends SchematicType
 					$data->setInt(Tile::TAG_X, $position->getFloorX());
 					$data->setInt(Tile::TAG_Y, $position->getFloorY());
 					$data->setInt(Tile::TAG_Z, $position->getFloorZ());
-					TileConvertor::toBedrock($data, $target);
+					TileConvertor::toBedrock($data, $target, $cache);
 				}
 			} catch (Throwable $e) {
 				throw new UnexpectedValueException("Schematic contains malformed tiles: " . $e->getMessage());

@@ -60,7 +60,7 @@ class TileConvertor
 	 *
 	 * Item Frame (entity in java)
 	 */
-	public static function toBedrock(CompoundTag $tile, BlockListSelection $selection): void
+	public static function toBedrock(CompoundTag $tile, BlockListSelection $selection, ConvertorCache $cache): void
 	{
 		//some of these aren't actually part of pmmp yet, but plugins might use them
 		switch ($tile->getString(Tile::TAG_ID)) {
