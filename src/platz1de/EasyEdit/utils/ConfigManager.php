@@ -11,7 +11,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.2";
+	private const CONFIG_VERSION = "2.0.3";
 
 	/**
 	 * @var int[]
@@ -25,6 +25,7 @@ class ConfigManager
 	private static string $javaPaletteDataSource;
 	private static string $rotationDataSource;
 	private static string $flipDataSource;
+	private static string $tileDataStatesSource;
 
 	public static function load(): void
 	{
@@ -107,8 +108,9 @@ class ConfigManager
 		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
 		self::$rotationDataSource = self::mustGetString($config, "rotation-data", "");
 		self::$flipDataSource = self::mustGetString($config, "flip-data", "");
+		self::$tileDataStatesSource = self::mustGetString($config, "tile-data-states", "");
 
-		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$sendDebug);
+		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource, self::$sendDebug);
 	}
 
 	/**

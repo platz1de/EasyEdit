@@ -1,4 +1,4 @@
-config-version: "2.0.2" #Please don't change this manually
+config-version: "2.0.3" #Please don't change this manually
 
 #Tool cooldown length in seconds (defaults to half a second)
 #Used for brushes, selection axes and more
@@ -29,3 +29,4 @@ bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/
 java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/java_palette.json"
 rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/rotation-data.json"
 flip-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/flip-data.json"
+tile-data-states: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/tile-data-states.json"

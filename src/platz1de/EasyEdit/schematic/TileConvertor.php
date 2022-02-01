@@ -14,6 +14,8 @@ use UnexpectedValueException;
 
 class TileConvertor
 {
+	public const DATA_CHEST_RELATION = "chest_relation";
+
 	public const TILE_CHEST = "minecraft:chest";
 	public const TILE_DISPENSER = "minecraft:dispenser";
 	public const TILE_DROPPER = "minecraft:dropper";
