@@ -82,24 +82,13 @@ class SpongeSchematic extends SchematicType
 			throw new UnexpectedValueException("Schematic is missing palette");
 		}
 
-		$cache = new ConvertorCache();
 		$palette = [];
 		foreach ($paletteData->getValue() as $name => $id) {
-			$palette[$id->getValue()] = BlockConvertor::getFromState($name, $cache);
+			$palette[$id->getValue()] = BlockConvertor::getFromState($name);
+			$tilePalette[$id->getValue()] = BlockConvertor::getTileDataFromState($name);
 		}
 
-		$blockData = new BinaryStream($blockDataRaw);
-
-		for ($y = 0; $y < $ySize; ++$y) {
-			for ($z = 0; $z < $zSize; ++$z) {
-				for ($x = 0; $x < $xSize; ++$x) {
-					[$id, $meta] = $palette[$blockData->getUnsignedVarInt()];
-
-					$target->addBlock($x, $y, $z, ($id << Block::INTERNAL_METADATA_BITS) | $meta);
-				}
-			}
-		}
-
+		$tileData = [];
 		if ($tiles !== null && $tiles->getTagType() === NBT::TAG_Compound) {
 			try {
 				/** @var CompoundTag $tile */
@@ -120,12 +109,29 @@ class SpongeSchematic extends SchematicType
 					$data->setInt(Tile::TAG_X, $position->getFloorX());
 					$data->setInt(Tile::TAG_Y, $position->getFloorY());
 					$data->setInt(Tile::TAG_Z, $position->getFloorZ());
-					TileConvertor::toBedrock($data, $target, $cache);
+					$tileData[World::blockHash($position->getFloorX(), $position->getFloorY(), $position->getFloorZ())] = $data;
 				}
 			} catch (Throwable $e) {
 				throw new UnexpectedValueException("Schematic contains malformed tiles: " . $e->getMessage());
 			}
 		}
+
+		$blockData = new BinaryStream($blockDataRaw);
+
+		for ($y = 0; $y < $ySize; ++$y) {
+			for ($z = 0; $z < $zSize; ++$z) {
+				for ($x = 0; $x < $xSize; ++$x) {
+					[$id, $meta] = $palette[$i = $blockData->getUnsignedVarInt()];
+
+					$target->addBlock($x, $y, $z, ($id << Block::INTERNAL_METADATA_BITS) | $meta);
+
+					if (isset($tileData[World::blockHash($x, $y, $z)])) {
+						TileConvertor::toBedrock($tileData[World::blockHash($x, $y, $z)], $target, $tilePalette[$i]);
+					}
+				}
+			}
+		}
+
 		//TODO: entities
 	}
 

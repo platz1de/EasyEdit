@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\schematic;
 use JsonException;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
+use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\ShulkerBox;
-use pocketmine\block\tile\Sign;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Facing;
 use pocketmine\nbt\tag\CompoundTag;
@@ -62,33 +62,44 @@ class TileConvertor
 	 *
 	 * Item Frame (entity in java)
 	 */
-	public static function toBedrock(CompoundTag $tile, BlockListSelection $selection, ConvertorCache $cache): void
+
+	/**
+	 * @param CompoundTag        $tile
+	 * @param BlockListSelection $selection
+	 * @param CompoundTag|null   $extraData
+	 */
+	public static function toBedrock(CompoundTag $tile, BlockListSelection $selection, ?CompoundTag $extraData): void
 	{
 		//some of these aren't actually part of pmmp yet, but plugins might use them
+		if ($extraData !== null) {
+			foreach ($extraData->getValue() as $key => $value) {
+				$tile->setTag($key, $value);
+			}
+		}
 		switch ($tile->getString(Tile::TAG_ID)) {
 			case self::TILE_SIGN:
 				//TODO: glowing & color
-				$text = [];
 				for ($i = 1; $i <= 4; $i++) {
 					$line = $tile->getString("Text" . $i);
 					try {
 						/** @var string[] $json */
 						$json = json_decode($line, true, 2, JSON_THROW_ON_ERROR);
-						$text[] = $json["text"];
+						$text = $json["text"];
 					} catch (JsonException) {
 						throw new UnexpectedValueException("Invalid JSON in sign text: " . $line);
 					}
+					$tile->setString("Text" . $i, $text);
 				}
-				$tile->removeTag("Text1", "Text2", "Text3", "Text4");
-				$tile->setString(Sign::TAG_TEXT_BLOB, implode("\n", $text));
 				break;
+			/** @noinspection PhpMissingBreakStatementInspection */
+			case self::TILE_TRAPPED_CHEST:
+				$tile->setString(Tile::TAG_ID, self::TILE_CHEST); //pmmp uses the same tile here
 			case self::TILE_CHEST:
 				//TODO: Some items need to be converted
-				//TODO: double chests are saved with their blockstate in java
-				break;
-			case self::TILE_TRAPPED_CHEST:
-				//TODO: see chest
-				$tile->setString(Tile::TAG_ID, self::TILE_CHEST); //pmmp uses the same tile here
+				if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {
+					$tile->setInt(Chest::TAG_PAIRX, $tile->getInt(Chest::TAG_PAIRX) + $tile->getInt(Tile::TAG_X));
+					$tile->setInt(Chest::TAG_PAIRZ, $tile->getInt(Chest::TAG_PAIRZ) + $tile->getInt(Tile::TAG_Z));
+				}
 				break;
 			case self::TILE_SHULKER_BOX:
 				//TODO: shulker facing is saved as a blockstate in java

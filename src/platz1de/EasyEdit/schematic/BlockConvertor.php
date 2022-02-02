@@ -147,16 +147,24 @@ class BlockConvertor
 	}
 
 	/**
-	 * @param string         $state
-	 * @param ConvertorCache $cache
+	 * @param string $state
 	 * @return array{int, int}
 	 */
-	public static function getFromState(string $state, ConvertorCache $cache): array
+	public static function getFromState(string $state): array
 	{
 		if (!isset(self::$paletteFrom[$state])) {
 			EditThread::getInstance()->getLogger()->debug("Requested unknown state " . $state);
 		}
 		return self::$paletteFrom[$state] ?? [0, 0];
+	}
+
+	/**
+	 * @param string $name
+	 * @return CompoundTag|null
+	 */
+	public static function getTileDataFromState(string $name): ?CompoundTag
+	{
+		return self::$compoundMapping[$name] ?? null;
 	}
 
 	/**
