@@ -91,6 +91,8 @@ Command | Description | Permission | Aliases/Notice
 
 ## Patterns
 
+Visit the [wiki](https://github.com/platz1de/EasyEdit/wiki/Patterns) for more information.
+
 ### Block Patterns
 
 Block Patterns are just blocks, they just consist out of the name of the block or its numeric ID
@@ -183,6 +185,9 @@ gravity(\[pattern]) | makes your blocks fall down until they reach the ground
 Minecraft Bedrock is just terrible at a lot of things, we can't do anything about it.
 
 ### Delayed chunk updates
+
 Chunks are not updated immediately, this produces ugly xray like effects even if we sent everything needed
+
 ### Command Handling
+
 Commands starting with a slash are handled terribly. The autocompletion just adds another slash every time and never shows the correct arguments making argument autocompletion impossible. For some non-apparent reason client side commands with an extra slash before them (like //help or //?) throw a client sided error and never send any packets to the server.
