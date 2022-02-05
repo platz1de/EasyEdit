@@ -59,82 +59,95 @@ class BlockConvertor
 		self::$flipData = [];
 		self::$compoundMapping = [];
 
-		//This should only be executed on edit thread
-		$bedrockData = Internet::getURL($bedrockSource, 10, [], $err);
-		$bedrockPaletteData = Internet::getURL($bedrockPaletteSource, 10, [], $err);
-		$javaPaletteData = Internet::getURL($javaPaletteSource, 10, [], $err);
-		$rotationData = Internet::getURL($rotationSource, 10, [], $err);
-		$flipData = Internet::getURL($flipSource, 10, [], $err);
-		$tileDataPaletteData = Internet::getURL($tileDataSourcePalette, 10, [], $err);
-		if ($bedrockData === null || $bedrockPaletteData === null || $javaPaletteData === null || $rotationData === null || $flipData === null || $tileDataPaletteData === null) {
-			EditThread::getInstance()->getLogger()->error("Failed to load conversion data, schematic conversion is not available");
-			if (isset($err)) {
-				EditThread::getInstance()->getLogger()->logException($err);
-			}
-			return;
-		}
-
 		try {
-			$bedrockBlocks = json_decode($bedrockData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$bedrockPalette = json_decode($bedrockPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$javaPalette = json_decode($javaPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$rotations = json_decode($rotationData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$flips = json_decode($flipData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-			$tileDataPalette = json_decode($tileDataPaletteData->getBody(), true, 512, JSON_THROW_ON_ERROR);
-
-			if (!is_array($bedrockBlocks) || !is_array($bedrockPalette) || !is_array($javaPalette) || !is_array($rotations) || !is_array($flips) || !is_array($tileDataPalette)) {
-				throw new UnexpectedValueException("Conversion data does not represent arrays");
+			foreach (self::loadFromSource($bedrockSource) as $javaStringId => $bedrockStringId) {
+				$idData = BlockParser::fromStringId($javaStringId);
+				self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);
+			}
+			/** @var string $javaState */
+			foreach (self::loadFromSource($bedrockPaletteSource) as $javaState => $bedrockStringId) {
+				self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
+			}
+			foreach (self::loadFromSource($javaPaletteSource) as $bedrockStringId => $javaState) {
+				$idData = BlockParser::fromStringId($bedrockStringId);
+				self::$paletteTo[$idData[0]][$idData[1]] = $javaState;
+			}
+			foreach (self::loadFromSource($rotationSource) as $preRotationId => $pastRotationId) {
+				$idData = BlockParser::fromStringId($preRotationId);
+				$rotatedIdData = BlockParser::fromStringId($pastRotationId);
+				self::$rotationData[$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $rotatedIdData[0] << Block::INTERNAL_METADATA_BITS | $rotatedIdData[1];
+			}
+			foreach (self::loadFromSourceComplex($flipSource) as $axisName => $axisFlips) {
+				$axis = match ($axisName) {
+					"xAxis" => Axis::X,
+					"yAxis" => Axis::Y,
+					"zAxis" => Axis::Z,
+					default => throw new UnexpectedValueException("Unknown axis name $axisName")
+				};
+				foreach ($axisFlips as $preFlipId => $pastFlipId) {
+					$idData = BlockParser::fromStringId($preFlipId);
+					$flippedIdData = BlockParser::fromStringId($pastFlipId);
+					self::$flipData[$axis][$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $flippedIdData[0] << Block::INTERNAL_METADATA_BITS | $flippedIdData[1];
+				}
+			}
+			$tileDataPalette = self::loadFromSourceComplex($tileDataSourcePalette);
+			if (!isset($tileDataPalette[TileConvertor::DATA_CHEST_RELATION])) {
+				EditThread::getInstance()->debug("Couldn't find chest relation data");
+			}
+			/** @var string $state */
+			foreach ($tileDataPalette[TileConvertor::DATA_CHEST_RELATION] ?? [] as $state => $data) {
+				self::$compoundMapping[$state] = CompoundTag::create()
+					->setInt(Chest::TAG_PAIRX, match ($data) {
+						"east" => 1,
+						"west" => -1,
+						default => 0
+					})
+					->setInt(Chest::TAG_PAIRZ, match ($data) {
+						"north" => -1,
+						"south" => 1,
+						default => 0
+					});
 			}
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
-			return;
+		}
+	}
+
+	/**
+	 * @param string $source
+	 * @return string[]
+	 * @throws Throwable
+	 */
+	private static function loadFromSource(string $source): array
+	{
+		//This should only be executed on edit thread
+		$data = Internet::getURL($source, 10, [], $err);
+		if ($data === null) {
+			if (isset($err)) {
+				throw $err;
+			}
+			return [];
 		}
 
-		foreach ($bedrockBlocks as $javaStringId => $bedrockStringId) {
-			$idData = BlockParser::fromStringId($javaStringId);
-			self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);
+		$parsed = json_decode($data->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+		if (!is_array($parsed)) {
+			throw new UnexpectedValueException("Conversion data does not represent arrays");
 		}
-		/** @var string $javaState */
-		foreach ($bedrockPalette as $javaState => $bedrockStringId) {
-			self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
-		}
-		foreach ($javaPalette as $bedrockStringId => $javaState) {
-			$idData = BlockParser::fromStringId($bedrockStringId);
-			self::$paletteTo[$idData[0]][$idData[1]] = $javaState;
-		}
-		foreach ($rotations as $preRotationId => $pastRotationId) {
-			$idData = BlockParser::fromStringId($preRotationId);
-			$rotatedIdData = BlockParser::fromStringId($pastRotationId);
-			self::$rotationData[$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $rotatedIdData[0] << Block::INTERNAL_METADATA_BITS | $rotatedIdData[1];
-		}
-		foreach ($flips as $axisName => $axisFlips) {
-			$axis = match ($axisName) {
-				"xAxis" => Axis::X,
-				"yAxis" => Axis::Y,
-				"zAxis" => Axis::Z,
-				default => throw new UnexpectedValueException("Unknown axis name $axisName")
-			};
-			foreach ($axisFlips as $preFlipId => $pastFlipId) {
-				$idData = BlockParser::fromStringId($preFlipId);
-				$flippedIdData = BlockParser::fromStringId($pastFlipId);
-				self::$flipData[$axis][$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $flippedIdData[0] << Block::INTERNAL_METADATA_BITS | $flippedIdData[1];
-			}
-		}
-		/** @var string $state */
-		foreach ($tileDataPalette[TileConvertor::DATA_CHEST_RELATION] ?? [] as $state => $data) {
-			self::$compoundMapping[$state] = CompoundTag::create()
-				->setInt(Chest::TAG_PAIRX, match ($data) {
-					"east" => 1,
-					"west" => -1,
-					default => 0
-				})
-				->setInt(Chest::TAG_PAIRZ, match ($data) {
-					"north" => -1,
-					"south" => 1,
-					default => 0
-				});
-		}
+
+		return $parsed;
+	}
+
+	/**
+	 * @param string $source
+	 * @return string[][]
+	 * @throws Throwable
+	 */
+	private static function loadFromSourceComplex(string $source): array
+	{
+		/**@phpstan-ignore-next-line we can't handle this properly */
+		return self::loadFromSource($source);
 	}
 
 	/**
