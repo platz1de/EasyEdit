@@ -48,15 +48,15 @@ class HeightMapCache
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
 					$y = World::Y_MAX - 1;
 					while ($y > World::Y_MIN) {
-						while ($y > World::Y_MIN && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+						while ($y >= World::Y_MIN && in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 							$y--;
 						}
 						$c = $y;
-						while ($y > World::Y_MIN && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+						while ($y >= World::Y_MIN && !in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
 							$y--;
 						}
-						self::$heightMap[$x][$z][$c] = $c - $y + 1;
-						self::$reverseHeightMap[$x][$z][$y] = $c - $y + 1;
+						self::$heightMap[$x][$z][$c] = $c - $y;
+						self::$reverseHeightMap[$x][$z][$y + 1] = $c - $y;
 					}
 				}
 			}
@@ -74,7 +74,7 @@ class HeightMapCache
 	{
 		self::moveTo($x, $z);
 		$search = $y;
-		while ($search < World::Y_MAX && !isset(self::$current[$search])) {
+		while ($search < (World::Y_MAX - 1) && !isset(self::$current[$search])) {
 			$search++;
 		}
 		$depth = $search - $y + 1;
@@ -91,7 +91,7 @@ class HeightMapCache
 	{
 		self::moveTo($x, $z);
 		$search = $y;
-		while ($search >= World::Y_MIN && !isset(self::$currentReverse[$search])) {
+		while ($search > World::Y_MIN && !isset(self::$currentReverse[$search])) {
 			$search--;
 		}
 		$depth = $y - $search + 1;
@@ -107,7 +107,7 @@ class HeightMapCache
 	public static function isSolid(int $x, int $y, int $z): bool
 	{
 		$down = self::searchAirDownwards($x, $y, $z);
-		return $down <= self::$currentReverse[$y - $down + 1];
+		return $down <= (self::$currentReverse[$y - $down + 1] ?? 0);
 	}
 
 	/**
