@@ -102,6 +102,23 @@ class Pattern
 	}
 
 	/**
+	 * @param class-string<Pattern> $pattern
+	 * @return bool
+	 */
+	public function contains(string $pattern): bool
+	{
+		if (static::class === $pattern) {
+			return true;
+		}
+		foreach ($this->pieces as $piece) {
+			if ($piece->contains($pattern)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @return int
 	 */
 	public function getWeight(): int

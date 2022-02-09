@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\selection\pattern;
 
+use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
@@ -9,6 +10,7 @@ use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 
@@ -61,11 +63,15 @@ class SetTask extends PatternedEditTask
 		$pattern = $this->getPattern();
 		$minY = $selection->getPos1()->getFloorY();
 		$maxY = $selection->getPos2()->getFloorY();
-		$selection->useOnBlocks(function (int $x, int $y, int $z) use (&$maxY, &$minY, $handler, $pattern, $selection): void {
+		$updateHeightMap = $pattern->contains(GravityPattern::class);
+		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($updateHeightMap, &$maxY, &$minY, $handler, $pattern, $selection): void {
 			if ($pattern->isValidAt($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection())) {
 				$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection());
 				if ($block !== -1) {
 					$handler->changeBlock($x, $y, $z, $block);
+					if ($updateHeightMap) {
+						HeightMapCache::setBlockAt($x, $y, $z, $block === 0);
+					}
 					$minY = min($minY, $y);
 					$maxY = max($maxY, $y);
 				}

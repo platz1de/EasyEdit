@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\world;
 
-use BadMethodCallException;
 use platz1de\EasyEdit\selection\Selection;
 use pocketmine\block\Block;
 use pocketmine\world\World;
@@ -145,25 +144,58 @@ class HeightMapCache
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
+	 * @param int  $x
+	 * @param int  $y
+	 * @param int  $z
+	 * @param bool $air
 	 */
-	public static function moveUpwards(int $x, int $y, int $z): void
+	public static function setBlockAt(int $x, int $y, int $z, bool $air): void
 	{
-		self::moveTo($x, $z);
-		if (!isset(self::$current[$y])) {
-			throw new BadMethodCallException("Can only move topmost blocks upwards");
+		$down = self::searchAirDownwards($x, $y, $z);
+		$up = self::$currentReverse[$y - $down + 1] ?? 0;
+		if ($down <= $up) { //solid
+			if (!$air) {
+				return;
+			}
+			if ($down > 1) {
+				self::$reverseHeightMap[$x][$z][$y - $down + 1] = $down - 1;
+				self::$heightMap[$x][$z][$y - 1] = $down - 1;
+			} else {
+				unset(self::$reverseHeightMap[$x][$z][$y - $down + 1]);
+			}
+			if ($up - $down > 0) {
+				self::$reverseHeightMap[$x][$z][$y + 1] = $up - $down;
+				self::$heightMap[$x][$z][$y - $down + $up] = $up - $down;
+			} else {
+				unset(self::$heightMap[$x][$z][$y - $down + $up]);
+			}
+		} else {
+			if ($air) {
+				return;
+			}
+			$extendUp = isset(self::$current[$y - 1]);
+			$extendDown = isset(self::$currentReverse[$y + 1]);
+			if ($extendUp) {
+				$old = self::$current[$y - 1];
+				unset(self::$heightMap[$x][$z][$y - 1]);
+				$diff = 1;
+				if ($extendDown) {
+					$diff = self::$currentReverse[$y + 1] + 1;
+					unset(self::$reverseHeightMap[$x][$z][$y + 1]);
+				}
+				self::$heightMap[$x][$z][$y + $diff - 1] = $old + $diff;
+				self::$reverseHeightMap[$x][$z][$y - $old] = $old + $diff;
+			} elseif ($extendDown) {
+				$old = self::$currentReverse[$y + 1];
+				unset(self::$reverseHeightMap[$x][$z][$y + 1]);
+				self::$heightMap[$x][$z][$y + $old] = $old + 1;
+				self::$reverseHeightMap[$x][$z][$y] = $old + 1;
+			} else {
+				self::$heightMap[$x][$z][$y] = 1;
+				self::$reverseHeightMap[$x][$z][$y] = 1;
+			}
 		}
-		$old = self::$current[$y];
-		unset(self::$heightMap[$x][$z][$y]);
-		$diff = 1;
-		if (isset(self::$currentReverse[$y + 1])) {
-			$diff = self::$currentReverse[$y + 1];
-			unset(self::$reverseHeightMap[$x][$z][$y + 1]);
-		}
-		self::$heightMap[$x][$z][$y + $diff] = $old + $diff;
-		self::$reverseHeightMap[$x][$z][$y - $old + 1] = $old + $diff;
+
 		self::$currentX = null; //invalidate
 	}
 

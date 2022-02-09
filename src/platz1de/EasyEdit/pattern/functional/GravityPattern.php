@@ -25,7 +25,6 @@ class GravityPattern extends Pattern
 		$originalY = $y;
 		if (!HeightMapCache::isSolid($x, $y, $z)) {
 			$y -= HeightMapCache::searchSolidDownwards($x, $y, $z) - 1;
-			HeightMapCache::moveUpwards($x, $y - 1, $z);
 		}
 		return parent::getFor($x, $originalY, $z, $iterator, $current, $total);
 	}
