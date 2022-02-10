@@ -15,6 +15,7 @@ use UnexpectedValueException;
 class TileConvertor
 {
 	public const DATA_CHEST_RELATION = "chest_relation";
+	public const DATA_SHULKER_BOX_FACING = "shulker_box_facing";
 
 	public const TILE_CHEST = "minecraft:chest";
 	public const TILE_DISPENSER = "minecraft:dispenser";
@@ -102,10 +103,6 @@ class TileConvertor
 				}
 				break;
 			case self::TILE_SHULKER_BOX:
-				//TODO: shulker facing is saved as a blockstate in java
-				$tile->setByte(ShulkerBox::TAG_FACING, Facing::UP);
-				//TODO: convert items
-				break;
 			case self::TILE_DISPENSER:
 			case self::TILE_DROPPER:
 			case self::TILE_HOPPER:

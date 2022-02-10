@@ -6,6 +6,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\Block;
 use pocketmine\block\tile\Chest;
+use pocketmine\block\tile\ShulkerBox;
 use pocketmine\math\Axis;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\Internet;
@@ -106,6 +107,19 @@ class BlockConvertor
 						"north" => -1,
 						"south" => 1,
 						default => 0
+					});
+			}
+			/** @var string $state */
+			foreach ($tileDataPalette[TileConvertor::DATA_SHULKER_BOX_FACING] ?? [] as $state => $data) {
+				self::$compoundMapping[$state] = CompoundTag::create()
+					->setByte(ShulkerBox::TAG_FACING, match ($data) {
+                        "down" => 0,
+						"up" => 1,
+						"north" => 2,
+						"south" => 3,
+						"west" => 4,
+						"east" => 5,
+						default => throw new UnexpectedValueException("Unknown facing $data")
 					});
 			}
 		} catch (Throwable $e) {
