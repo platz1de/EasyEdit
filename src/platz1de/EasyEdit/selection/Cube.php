@@ -96,22 +96,42 @@ class Cube extends Selection implements Patterned
 
 		if ($context->isFull()) {
 			CubicConstructor::betweenPoints($this->getPos1(), $this->getPos2(), $closure);
-		} else {
-			if ($context->includesFilling()) {
-				//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
-				CubicConstructor::betweenPoints(Vector3::maxComponents($full->getCubicStart()->add(1, 1, 1), $this->getCubicStart()), Vector3::minComponents($full->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd()), $closure);
-			}
-
-			if ($context->includesAllSides()) {
-				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::ALL, $context->getSideThickness(), $closure);
-			} elseif ($context->includesWalls()) {
-				CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $context->getSideThickness(), $closure);
-			}
-
-			if ($context->includesCenter()) {
-				CubicConstructor::betweenPoints(Vector3::maxComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
-			}
+			return;
 		}
+
+		if ($context->includesFilling()) {
+			//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
+			CubicConstructor::betweenPoints(Vector3::maxComponents($full->getCubicStart()->add(1, 1, 1), $this->getCubicStart()), Vector3::minComponents($full->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd()), $closure);
+		}
+
+		if ($context->includesAllSides()) {
+			CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::ALL, $context->getSideThickness(), $closure);
+		} elseif ($context->includesWalls()) {
+			CubicConstructor::onSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $context->getSideThickness(), $closure);
+		}
+
+		if ($context->includesCenter()) {
+			CubicConstructor::betweenPoints(Vector3::maxComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
+		}
+	}
+
+	/**
+	 * @param Player $player
+	 * @return Cube
+	 */
+	public static function createInWorld(Player $player): Cube
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+			if ($selection instanceof self && $selection->getWorld() === $player->getWorld()) {
+				return $selection;
+			}
+			$selection->close();
+		} catch (Throwable) { //no selection
+		}
+		$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
+		SelectionManager::setForPlayer($player->getName(), $selection);
+		return $selection;
 	}
 
 	/**
@@ -120,19 +140,9 @@ class Cube extends Selection implements Patterned
 	 */
 	public static function selectPos1(Player $player, Vector3 $position): void
 	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self || $selection->getWorld() !== $player->getWorld()) {
-				$selection->close();
-				$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
-			}
-		} catch (Throwable) {
-			$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
-		}
+		$selection = self::createInWorld($player);
 
 		$selection->setPos1($position->floor());
-
-		SelectionManager::setForPlayer($player->getName(), $selection);
 
 		Messages::send($player, "selected-pos1", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}
@@ -143,19 +153,9 @@ class Cube extends Selection implements Patterned
 	 */
 	public static function selectPos2(Player $player, Vector3 $position): void
 	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			if (!$selection instanceof self || $selection->getWorld() !== $player->getWorld()) {
-				$selection->close();
-				$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
-			}
-		} catch (Throwable) {
-			$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
-		}
+		$selection = self::createInWorld($player);
 
 		$selection->setPos2($position->floor());
-
-		SelectionManager::setForPlayer($player->getName(), $selection);
 
 		Messages::send($player, "selected-pos2", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}
