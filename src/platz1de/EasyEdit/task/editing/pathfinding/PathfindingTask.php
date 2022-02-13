@@ -13,6 +13,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
@@ -84,13 +85,14 @@ class PathfindingTask extends EditTask
 		$closed = [];
 		$checked = 0;
 		$loadedChunks = []; //TODO: unload chunks after a set amount
+		$max = ConfigManager::getPathfindingMax();
 
 		$endX = $this->end->getFloorX();
 		$endY = $this->end->getFloorY();
 		$endZ = $this->end->getFloorZ();
 
 		$open->insert(new Node($this->start->getFloorX(), $this->start->getFloorY(), $this->start->getFloorZ(), null, $endX, $endY, $endZ));
-		while ($checked++ < 1000000) { //hardcoded limit of 1M blocks for now
+		while ($checked++ < $max) {
 			/** @var Node $current */
 			$current = $open->extract();
 			unset($collection[$current->hash]);

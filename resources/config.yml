@@ -12,6 +12,14 @@ allow-history-other: true
 #Disable this if you have commands requiring 3 slashes
 remap-commands: true
 
+#Max blocks to use fast set on
+#Fast set allows to set blocks without any flickering, but triples execution time
+#This is also somewhat harsh on client and network performance, so better not set this to high; default:256000
+fast-set-max: 256000
+
+#Max blocks checked when pathfinding, default: 1000000 (1M)
+pathfinding-max: 1000000
+
 #Blocks which get ignored when calculating terrain height (e.g. when smoothing) or inserting selection
 terrain-ignored-blocks: [ "air", "wood", "wood2", "leaves", "leaves2", "dandelion", "poppy", "tall_grass", "water", "8", "lava", "10", "snow_layer", "carpet" ]
 

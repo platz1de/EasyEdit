@@ -19,6 +19,8 @@ class ConfigManager
 	private static array $terrainIgnored = [];
 	private static float $toolCooldown;
 	private static bool $allowOtherHistory;
+	private static int $fastSetMax;
+	private static int $pathfindingMax;
 	private static bool $sendDebug;
 	private static string $bedrockConversionDataSource;
 	private static string $bedrockPaletteDataSource;
@@ -97,6 +99,9 @@ class ConfigManager
 
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
 
+		self::$fastSetMax = self::mustGetInt($config, "fast-set-max", 256000);
+		self::$pathfindingMax = self::mustGetInt($config, "pathfinding-max", 1000000);
+
 		if (self::mustGetBool($config, "remap-commands", false)) {
 			RemapEventListener::init();
 		}
@@ -110,7 +115,7 @@ class ConfigManager
 		self::$flipDataSource = self::mustGetString($config, "flip-data", "");
 		self::$tileDataStatesSource = self::mustGetString($config, "tile-data-states", "");
 
-		ConfigInputData::from(self::$terrainIgnored, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource, self::$sendDebug);
+		ConfigInputData::from(self::$terrainIgnored, self::$fastSetMax, self::$pathfindingMax, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource, self::$sendDebug);
 	}
 
 	/**
@@ -140,6 +145,22 @@ class ConfigManager
 		$data = $config->get($key, $default);
 		if (!is_float($data) && !is_int($data)) { //also accept ints
 			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected float");
+			return $default;
+		}
+		return $data;
+	}
+
+	/**
+	 * @param Config $config
+	 * @param string $key
+	 * @param int    $default
+	 * @return int
+	 */
+	private static function mustGetInt(Config $config, string $key, int $default): int
+	{
+		$data = $config->get($key, $default);
+		if (!is_int($data)) {
+			EasyEdit::getInstance()->getLogger()->warning("Your config value for " . $key . " is invalid, expected integer");
 			return $default;
 		}
 		return $data;
@@ -191,6 +212,26 @@ class ConfigManager
 	public static function isAllowingOtherHistory(): bool
 	{
 		return self::$allowOtherHistory;
+	}
+
+	public static function setFastSetMax(int $max): void
+	{
+		self::$fastSetMax = $max;
+	}
+
+	public static function getFastSetMax(): int
+	{
+		return self::$fastSetMax;
+	}
+
+	public static function setPathfindingMax(int $max): void
+	{
+		self::$fastSetMax = $max;
+	}
+
+	public static function getPathfindingMax(): int
+	{
+		return self::$fastSetMax;
 	}
 
 	/**
