@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use pocketmine\entity\Location;
+use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -32,6 +33,32 @@ class VectorUtils
 			$p = $vector->east($amount);
 		}
 		return $p;
+	}
+
+	/**
+	 * @param Location $from
+	 * @return int
+	 */
+	public static function getFacing(Location $from): int
+	{
+		$yaw = $from->getYaw();
+		$pitch = $from->getPitch();
+		if ($pitch >= 45) {
+			return Facing::DOWN;
+		}
+		if ($pitch <= -45) {
+			return Facing::UP;
+		}
+		if ($yaw >= 315 || $yaw < 45) {
+			return Facing::SOUTH;
+		}
+		if ($yaw < 135) {
+			return Facing::WEST;
+		}
+		if ($yaw < 225) {
+			return Facing::NORTH;
+		}
+		return Facing::EAST;
 	}
 
 	/**

@@ -8,11 +8,9 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\DynamicStoredFlipTask;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Axis;
-use pocketmine\math\Vector3;
+use pocketmine\math\Facing;
 use pocketmine\player\Player;
 use Throwable;
-use UnexpectedValueException;
 
 class FlipCommand extends EasyEditCommand
 {
@@ -33,15 +31,6 @@ class FlipCommand extends EasyEditCommand
 			Messages::send($player, "no-clipboard");
 			return;
 		}
-
-		$vector = VectorUtils::moveVectorInSight($player->getLocation(), Vector3::zero());
-		$axis = match ($vector->getX() . ":" . $vector->getY() . ":" . $vector->getZ()) {
-			"1:0:0", "-1:0:0" => Axis::X,
-			"0:1:0", "0:-1:0" => Axis::Y,
-			"0:0:1", "0:0:-1" => Axis::Z,
-			default => throw new UnexpectedValueException("Unknown Axis " . $vector->getX() . ":" . $vector->getY() . ":" . $vector->getZ())
-		};
-
-		DynamicStoredFlipTask::queue($player->getName(), $selection, $axis);
+		DynamicStoredFlipTask::queue($player->getName(), $selection, Facing::axis(VectorUtils::getFacing($player->getLocation())));
 	}
 }
