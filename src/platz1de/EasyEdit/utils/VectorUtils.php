@@ -93,4 +93,30 @@ class VectorUtils
 	{
 		return $vector->getX() >= $min->getX() && $vector->getX() <= $max->getX() && $vector->getY() >= $min->getY() && $vector->getY() <= $max->getY() && $vector->getZ() >= $min->getZ() && $vector->getZ() <= $max->getZ();
 	}
+
+	/**
+	 * @param int     $x
+	 * @param int     $y
+	 * @param int     $z
+	 * @param Vector3 $min
+	 * @param Vector3 $max
+	 */
+	public static function adjustBoundaries(int $x, int $y, int $z, Vector3 $min, Vector3 $max): void
+	{
+		if ($x < $min->getX()) {
+			$min->x = $x;
+		} elseif ($x > $max->getX()) {
+			$max->x = $x;
+		}
+		if ($y < $min->getY()) {
+			$min->y = $y;
+		} elseif ($y > $max->getY()) {
+			$max->y = $y;
+		}
+		if ($z < $min->getZ()) {
+			$min->z = $z;
+		} elseif ($z > $max->getZ()) {
+			$max->z = $z;
+		}
+	}
 }

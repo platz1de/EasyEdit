@@ -54,6 +54,17 @@ class ReferencedChunkManager extends SimpleChunkManager
 		}
 	}
 
+	/**
+	 * @param int $x
+	 * @param int $z
+	 */
+	public function loadIfNeeded(int $x, int $z): void
+	{
+		if (!isset($this->chunks[World::chunkHash($x, $z)])) {
+			$this->setChunk($x, $z, new Chunk([], BiomeArray::fill(BiomeIds::OCEAN), true));
+		}
+	}
+
 	public function __clone(): void
 	{
 		$this->chunks = array_map(static function (Chunk $chunk): Chunk {
