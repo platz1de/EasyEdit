@@ -4,7 +4,9 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
+use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use UnexpectedValueException;
@@ -115,7 +117,7 @@ class ConfigManager
 		self::$flipDataSource = self::mustGetString($config, "flip-data", "");
 		self::$tileDataStatesSource = self::mustGetString($config, "tile-data-states", "");
 
-		ConfigInputData::from(self::$terrainIgnored, self::$fastSetMax, self::$pathfindingMax, self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource, self::$sendDebug);
+		ConfigInputData::create();
 	}
 
 	/**
@@ -214,32 +216,14 @@ class ConfigManager
 		return self::$allowOtherHistory;
 	}
 
-	public static function setFastSetMax(int $max): void
-	{
-		self::$fastSetMax = $max;
-	}
-
 	public static function getFastSetMax(): int
 	{
 		return self::$fastSetMax;
 	}
 
-	public static function setPathfindingMax(int $max): void
-	{
-		self::$fastSetMax = $max;
-	}
-
 	public static function getPathfindingMax(): int
 	{
 		return self::$fastSetMax;
-	}
-
-	/**
-	 * @param bool $send
-	 */
-	public static function sendDebug(bool $send): void
-	{
-		self::$sendDebug = $send;
 	}
 
 	/**
@@ -256,5 +240,45 @@ class ConfigManager
 	public static function getToolCooldown(): float
 	{
 		return self::$toolCooldown;
+	}
+
+	public static function putRawData(ExtendedBinaryStream $stream): void
+	{
+		$stream->putInt(count(self::$terrainIgnored));
+		foreach (self::$terrainIgnored as $id) {
+			$stream->putInt($id);
+		}
+		$stream->putInt(self::$fastSetMax);
+		$stream->putInt(self::$pathfindingMax);
+		$stream->putString(self::$bedrockConversionDataSource);
+		$stream->putString(self::$bedrockPaletteDataSource);
+		$stream->putString(self::$javaPaletteDataSource);
+		$stream->putString(self::$rotationDataSource);
+		$stream->putString(self::$flipDataSource);
+		$stream->putString(self::$tileDataStatesSource);
+		$stream->putBool(self::$sendDebug);
+	}
+
+	public static function parseRawData(ExtendedBinaryStream $stream): void
+	{
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			self::$terrainIgnored[] = $stream->getInt();
+		}
+		self::$fastSetMax = $stream->getInt();
+		self::$pathfindingMax = $stream->getInt();
+		self::$bedrockConversionDataSource = $stream->getString();
+		self::$bedrockPaletteDataSource = $stream->getString();
+		self::$javaPaletteDataSource = $stream->getString();
+		self::$rotationDataSource = $stream->getString();
+		self::$flipDataSource = $stream->getString();
+		self::$tileDataStatesSource = $stream->getString();
+		self::$sendDebug = $stream->getBool();
+	}
+
+	public static function distributeData(): void
+	{
+		HeightMapCache::setIgnore(self::$terrainIgnored);
+		BlockConvertor::load(self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource);
 	}
 }
