@@ -158,6 +158,17 @@ class EditTaskHandler
 	 * @param int $x
 	 * @param int $y
 	 * @param int $z
+	 * @return int
+	 */
+	public function getResultingBlock(int $x, int $y, int $z): int
+	{
+		return $this->result->getBlockAt($x, $y, $z);
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
 	 * @param int $block
 	 */
 	public function changeBlock(int $x, int $y, int $z, int $block): void
