@@ -11,6 +11,7 @@ use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
@@ -107,7 +108,7 @@ class FillTask extends EditTask
 			},
 			default => throw new BadMethodCallException("Invalid direction")
 		};
-		$max = 500000; //TODO: config
+		$max = ConfigManager::getFillMax();
 
 		$queue->insert(World::blockHash($startX, $startY, $startZ), 0);
 		while ($set++ < $max && !$queue->isEmpty()) {

@@ -1,4 +1,4 @@
-config-version: "2.0.3" #Please don't change this manually
+config-version: "2.0.4" #Please don't change this manually
 
 #Tool cooldown length in seconds (defaults to half a second)
 #Used for brushes, selection axes and more
@@ -16,6 +16,9 @@ remap-commands: true
 #Fast set allows to set blocks without any flickering, but triples execution time
 #This is also somewhat harsh on client and network performance, so better not set this to high; default:256000
 fast-set-max: 256000
+
+#Max blocks to check while filling; default:500000
+fill-max: 500000
 
 #Max blocks checked when pathfinding, default: 1000000 (1M)
 pathfinding-max: 1000000

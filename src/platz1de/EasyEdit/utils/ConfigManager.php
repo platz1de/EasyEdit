@@ -13,7 +13,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.3";
+	private const CONFIG_VERSION = "2.0.4";
 
 	/**
 	 * @var int[]
@@ -23,6 +23,7 @@ class ConfigManager
 	private static bool $allowOtherHistory;
 	private static int $fastSetMax;
 	private static int $pathfindingMax;
+	private static int $fillMax;
 	private static bool $sendDebug;
 	private static string $bedrockConversionDataSource;
 	private static string $bedrockPaletteDataSource;
@@ -103,6 +104,7 @@ class ConfigManager
 
 		self::$fastSetMax = self::mustGetInt($config, "fast-set-max", 256000);
 		self::$pathfindingMax = self::mustGetInt($config, "pathfinding-max", 1000000);
+		self::$fillMax = self::mustGetInt($config, "fill-max", 500000);
 
 		if (self::mustGetBool($config, "remap-commands", false)) {
 			RemapEventListener::init();
@@ -226,6 +228,11 @@ class ConfigManager
 		return self::$fastSetMax;
 	}
 
+	public static function getFillMax(): int
+	{
+		return self::$fillMax;
+	}
+
 	/**
 	 * @return bool
 	 */
@@ -250,6 +257,7 @@ class ConfigManager
 		}
 		$stream->putInt(self::$fastSetMax);
 		$stream->putInt(self::$pathfindingMax);
+		$stream->putInt(self::$fillMax);
 		$stream->putString(self::$bedrockConversionDataSource);
 		$stream->putString(self::$bedrockPaletteDataSource);
 		$stream->putString(self::$javaPaletteDataSource);
@@ -267,6 +275,7 @@ class ConfigManager
 		}
 		self::$fastSetMax = $stream->getInt();
 		self::$pathfindingMax = $stream->getInt();
+		self::$fillMax = $stream->getInt();
 		self::$bedrockConversionDataSource = $stream->getString();
 		self::$bedrockPaletteDataSource = $stream->getString();
 		self::$javaPaletteDataSource = $stream->getString();
