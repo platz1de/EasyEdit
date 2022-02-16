@@ -81,7 +81,6 @@ class FillTask extends EditTask
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$loadedChunks = [];
-		$set = 0;
 		$id = $this->block->get();
 		$ignore = HeightMapCache::getIgnore();
 		$startX = $this->start->getFloorX();
@@ -108,17 +107,21 @@ class FillTask extends EditTask
 			},
 			default => throw new BadMethodCallException("Invalid direction")
 		};
-		$max = ConfigManager::getFillMax();
+		$max = ConfigManager::getFillDistance();
 
+		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
 		$queue->insert(World::blockHash($startX, $startY, $startZ), 0);
-		while ($set++ < $max && !$queue->isEmpty()) {
-			/** @var int $current */
+		while (!$queue->isEmpty()) {
+			/** @var array{data: int, priority: int} $current */
 			$current = $queue->extract();
-			World::getBlockXYZ($current, $x, $y, $z);
+			if (-$current["priority"] > $max) {
+				break;
+			}
+			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			if (!isset($loadedChunks[$chunk])) {
 				$loadedChunks[$chunk] = true;
-				$this->progress = $set / $max;
+				$this->progress = -$current["priority"] / $max;
 				if (!$this->requestRuntimeChunks($handler, [$chunk])) {
 					return;
 				}
@@ -127,10 +130,11 @@ class FillTask extends EditTask
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $id);
-			foreach ((new Vector3($x, $y, $z))->sides() as $side) {
+			foreach (Facing::ALL as $facing) {
+				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if ($validate($side) && !isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					$queue->insert($hash, -$set);
+					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
 		}
