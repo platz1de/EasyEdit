@@ -34,65 +34,7 @@ class ConfigManager
 
 	public static function load(): void
 	{
-		$config = EasyEdit::getInstance()->getConfig();
-
-		$current = $config->get("config-version", "1.0");
-		if (!is_string($current)) {
-			throw new UnexpectedValueException("config-version is not a string");
-		}
-		if ($current !== self::CONFIG_VERSION) {
-			$cMajor = explode(".", $current)[0];
-			$gMajor = explode(".", self::CONFIG_VERSION)[0];
-
-			if ($cMajor === $gMajor) {
-				//Updating the config while remaining current values
-				$new = EasyEdit::getInstance()->getResource("config.yml");
-				if ($new === null || ($data = stream_get_contents($new)) === false) {
-					throw new UnexpectedValueException("Couldn't read update data");
-				}
-				fclose($new);
-
-				if (($old = file_get_contents($config->getPath())) === false) {
-					throw new UnexpectedValueException("Couldn't read current data");
-				}
-
-				//Allow different line endings
-				$newConfig = preg_split("/\r\n|\n|\r/", $data);
-				$oldConfig = preg_split("/\r\n|\n|\r/", $old);
-				if ($newConfig === false || $oldConfig === false) {
-					throw new AssumptionFailedError("Failed to split strings");
-				}
-
-				//We can't just use yaml_parse as we want to preserve comments
-				foreach ($config->getAll() as $key => $value) {
-					if ($key === "config-version") {
-						continue;
-					}
-					$position = array_filter($newConfig, static function (string $line) use ($key): bool {
-						return str_starts_with($line, $key . ":");
-					});
-					$oldPosition = array_filter($oldConfig, static function (string $line) use ($key): bool {
-						return str_starts_with($line, $key . ":");
-					});
-					if (count($position) === 1) {
-						$newConfig[key($position)] = $oldConfig[key($oldPosition)];
-					}
-				}
-
-				file_put_contents($config->getPath(), implode(PHP_EOL, $newConfig));
-
-				EasyEdit::getInstance()->getLogger()->notice("Your config was updated to the newest Version");
-			} else {
-				//We can't update for major releases
-				copy($config->getPath(), $config->getPath() . ".old");
-				unlink($config->getPath());
-				EasyEdit::getInstance()->saveDefaultConfig();
-
-				EasyEdit::getInstance()->getLogger()->warning("Your config was replaced with a newer Version");
-			}
-
-			$config->reload();
-		}
+		$config = self::loadConfig();
 
 		self::$terrainIgnored = array_map(static function (string $block): int {
 			return BlockParser::getBlock($block)->getId();
@@ -289,5 +231,69 @@ class ConfigManager
 	{
 		HeightMapCache::setIgnore(self::$terrainIgnored);
 		BlockConvertor::load(self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource);
+	}
+
+	private static function loadConfig(): Config
+	{
+		$config = EasyEdit::getInstance()->getConfig();
+
+		$current = $config->get("config-version", "1.0");
+		if (!is_string($current)) {
+			throw new UnexpectedValueException("config-version is not a string");
+		}
+		if ($current !== self::CONFIG_VERSION) {
+			$cMajor = explode(".", $current)[0];
+			$gMajor = explode(".", self::CONFIG_VERSION)[0];
+
+			if ($cMajor === $gMajor) {
+				//Updating the config while remaining current values
+				$new = EasyEdit::getInstance()->getResource("config.yml");
+				if ($new === null || ($data = stream_get_contents($new)) === false) {
+					throw new UnexpectedValueException("Couldn't read update data");
+				}
+				fclose($new);
+
+				if (($old = file_get_contents($config->getPath())) === false) {
+					throw new UnexpectedValueException("Couldn't read current data");
+				}
+
+				//Allow different line endings
+				$newConfig = preg_split("/\r\n|\n|\r/", $data);
+				$oldConfig = preg_split("/\r\n|\n|\r/", $old);
+				if ($newConfig === false || $oldConfig === false) {
+					throw new AssumptionFailedError("Failed to split strings");
+				}
+
+				//We can't just use yaml_parse as we want to preserve comments
+				foreach ($config->getAll() as $key => $value) {
+					if ($key === "config-version") {
+						continue;
+					}
+					$position = array_filter($newConfig, static function (string $line) use ($key): bool {
+						return str_starts_with($line, $key . ":");
+					});
+					$oldPosition = array_filter($oldConfig, static function (string $line) use ($key): bool {
+						return str_starts_with($line, $key . ":");
+					});
+					if (count($position) === 1) {
+						$newConfig[key($position)] = $oldConfig[key($oldPosition)];
+					}
+				}
+
+				file_put_contents($config->getPath(), implode(PHP_EOL, $newConfig));
+
+				EasyEdit::getInstance()->getLogger()->notice("Your config was updated to the newest Version");
+			} else {
+				//We can't update for major releases
+				copy($config->getPath(), $config->getPath() . ".old");
+				unlink($config->getPath());
+				EasyEdit::getInstance()->saveDefaultConfig();
+
+				EasyEdit::getInstance()->getLogger()->warning("Your config was replaced with a newer Version");
+			}
+
+			$config->reload();
+		}
+		return $config;
 	}
 }
