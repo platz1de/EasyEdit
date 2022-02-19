@@ -26,69 +26,69 @@ Feature-rich WorldEditor for PocketMine-MP
 
 Selection:
 
-Command | Description | Permission | Aliases/Notice
----|---|---|---
-//pos1 [x] [y] [z]| Set the first Position | easyedit.select | //1<br>left click a block in creative with a wooden axe
-//pos2 [x] [y] [z]| Set the first Position | easyedit.select | //2<br>break a block in creative with a wooden axe
-//extend [count\|vertical] | Extend the selected Area | easyedit.select | //expand<br>Look into the direction you want to extend to
-//set \<pattern> | Set the selected Area | easyedit.edit
-//replace \<block> \<pattern> | Replace the selected Area | easyedit.edit
-//naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area | easyedit.edit
-//smooth | Smooth the selected Area | easyedit.edit
-//center [block] | Set the center Blocks (1-8) | easyedit.edit | //middle
-//walls [pattern] | Set walls of the selected area | easyedit.edit | //wall
-//sides [pattern] | Set sides of the selected area | easyedit.edit | //side
-//move \<count> | Move the selected area | easyedit.edit | Look into the direction you want the selected blocks to move into
-//stack \<count> | Stack the selected area | easyedit.edit | Look into the direction you want the selected blocks to stack into
-//istack \<count> | Stack the selected area without overwriting existing terrain | easyedit.edit
-//count [radius] | Count selected blocks | easyedit.select
-//extinguish [radius] | Extinguish fire | easyedit.edit | //ext
-//view | View the selected area | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures)
+| Command                                       | Description                                                  | Permission      | Aliases/Notice                                                                  |
+|-----------------------------------------------|--------------------------------------------------------------|-----------------|---------------------------------------------------------------------------------|
+| //pos1 [x] [y] [z]                            | Set the first Position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
+| //pos2 [x] [y] [z]                            | Set the first Position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
+| //extend [count]<br>//extend vertical         | Extend the selected Area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
+| //set \<pattern>                              | Set the selected Area                                        | easyedit.edit   |
+| //replace \<block> \<pattern>                 | Replace the selected Area                                    | easyedit.edit   |
+| //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area                                 | easyedit.edit   |
+| //smooth                                      | Smooth the selected Area                                     | easyedit.edit   |
+| //center [block]                              | Set the center Blocks (1-8)                                  | easyedit.edit   | //middle                                                                        |
+| //walls [pattern]                             | Set walls of the selected area                               | easyedit.edit   | //wall                                                                          |
+| //sides [pattern]                             | Set sides of the selected area                               | easyedit.edit   | //side                                                                          |
+| //move \<count>                               | Move the selected area                                       | easyedit.edit   | Look into the direction you want the selected blocks to move into               |
+| //stack \<count>                              | Stack the selected area                                      | easyedit.edit   | Look into the direction you want the selected blocks to stack into              |
+| //istack \<count>                             | Stack the selected area without overwriting existing terrain | easyedit.edit   |
+| //count [radius]                              | Count selected blocks                                        | easyedit.select |
+| //extinguish [radius]                         | Extinguish fire                                              | easyedit.edit   | //ext                                                                           |
+| //view                                        | View the selected area                                       | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures) |
 
 History:
 
-Command | Description | Permission | Aliases/Notice
----|---|---|---
-//undo [count] | Revert your latest change | easyedit.history easyedit.edit
-//undo \<target> [count] | Revert targets latest change | easyedit.history easyedit.edit easyedit.edit.other | Can be disabled via config
-//redo [count] | Revert your latest undo | easyedit.history easyedit.edit
-//redo \<target> [count] | Revert targets latest undo | easyedit.history easyedit.edit easyedit.edit.other | Can be disabled via config
+| Command                  | Description                  | Permission                                         | Aliases/Notice             |
+|--------------------------|------------------------------|----------------------------------------------------|----------------------------|
+| //undo [count]           | Revert your latest change    | easyedit.history easyedit.edit                     |                            |
+| //undo \<target> [count] | Revert targets latest change | easyedit.history easyedit.edit easyedit.edit.other | Can be disabled via config |
+| //redo [count]           | Revert your latest undo      | easyedit.history easyedit.edit                     |                            |
+| //redo \<target> [count] | Revert targets latest undo   | easyedit.history easyedit.edit easyedit.edit.other | Can be disabled via config |
 
 Clipboard:
 
-Command | Description | Permission | Aliases/Notice
----|---|---|---
-//copy | Copy the selected Area | easyedit.clipboard
-//cut | Cut the selected Area | easyedit.clipboard easyedit.edit | Copies and replaces with air
-//paste | Paste the Clipboard | easyedit.clipboard easyedit.edit
-//insert | Insert the Clipboard | easyedit.clipboard easyedit.edit | Paste only into air blocks
-//rotate | Rotate the Clipboard | easyedit.clipboard | Rotates by 90 Degrees
-//flip | Flip the Clipboard | easyedit.clipboard | Flips on axis you look on, always uses selected point as "mirror"
-//loadschematic \<schematicName> | Load a saved schematic | easyedit.readdisk easyedit.clipboard | //load
-//saveschematic \<schematicName> | Save your clipboard into a schematic | easyedit.writedisk easyedit.clipboard | //save
+| Command                          | Description                          | Permission                            | Aliases/Notice                                                    |
+|----------------------------------|--------------------------------------|---------------------------------------|-------------------------------------------------------------------|
+| //copy                           | Copy the selected Area               | easyedit.clipboard                    |                                                                   |
+| //cut                            | Cut the selected Area                | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
+| //paste                          | Paste the Clipboard                  | easyedit.clipboard easyedit.edit      |                                                                   |
+| //insert                         | Insert the Clipboard                 | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
+| //rotate                         | Rotate the Clipboard                 | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
+| //flip                           | Flip the Clipboard                   | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
+| //loadschematic \<schematicName> | Load a saved schematic               | easyedit.readdisk easyedit.clipboard  | //load                                                            |
+| //saveschematic \<schematicName> | Save your clipboard into a schematic | easyedit.writedisk easyedit.clipboard | //save                                                            |
 
 Generation:
 
-Command | Description | Permission | Aliases/Notice
----|---|---|---
-//sphere \<radius> \<pattern> | Set a sphere | easyedit.generate easyedit.edit | //sph
-//hsphere \<radius> \<pattern> [thickness] | Set a hollow sphere | easyedit.generate easyedit.edit | //hsph //hollowsphere
-//cylinder \<radius> \<height> \<pattern> | Set a cylinder | easyedit.generate easyedit.edit | //cy
-//hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder | easyedit.generate easyedit.edit | //hcy //hollowcylinder
-//noise [type] | Generate with a simple noise function | easyedit.generate easyedit.edit
+| Command                                                | Description                           | Permission                      | Aliases/Notice         |
+|--------------------------------------------------------|---------------------------------------|---------------------------------|------------------------|
+| //sphere \<radius> \<pattern>                          | Set a sphere                          | easyedit.generate easyedit.edit | //sph                  |
+| //hsphere \<radius> \<pattern> [thickness]             | Set a hollow sphere                   | easyedit.generate easyedit.edit | //hsph //hollowsphere  |
+| //cylinder \<radius> \<height> \<pattern>              | Set a cylinder                        | easyedit.generate easyedit.edit | //cy                   |
+| //hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder                 | easyedit.generate easyedit.edit | //hcy //hollowcylinder |
+| //noise [type]                                         | Generate with a simple noise function | easyedit.generate easyedit.edit |                        |
 
 Utility:
 
-Command | Description | Permission | Aliases/Notice
----|---|---|---
-//commands [page] | List all EasyEdit commands | - | //h //cmd
-//brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush | easyedit.brush <br> (To use: easyedit.edit)| //br
-//fill \[Block] | Fill an area | easyedit.edit easyedit.generate | Fills into looking direction
-//line \<x> \<y> \<z> \[pattern] | Draw a line | easyedit.edit easyedit.generate
-//blockinfo | Get a blockinfo stick | easyedit.util | //bi
-//status | Check on the EditThread | easyedit.manage
-//cancel | Cancel the current task | easyedit.manage
-//benchmark | Start a benchmark | easyedit.manage | This will create a temporary world and edit a few preset actions
+| Command                                                                                                                                                                                      | Description                | Permission                                  | Aliases/Notice                                                   |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|------------------------------------------------------------------|
+| //commands [page]                                                                                                                                                                            | List all EasyEdit commands | -                                           | //h //cmd                                                        |
+| //brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush         | easyedit.brush <br> (To use: easyedit.edit) | //br                                                             |
+| //fill \[Block]                                                                                                                                                                              | Fill an area               | easyedit.edit easyedit.generate             | Fills into looking direction                                     |
+| //line \<x> \<y> \<z> \[pattern]                                                                                                                                                             | Draw a line                | easyedit.edit easyedit.generate             |                                                                  |
+| //blockinfo                                                                                                                                                                                  | Get a blockinfo stick      | easyedit.util                               | //bi                                                             |
+| //status                                                                                                                                                                                     | Check on the EditThread    | easyedit.manage                             |                                                                  |
+| //cancel                                                                                                                                                                                     | Cancel the current task    | easyedit.manage                             |                                                                  |
+| //benchmark                                                                                                                                                                                  | Start a benchmark          | easyedit.manage                             | This will create a temporary world and edit a few preset actions |
 
 ## Patterns
 
@@ -155,18 +155,18 @@ These are especially useful in complex structures or even nested: <br>
 [argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
-Pattern | Description
----|---
-block;\<block>(patterns) | Executes Patterns if the block is the same as the specified block (like in //replace)
-above;\<block>(patterns) | Executes Patterns if the block is above the specified block
-around;\<block>(patterns) | Executes Patterns if the block is next to the specified block
-below;\<block>(patterns) | Executes Patterns if the block is below the specified block
-not(condition(patterns)) | Executes Patterns of next Pattern is false (only works when nested)
-odd;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at odd coordinates at x, y and z Axis, the x, y and z can be left out (only given ones will be checked)
-even;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at even coordinates (see odd for more info)
-divisible;\<number>;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at coordinates which are divisible by the given number (see odd for more info)
-walls;\[thickness](patterns) | Executes Patterns if the block is one of the walls of the selections
-sides;\[thickness](patterns) | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)
+| Pattern                                      | Description                                                                                                                               |
+|----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| block;\<block>(patterns)                     | Executes Patterns if the block is the same as the specified block (like in //replace)                                                     |
+| above;\<block>(patterns)                     | Executes Patterns if the block is above the specified block                                                                               |
+| around;\<block>(patterns)                    | Executes Patterns if the block is next to the specified block                                                                             |
+| below;\<block>(patterns)                     | Executes Patterns if the block is below the specified block                                                                               |
+| not(condition(patterns))                     | Executes Patterns of next Pattern is false (only works when nested)                                                                       |
+| odd;\[x];\[y];\[z](patterns)                 | Executes Patterns if the block is at odd coordinates at x, y and z Axis, the x, y and z can be left out (only given ones will be checked) |
+| even;\[x];\[y];\[z](patterns)                | Executes Patterns if the block is at even coordinates (see odd for more info)                                                             |
+| divisible;\<number>;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at coordinates which are divisible by the given number (see odd for more info)                          |
+| walls;\[thickness](patterns)                 | Executes Patterns if the block is one of the walls of the selections                                                                      |
+| sides;\[thickness](patterns)                 | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)                                             |
 
 ### Functional Patterns
 
@@ -176,10 +176,10 @@ These Patterns have a unique use and are mostly used for the default commands
 [argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
-Pattern | Description
----|---
-naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3)
-gravity(\[pattern]) | makes your blocks fall down until they reach the ground
+| Pattern                                      | Description                                                                       |
+|----------------------------------------------|-----------------------------------------------------------------------------------|
+| naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3) |
+| gravity(\[pattern])                          | makes your blocks fall down until they reach the ground                           |
 
 ## Blame Mojang
 
