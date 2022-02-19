@@ -9,10 +9,10 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\task\editing\LineTask;
 use platz1de\EasyEdit\task\editing\pathfinding\PathfindingTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 
 class LineCommand extends EasyEditCommand
@@ -35,9 +35,7 @@ class LineCommand extends EasyEditCommand
 				$mode = "direct"; //TODO: use a better parser
 			}
 
-			$x = (int) $args[0];
-			$y = (int) $args[1];
-			$z = (int) $args[2];
+			$target = ArgumentParser::parseCoordinates($player, $args[0], $args[1], $args[2]);
 
 			if (isset($args[3])) {
 				try {
@@ -54,17 +52,17 @@ class LineCommand extends EasyEditCommand
 				case "line":
 				case "direct":
 				default:
-					LineTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), new Vector3($x, $y, $z), StaticBlock::fromBlock($block));
+					LineTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, StaticBlock::fromBlock($block));
 					break;
 				case "find":
 				case "search":
-					PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), new Vector3($x, $y, $z), true, StaticBlock::fromBlock($block));
+					PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, true, StaticBlock::fromBlock($block));
 					break;
 				case "find-line":
 				case "find-direct":
 				case "no-diagonal":
 				case "solid":
-					PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), new Vector3($x, $y, $z), false, StaticBlock::fromBlock($block));
+					PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, StaticBlock::fromBlock($block));
 					break;
 			}
 		} else {
