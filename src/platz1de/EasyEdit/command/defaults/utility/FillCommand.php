@@ -30,7 +30,7 @@ class FillCommand extends EasyEditCommand
 		}
 
 		try {
-			$block = StaticBlock::fromBLock(BlockParser::getBlock($args[0]));
+			$block = StaticBlock::fromBlock(BlockParser::getBlock($args[0]));
 		} catch (ParseError $exception) {
 			$player->sendMessage($exception->getMessage());
 			return;
