@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\command;
 
-use platz1de\EasyEdit\pattern\parser\ParseError;
+use platz1de\EasyEdit\command\exception\CommandException;
 use pocketmine\player\Player;
 use pocketmine\Server;
 
@@ -42,8 +42,8 @@ class CommandManager
 		//TODO: Flags?
 		try {
 			$command->process($player, $args);
-		} catch (ParseError $e) {
-			$player->sendMessage($e->getMessage());
+		} catch (CommandException $e) {
+			$e->sendWarning($player);
 		}
 	}
 

@@ -4,11 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
-use Throwable;
 
 class PasteCommand extends EasyEditCommand
 {
@@ -23,13 +21,6 @@ class PasteCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		try {
-			$selection = ClipBoardManager::getFromPlayer($player->getName());
-		} catch (Throwable) {
-			Messages::send($player, "no-clipboard");
-			return;
-		}
-
-		DynamicStoredPasteTask::queue($player->getName(), $selection, $player->getPosition(), true);
+		DynamicStoredPasteTask::queue($player->getName(), ArgumentParser::getClipboard($player), $player->getPosition(), true);
 	}
 }

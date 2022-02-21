@@ -4,11 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\task\schematic\SchematicSaveTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
-use Throwable;
 
 class SaveSchematicCommand extends EasyEditCommand
 {
@@ -29,13 +27,6 @@ class SaveSchematicCommand extends EasyEditCommand
 			return;
 		}
 
-		try {
-			$selection = ClipBoardManager::getFromPlayer($player->getName());
-		} catch (Throwable) {
-			Messages::send($player, "no-clipboard");
-			return;
-		}
-
-		SchematicSaveTask::queue($player->getName(), $selection, $schematicName);
+		SchematicSaveTask::queue($player->getName(), ArgumentParser::getClipboard($player), $schematicName);
 	}
 }

@@ -2,9 +2,17 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\command\exception\NoClipboardException;
+use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\pattern\parser\ParseError;
+use platz1de\EasyEdit\selection\ClipBoardManager;
+use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\selection\WrongSelectionTypeException;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use Throwable;
 
 class ArgumentParser
 {
@@ -42,5 +50,49 @@ class ArgumentParser
 			return $player + (float) substr($coordinate, 1);
 		}
 		return (float) $coordinate;
+	}
+
+	/**
+	 * @param Player $player
+	 * @return Selection
+	 */
+	public static function getSelection(Player $player): Selection
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($player->getName());
+		} catch (Throwable) {
+			throw new NoSelectionException();
+		}
+		if (!$selection->isValid()) {
+			throw new NoSelectionException();
+		}
+		return $selection;
+	}
+
+	/**
+	 * @param Player $player
+	 * @return Cube
+	 */
+	public static function getCube(Player $player): Cube
+	{
+		$selection = self::getSelection($player);
+		if (!$selection instanceof Cube) {
+			throw new WrongSelectionTypeException($selection::class, Cube::class);
+		}
+		return $selection;
+	}
+
+	/**
+	 * @param Player $player
+	 * @return int
+	 */
+	public static function getClipboard(Player $player): int
+	{
+		try {
+			$clipboard = ClipBoardManager::getFromPlayer($player->getName());
+		} catch (Throwable) {
+			throw new NoClipboardException();
+		}
+		return $clipboard;
 	}
 }

@@ -180,20 +180,6 @@ abstract class Selection
 	}
 
 	/**
-	 * @param Selection   $selection
-	 * @param string|null $expected
-	 */
-	public static function validate(Selection $selection, ?string $expected = null): void
-	{
-		if (($expected !== null) && get_class($selection) !== $expected) {
-			throw new WrongSelectionTypeError(get_class($selection), $expected);
-		}
-		if (!$selection->isValid()) {
-			throw new UnexpectedValueException("Selection is not valid");
-		}
-	}
-
-	/**
 	 * @param int $block
 	 * @return bool
 	 */

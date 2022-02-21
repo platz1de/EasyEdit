@@ -10,6 +10,9 @@ selected-pos2: "Selected the second position as {x} {y} {z}"
 no-selection: "You don't have an active selection"
 no-clipboard: "You don't have an active clipboard"
 
+#Args: {given} {expected}
+wrong-selection: "Your selection is of type {given}, but {expected} is required"
+
 no-history: "Nothing to undo"
 no-future: "Nothing to redo"
 

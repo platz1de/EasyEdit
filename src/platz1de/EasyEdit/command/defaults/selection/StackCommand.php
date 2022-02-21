@@ -4,16 +4,12 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\editing\selection\StackTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use Throwable;
 
 class StackCommand extends EasyEditCommand
 {
@@ -29,15 +25,7 @@ class StackCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		$count = (int) ($args[0] ?? 1);
-
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			/** @var Cube $selection */
-			Selection::validate($selection, Cube::class);
-		} catch (Throwable) {
-			Messages::send($player, "no-selection");
-			return;
-		}
+		$selection = ArgumentParser::getCube($player);
 
 		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), Vector3::zero(), $count)), $player->getPosition());
 	}
