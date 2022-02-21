@@ -4,12 +4,12 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\command\exception\NoClipboardException;
 use platz1de\EasyEdit\command\exception\NoSelectionException;
+use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\selection\WrongSelectionTypeException;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use Throwable;

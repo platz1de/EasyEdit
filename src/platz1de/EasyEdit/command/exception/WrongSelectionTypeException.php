@@ -1,8 +1,7 @@
 <?php
 
-namespace platz1de\EasyEdit\selection;
+namespace platz1de\EasyEdit\command\exception;
 
-use platz1de\EasyEdit\command\exception\CommandException;
 use platz1de\EasyEdit\Messages;
 use pocketmine\player\Player;
 
