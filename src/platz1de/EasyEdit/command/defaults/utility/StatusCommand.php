@@ -33,7 +33,7 @@ class StatusCommand extends EasyEditCommand
 			]);
 		} else {
 			$p = $player->getName();
-			CollectStatsTask::from(function (string $taskName, int $taskId, string $responsiblePlayer, float $progress, int $queueLength, int $storageSize, int $currentMemory, int $realMemory) use ($p): void {
+			CollectStatsTask::from(static function (string $taskName, int $taskId, string $responsiblePlayer, float $progress, int $queueLength, int $storageSize, int $currentMemory, int $realMemory) use ($p): void {
 				if ($taskId !== -1) {
 					$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();
 					$progressPart = $progress * 100 . "%";
