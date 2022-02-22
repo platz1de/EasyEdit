@@ -22,7 +22,6 @@ use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\pattern\PatternConstruct;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\player\Player;
-use Throwable;
 
 class PatternParser
 {
@@ -64,17 +63,13 @@ class PatternParser
 	 */
 	public static function parseInternal(string $pattern): Pattern
 	{
-		try {
-			//basically magic
-			preg_match_all("/(?:\((?:[^()]+|(?R))+\)|[^(),\s]+)+/", $pattern, $matches);
-			$pieces = [];
-			foreach ($matches[0] as $piece) {
-				$pieces[] = self::parseLogical($piece);
-			}
-			return Pattern::from($pieces);
-		} catch (Throwable $exception) {
-			throw new ParseError($exception->getMessage(), false); //the difference is purely internally
+		//basically magic
+		preg_match_all("/(?:\((?:[^()]+|(?R))+\)|[^(),\s]+)+/", $pattern, $matches);
+		$pieces = [];
+		foreach ($matches[0] as $piece) {
+			$pieces[] = self::parseLogical($piece);
 		}
+		return Pattern::from($pieces);
 	}
 
 	/**
