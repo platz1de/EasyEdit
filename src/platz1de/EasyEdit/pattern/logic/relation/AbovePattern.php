@@ -2,11 +2,11 @@
 
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
-use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
+use Throwable;
 
 class AbovePattern extends Pattern
 {
@@ -33,7 +33,7 @@ class AbovePattern extends Pattern
 		try {
 			//shut up phpstorm
 			$this->args->setBlock($this->args->getBlock());
-		} catch (ParseError) {
+		} catch (Throwable) {
 			throw new WrongPatternUsageException("Above needs a block as first Argument");
 		}
 	}

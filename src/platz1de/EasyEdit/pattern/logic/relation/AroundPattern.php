@@ -2,12 +2,12 @@
 
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
-use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\SafeSubChunkExplorer;
 use pocketmine\math\Vector3;
+use Throwable;
 
 class AroundPattern extends Pattern
 {
@@ -36,7 +36,7 @@ class AroundPattern extends Pattern
 		try {
 			//shut up phpstorm
 			$this->args->setBlock($this->args->getBlock());
-		} catch (ParseError) {
+		} catch (Throwable) {
 			throw new WrongPatternUsageException("Around needs a block as first Argument");
 		}
 	}
