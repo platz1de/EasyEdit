@@ -4,8 +4,11 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\command\exception\NoClipboardException;
 use platz1de\EasyEdit\command\exception\NoSelectionException;
+use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
 use platz1de\EasyEdit\pattern\parser\ParseError;
+use platz1de\EasyEdit\pattern\parser\PatternParser;
+use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
@@ -94,5 +97,21 @@ class ArgumentParser
 			throw new NoClipboardException();
 		}
 		return $clipboard;
+	}
+
+	/**
+	 * @param Player      $player
+	 * @param array       $args
+	 * @param int         $start
+	 * @param string|null $default
+	 * @return Pattern
+	 */
+	public static function parseCombinedPattern(Player $player, array $args, int $start, string $default = null): Pattern
+	{
+		try {
+			return PatternParser::parseInputCombined($args, $start, $player, $default);
+		} catch (ParseError $exception) {
+			throw new PatternParseException($exception);
+		}
 	}
 }

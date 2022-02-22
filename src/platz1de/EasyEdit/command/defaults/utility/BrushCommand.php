@@ -4,9 +4,11 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
@@ -30,12 +32,7 @@ class BrushCommand extends EasyEditCommand
 		$nbt = CompoundTag::create()->setString("brushType", BrushHandler::identifierToName($type));
 		switch ($type) {
 			case BrushHandler::BRUSH_SPHERE:
-				try {
-					PatternParser::parseInputCombined($args, 2, $player, "stone");
-				} catch (ParseError $exception) {
-					$player->sendMessage($exception->getMessage());
-					return;
-				}
+				ArgumentParser::parseCombinedPattern($player, $args, 2, "stone");
 				$nbt->setFloat("brushSize", (float) ($args[1] ?? 3));
 				$nbt->setString("brushPattern", $args[2] ?? "stone");
 				break;
@@ -48,8 +45,7 @@ class BrushCommand extends EasyEditCommand
 					PatternParser::parseInput($args[3] ?? "dirt", $player);
 					PatternParser::parseInput($args[4] ?? "stone", $player);
 				} catch (ParseError $exception) {
-					$player->sendMessage($exception->getMessage());
-					return;
+					throw new PatternParseException($exception);
 				}
 				$nbt->setFloat("brushSize", (float) ($args[1] ?? 4));
 				$nbt->setString("topBlock", $args[2] ?? "grass");
@@ -57,12 +53,7 @@ class BrushCommand extends EasyEditCommand
 				$nbt->setString("bottomBlock", $args[4] ?? "stone");
 				break;
 			case BrushHandler::BRUSH_CYLINDER:
-				try {
-					PatternParser::parseInputCombined($args, 3, $player, "stone");
-				} catch (ParseError $exception) {
-					$player->sendMessage($exception->getMessage());
-					return;
-				}
+				ArgumentParser::parseCombinedPattern($player, $args, 3, "stone");
 				$nbt->setFloat("brushSize", (float) ($args[1] ?? 4));
 				$nbt->setShort("brushHeight", (int) ($args[2] ?? 2));
 				$nbt->setString("brushPattern", $args[3] ?? "stone");

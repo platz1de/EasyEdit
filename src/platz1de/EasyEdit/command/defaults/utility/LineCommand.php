@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
@@ -41,8 +42,7 @@ class LineCommand extends EasyEditCommand
 				try {
 					$block = BlockParser::getBlock($args[3]);
 				} catch (ParseError $exception) {
-					$player->sendMessage($exception->getMessage());
-					return;
+					throw new PatternParseException($exception);
 				}
 			} else {
 				$block = VanillaBlocks::CONCRETE()->setColor(DyeColor::RED());

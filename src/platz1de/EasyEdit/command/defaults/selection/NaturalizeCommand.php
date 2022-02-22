@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
@@ -29,8 +30,7 @@ class NaturalizeCommand extends EasyEditCommand
 			$middle = PatternParser::parseInput($args[1] ?? "dirt", $player);
 			$bottom = PatternParser::parseInput($args[2] ?? "stone", $player);
 		} catch (ParseError $exception) {
-			$player->sendMessage($exception->getMessage());
-			return;
+			throw new PatternParseException($exception);
 		}
 
 		SetTask::queue(ArgumentParser::getSelection($player), NaturalizePattern::from([$top, $middle, $bottom]), $player->getPosition());

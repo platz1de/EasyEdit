@@ -4,10 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\generation;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
 
 class CylinderCommand extends EasyEditCommand
@@ -28,13 +27,6 @@ class CylinderCommand extends EasyEditCommand
 			return;
 		}
 
-		try {
-			$pattern = PatternParser::parseInputCombined($args, 2, $player);
-		} catch (ParseError $exception) {
-			$player->sendMessage($exception->getMessage());
-			return;
-		}
-
-		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
+		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), ArgumentParser::parseCombinedPattern($player, $args, 2), $player->getPosition());
 	}
 }

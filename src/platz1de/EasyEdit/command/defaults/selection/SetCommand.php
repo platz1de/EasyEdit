@@ -4,8 +4,6 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
@@ -28,13 +26,6 @@ class SetCommand extends EasyEditCommand
 			return;
 		}
 
-		try {
-			$pattern = PatternParser::parseInputCombined($args, 0, $player);
-		} catch (ParseError $exception) {
-			$player->sendMessage($exception->getMessage());
-			return;
-		}
-
-		SetTask::queue(ArgumentParser::getSelection($player), $pattern, $player->getPosition());
+		SetTask::queue(ArgumentParser::getSelection($player), ArgumentParser::parseCombinedPattern($player, $args, 0), $player->getPosition());
 	}
 }

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults\generation;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
@@ -33,8 +34,7 @@ class HollowCylinderCommand extends EasyEditCommand
 		try {
 			$pattern = SidesPattern::from([PatternParser::parseInput($args[2], $player)], PatternArgumentData::create()->setFloat("thickness", (float) ($args[3] ?? 1.0)));
 		} catch (ParseError $exception) {
-			$player->sendMessage($exception->getMessage());
-			return;
+			throw new PatternParseException($exception);
 		}
 
 		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
