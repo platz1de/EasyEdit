@@ -86,7 +86,7 @@ class PatternParser
 				$pieces[] = self::parsePiece($piece);
 			}
 		} catch (ParseError $exception) {
-			throw new ParseError("Failed to parse piece " . $pattern . PHP_EOL . $exception->getMessage(), false);
+			throw new ParseError('Failed to parse piece "' . $pattern .  '"' . PHP_EOL . " - " . $exception->getMessage(), false);
 		}
 		return PatternConstruct::from($pieces);
 	}
