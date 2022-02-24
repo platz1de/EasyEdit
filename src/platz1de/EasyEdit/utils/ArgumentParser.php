@@ -13,6 +13,7 @@ use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
+use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use Throwable;
@@ -113,5 +114,45 @@ class ArgumentParser
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
+	}
+
+	/**
+	 * @param Player      $player
+	 * @param string|null $args1
+	 * @param string|null $args2
+	 * @param float|null  $amount
+	 * @return Vector3
+	 */
+	public static function parseDirectionVector(Player $player, string $args1 = null, string $args2 = null, float &$amount = null): Vector3
+	{
+		$amount = 1.0;
+		if (is_numeric($args1)) {
+			$amount = (float) $args1;
+			$direction = $args2;
+		} else {
+			$direction = $args1;
+			if (is_numeric($args2)) {
+				$amount = (float) $args2;
+			}
+		}
+		return Vector3::zero()->getSide(self::parseFacing($player, $direction), $amount);
+	}
+
+	/**
+	 * @param Player      $player
+	 * @param string|null $direction
+	 * @return int
+	 */
+	public static function parseFacing(Player $player, string $direction = null): int
+	{
+		return match ($direction) {
+			"north", "n" => Facing::NORTH,
+			"south", "s" => Facing::SOUTH,
+			"east", "e" => Facing::EAST,
+			"west", "w" => Facing::WEST,
+			"up", "u" => Facing::UP,
+			"down", "d" => Facing::DOWN,
+			default => VectorUtils::getFacing($player->getLocation())
+		};
 	}
 }

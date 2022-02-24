@@ -14,7 +14,7 @@ class FlipCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/flip", "Flip the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/flip", "Flip the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD], "/flip [direction]");
 	}
 
 	/**
@@ -23,6 +23,6 @@ class FlipCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		DynamicStoredFlipTask::queue($player->getName(), ArgumentParser::getClipboard($player), Facing::axis(VectorUtils::getFacing($player->getLocation())));
+		DynamicStoredFlipTask::queue($player->getName(), ArgumentParser::getClipboard($player), Facing::axis(ArgumentParser::parseFacing($player, $args[0] ?? null)));
 	}
 }

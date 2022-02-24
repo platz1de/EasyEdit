@@ -26,24 +26,24 @@ Feature-rich WorldEditor for PocketMine-MP
 
 Selection:
 
-| Command                                       | Description                                                  | Permission      | Aliases/Notice                                                                  |
-|-----------------------------------------------|--------------------------------------------------------------|-----------------|---------------------------------------------------------------------------------|
-| //pos1 [x] [y] [z]                            | Set the first Position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
-| //pos2 [x] [y] [z]                            | Set the first Position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
-| //extend [count]<br>//extend vertical         | Extend the selected Area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
-| //set \<pattern>                              | Set the selected Area                                        | easyedit.edit   |
-| //replace \<block> \<pattern>                 | Replace the selected Area                                    | easyedit.edit   |
-| //naturalize \[pattern] \[pattern] \[pattern] | Naturalize the selected Area                                 | easyedit.edit   |
-| //smooth                                      | Smooth the selected Area                                     | easyedit.edit   |
-| //center [block]                              | Set the center Blocks (1-8)                                  | easyedit.edit   | //middle                                                                        |
-| //walls [pattern]                             | Set walls of the selected area                               | easyedit.edit   | //wall                                                                          |
-| //sides [pattern]                             | Set sides of the selected area                               | easyedit.edit   | //side                                                                          |
-| //move \<count>                               | Move the selected area                                       | easyedit.edit   | Look into the direction you want the selected blocks to move into               |
-| //stack \<count>                              | Stack the selected area                                      | easyedit.edit   | Look into the direction you want the selected blocks to stack into              |
-| //istack \<count>                             | Stack the selected area without overwriting existing terrain | easyedit.edit   |
-| //count [radius]                              | Count selected blocks                                        | easyedit.select |
-| //extinguish [radius]                         | Extinguish fire                                              | easyedit.edit   | //ext                                                                           |
-| //view                                        | View the selected area                                       | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures) |
+| Command                                           | Description                                                  | Permission      | Aliases/Notice                                                                  |
+|---------------------------------------------------|--------------------------------------------------------------|-----------------|---------------------------------------------------------------------------------|
+| //pos1 [x] [y] [z]                                | Set the first Position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
+| //pos2 [x] [y] [z]                                | Set the first Position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
+| //extend [direction] [count]<br>//extend vertical | Extend the selected Area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
+| //set \<pattern>                                  | Set the selected Area                                        | easyedit.edit   |
+| //replace \<block> \<pattern>                     | Replace the selected Area                                    | easyedit.edit   |
+| //naturalize \[pattern] \[pattern] \[pattern]     | Naturalize the selected Area                                 | easyedit.edit   |
+| //smooth                                          | Smooth the selected Area                                     | easyedit.edit   |
+| //center [block]                                  | Set the center Blocks (1-8)                                  | easyedit.edit   | //middle                                                                        |
+| //walls [pattern]                                 | Set walls of the selected area                               | easyedit.edit   | //wall                                                                          |
+| //sides [pattern]                                 | Set sides of the selected area                               | easyedit.edit   | //side                                                                          |
+| //move [direction] [count]                        | Move the selected area                                       | easyedit.edit   | Look into the direction you want the selected blocks to move into               |
+| //stack [direction] [count]                       | Stack the selected area                                      | easyedit.edit   | Look into the direction you want the selected blocks to stack into              |
+| //istack [direction] [count]                      | Stack the selected area without overwriting existing terrain | easyedit.edit   |
+| //count [radius]                                  | Count selected blocks                                        | easyedit.select |
+| //extinguish [radius]                             | Extinguish fire                                              | easyedit.edit   | //ext                                                                           |
+| //view                                            | View the selected area                                       | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures) |
 
 History:
 
@@ -63,7 +63,7 @@ Clipboard:
 | //paste                          | Paste the Clipboard                  | easyedit.clipboard easyedit.edit      |                                                                   |
 | //insert                         | Insert the Clipboard                 | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
 | //rotate                         | Rotate the Clipboard                 | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
-| //flip                           | Flip the Clipboard                   | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
+| //flip [direction]               | Flip the Clipboard                   | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
 | //loadschematic \<schematicName> | Load a saved schematic               | easyedit.readdisk easyedit.clipboard  | //load                                                            |
 | //saveschematic \<schematicName> | Save your clipboard into a schematic | easyedit.writedisk easyedit.clipboard | //save                                                            |
 
@@ -83,7 +83,7 @@ Utility:
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|------------------------------------------------------------------|
 | //commands [page]                                                                                                                                                                            | List all EasyEdit commands | -                                           | //h //cmd                                                        |
 | //brush sphere \[radius] \[pattern]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] | Create a new Brush         | easyedit.brush <br> (To use: easyedit.edit) | //br                                                             |
-| //fill \[Block]                                                                                                                                                                              | Fill an area               | easyedit.edit easyedit.generate             | Fills into looking direction                                     |
+| //fill \<Block> [direction]                                                                                                                                                                  | Fill an area               | easyedit.edit easyedit.generate             | Fills into looking direction                                     |
 | //line \<x> \<y> \<z> \[pattern]                                                                                                                                                             | Draw a line                | easyedit.edit easyedit.generate             |                                                                  |
 | //blockinfo                                                                                                                                                                                  | Get a blockinfo stick      | easyedit.util                               | //bi                                                             |
 | //status                                                                                                                                                                                     | Check on the EditThread    | easyedit.manage                             |                                                                  |

@@ -15,7 +15,7 @@ class StackInsertCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/istack", "Stack the selected area without overwriting existing terrain", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//istack <count>");
+		parent::__construct("/istack", "Stack the selected area without overwriting existing terrain", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//istack [direction] [count]");
 	}
 
 	/**
@@ -24,9 +24,8 @@ class StackInsertCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		$count = (int) ($args[0] ?? 1);
 		$selection = ArgumentParser::getCube($player);
 
-		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), VectorUtils::moveVectorInSight($player->getLocation(), Vector3::zero(), $count)), $player->getPosition(), true);
+		StackTask::queue(new StackedCube($selection->getPlayer(), $selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($player, $args[0] ?? null, $args[1] ?? null)), $player->getPosition(), true);
 	}
 }

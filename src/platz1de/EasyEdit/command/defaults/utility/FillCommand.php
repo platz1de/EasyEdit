@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\task\editing\FillTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\player\Player;
@@ -15,7 +16,7 @@ class FillCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/fill", "Fill an area", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE], "//fill <Block>");
+		parent::__construct("/fill", "Fill an area", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE], "//fill <Block> [direction]");
 	}
 
 	/**
@@ -35,6 +36,6 @@ class FillCommand extends EasyEditCommand
 			$player->sendMessage($exception->getMessage());
 			return;
 		}
-		FillTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3(), VectorUtils::getFacing($player->getLocation()), $block);
+		FillTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3(), ArgumentParser::parseFacing($player, $args[1] ?? null), $block);
 	}
 }
