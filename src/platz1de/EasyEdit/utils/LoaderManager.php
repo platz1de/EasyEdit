@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use pocketmine\block\tile\Tile;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
@@ -41,10 +42,11 @@ class LoaderManager
 	public static function setChunks(World $world, array $chunks, array $tiles): void
 	{
 		foreach ($tiles as $tile) {
-			$tile = TileFactory::getInstance()->createFromData($world, $tile);
-			if ($tile !== null) {
-				$hash = World::chunkHash($tile->getPosition()->getX() >> 4, $tile->getPosition()->getZ() >> 4);
-				if (isset($chunks[$hash])) {
+			$hash = World::chunkHash($tile->getInt(Tile::TAG_X) >> 4, $tile->getInt(Tile::TAG_Z) >> 4);
+			if (isset($chunks[$hash])) {
+				//Note: this deletes any tiles at the given position once destroyed, even if the tile is never used (ty pmmp)
+				$tile = TileFactory::getInstance()->createFromData($world, $tile);
+				if ($tile !== null) {
 					$chunks[$hash]->addTile($tile);
 				}
 			}
