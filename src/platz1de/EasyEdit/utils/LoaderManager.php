@@ -44,11 +44,12 @@ class LoaderManager
 	 */
 	public static function setChunks(World $world, array $chunks, array $tiles, array $injections): void
 	{
-		foreach ($tiles as $tile) {
-			$tile = TileFactory::getInstance()->createFromData($world, $tile);
-			if ($tile !== null) {
-				$hash = World::chunkHash($tile->getPosition()->getX() >> 4, $tile->getPosition()->getZ() >> 4);
-				if (isset($chunks[$hash])) {
+		foreach ($tiles as $rawTile) {
+			$hash = World::chunkHash($rawTile->getInt(Tile::TAG_X) >> 4, $rawTile->getInt(Tile::TAG_Z) >> 4);
+			if (isset($chunks[$hash])) {
+				//Note: this deletes any tiles at the given position even if the tile is never used (srsly pmmp?)
+				$tile = TileFactory::getInstance()->createFromData($world, $rawTile);
+				if ($tile !== null) {
 					$chunks[$hash]->addTile($tile);
 				}
 			}

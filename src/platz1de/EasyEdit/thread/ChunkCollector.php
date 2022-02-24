@@ -107,7 +107,9 @@ class ChunkCollector
 		self::$ready = false;
 		self::$manager?->filterChunks($closure);
 		EditThread::getInstance()->debug("Cached " . count(self::$manager?->getChunks() ?? []) . " chunks");
-		self::$tiles = [];
+		self::$tiles = array_filter(self::$tiles, static function (CompoundTag $tile) {
+			return self::$manager?->getChunk($tile->getInt(Tile::TAG_X) >> 4, $tile->getInt(Tile::TAG_Z) >> 4) !== null;
+		});
 	}
 
 	public static function clear(): void
