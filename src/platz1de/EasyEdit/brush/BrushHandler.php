@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\brush;
 
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
@@ -43,7 +44,7 @@ class BrushHandler
 						SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone")), $player->getPosition());
 				}
 			} catch (ParseError $e) {
-				$player->sendMessage($e->getMessage());
+				Messages::send($player, $e->getMessage(), [], false);
 			}
 		}
 	}
