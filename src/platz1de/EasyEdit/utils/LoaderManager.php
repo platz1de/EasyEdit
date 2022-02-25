@@ -47,7 +47,7 @@ class LoaderManager
 		foreach ($tiles as $rawTile) {
 			$hash = World::chunkHash($rawTile->getInt(Tile::TAG_X) >> 4, $rawTile->getInt(Tile::TAG_Z) >> 4);
 			if (isset($chunks[$hash])) {
-				//Note: this deletes any tiles at the given position even if the tile is never used (srsly pmmp?)
+				//Note: this deletes any tiles at the given position even if the tile is never used (ty pmmp)
 				$tile = TileFactory::getInstance()->createFromData($world, $rawTile);
 				if ($tile !== null) {
 					$chunks[$hash]->addTile($tile);
