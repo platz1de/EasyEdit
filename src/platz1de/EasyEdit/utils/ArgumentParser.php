@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\command\exception\NoClipboardException;
 use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\command\exception\PatternParseException;
@@ -154,5 +156,17 @@ class ArgumentParser
 			"down", "d" => Facing::DOWN,
 			default => VectorUtils::getFacing($player->getLocation())
 		};
+	}
+
+	/**
+	 * @param string[]        $args
+	 * @param int             $count
+	 * @param EasyEditCommand $command
+	 */
+	public static function requireArgumentCount(array $args, int $count, EasyEditCommand $command): void
+	{
+		if (count($args) < $count) {
+			throw new InvalidUsageException($command);
+		}
 	}
 }

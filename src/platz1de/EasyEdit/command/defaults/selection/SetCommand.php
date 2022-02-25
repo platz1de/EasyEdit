@@ -21,11 +21,7 @@ class SetCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		if (($args[0] ?? "") === "") {
-			$player->sendMessage($this->getUsage());
-			return;
-		}
-
+		ArgumentParser::requireArgumentCount($args, 1, $this);
 		SetTask::queue(ArgumentParser::getSelection($player), ArgumentParser::parseCombinedPattern($player, $args, 0), $player->getPosition());
 	}
 }

@@ -25,7 +25,7 @@ class ReplaceCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Player $player, array $args): Pattern
 	{
-		//TODO: validate usage
+		ArgumentParser::requireArgumentCount($args, 2, $this);
 		try {
 			$block = PatternParser::getBlockType($args[0]);
 		} catch (ParseError $exception) {

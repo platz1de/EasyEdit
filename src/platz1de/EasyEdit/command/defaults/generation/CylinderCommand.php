@@ -22,11 +22,7 @@ class CylinderCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		if (($args[2] ?? "") === "") {
-			$player->sendMessage($this->getUsage());
-			return;
-		}
-
+		ArgumentParser::requireArgumentCount($args, 3, $this);
 		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), ArgumentParser::parseCombinedPattern($player, $args, 2), $player->getPosition());
 	}
 }

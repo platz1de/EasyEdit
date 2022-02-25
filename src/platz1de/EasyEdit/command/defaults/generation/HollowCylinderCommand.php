@@ -11,6 +11,7 @@ use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
+use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
 
 class HollowCylinderCommand extends EasyEditCommand
@@ -26,11 +27,7 @@ class HollowCylinderCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		if (($args[2] ?? "") === "") {
-			$player->sendMessage($this->getUsage());
-			return;
-		}
-
+		ArgumentParser::requireArgumentCount($args, 3, $this);
 		try {
 			$pattern = SidesPattern::from([PatternParser::parseInput($args[2], $player)], PatternArgumentData::create()->setFloat("thickness", (float) ($args[3] ?? 1.0)));
 		} catch (ParseError $exception) {

@@ -3,13 +3,13 @@
 namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\task\editing\FillTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\player\Player;
 
 class FillCommand extends EasyEditCommand
@@ -25,16 +25,11 @@ class FillCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		if (count($args) < 1) {
-			$player->sendMessage($this->getUsage());
-			return;
-		}
-
+		ArgumentParser::requireArgumentCount($args, 1, $this);
 		try {
 			$block = StaticBlock::fromBlock(BlockParser::getBlock($args[0]));
 		} catch (ParseError $exception) {
-			$player->sendMessage($exception->getMessage());
-			return;
+			throw new PatternParseException($exception);
 		}
 		FillTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3(), ArgumentParser::parseFacing($player, $args[1] ?? null), $block);
 	}

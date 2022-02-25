@@ -22,11 +22,7 @@ class SphereCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		if (($args[1] ?? "") === "") {
-			$player->sendMessage($this->getUsage());
-			return;
-		}
-
+		ArgumentParser::requireArgumentCount($args, 2, $this);
 		SetTask::queue(Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (int) $args[0]), ArgumentParser::parseCombinedPattern($player, $args, 1), $player->getPosition());
 	}
 }
