@@ -27,7 +27,8 @@ class BrushCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		$type = BrushHandler::nameToIdentifier($args[0] ?? "");
+		ArgumentParser::requireArgumentCount($args, 1, $this);
+		$type = BrushHandler::nameToIdentifier($args[0]);
 
 		$nbt = CompoundTag::create()->setString("brushType", BrushHandler::identifierToName($type));
 		switch ($type) {
