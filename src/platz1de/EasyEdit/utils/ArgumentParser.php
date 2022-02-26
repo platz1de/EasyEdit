@@ -169,4 +169,18 @@ class ArgumentParser
 			throw new InvalidUsageException($command);
 		}
 	}
+
+	/**
+	 * @param bool        $default
+	 * @param string|null $argument
+	 * @return bool
+	 */
+	public static function parseBool(bool $default, string $argument = null): bool
+	{
+		return match ($argument) {
+			"true", "t", "yes", "y", "1", "+" => true,
+			"false", "f", "no", "n", "0", "-" => false,
+			default => $default
+		};
+	}
 }
