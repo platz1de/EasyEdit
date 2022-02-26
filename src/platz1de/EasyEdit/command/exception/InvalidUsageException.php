@@ -15,6 +15,6 @@ class InvalidUsageException extends CommandException
 
 	public function sendWarning(Player $player): void
 	{
-		Messages::send($player, $this->getMessage(), [], false);
+		Messages::send($player, "wrong-usage", ["{usage}" => $this->getMessage()]);
 	}
 }

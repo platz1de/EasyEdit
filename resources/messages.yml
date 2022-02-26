@@ -1,4 +1,4 @@
-message-version: "2.0.1" #Please don't change this manually
+message-version: "2.0.2" #Please don't change this manually
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
@@ -18,6 +18,9 @@ no-future: "Nothing to redo"
 
 no-task: "No task is currently running"
 task-cancelled: "Current task was cancelled"
+
+#Args: {usage}
+wrong-usage: "Wrong command usage:\n{usage}"
 
 #Args: {commands} {start} {end} {total}
 command-list: "Commands (showing {start} to {end} of {total}):\n{commands}"
