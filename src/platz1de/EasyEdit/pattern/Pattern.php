@@ -24,12 +24,12 @@ class Pattern
 	 */
 	public static function from(array $pieces, ?PatternArgumentData $args = null): Pattern
 	{
-		if ((static::class === __CLASS__) && count($pieces) === 1) {
-			return $pieces[0];
+		if ((static::class === __CLASS__) && count($pieces) === 1 && $pieces[0]->getWeight() === 100) {
+			return $pieces[0]; //no need to wrap single patterns
 		}
 
 		if (count($pieces) === 1 && $pieces[0]::class === __CLASS__) {
-			$pieces = $pieces[0]->pieces;
+			$pieces = $pieces[0]->pieces; //no double-wrapping
 		}
 
 		$name = static::class;
@@ -63,13 +63,16 @@ class Pattern
 	 */
 	public function getFor(int $x, int &$y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
 	{
-		if (count($this->pieces) === 1 && $this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total)) {
-			return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);
-		}
-		$sum = array_sum(array_map(static function (Pattern $pattern): int {
-			return $pattern->getWeight();
-		}, $this->pieces));
 		try {
+			if (count($this->pieces) === 1) {
+				if ($this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total) && ($this->pieces[0]->getWeight() === 100 || random_int(1, 100) <= $this->pieces[0]->getWeight())) {
+					return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);
+				}
+				return -1;
+			}
+			$sum = array_sum(array_map(static function (Pattern $pattern): int {
+				return $pattern->getWeight();
+			}, $this->pieces));
 			$rand = random_int(0, max($sum, 100));
 		} catch (Exception) {
 			throw new AssumptionFailedError("Failed to generate random integer");
