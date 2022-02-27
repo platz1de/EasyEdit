@@ -12,7 +12,7 @@ class CopyCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/copy", "Copy the selected Area", [KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/copy", "Copy the selected Area", [KnownPermissions::PERMISSION_CLIPBOARD], "//copy\n//copy center");
 	}
 
 	/**
@@ -21,6 +21,11 @@ class CopyCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		CopyTask::queue(ArgumentParser::getSelection($player), $player->getPosition());
+		CopyTask::queue(ArgumentParser::getSelection($player), ArgumentParser::parseRelativePosition($player, $args[0] ?? null));
+	}
+
+	public function getCompactHelp(): string
+	{
+		return "//copy - Copy the selected Area, relative to your current position\n//copy center - Copy the selected Area, relative to the center";
 	}
 }

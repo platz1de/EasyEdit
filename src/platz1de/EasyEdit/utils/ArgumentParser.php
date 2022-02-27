@@ -59,6 +59,19 @@ class ArgumentParser
 	}
 
 	/**
+	 * @param Player      $player
+	 * @param string|null $args
+	 * @return Vector3
+	 */
+	public static function parseRelativePosition(Player $player, string $args = null): Vector3
+	{
+		return match ($args) {
+			"center", "c", "middle" => self::getSelection($player)->getBottomCenter(),
+			default => $player->getPosition()
+		};
+	}
+
+	/**
 	 * @param Player $player
 	 * @return Selection
 	 */

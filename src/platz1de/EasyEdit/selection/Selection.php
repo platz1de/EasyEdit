@@ -95,6 +95,14 @@ abstract class Selection
 	}
 
 	/**
+	 * @return Vector3
+	 */
+	public function getBottomCenter(): Vector3
+	{
+		return $this->getPos1()->addVector($this->getPos2())->divide(2)->withComponents(null, $this->getPos1()->getY(), null);
+	}
+
+	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full

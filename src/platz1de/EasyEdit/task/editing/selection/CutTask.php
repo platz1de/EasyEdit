@@ -18,7 +18,6 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 
 class CutTask extends ExecutableTask
 {
@@ -46,11 +45,11 @@ class CutTask extends ExecutableTask
 
 	/**
 	 * @param Selection $selection
-	 * @param Position  $place
+	 * @param Vector3   $place
 	 */
-	public static function queue(Selection $selection, Position $place): void
+	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), $selection, $place->asVector3()));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), $selection, $place));
 	}
 
 	/**

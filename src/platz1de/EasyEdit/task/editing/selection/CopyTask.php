@@ -16,7 +16,6 @@ use platz1de\EasyEdit\thread\output\MessageSendData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 
 class CopyTask extends SelectionEditTask
 {
@@ -38,11 +37,11 @@ class CopyTask extends SelectionEditTask
 
 	/**
 	 * @param Selection $selection
-	 * @param Position  $place
+	 * @param Vector3   $place
 	 */
-	public static function queue(Selection $selection, Position $place): void
+	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place->asVector3(), $selection->getPos1()->multiply(-1)));
+		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
 	}
 
 	/**
