@@ -13,7 +13,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.4";
+	private const CONFIG_VERSION = "2.0.5";
 
 	/**
 	 * @var int[]
