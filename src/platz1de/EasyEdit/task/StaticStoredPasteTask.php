@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
@@ -17,19 +18,19 @@ use pocketmine\math\Vector3;
 
 class StaticStoredPasteTask extends ExecutableTask
 {
-	private int $saveId;
+	private StoredSelectionIdentifier $saveId;
 	private bool $keep;
 	private bool $isUndo;
 	private StaticPasteTask|StreamPasteTask $executor;
 
 	/**
-	 * @param string $owner
-	 * @param int    $saveId
-	 * @param bool   $keep
-	 * @param bool   $isUndo
+	 * @param string                    $owner
+	 * @param StoredSelectionIdentifier $saveId
+	 * @param bool                      $keep
+	 * @param bool                      $isUndo
 	 * @return StaticStoredPasteTask
 	 */
-	public static function from(string $owner, int $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
+	public static function from(string $owner, StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -39,12 +40,12 @@ class StaticStoredPasteTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string $owner
-	 * @param int    $id
-	 * @param bool   $keep
-	 * @param bool   $isUndo
+	 * @param string                    $owner
+	 * @param StoredSelectionIdentifier $id
+	 * @param bool                      $keep
+	 * @param bool                      $isUndo
 	 */
-	public static function queue(string $owner, int $id, bool $keep, bool $isUndo = false): void
+	public static function queue(string $owner, StoredSelectionIdentifier $id, bool $keep, bool $isUndo = false): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id, $keep, $isUndo));
 	}
@@ -65,7 +66,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		}
 		$data = new AdditionalDataManager(true, true);
 		$undo = $this->isUndo;
-		$data->setResultHandler(static function (EditTask $task, int $changeId) use ($undo): void {
+		$data->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($undo): void {
 			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
 			StaticPasteTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
@@ -84,14 +85,14 @@ class StaticStoredPasteTask extends ExecutableTask
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putInt($this->saveId);
+		$stream->putString($this->saveId->fastSerialize());
 		$stream->putBool($this->keep);
 		$stream->putBool($this->isUndo);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->saveId = $stream->getInt();
+		$this->saveId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 		$this->keep = $stream->getBool();
 		$this->isUndo = $stream->getBool();
 	}

@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ChunkManagedBlockList;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use pocketmine\world\World;
 use UnexpectedValueException;
@@ -21,17 +22,18 @@ class StorageModule
 	private static ?BlockListSelection $collected = null;
 
 	/**
-	 * @return int
+	 * @return StoredSelectionIdentifier
 	 */
-	public static function finishCollecting(): int
+	public static function finishCollecting(): StoredSelectionIdentifier
 	{
 		if (self::$collected === null) {
 			throw new BadMethodCallException("History should only collect existing pieces");
 		}
 		$id = self::nextStorageId();
 		self::$storage[$id] = self::$collected;
+		$identifier = new StoredSelectionIdentifier($id, self::$collected::class);
 		self::$collected = null;
-		return $id;
+		return $identifier;
 	}
 
 	/**
@@ -55,12 +57,12 @@ class StorageModule
 	}
 
 	/**
-	 * @param int $id
+	 * @param StoredSelectionIdentifier $id
 	 * @return BlockListSelection
 	 */
-	public static function getStored(int $id): BlockListSelection
+	public static function getStored(StoredSelectionIdentifier $id): BlockListSelection
 	{
-		$toClone = self::$storage[$id];
+		$toClone = self::$storage[$id->getMagicId()];
 		$class = $toClone::class;
 		$selection = new $class($toClone->getPlayer());
 		if ($selection instanceof ChunkManagedBlockList && $toClone instanceof ChunkManagedBlockList) {
@@ -81,7 +83,7 @@ class StorageModule
 			$selection->setData($toClone->getData());
 			$selection->setWorld($toClone->getWorldName());
 		} else {
-			throw new UnexpectedValueException("Invalid selection of type " . $class . " saved at id " . $id);
+			throw new UnexpectedValueException("Invalid selection of type " . $class . " saved at id " . $id->getMagicId() . ", expected " . $id->getType());
 		}
 		foreach ($toClone->getTiles() as $tile) {
 			$selection->addTile($tile);
@@ -90,46 +92,46 @@ class StorageModule
 	}
 
 	/**
-	 * @param int $id
+	 * @param StoredSelectionIdentifier $id
 	 * @return StaticBlockListSelection|BinaryBlockListStream
 	 */
-	public static function mustGetStatic(int $id): StaticBlockListSelection|BinaryBlockListStream
+	public static function mustGetStatic(StoredSelectionIdentifier $id): StaticBlockListSelection|BinaryBlockListStream
 	{
 		$selection = self::getStored($id);
 		if ($selection instanceof StaticBlockListSelection || $selection instanceof BinaryBlockListStream) {
 			return $selection;
 		}
-		throw new UnexpectedValueException("Invalid selection of type " . $selection::class . " saved at id " . $id . ", expected " . StaticBlockListSelection::class . " or " . BinaryBlockListStream::class);
+		throw new UnexpectedValueException("Invalid selection of type " . $selection::class . " saved at id " . $id->getMagicId() . ", expected " . StaticBlockListSelection::class . " or " . BinaryBlockListStream::class);
 	}
 
 	/**
-	 * @param int $id
+	 * @param StoredSelectionIdentifier $id
 	 * @return DynamicBlockListSelection
 	 */
-	public static function mustGetDynamic(int $id): DynamicBlockListSelection
+	public static function mustGetDynamic(StoredSelectionIdentifier $id): DynamicBlockListSelection
 	{
 		$selection = self::getStored($id);
 		if ($selection instanceof DynamicBlockListSelection) {
 			return $selection;
 		}
-		throw new UnexpectedValueException("Invalid selection of type " . $selection::class . " saved at id " . $id . ", expected " . DynamicBlockListSelection::class);
+		throw new UnexpectedValueException("Invalid selection of type " . $selection::class . " saved at id " . $id->getMagicId() . ", expected " . DynamicBlockListSelection::class);
 	}
 
 	/**
-	 * @param int                $id
-	 * @param BlockListSelection $selection
+	 * @param StoredSelectionIdentifier $id
+	 * @param BlockListSelection        $selection
 	 */
-	public static function forceStore(int $id, BlockListSelection $selection): void
+	public static function forceStore(StoredSelectionIdentifier $id, BlockListSelection $selection): void
 	{
-		self::$storage[$id] = $selection;
+		self::$storage[$id->getMagicId()] = $selection;
 	}
 
 	/**
-	 * @param int $id
+	 * @param StoredSelectionIdentifier $id
 	 */
-	public static function cleanStored(int $id): void
+	public static function cleanStored(StoredSelectionIdentifier $id): void
 	{
-		unset(self::$storage[$id]);
+		unset(self::$storage[$id->getMagicId()]);
 	}
 
 	/**

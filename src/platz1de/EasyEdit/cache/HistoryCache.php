@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\cache;
 
-use BadMethodCallException;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 
@@ -10,27 +10,23 @@ class HistoryCache
 {
 	/**
 	 * //undo
-	 * @var int[][]
+	 * @var StoredSelectionIdentifier[][]
 	 */
 	private static array $pastCache = [];
 	/**
 	 * //redo
-	 * @var int[][]
+	 * @var StoredSelectionIdentifier[][]
 	 */
 	private static array $futureCache = [];
 
 	/**
-	 * @param string $player
-	 * @param int    $id
-	 * @param bool   $fromUndo
+	 * @param string                    $player
+	 * @param StoredSelectionIdentifier $id
+	 * @param bool                      $fromUndo
 	 * @return void
 	 */
-	public static function addToCache(string $player, int $id, bool $fromUndo): void
+	public static function addToCache(string $player, StoredSelectionIdentifier $id, bool $fromUndo): void
 	{
-		if ($id === -1) {
-			throw new BadMethodCallException("Invalid Task Id -1 given");
-		}
-
 		if ($fromUndo) {
 			self::$futureCache[$player][] = $id;
 		} else {

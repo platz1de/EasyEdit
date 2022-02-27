@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -20,16 +21,16 @@ use UnexpectedValueException;
 
 class DynamicStoredFlipTask extends ExecutableTask
 {
-	private int $saveId;
+	private StoredSelectionIdentifier $saveId;
 	private int $axis;
 
 	/**
-	 * @param string $owner
-	 * @param int    $saveId
-	 * @param int    $axis
+	 * @param string                    $owner
+	 * @param StoredSelectionIdentifier $saveId
+	 * @param int                       $axis
 	 * @return DynamicStoredFlipTask
 	 */
-	public static function from(string $owner, int $saveId, int $axis): DynamicStoredFlipTask
+	public static function from(string $owner, StoredSelectionIdentifier $saveId, int $axis): DynamicStoredFlipTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -38,11 +39,11 @@ class DynamicStoredFlipTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string $owner
-	 * @param int    $id
-	 * @param int    $axis
+	 * @param string                    $owner
+	 * @param StoredSelectionIdentifier $id
+	 * @param int                       $axis
 	 */
-	public static function queue(string $owner, int $id, int $axis): void
+	public static function queue(string $owner, StoredSelectionIdentifier $id, int $axis): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id, $axis));
 	}
@@ -114,13 +115,13 @@ class DynamicStoredFlipTask extends ExecutableTask
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putInt($this->saveId);
+		$stream->putString($this->saveId->fastSerialize());
 		$stream->putInt($this->axis);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->saveId = $stream->getInt();
+		$this->saveId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 		$this->axis = $stream->getInt();
 	}
 }

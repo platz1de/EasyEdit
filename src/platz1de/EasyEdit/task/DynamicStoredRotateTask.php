@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -18,14 +19,14 @@ use pocketmine\world\World;
 
 class DynamicStoredRotateTask extends ExecutableTask
 {
-	private int $saveId;
+	private StoredSelectionIdentifier $saveId;
 
 	/**
-	 * @param string $owner
-	 * @param int    $saveId
+	 * @param string                    $owner
+	 * @param StoredSelectionIdentifier $saveId
 	 * @return DynamicStoredRotateTask
 	 */
-	public static function from(string $owner, int $saveId): DynamicStoredRotateTask
+	public static function from(string $owner, StoredSelectionIdentifier $saveId): DynamicStoredRotateTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -33,10 +34,10 @@ class DynamicStoredRotateTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string $owner
-	 * @param int    $id
+	 * @param string                    $owner
+	 * @param StoredSelectionIdentifier $id
 	 */
-	public static function queue(string $owner, int $id): void
+	public static function queue(string $owner, StoredSelectionIdentifier $id): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id));
 	}
@@ -78,11 +79,11 @@ class DynamicStoredRotateTask extends ExecutableTask
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putInt($this->saveId);
+		$stream->putString($this->saveId->fastSerialize());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->saveId = $stream->getInt();
+		$this->saveId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 	}
 }

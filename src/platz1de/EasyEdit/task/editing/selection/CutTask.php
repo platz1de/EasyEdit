@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
@@ -63,13 +64,13 @@ class CutTask extends ExecutableTask
 	public function execute(): void
 	{
 		$copyData = new AdditionalDataManager(false, true);
-		$copyData->setResultHandler(static function (EditTask $task, int $changeId): void {
+		$copyData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
 			ClipboardCacheData::from($task->getOwner(), $changeId);
 		});
 		$this->executor1 = CopyTask::from($this->getOwner(), $this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1));
 		$this->executor1->execute();
 		$setData = new AdditionalDataManager(true, true);
-		$setData->setResultHandler(static function (EditTask $task, int $changeId): void {
+		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
 			HistoryCacheData::from($task->getOwner(), $changeId, false);
 			CutTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});

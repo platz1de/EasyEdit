@@ -3,23 +3,24 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\cache\HistoryCache;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class HistoryCacheData extends OutputData
 {
 	private string $player;
-	private int $changeId;
+	private StoredSelectionIdentifier $changeId;
 	private bool $isUndo;
 
 	/**
-	 * @param string $player
-	 * @param int    $changeId
-	 * @param bool   $isUndo
+	 * @param string                         $player
+	 * @param StoredSelectionIdentifier|null $changeId
+	 * @param bool                           $isUndo
 	 */
-	public static function from(string $player, int $changeId, bool $isUndo): void
+	public static function from(string $player, ?StoredSelectionIdentifier $changeId, bool $isUndo): void
 	{
-		if ($changeId === -1) {
+		if ($changeId === null) {
 			EditThread::getInstance()->getLogger()->debug("Not saving history");
 			return;
 		}
@@ -38,14 +39,14 @@ class HistoryCacheData extends OutputData
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->player);
-		$stream->putInt($this->changeId);
+		$stream->putString($this->changeId->fastSerialize());
 		$stream->putBool($this->isUndo);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->player = $stream->getString();
-		$this->changeId = $stream->getInt();
+		$this->changeId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 		$this->isUndo = $stream->getBool();
 	}
 }

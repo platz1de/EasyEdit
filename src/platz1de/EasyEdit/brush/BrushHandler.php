@@ -14,6 +14,7 @@ use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 use Throwable;
 
 
@@ -54,7 +55,7 @@ class BrushHandler
 							Messages::send($player, "no-clipboard");
 							return;
 						}
-						DynamicStoredPasteTask::queue($player->getName(), $clipboard, $target->getPosition()->up(), true);
+						DynamicStoredPasteTask::queue($player->getName(), $clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true);
 				}
 			} catch (ParseError $e) {
 				Messages::send($player, $e->getMessage(), [], false);

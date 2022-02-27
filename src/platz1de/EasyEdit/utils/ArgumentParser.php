@@ -13,6 +13,7 @@ use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
 use pocketmine\math\Facing;
@@ -103,9 +104,9 @@ class ArgumentParser
 
 	/**
 	 * @param Player $player
-	 * @return int
+	 * @return StoredSelectionIdentifier
 	 */
-	public static function getClipboard(Player $player): int
+	public static function getClipboard(Player $player): StoredSelectionIdentifier
 	{
 		try {
 			$clipboard = ClipBoardManager::getFromPlayer($player->getName());

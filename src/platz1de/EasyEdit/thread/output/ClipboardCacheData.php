@@ -3,19 +3,24 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\selection\ClipBoardManager;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use UnexpectedValueException;
 
 class ClipboardCacheData extends OutputData
 {
 	private string $player;
-	private int $changeId;
+	private StoredSelectionIdentifier $changeId;
 
 	/**
-	 * @param string $player
-	 * @param int    $changeId
+	 * @param string                     $player
+	 * @param ?StoredSelectionIdentifier $changeId
 	 */
-	public static function from(string $player, int $changeId): void
+	public static function from(string $player, ?StoredSelectionIdentifier $changeId): void
 	{
+		if ($changeId === null) {
+			throw new UnexpectedValueException("Clipboard should never be filled with invalid selections");
+		}
 		$data = new self();
 		$data->player = $player;
 		$data->changeId = $changeId;
@@ -30,12 +35,12 @@ class ClipboardCacheData extends OutputData
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->player);
-		$stream->putInt($this->changeId);
+		$stream->putString($this->changeId->fastSerialize());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->player = $stream->getString();
-		$this->changeId = $stream->getInt();
+		$this->changeId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 	}
 }

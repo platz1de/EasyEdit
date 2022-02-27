@@ -2,34 +2,31 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use BadMethodCallException;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 
 class ClipBoardManager
 {
 	/**
-	 * @var int[]
+	 * @var StoredSelectionIdentifier[]
 	 */
 	private static array $clipboard = [];
 
 	/**
 	 * @param string $player
-	 * @return int
+	 * @return StoredSelectionIdentifier
 	 */
-	public static function getFromPlayer(string $player): int
+	public static function getFromPlayer(string $player): StoredSelectionIdentifier
 	{
 		return self::$clipboard[$player];
 	}
 
 	/**
-	 * @param string $player
-	 * @param int    $id
+	 * @param string                    $player
+	 * @param StoredSelectionIdentifier $id
 	 */
-	public static function setForPlayer(string $player, int $id): void
+	public static function setForPlayer(string $player, StoredSelectionIdentifier $id): void
 	{
-		if ($id === -1) {
-			throw new BadMethodCallException("Invalid Task Id -1 given");
-		}
 		if (isset(self::$clipboard[$player])) {
 			CleanStorageTask::from([self::$clipboard[$player]]);
 		}

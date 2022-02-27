@@ -118,7 +118,7 @@ abstract class EditTask extends ExecutableTask
 		}
 
 		if ($this->data->isFinalPiece()) {
-			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : -1;
+			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : null;
 			if ($this->data->hasResultHandler()) {
 				$closure = $this->data->getResultHandler();
 				$closure($this, $changeId);
@@ -134,7 +134,7 @@ abstract class EditTask extends ExecutableTask
 	public function forceStop(): void
 	{
 		if (!$this->data->isFirstPiece()) {
-			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : -1;
+			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : null;
 			if ($this->data->hasResultHandler()) {
 				$closure = $this->data->getResultHandler();
 				$closure($this, $changeId);
