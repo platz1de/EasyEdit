@@ -6,12 +6,15 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
+use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
+use Throwable;
 
 
 class BrushHandler
@@ -20,6 +23,7 @@ class BrushHandler
 	public const BRUSH_SMOOTH = 1;
 	public const BRUSH_NATURALIZE = 2;
 	public const BRUSH_CYLINDER = 3;
+	public const BRUSH_PASTE = 4;
 
 	/**
 	 * @param CompoundTag $brush
@@ -42,6 +46,15 @@ class BrushHandler
 						break;
 					case self::BRUSH_CYLINDER:
 						SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone")), $player->getPosition());
+						break;
+					case self::BRUSH_PASTE:
+						try {
+							$clipboard = ClipBoardManager::getFromPlayer($player->getName());
+						} catch (Throwable) {
+							Messages::send($player, "no-clipboard");
+							return;
+						}
+						DynamicStoredPasteTask::queue($player->getName(), $clipboard, $target->getPosition()->up(), true);
 				}
 			} catch (ParseError $e) {
 				Messages::send($player, $e->getMessage(), [], false);
@@ -60,6 +73,7 @@ class BrushHandler
 			"smooth", "smoothing" => self::BRUSH_SMOOTH,
 			"naturalize", "nat", "naturalized" => self::BRUSH_NATURALIZE,
 			"cylinder", "cyl", "cy" => self::BRUSH_CYLINDER,
+			"paste", "pasting" => self::BRUSH_PASTE
 		};
 	}
 
@@ -74,6 +88,7 @@ class BrushHandler
 			self::BRUSH_SMOOTH => "smooth",
 			self::BRUSH_NATURALIZE => "naturalize",
 			self::BRUSH_CYLINDER => "cylinder",
+			self::BRUSH_PASTE => "paste"
 		};
 	}
 }

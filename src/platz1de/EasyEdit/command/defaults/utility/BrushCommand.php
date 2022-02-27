@@ -18,7 +18,7 @@ class BrushCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/brush", "Create a new Brush", [KnownPermissions::PERMISSION_BRUSH], "//brush sphere [radius] [pattern] [gravity]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern] [gravity]", ["/br"]);
+		parent::__construct("/brush", "Create a new Brush", [KnownPermissions::PERMISSION_BRUSH], "//brush sphere [radius] [pattern] [gravity]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern] [gravity]\n//brush paste", ["/br"]);
 	}
 
 	/**
@@ -79,6 +79,6 @@ class BrushCommand extends EasyEditCommand
 
 	public function getCompactHelp(): string
 	{
-		return "//brush sphere [radius] [pattern] [gravity] - Create a spherical brush\n//brush smooth [radius] - Create a smoothing brush\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Create a naturalizing brush\n//brush cylinder [radius] [height] [pattern] [gravity] - Create a cylindrical brush";
+		return "//brush sphere [radius] [pattern] [gravity] - Create a spherical brush\n//brush smooth [radius] - Create a smoothing brush\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Create a naturalizing brush\n//brush cylinder [radius] [height] [pattern] [gravity] - Create a cylindrical brush\n//brush paste - Create a paste brush";
 	}
 }
