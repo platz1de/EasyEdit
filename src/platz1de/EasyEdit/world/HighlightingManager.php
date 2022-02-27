@@ -13,7 +13,6 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\player\Player;
 use pocketmine\Server;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class HighlightingManager
@@ -128,7 +127,7 @@ class HighlightingManager
 			self::$staticDataHolders[$player] = [];
 		}
 
-		self::$staticDataHolders[$player][self::$id] = Position::fromObject($dataHolder->floor(), $world);
+		self::$staticDataHolders[$player][self::$id] = new ReferencedPosition($dataHolder->floor(), $world->getFolderName());
 		self::$staticData[self::$id] = CompoundTag::create()
 			->setString("id", "StructureBlock")
 			->setString("structureName", "clipboard")
