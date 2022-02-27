@@ -22,6 +22,6 @@ class ViewCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		$selection = ArgumentParser::getCube($player);
-		HighlightingManager::showStructureView($player->getName(), $player->getWorld(), $player->getPosition()->up(2), $selection->getPos1(), $selection->getPos2());
+		HighlightingManager::showStructureView($player, $player->getWorld(), $player->getPosition()->up(2), $selection->getPos1(), $selection->getPos2());
 	}
 }

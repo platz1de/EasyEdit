@@ -114,21 +114,16 @@ class HighlightingManager
 	/**
 	 * Highlight a cube using structure blocks
 	 *
-	 * @param string  $player
+	 * @param Player  $player
 	 * @param World   $world
 	 * @param Vector3 $dataHolder
 	 * @param Vector3 $min
 	 * @param Vector3 $max
 	 * @return int
 	 */
-	public static function showStructureView(string $player, World $world, Vector3 $dataHolder, Vector3 $min, Vector3 $max): int
+	public static function showStructureView(Player $player, World $world, Vector3 $dataHolder, Vector3 $min, Vector3 $max): int
 	{
-		if (!isset(self::$staticDataHolders[$player])) {
-			self::$staticDataHolders[$player] = [];
-		}
-
-		self::$staticDataHolders[$player][self::$id] = new ReferencedPosition($dataHolder->floor(), $world->getFolderName());
-		self::$staticData[self::$id] = CompoundTag::create()
+		PacketUtils::sendFakeBlock($dataHolder->floor(), $world, $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS, CompoundTag::create()
 			->setString("id", "StructureBlock")
 			->setString("structureName", "clipboard")
 			->setString("dataField", "")
@@ -148,12 +143,10 @@ class HighlightingManager
 			->setByte("removeBlocks", 0)
 			->setByte("showBoundingBox", 0)
 			->setByte("isMovable", 0)
-			->setByte("isPowered", 0);
+			->setByte("isPowered", 0));
 
-		self::sendStaticHolder($player, self::$id);
-
-		if (($p = Server::getInstance()->getPlayerExact($player)) instanceof Player && ($inv = $p->getNetworkSession()->getInvManager()) instanceof InventoryManager) {
-			$p->getNetworkSession()->sendDataPacket(ContainerOpenPacket::blockInv($inv->getCurrentWindowId(), WindowTypes::STRUCTURE_EDITOR, new BlockPosition($dataHolder->getFloorX(), $dataHolder->getFloorY(), $dataHolder->getFloorZ())));
+		if (($inv = $player->getNetworkSession()->getInvManager()) instanceof InventoryManager) {
+			$player->getNetworkSession()->sendDataPacket(ContainerOpenPacket::blockInv($inv->getCurrentWindowId(), WindowTypes::STRUCTURE_EDITOR, new BlockPosition($dataHolder->getFloorX(), $dataHolder->getFloorY(), $dataHolder->getFloorZ())));
 		}
 		return self::$id++;
 	}
