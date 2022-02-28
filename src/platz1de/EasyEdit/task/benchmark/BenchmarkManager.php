@@ -46,7 +46,10 @@ class BenchmarkManager
 	public static function benchmarkCallback(string $worldName, array $results): void
 	{
 		self::$task->cancel();
-		/** @var BenchmarkTask $benchmark */
+		/**
+		 * @var BenchmarkTask         $benchmark
+		 * @phpstan-var BenchmarkTask $benchmark
+		 */
 		$benchmark = self::$task->getTask();
 		$time = array_sum(array_map(static function (array $dat): float {
 			return $dat[1];

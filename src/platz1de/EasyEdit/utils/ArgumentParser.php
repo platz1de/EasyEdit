@@ -118,7 +118,7 @@ class ArgumentParser
 
 	/**
 	 * @param Player      $player
-	 * @param array       $args
+	 * @param string[]    $args
 	 * @param int         $start
 	 * @param string|null $default
 	 * @return Pattern
@@ -136,19 +136,19 @@ class ArgumentParser
 	 * @param Player      $player
 	 * @param string|null $args1
 	 * @param string|null $args2
-	 * @param float|null  $amount
+	 * @param int|null    $amount
 	 * @return Vector3
 	 */
-	public static function parseDirectionVector(Player $player, string $args1 = null, string $args2 = null, float &$amount = null): Vector3
+	public static function parseDirectionVector(Player $player, string $args1 = null, string $args2 = null, int &$amount = null): Vector3
 	{
-		$amount = 1.0;
+		$amount = 1;
 		if (is_numeric($args1)) {
-			$amount = (float) $args1;
+			$amount = (int) $args1;
 			$direction = $args2;
 		} else {
 			$direction = $args1;
 			if (is_numeric($args2)) {
-				$amount = (float) $args2;
+				$amount = (int) $args2;
 			}
 		}
 		return Vector3::zero()->getSide(self::parseFacing($player, $direction), $amount);

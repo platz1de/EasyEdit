@@ -77,10 +77,9 @@ class PathfindingTask extends EditTask
 	 */
 	public function executeEdit(EditTaskHandler $handler): void
 	{
+		/** @phpstan-var NodeHeap<Node> $open */
 		$open = new NodeHeap();
-		/**
-		 * @var Node[] $collection
-		 */
+		/** @var Node[] $collection */
 		$collection = [];
 		$closed = [];
 		$checked = 0;
