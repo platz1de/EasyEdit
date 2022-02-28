@@ -65,7 +65,6 @@ class BlockConvertor
 				$idData = BlockParser::fromStringId($javaStringId);
 				self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);
 			}
-			/** @var string $javaState */
 			foreach (self::loadFromSource($bedrockPaletteSource) as $javaState => $bedrockStringId) {
 				self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
 			}
@@ -113,7 +112,7 @@ class BlockConvertor
 			foreach ($tileDataPalette[TileConvertor::DATA_SHULKER_BOX_FACING] ?? [] as $state => $data) {
 				self::$compoundMapping[$state] = CompoundTag::create()
 					->setByte(ShulkerBox::TAG_FACING, match ($data) {
-                        "down" => 0,
+						"down" => 0,
 						"up" => 1,
 						"north" => 2,
 						"south" => 3,
@@ -130,7 +129,7 @@ class BlockConvertor
 
 	/**
 	 * @param string $source
-	 * @return string[]
+	 * @return array<string, string>
 	 * @throws Throwable
 	 */
 	private static function loadFromSource(string $source): array

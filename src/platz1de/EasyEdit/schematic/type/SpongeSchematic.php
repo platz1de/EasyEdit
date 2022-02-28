@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\schematic\BlockConvertor;
-use platz1de\EasyEdit\schematic\ConvertorCache;
 use platz1de\EasyEdit\schematic\TileConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\Block;
@@ -83,6 +82,7 @@ class SpongeSchematic extends SchematicType
 		}
 
 		$palette = [];
+		$tilePalette = [];
 		foreach ($paletteData->getValue() as $name => $id) {
 			$palette[$id->getValue()] = BlockConvertor::getFromState($name);
 			$tilePalette[$id->getValue()] = BlockConvertor::getTileDataFromState($name);

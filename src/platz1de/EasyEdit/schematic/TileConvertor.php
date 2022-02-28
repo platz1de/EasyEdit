@@ -6,9 +6,7 @@ use JsonException;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\block\tile\Chest;
-use pocketmine\block\tile\ShulkerBox;
 use pocketmine\block\tile\Tile;
-use pocketmine\math\Facing;
 use pocketmine\nbt\tag\CompoundTag;
 use UnexpectedValueException;
 
@@ -85,6 +83,9 @@ class TileConvertor
 					try {
 						/** @var string[] $json */
 						$json = json_decode($line, true, 2, JSON_THROW_ON_ERROR);
+						if (!isset($json["text"])) {
+							throw new JsonException("Missing text key");
+						}
 						$text = $json["text"];
 					} catch (JsonException) {
 						throw new UnexpectedValueException("Invalid JSON in sign text: " . $line);
