@@ -55,7 +55,7 @@ class BrushHandler
 							Messages::send($player, "no-clipboard");
 							return;
 						}
-						DynamicStoredPasteTask::queue($player->getName(), $clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true);
+						DynamicStoredPasteTask::queue($player->getName(), $clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1);
 				}
 			} catch (ParseError $e) {
 				Messages::send($player, $e->getMessage(), [], false);

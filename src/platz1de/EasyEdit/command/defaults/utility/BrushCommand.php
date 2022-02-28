@@ -18,7 +18,7 @@ class BrushCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/brush", "Create a new Brush", [KnownPermissions::PERMISSION_BRUSH], "//brush sphere [radius] [pattern] [gravity]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern] [gravity]\n//brush paste", ["/br"]);
+		parent::__construct("/brush", "Create a new Brush", [KnownPermissions::PERMISSION_BRUSH], "//brush sphere [radius] [pattern] [gravity]\n//brush smooth [radius]\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock]\n//brush cylinder [radius] [height] [pattern] [gravity]\n//brush paste [insert]", ["/br"]);
 	}
 
 	/**
@@ -66,6 +66,9 @@ class BrushCommand extends EasyEditCommand
 				$nbt->setFloat("brushSize", (float) ($args[1] ?? 4));
 				$nbt->setShort("brushHeight", (int) ($args[2] ?? 2));
 				$nbt->setString("brushPattern", ArgumentParser::parseBool(false, $args[4] ?? null) ? "gravity(" . ($args[3] ?? "stone") . ")" : $args[3] ?? "stone");
+				break;
+			case BrushHandler::BRUSH_PASTE:
+				$nbt->setByte("isInsert", ArgumentParser::parseBool(false, $args[1] ?? null) ? 1 : 0);
 		}
 		$item = VanillaItems::WOODEN_SHOVEL()->setNamedTag($nbt);
 		$lore = [];
@@ -79,6 +82,6 @@ class BrushCommand extends EasyEditCommand
 
 	public function getCompactHelp(): string
 	{
-		return "//brush sphere [radius] [pattern] [gravity] - Create a spherical brush\n//brush smooth [radius] - Create a smoothing brush\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Create a naturalizing brush\n//brush cylinder [radius] [height] [pattern] [gravity] - Create a cylindrical brush\n//brush paste - Create a paste brush";
+		return "//brush sphere [radius] [pattern] [gravity] - Create a spherical brush\n//brush smooth [radius] - Create a smoothing brush\n//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Create a naturalizing brush\n//brush cylinder [radius] [height] [pattern] [gravity] - Create a cylindrical brush\n//brush paste [insert] - Create a paste brush";
 	}
 }
