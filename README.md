@@ -160,6 +160,7 @@ patterns - children patterns, can be separated by a comma
 | block;\<block>(patterns)                     | Executes Patterns if the block is the same as the specified block (like in //replace)                                                     |
 | above;\<block>(patterns)                     | Executes Patterns if the block is above the specified block                                                                               |
 | around;\<block>(patterns)                    | Executes Patterns if the block is next to the specified block                                                                             |
+| horizontal;\<block>(patterns)                | Executes Patterns if the block is next to the specified block in horizontal direction                                                     |
 | below;\<block>(patterns)                     | Executes Patterns if the block is below the specified block                                                                               |
 | not(condition(patterns))                     | Executes Patterns of next Pattern is false (only works when nested)                                                                       |
 | odd;\[x];\[y];\[z](patterns)                 | Executes Patterns if the block is at odd coordinates at x, y and z Axis, the x, y and z can be left out (only given ones will be checked) |

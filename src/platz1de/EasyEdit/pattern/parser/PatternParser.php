@@ -14,6 +14,7 @@ use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
 use platz1de\EasyEdit\pattern\logic\relation\AroundPattern;
 use platz1de\EasyEdit\pattern\logic\relation\BelowPattern;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
+use platz1de\EasyEdit\pattern\logic\relation\HorizontalPattern;
 use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
@@ -151,6 +152,7 @@ class PatternParser
 			"above" => AbovePattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
 			"below" => BelowPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
 			"around" => AroundPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
+			"horizontal", "horizon" => HorizontalPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
 			"nat", "naturalized" => NaturalizePattern::from($children),
 			"walls", "wall" => WallPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
 			"sides", "side" => SidesPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
