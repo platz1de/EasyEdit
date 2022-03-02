@@ -3,7 +3,9 @@
 namespace platz1de\EasyEdit\schematic;
 
 use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\output\ResourceData;
 use platz1de\EasyEdit\utils\BlockParser;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\ShulkerBox;
@@ -125,6 +127,8 @@ class BlockConvertor
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
 		}
+
+		ResourceData::from();
 	}
 
 	/**
@@ -220,5 +224,50 @@ class BlockConvertor
 	public static function flip(int $axis, int $id): int
 	{
 		return self::$flipData[$axis][$id] ?? $id;
+	}
+
+	public static function getResourceData(): string
+	{
+		$stream = new ExtendedBinaryStream();
+		$stream->putInt(count(self::$paletteFrom));
+		foreach (self::$paletteFrom as $state => $data) {
+			$stream->putString($state);
+			$stream->putInt($data[0]);
+			$stream->putInt($data[1]);
+		}
+		$stream->putInt(count(self::$paletteTo));
+		foreach (self::$paletteTo as $id => $data) {
+			$stream->putInt($id);
+			$stream->putInt(count($data));
+			foreach ($data as $meta => $state) {
+				$stream->putInt($meta);
+				$stream->putString($state);
+			}
+		}
+		return $stream->getBuffer();
+	}
+
+	public static function loadResourceData(string $data): void
+	{
+		$stream = new ExtendedBinaryStream($data);
+		self::$paletteFrom = [];
+		self::$paletteTo = [];
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$state = $stream->getString();
+			$id = $stream->getInt();
+			$meta = $stream->getInt();
+			self::$paletteFrom[$state] = [$id, $meta];
+		}
+		$count = $stream->getInt();
+		for ($i = 0; $i < $count; $i++) {
+			$id = $stream->getInt();
+			$c = $stream->getInt();
+			for ($j = 0; $j < $c; $j++) {
+				$meta = $stream->getInt();
+				$state = $stream->getString();
+				self::$paletteTo[$id][$meta] = $state;
+			}
+		}
 	}
 }

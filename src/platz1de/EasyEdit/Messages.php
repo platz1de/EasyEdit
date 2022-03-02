@@ -11,7 +11,7 @@ use UnexpectedValueException;
 
 class Messages
 {
-	private const MESSAGE_VERSION = "2.0.2";
+	private const MESSAGE_VERSION = "2.0.3";
 
 	//TODO: All command strings should be translatable
 	public const RESOURCE_WARNING = TextFormat::RED . "RESOURCE HEAVY" . TextFormat::RESET;

@@ -1,4 +1,4 @@
-message-version: "2.0.2" #Please don't change this manually
+message-version: "2.0.3" #Please don't change this manually
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
@@ -53,8 +53,8 @@ benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 
-#Args: {id} {meta} {name} {x} {y} {z}
-block-info: "{name} ({id}:{meta}) at {x} {y} {z}"
+#Args: {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
