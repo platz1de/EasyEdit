@@ -41,6 +41,7 @@ class DefaultEventListener implements Listener
 			$event->cancel();
 			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPosition());
 		} elseif ($axe instanceof Stick && $axe->getNamedTag()->getByte("isInfoStick", 0) === 1) {
+			$event->cancel();
 			BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
 		}
 
@@ -100,6 +101,7 @@ class DefaultEventListener implements Listener
 				}
 			}
 		} elseif ($item instanceof Stick && $item->getNamedTag()->getByte("isInfoStick", 0) === 1) {
+			$event->cancel();
 			//We use a raytrace here as some blocks can't be interacted with
 			BlockInfoTool::display($event->getPlayer()->getName(), $block);
 		}
