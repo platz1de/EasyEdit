@@ -6,7 +6,6 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResourceData;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\block\Block;
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\ShulkerBox;
 use pocketmine\math\Axis;
@@ -24,16 +23,16 @@ use UnexpectedValueException;
 class BlockConvertor
 {
 	/**
-	 * @var array<int, array<int, array{int, int}>>
+	 * @var array<int, int>
 	 */
 	private static array $conversionFrom;
 
 	/**
-	 * @var array<string, array{int, int}>
+	 * @var array<string, int>
 	 */
 	private static array $paletteFrom;
 	/**
-	 * @var array<int, array<int, string>>
+	 * @var array<int, string>
 	 */
 	private static array $paletteTo;
 	/**
@@ -64,20 +63,16 @@ class BlockConvertor
 
 		try {
 			foreach (self::loadFromSource($bedrockSource) as $javaStringId => $bedrockStringId) {
-				$idData = BlockParser::fromStringId($javaStringId);
-				self::$conversionFrom[$idData[0]][$idData[1]] = BlockParser::fromStringId($bedrockStringId);
+				self::$conversionFrom[BlockParser::fromStringId($javaStringId)] = BlockParser::fromStringId($bedrockStringId);
 			}
 			foreach (self::loadFromSource($bedrockPaletteSource) as $javaState => $bedrockStringId) {
 				self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
 			}
 			foreach (self::loadFromSource($javaPaletteSource) as $bedrockStringId => $javaState) {
-				$idData = BlockParser::fromStringId($bedrockStringId);
-				self::$paletteTo[$idData[0]][$idData[1]] = $javaState;
+				self::$paletteTo[BlockParser::fromStringId($bedrockStringId)] = $javaState;
 			}
 			foreach (self::loadFromSource($rotationSource) as $preRotationId => $pastRotationId) {
-				$idData = BlockParser::fromStringId($preRotationId);
-				$rotatedIdData = BlockParser::fromStringId($pastRotationId);
-				self::$rotationData[$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $rotatedIdData[0] << Block::INTERNAL_METADATA_BITS | $rotatedIdData[1];
+				self::$rotationData[BlockParser::fromStringId($preRotationId)] = BlockParser::fromStringId($pastRotationId);
 			}
 			foreach (self::loadFromSourceComplex($flipSource) as $axisName => $axisFlips) {
 				$axis = match ($axisName) {
@@ -87,9 +82,7 @@ class BlockConvertor
 					default => throw new UnexpectedValueException("Unknown axis name $axisName")
 				};
 				foreach ($axisFlips as $preFlipId => $pastFlipId) {
-					$idData = BlockParser::fromStringId($preFlipId);
-					$flippedIdData = BlockParser::fromStringId($pastFlipId);
-					self::$flipData[$axis][$idData[0] << Block::INTERNAL_METADATA_BITS | $idData[1]] = $flippedIdData[0] << Block::INTERNAL_METADATA_BITS | $flippedIdData[1];
+					self::$flipData[$axis][BlockParser::fromStringId($preFlipId)] = BlockParser::fromStringId($pastFlipId);
 				}
 			}
 			$tileDataPalette = self::loadFromSourceComplex($tileDataSourcePalette);
@@ -169,23 +162,23 @@ class BlockConvertor
 
 	/**
 	 * @param int $id
-	 * @param int $meta
+	 * @return int
 	 */
-	public static function convertFromJava(int &$id, int &$meta): void
+	public static function convertFromJava(int $id): int
 	{
-		[$id, $meta] = self::$conversionFrom[$id][$meta] ?? [$id, $meta];
+		return self::$conversionFrom[$id] ?? $id;
 	}
 
 	/**
 	 * @param string $state
-	 * @return array{int, int}
+	 * @return int
 	 */
-	public static function getFromState(string $state): array
+	public static function getFromState(string $state): int
 	{
 		if (!isset(self::$paletteFrom[$state])) {
 			EditThread::getInstance()->getLogger()->debug("Requested unknown state " . $state);
 		}
-		return self::$paletteFrom[$state] ?? [0, 0];
+		return self::$paletteFrom[$state] ?? 0;
 	}
 
 	/**
@@ -199,12 +192,11 @@ class BlockConvertor
 
 	/**
 	 * @param int $id
-	 * @param int $meta
 	 * @return string
 	 */
-	public static function getState(int $id, int $meta): string
+	public static function getState(int $id): string
 	{
-		return self::$paletteTo[$id][$meta] ?? self::$paletteTo[0][0];
+		return self::$paletteTo[$id] ?? self::$paletteTo[0];
 	}
 
 	/**
@@ -230,19 +222,14 @@ class BlockConvertor
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putInt(count(self::$paletteFrom));
-		foreach (self::$paletteFrom as $state => $data) {
+		foreach (self::$paletteFrom as $state => $id) {
 			$stream->putString($state);
-			$stream->putInt($data[0]);
-			$stream->putInt($data[1]);
+			$stream->putInt($id);
 		}
 		$stream->putInt(count(self::$paletteTo));
-		foreach (self::$paletteTo as $id => $data) {
+		foreach (self::$paletteTo as $id => $state) {
 			$stream->putInt($id);
-			$stream->putInt(count($data));
-			foreach ($data as $meta => $state) {
-				$stream->putInt($meta);
-				$stream->putString($state);
-			}
+			$stream->putString($state);
 		}
 		return $stream->getBuffer();
 	}
@@ -254,20 +241,11 @@ class BlockConvertor
 		self::$paletteTo = [];
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$state = $stream->getString();
-			$id = $stream->getInt();
-			$meta = $stream->getInt();
-			self::$paletteFrom[$state] = [$id, $meta];
+			self::$paletteFrom[$stream->getString()] = $stream->getInt();
 		}
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$id = $stream->getInt();
-			$c = $stream->getInt();
-			for ($j = 0; $j < $c; $j++) {
-				$meta = $stream->getInt();
-				$state = $stream->getString();
-				self::$paletteTo[$id][$meta] = $state;
-			}
+			self::$paletteTo[$stream->getInt()] = $stream->getString();
 		}
 	}
 }

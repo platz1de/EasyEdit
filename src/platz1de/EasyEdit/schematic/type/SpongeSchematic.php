@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\schematic\type;
 use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\schematic\TileConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
-use pocketmine\block\Block;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
@@ -121,9 +120,7 @@ class SpongeSchematic extends SchematicType
 		for ($y = 0; $y < $ySize; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
-					[$id, $meta] = $palette[$i = $blockData->getUnsignedVarInt()];
-
-					$target->addBlock($x, $y, $z, ($id << Block::INTERNAL_METADATA_BITS) | $meta);
+					$target->addBlock($x, $y, $z, $palette[$i = $blockData->getUnsignedVarInt()]);
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {
 						TileConvertor::toBedrock($tileData[World::blockHash($x, $y, $z)], $target, $tilePalette[$i]);
@@ -171,7 +168,7 @@ class SpongeSchematic extends SchematicType
 
 		$paletteData = new CompoundTag();
 		foreach ($palette as $id => $index) {
-			$paletteData->setInt(BlockConvertor::getState($id >> Block::INTERNAL_METADATA_BITS, $id & Block::INTERNAL_METADATA_MASK), $index);
+			$paletteData->setInt(BlockConvertor::getState($id), $index);
 		}
 
 		$blocks = new CompoundTag();

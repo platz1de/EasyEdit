@@ -40,9 +40,7 @@ class McEditSchematic extends SchematicType
 					$id = ord($blockIdData[$i]);
 					$meta = ord($blockMetaData[$i]);
 
-					BlockConvertor::convertFromJava($id, $meta);
-
-					$target->addBlock($x, $y, $z, ($id << Block::INTERNAL_METADATA_BITS) | $meta);
+					$target->addBlock($x, $y, $z, BlockConvertor::convertFromJava(($id << Block::INTERNAL_METADATA_BITS) | $meta));
 					$i++;
 				}
 			}

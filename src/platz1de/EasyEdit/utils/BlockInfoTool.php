@@ -21,7 +21,7 @@ class BlockInfoTool
 			"{x}" => (string) $block->getPosition()->getX(),
 			"{y}" => (string) $block->getPosition()->getY(),
 			"{z}" => (string) $block->getPosition()->getZ(),
-			"{java_state}" => BlockConvertor::getState($block->getId(), $block->getMeta())
+			"{java_state}" => BlockConvertor::getState($block->getFullId())
 		]);
 	}
 }

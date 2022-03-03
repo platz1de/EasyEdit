@@ -48,14 +48,14 @@ class BlockParser
 
 	/**
 	 * @param string $stringId Id in format id:meta
-	 * @return array{int, int} id, meta
+	 * @return int fullID
 	 */
-	public static function fromStringId(string $stringId): array
+	public static function fromStringId(string $stringId): int
 	{
 		$data = explode(":", $stringId);
 		if (!isset($data[1])) {
 			throw new ParseError("Expected string block id, got " . $stringId);
 		}
-		return [(int) $data[0], (int) $data[1]];
+		return ((int) $data[0] << Block::INTERNAL_METADATA_BITS) | (int) $data[1];
 	}
 }
