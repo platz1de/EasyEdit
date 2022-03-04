@@ -248,4 +248,12 @@ class BlockConvertor
 			self::$paletteTo[$stream->getInt()] = $stream->getString();
 		}
 	}
+
+	/**
+	 * @return string[]
+	 */
+	public static function getAllKnownStates(): array
+	{
+		return self::$paletteTo;
+	}
 }
