@@ -40,29 +40,29 @@ class LineCommand extends EasyEditCommand
 
 		if (isset($args[3])) {
 			try {
-				$block = BlockParser::getBlock($args[3]);
+				$block = BlockParser::parseBlockIdentifier($args[3]);
 			} catch (ParseError $exception) {
 				throw new PatternParseException($exception);
 			}
 		} else {
-			$block = VanillaBlocks::CONCRETE()->setColor(DyeColor::RED());
+			$block = VanillaBlocks::CONCRETE()->setColor(DyeColor::RED())->getFullId();
 		}
 
 		switch ($mode) {
 			case "line":
 			case "direct":
 			default:
-				LineTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, StaticBlock::fromBlock($block));
+				LineTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, StaticBlock::fromFullId($block));
 				break;
 			case "find":
 			case "search":
-				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, true, StaticBlock::fromBlock($block));
+				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, true, StaticBlock::fromFullId($block));
 				break;
 			case "find-line":
 			case "find-direct":
 			case "no-diagonal":
 			case "solid":
-				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, StaticBlock::fromBlock($block));
+				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, StaticBlock::fromFullId($block));
 				break;
 		}
 	}

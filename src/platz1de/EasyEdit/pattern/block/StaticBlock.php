@@ -76,6 +76,19 @@ class StaticBlock extends Pattern
 	}
 
 	/**
+	 * @param int $block
+	 * @return StaticBlock
+	 */
+	public static function fromFullId(int $block): StaticBlock
+	{
+		$pattern = self::from([], PatternArgumentData::create()->setRealBlock($block));
+		if (!$pattern instanceof self) {
+			throw new AssumptionFailedError("StaticBlock was wrapped into a parent pattern while creating instance");
+		}
+		return $pattern;
+	}
+
+	/**
 	 * @param int $fullBlock
 	 * @return bool
 	 */

@@ -111,7 +111,7 @@ class PatternParser
 		//blocks have priority
 		try {
 			$invert = false; //this would be always false
-			$pattern = StaticBlock::fromBlock(BlockParser::getBlock($patternString));
+			$pattern = StaticBlock::fromFullId(BlockParser::parseBlockIdentifier($patternString));
 		} catch (ParseError) {
 			//This still allows old syntax, starting with #
 			//I have no idea what phpstorm is doing here
@@ -176,9 +176,9 @@ class PatternParser
 		}
 
 		if (BlockParser::isStatic($string)) {
-			return StaticBlock::fromBlock(BlockParser::getBlock($string));
+			return StaticBlock::fromFullId(BlockParser::parseBlockIdentifier($string));
 		}
 
-		return DynamicBlock::fromBlock(BlockParser::getBlock($string));
+		return DynamicBlock::fromFullId(BlockParser::parseBlockIdentifier($string));
 	}
 }

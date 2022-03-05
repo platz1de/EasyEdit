@@ -13,7 +13,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.5";
+	private const CONFIG_VERSION = "2.0.6";
 
 	/**
 	 * @var int[]
@@ -21,6 +21,7 @@ class ConfigManager
 	private static array $terrainIgnored = [];
 	private static float $toolCooldown;
 	private static bool $allowOtherHistory;
+	private static bool $allowUnregisteredBlocks;
 	private static int $fastSetMax;
 	private static int $pathfindingMax;
 	private static int $fillDistance;
@@ -43,6 +44,7 @@ class ConfigManager
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
 
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
+		self::$allowUnregisteredBlocks = self::mustGetBool($config, "allow-unregistered-blocks", false);
 
 		self::$fastSetMax = self::mustGetInt($config, "fast-set-max", 256000);
 		self::$pathfindingMax = self::mustGetInt($config, "pathfinding-max", 1000000);
@@ -158,6 +160,14 @@ class ConfigManager
 	public static function isAllowingOtherHistory(): bool
 	{
 		return self::$allowOtherHistory;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isAllowingUnregisteredBlocks(): bool
+	{
+		return self::$allowUnregisteredBlocks;
 	}
 
 	public static function getFastSetMax(): int

@@ -1,4 +1,4 @@
-config-version: "2.0.5" #Please don't change this manually
+config-version: "2.0.6" #Please don't change this manually
 
 #Tool cooldown length in seconds (defaults to half a second)
 #Used for brushes, selection axes and more
@@ -11,6 +11,10 @@ allow-history-other: true
 #Remaps usages of 3 or more slashes to 2 slashes, allowing usage of minecraft autocomplete
 #Disable this if you have commands requiring 3 slashes
 remap-commands: true
+
+#Whether to allow setting blocks which are not registered
+#Enabling this allows setting blocks which are not registered, but might cause issues like game crashes or world corruption
+allow-unregistered-blocks: false
 
 #Max blocks to use fast set on
 #Fast set allows to set blocks without any flickering, but triples execution time
