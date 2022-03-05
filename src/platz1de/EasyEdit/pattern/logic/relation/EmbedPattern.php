@@ -5,7 +5,9 @@ namespace platz1de\EasyEdit\pattern\logic\relation;
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use pocketmine\block\Block;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -24,7 +26,7 @@ class EmbedPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
-		if ($y + 1 < World::Y_MAX && $this->args->getBlock()->equals($iterator->getBlockAt($x, $y + 1, $z))) {
+		if ($y + 1 < World::Y_MAX && !in_array($iterator->getBlockAt($x, $y + 1, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore())) {
 			return false;
 		}
 		foreach ((new Vector3($x, $y, $z))->sidesAroundAxis(Axis::Y) as $vector) {
