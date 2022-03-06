@@ -74,15 +74,13 @@ class FillTask extends EditTask
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
-		if (in_array($this->block->getId(), HeightMapCache::getIgnore(), true)) { //this would produce an infinite loop
-			throw new BadMethodCallException("Filling with air is not supported!");
-		}
+		$ignore = HeightMapCache::getIgnore();
+		unset($ignore[array_search($this->block->getId(), $ignore)]);
 
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$loadedChunks = [];
 		$id = $this->block->get();
-		$ignore = HeightMapCache::getIgnore();
 		$startX = $this->start->getFloorX();
 		$startY = $this->start->getFloorY();
 		$startZ = $this->start->getFloorZ();
