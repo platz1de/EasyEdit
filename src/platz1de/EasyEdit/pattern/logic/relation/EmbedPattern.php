@@ -26,6 +26,9 @@ class EmbedPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
 	{
+		if (in_array($iterator->getBlockAt($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore())) {
+			return false;
+		}
 		if ($y + 1 < World::Y_MAX && !in_array($iterator->getBlockAt($x, $y + 1, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore())) {
 			return false;
 		}
