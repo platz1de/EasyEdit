@@ -74,7 +74,8 @@ class BlockConvertor
 			foreach (self::loadFromSource($rotationSource) as $preRotationId => $pastRotationId) {
 				self::$rotationData[BlockParser::fromStringId($preRotationId)] = BlockParser::fromStringId($pastRotationId);
 			}
-			foreach (self::loadFromSourceComplex($flipSource) as $axisName => $axisFlips) {
+			/** @var string[] $axisFlips */
+			foreach (self::loadFromSource($flipSource) as $axisName => $axisFlips) {
 				$axis = match ($axisName) {
 					"xAxis" => Axis::X,
 					"yAxis" => Axis::Y,
@@ -85,11 +86,11 @@ class BlockConvertor
 					self::$flipData[$axis][BlockParser::fromStringId($preFlipId)] = BlockParser::fromStringId($pastFlipId);
 				}
 			}
-			$tileDataPalette = self::loadFromSourceComplex($tileDataSourcePalette);
+			/** @var array<string, array<string, string>> $tileDataPalette */
+			$tileDataPalette = self::loadFromSource($tileDataSourcePalette);
 			if (!isset($tileDataPalette[TileConvertor::DATA_CHEST_RELATION])) {
 				EditThread::getInstance()->debug("Couldn't find chest relation data");
 			}
-			/** @var string $state */
 			foreach ($tileDataPalette[TileConvertor::DATA_CHEST_RELATION] ?? [] as $state => $data) {
 				self::$compoundMapping[$state] = CompoundTag::create()
 					->setInt(Chest::TAG_PAIRX, match ($data) {
@@ -103,7 +104,6 @@ class BlockConvertor
 						default => 0
 					});
 			}
-			/** @var string $state */
 			foreach ($tileDataPalette[TileConvertor::DATA_SHULKER_BOX_FACING] ?? [] as $state => $data) {
 				self::$compoundMapping[$state] = CompoundTag::create()
 					->setByte(ShulkerBox::TAG_FACING, match ($data) {
@@ -147,17 +147,6 @@ class BlockConvertor
 		}
 
 		return $parsed;
-	}
-
-	/**
-	 * @param string $source
-	 * @return string[][]
-	 * @throws Throwable
-	 */
-	private static function loadFromSourceComplex(string $source): array
-	{
-		/**@phpstan-ignore-next-line we can't handle this properly */
-		return self::loadFromSource($source);
 	}
 
 	/**
