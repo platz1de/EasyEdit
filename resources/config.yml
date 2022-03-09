@@ -1,4 +1,4 @@
-config-version: "2.0.6" #Please don't change this manually
+config-version: "2.0.7" #Please don't change this manually
 
 #Tool cooldown length in seconds (defaults to half a second)
 #Used for brushes, selection axes and more
@@ -45,3 +45,4 @@ java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/for
 rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/rotation-data.json"
 flip-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/flip-data.json"
 tile-data-states: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/tile-data-states.json"
+java-tile-states: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/java-tile-states.json"

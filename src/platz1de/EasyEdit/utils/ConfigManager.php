@@ -13,7 +13,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.6";
+	private const CONFIG_VERSION = "2.0.7";
 
 	/**
 	 * @var int[]
@@ -32,6 +32,7 @@ class ConfigManager
 	private static string $rotationDataSource;
 	private static string $flipDataSource;
 	private static string $tileDataStatesSource;
+	private static string $javaTileStatesSource;
 
 	public static function load(): void
 	{
@@ -62,6 +63,7 @@ class ConfigManager
 		self::$rotationDataSource = self::mustGetString($config, "rotation-data", "");
 		self::$flipDataSource = self::mustGetString($config, "flip-data", "");
 		self::$tileDataStatesSource = self::mustGetString($config, "tile-data-states", "");
+		self::$javaTileStatesSource = self::mustGetString($config, "java-tile-states", "");
 
 		ConfigInputData::create();
 	}
@@ -216,6 +218,7 @@ class ConfigManager
 		$stream->putString(self::$rotationDataSource);
 		$stream->putString(self::$flipDataSource);
 		$stream->putString(self::$tileDataStatesSource);
+		$stream->putString(self::$javaTileStatesSource);
 		$stream->putBool(self::$sendDebug);
 	}
 
@@ -234,13 +237,14 @@ class ConfigManager
 		self::$rotationDataSource = $stream->getString();
 		self::$flipDataSource = $stream->getString();
 		self::$tileDataStatesSource = $stream->getString();
+		self::$javaTileStatesSource = $stream->getString();
 		self::$sendDebug = $stream->getBool();
 	}
 
 	public static function distributeData(): void
 	{
 		HeightMapCache::setIgnore(self::$terrainIgnored);
-		BlockConvertor::load(self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource);
+		BlockConvertor::load(self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource, self::$javaTileStatesSource);
 	}
 
 	private static function loadConfig(): Config

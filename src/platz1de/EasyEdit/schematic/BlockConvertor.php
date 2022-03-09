@@ -11,6 +11,7 @@ use pocketmine\block\tile\ShulkerBox;
 use pocketmine\math\Axis;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\Internet;
+use pocketmine\utils\InternetException;
 use Throwable;
 use UnexpectedValueException;
 
@@ -48,11 +49,15 @@ class BlockConvertor
 	 */
 	private static array $compoundMapping;
 	/**
-	 * @var array<string, array{string, CompoundTag}>
+	 * @var array<string, string[]>
+	 */
+	private static array $compoundTagKeys;
+	/**
+	 * @var array<string, array<string, string>>
 	 */
 	private static array $reverseCompoundMapping;
 
-	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource, string $rotationSource, string $flipSource, string $tileDataSourcePalette): void
+	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource, string $rotationSource, string $flipSource, string $tileDataSourcePalette, string $javaTileSource): void
 	{
 		self::$conversionFrom = [];
 		self::$paletteFrom = [];
@@ -60,6 +65,8 @@ class BlockConvertor
 		self::$rotationData = [];
 		self::$flipData = [];
 		self::$compoundMapping = [];
+		self::$compoundTagKeys = [];
+		self::$reverseCompoundMapping = [];
 
 		try {
 			foreach (self::loadFromSource($bedrockSource) as $javaStringId => $bedrockStringId) {
@@ -116,6 +123,57 @@ class BlockConvertor
 						default => throw new UnexpectedValueException("Unknown facing $data")
 					});
 			}
+
+			/** @var array<string, array<string, array<string, string>>> $javaTilePalette */
+			$javaTilePalette = self::loadFromSource($javaTileSource);
+			foreach ($javaTilePalette[TileConvertor::DATA_CHEST_RELATION] ?? [] as $state => $data) {
+				self::$compoundTagKeys[$state] = [Chest::TAG_PAIRX, Chest::TAG_PAIRZ];
+				foreach ($data as $type => $result) {
+					switch ($type) {
+						case "east":
+							self::$reverseCompoundMapping[$state]["1;0"] = $result;
+							break;
+						case "west":
+							self::$reverseCompoundMapping[$state]["-1;0"] = $result;
+							break;
+						case "north":
+							self::$reverseCompoundMapping[$state]["0;-1"] = $result;
+							break;
+						case "south":
+							self::$reverseCompoundMapping[$state]["0;1"] = $result;
+							break;
+						default:
+							throw new UnexpectedValueException("Unknown direction $type");
+					}
+				}
+			}
+			foreach ($javaTilePalette[TileConvertor::DATA_SHULKER_BOX_FACING] ?? [] as $state => $data) {
+				self::$compoundTagKeys[$state] = [ShulkerBox::TAG_FACING];
+				foreach ($data as $type => $result) {
+					switch ($type) {
+						case "down":
+							self::$reverseCompoundMapping[$state]["0"] = $result;
+							break;
+						case "up":
+							self::$reverseCompoundMapping[$state]["1"] = $result;
+							break;
+						case "north":
+							self::$reverseCompoundMapping[$state]["2"] = $result;
+							break;
+						case "south":
+							self::$reverseCompoundMapping[$state]["3"] = $result;
+							break;
+						case "west":
+							self::$reverseCompoundMapping[$state]["4"] = $result;
+							break;
+						case "east":
+							self::$reverseCompoundMapping[$state]["5"] = $result;
+							break;
+						default:
+							throw new UnexpectedValueException("Unknown facing $type");
+					}
+				}
+			}
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
@@ -135,7 +193,7 @@ class BlockConvertor
 		$data = Internet::getURL($source, 10, [], $err);
 		if ($data === null) {
 			if (isset($err)) {
-				throw $err;
+				throw new InternetException($err);
 			}
 			return [];
 		}
@@ -177,6 +235,32 @@ class BlockConvertor
 	public static function getTileDataFromState(string $name): ?CompoundTag
 	{
 		return self::$compoundMapping[$name] ?? null;
+	}
+
+	/**
+	 * @param string      $state
+	 * @param CompoundTag $tag
+	 * @return string
+	 */
+	public static function processTileData(string $state, CompoundTag $tag): string
+	{
+		if (!isset(self::$compoundTagKeys[$state])) {
+			return $state;
+		}
+		$values = [];
+		foreach (self::$compoundTagKeys[$state] as $key) {
+			$value = $tag->getTag($key);
+			if ($value === null) {
+				return $state;
+			}
+			$values[] = (string) $value->getValue();
+			$tag->removeTag($key);
+		}
+		if (!isset(self::$reverseCompoundMapping[$state][implode(";", $values)])) {
+			EditThread::getInstance()->debug("Unknown state $state with magical values " . implode(";", $values));
+			return $state;
+		}
+		return self::$reverseCompoundMapping[$state][implode(";", $values)];
 	}
 
 	/**

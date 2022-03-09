@@ -5,9 +5,16 @@ namespace platz1de\EasyEdit\schematic;
 use JsonException;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
+use pocketmine\block\Block;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\tile\Chest;
+use pocketmine\block\tile\Hopper;
+use pocketmine\block\tile\ShulkerBox;
+use pocketmine\block\tile\Sign;
 use pocketmine\block\tile\Tile;
+use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
+use Throwable;
 use UnexpectedValueException;
 
 class TileConvertor
@@ -75,32 +82,83 @@ class TileConvertor
 				$tile->setTag($key, $value);
 			}
 		}
+		try {
+			switch ($tile->getString(Tile::TAG_ID)) {
+				case self::TILE_SIGN:
+					//TODO: glowing & color
+					for ($i = 1; $i <= 4; $i++) {
+						$line = $tile->getString("Text" . $i);
+						try {
+							/** @var string[] $json */
+							$json = json_decode($line, true, 2, JSON_THROW_ON_ERROR);
+							if (!isset($json["text"])) {
+								throw new JsonException("Missing text key");
+							}
+							$text = $json["text"];
+						} catch (JsonException) {
+							throw new UnexpectedValueException("Invalid JSON in sign text: " . $line);
+						}
+						$tile->setString("Text" . $i, $text);
+					}
+					break;
+				/** @noinspection PhpMissingBreakStatementInspection */
+				case self::TILE_TRAPPED_CHEST:
+					$tile->setString(Tile::TAG_ID, self::TILE_CHEST); //pmmp uses the same tile here
+				case self::TILE_CHEST:
+					//TODO: Some items need to be converted
+					if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {
+						$tile->setInt(Chest::TAG_PAIRX, $tile->getInt(Chest::TAG_PAIRX) + $tile->getInt(Tile::TAG_X));
+						$tile->setInt(Chest::TAG_PAIRZ, $tile->getInt(Chest::TAG_PAIRZ) + $tile->getInt(Tile::TAG_Z));
+					}
+					break;
+				case self::TILE_SHULKER_BOX:
+				case self::TILE_DISPENSER:
+				case self::TILE_DROPPER:
+				case self::TILE_HOPPER:
+					//TODO: convert items
+					break;
+				default:
+					EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
+					return;
+			}
+		} catch (Throwable) {
+			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID));
+			return;
+		}
+		$selection->addTile($tile);
+	}
+
+	/**
+	 * @param int         $blockId
+	 * @param CompoundTag $tile
+	 * @return bool
+	 */
+	public static function toJava(int $blockId, CompoundTag $tile): bool
+	{
+		$tile->setString(Tile::TAG_ID, self::getJavaId($tile->getString(Tile::TAG_ID)));
 		switch ($tile->getString(Tile::TAG_ID)) {
 			case self::TILE_SIGN:
 				//TODO: glowing & color
 				for ($i = 1; $i <= 4; $i++) {
 					$line = $tile->getString("Text" . $i);
 					try {
-						/** @var string[] $json */
-						$json = json_decode($line, true, 2, JSON_THROW_ON_ERROR);
-						if (!isset($json["text"])) {
-							throw new JsonException("Missing text key");
-						}
-						$text = $json["text"];
+						/** @var string $json */
+						$json = json_encode(["text" => $line], JSON_THROW_ON_ERROR);
 					} catch (JsonException) {
-						throw new UnexpectedValueException("Invalid JSON in sign text: " . $line);
+						throw new UnexpectedValueException("Failed to encode JSON for sign text: " . $line);
 					}
-					$tile->setString("Text" . $i, $text);
+					$tile->setString("Text" . $i, $json);
+					$tile->removeTag(Sign::TAG_TEXT_BLOB);
 				}
 				break;
-			/** @noinspection PhpMissingBreakStatementInspection */
-			case self::TILE_TRAPPED_CHEST:
-				$tile->setString(Tile::TAG_ID, self::TILE_CHEST); //pmmp uses the same tile here
 			case self::TILE_CHEST:
+				if ($blockId >> Block::INTERNAL_METADATA_BITS === BlockLegacyIds::TRAPPED_CHEST) {
+					$tile->setString(Tile::TAG_ID, self::TILE_TRAPPED_CHEST); //pmmp uses the same tile here
+				}
 				//TODO: Some items need to be converted
 				if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {
-					$tile->setInt(Chest::TAG_PAIRX, $tile->getInt(Chest::TAG_PAIRX) + $tile->getInt(Tile::TAG_X));
-					$tile->setInt(Chest::TAG_PAIRZ, $tile->getInt(Chest::TAG_PAIRZ) + $tile->getInt(Tile::TAG_Z));
+					$tile->setInt(Chest::TAG_PAIRX, $tile->getInt(Chest::TAG_PAIRX) - $tile->getInt(Tile::TAG_X));
+					$tile->setInt(Chest::TAG_PAIRZ, $tile->getInt(Chest::TAG_PAIRZ) - $tile->getInt(Tile::TAG_Z));
 				}
 				break;
 			case self::TILE_SHULKER_BOX:
@@ -111,8 +169,25 @@ class TileConvertor
 				break;
 			default:
 				EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
-				return;
+				return false;
 		}
-		$selection->addTile($tile);
+		return true;
+	}
+
+	/**
+	 * @param string $tile
+	 * @return string
+	 */
+	public static function getJavaId(string $tile): string
+	{
+		return match ($tile) {
+			TileFactory::getInstance()->getSaveId(Chest::class) => self::TILE_CHEST,
+			"Dispenser" => self::TILE_DISPENSER,
+			"Dropper" => self::TILE_DROPPER,
+			TileFactory::getInstance()->getSaveId(Hopper::class) => self::TILE_HOPPER,
+			TileFactory::getInstance()->getSaveId(ShulkerBox::class) => self::TILE_SHULKER_BOX,
+			TileFactory::getInstance()->getSaveId(Sign::class) => self::TILE_SIGN,
+			default => $tile //just attempt it
+		};
 	}
 }
