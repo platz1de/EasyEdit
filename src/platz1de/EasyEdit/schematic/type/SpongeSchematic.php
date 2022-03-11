@@ -132,7 +132,7 @@ class SpongeSchematic extends SchematicType
 
 	public static function writeFromSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
-		$nbt->setInt(self::FORMAT_VERSION, 3);
+		$nbt->setInt(self::FORMAT_VERSION, 2);
 		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
 		$metaData->setInt(McEditSchematic::OFFSET_X, $target->getPoint()->getFloorX());
@@ -179,12 +179,12 @@ class SpongeSchematic extends SchematicType
 							$x = $tile->getInt(Tile::TAG_X);
 							$y = $tile->getInt(Tile::TAG_Y);
 							$z = $tile->getInt(Tile::TAG_Z);
-							$data = new CompoundTag();
-							$data->setTag(self::ENTITY_EXTRA_DATA, $tile);
-							$data->removeTag(Tile::TAG_ID, Tile::TAG_X, Tile::TAG_Y, Tile::TAG_Z);
-							$data->setString(self::ENTITY_ID, $id);
-							$data->setIntArray(self::ENTITY_POSITION, [$x, $y, $z]);
-							$tiles[] = $data; //filter
+							$tile->removeTag(Tile::TAG_ID, Tile::TAG_X, Tile::TAG_Y, Tile::TAG_Z);
+							//$data = new CompoundTag();
+							//data->setTag(self::ENTITY_EXTRA_DATA, $tile);
+							$tile->setString(self::ENTITY_ID, $id);
+							$tile->setIntArray(self::ENTITY_POSITION, [$x, $y, $z]);
+							$tiles[] = $tile; //filter
 						}
 					}
 
@@ -202,12 +202,17 @@ class SpongeSchematic extends SchematicType
 			$paletteData->setInt($id, $index);
 		}
 
-		$blocks = new CompoundTag();
-		$blocks->setByteArray(self::DATA, $blockData->getBuffer());
-		$blocks->setTag(self::PALETTE, $paletteData);
-		$blocks->setTag(self::BLOCK_ENTITY_DATA, new ListTag($tiles, NBT::TAG_Compound));
+		//TODO: switch back to v3 whenever java WorldEdit finally supports it
+		//$blocks = new CompoundTag();
+		//$blocks->setByteArray(self::DATA, $blockData->getBuffer());
+		//$blocks->setTag(self::PALETTE, $paletteData);
+		//$blocks->setTag(self::BLOCK_ENTITY_DATA, new ListTag($tiles, NBT::TAG_Compound));
+		//
+		//$nbt->setTag(self::DATA_BLOCKS, $blocks);
 
-		$nbt->setTag(self::DATA_BLOCKS, $blocks);
+		$nbt->setByteArray(self::BLOCK_DATA_LEGACY, $blockData->getBuffer());
+		$nbt->setTag(self::PALETTE, $paletteData);
+		$nbt->setTag(self::BLOCK_ENTITY_DATA, new ListTag($tiles, NBT::TAG_Compound));
 
 		//TODO: entities
 	}
