@@ -8,6 +8,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\tile\Chest;
+use pocketmine\block\tile\Container;
 use pocketmine\block\tile\Hopper;
 use pocketmine\block\tile\ShulkerBox;
 use pocketmine\block\tile\Sign;
@@ -105,7 +106,7 @@ class TileConvertor
 				case self::TILE_TRAPPED_CHEST:
 					$tile->setString(Tile::TAG_ID, self::TILE_CHEST); //pmmp uses the same tile here
 				case self::TILE_CHEST:
-					//TODO: Some items need to be converted
+					self::convertItemsBedrock($tile);
 					if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {
 						$tile->setInt(Chest::TAG_PAIRX, $tile->getInt(Chest::TAG_PAIRX) + $tile->getInt(Tile::TAG_X));
 						$tile->setInt(Chest::TAG_PAIRZ, $tile->getInt(Chest::TAG_PAIRZ) + $tile->getInt(Tile::TAG_Z));
@@ -115,14 +116,14 @@ class TileConvertor
 				case self::TILE_DISPENSER:
 				case self::TILE_DROPPER:
 				case self::TILE_HOPPER:
-					//TODO: convert items
+					self::convertItemsBedrock($tile);
 					break;
 				default:
 					EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
 					return;
 			}
-		} catch (Throwable) {
-			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID));
+		} catch (Throwable $exception) {
+			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID) . ": " . $exception->getMessage());
 			return;
 		}
 		$selection->addTile($tile);
@@ -155,7 +156,7 @@ class TileConvertor
 				if ($blockId >> Block::INTERNAL_METADATA_BITS === BlockLegacyIds::TRAPPED_CHEST) {
 					$tile->setString(Tile::TAG_ID, self::TILE_TRAPPED_CHEST); //pmmp uses the same tile here
 				}
-				//TODO: Some items need to be converted
+				self::convertItemsJava($tile);
 				if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {
 					$tile->setInt(Chest::TAG_PAIRX, $tile->getInt(Chest::TAG_PAIRX) - $tile->getInt(Tile::TAG_X));
 					$tile->setInt(Chest::TAG_PAIRZ, $tile->getInt(Chest::TAG_PAIRZ) - $tile->getInt(Tile::TAG_Z));
@@ -165,7 +166,7 @@ class TileConvertor
 			case self::TILE_DISPENSER:
 			case self::TILE_DROPPER:
 			case self::TILE_HOPPER:
-				//TODO: convert items
+				self::convertItemsJava($tile);
 				break;
 			default:
 				EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
@@ -189,5 +190,59 @@ class TileConvertor
 			TileFactory::getInstance()->getSaveId(Sign::class) => self::TILE_SIGN,
 			default => $tile //just attempt it
 		};
+	}
+
+	/**
+	 * @param CompoundTag $tile
+	 * @return void
+	 */
+	public static function convertItemsBedrock(CompoundTag $tile): void
+	{
+		//TODO: special data (lore...)
+		$items = $tile->getListTag(Container::TAG_ITEMS);
+		if ($items === null) {
+			return;
+		}
+		foreach ($items as $item) {
+			if (!$item instanceof CompoundTag) {
+				throw new UnexpectedValueException("Items need to be represented as compound tags");
+			}
+			try {
+				$javaId = $item->getString("id");
+			} catch (Throwable) {
+				continue; //probably already bedrock format, or at least not convertable
+			}
+			$i = BlockConvertor::getTranslatedItemBedrock($javaId);
+			if ($i === null) {
+				EditThread::getInstance()->debug("Couldn't convert item " . $javaId);
+				continue;
+			}
+			$item->setShort("id", $i[0]);
+			$item->setShort("Damage", $i[1]);
+		}
+	}
+
+	/**
+	 * @param CompoundTag $tile
+	 * @return void
+	 */
+	public static function convertItemsJava(CompoundTag $tile): void
+	{
+		$items = $tile->getListTag(Container::TAG_ITEMS);
+		if ($items === null) {
+			return;
+		}
+		foreach ($items as $item) {
+			if (!$item instanceof CompoundTag) {
+				throw new UnexpectedValueException("Items need to be represented as compound tags");
+			}
+			$i = BlockConvertor::getTranslatedItemJava($item->getShort("id"), $item->getShort("Damage"));
+			if ($i === null) {
+				EditThread::getInstance()->debug("Couldn't convert item " . $item->getShort("id") . ":" . $item->getShort("Damage"));
+				continue;
+			}
+			$item->removeTag("Damage");
+			$item->setString("id", $i);
+		}
 	}
 }

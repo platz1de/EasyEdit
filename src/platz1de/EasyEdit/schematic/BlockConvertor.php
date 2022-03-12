@@ -8,6 +8,9 @@ use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\ShulkerBox;
+use pocketmine\block\VanillaBlocks;
+use pocketmine\item\LegacyStringToItemParser;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\Axis;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\Internet;
@@ -56,6 +59,15 @@ class BlockConvertor
 	 * @var array<string, array<string, string>>
 	 */
 	private static array $reverseCompoundMapping;
+
+	/**
+	 * @var array<string, array{int, int}>
+	 */
+	private static array $itemTranslationBedrock;
+	/**
+	 * @var array<int, array<int, string>>
+	 */
+	private static array $itemTranslationJava;
 
 	public static function load(string $bedrockSource, string $bedrockPaletteSource, string $javaPaletteSource, string $rotationSource, string $flipSource, string $tileDataSourcePalette, string $javaTileSource): void
 	{
@@ -177,6 +189,22 @@ class BlockConvertor
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
 			EditThread::getInstance()->getLogger()->logException($e);
+		}
+
+		foreach (VanillaBlocks::getAll() as $blockId => $block) {
+			$item = $block->asItem();
+			self::$itemTranslationBedrock[$blockId] = [$item->getId(), $item->getMeta()];
+			self::$itemTranslationJava[$item->getId()][$item->getMeta()] = "minecraft:" . mb_strtolower($blockId);
+		}
+		foreach (VanillaItems::getAll() as $itemId => $item) {
+			self::$itemTranslationBedrock[$itemId] = [$item->getId(), $item->getMeta()];
+			self::$itemTranslationJava[$item->getId()][$item->getMeta()] = "minecraft:" . mb_strtolower($itemId);
+		}
+		foreach (LegacyStringToItemParser::getInstance()->getMappings() as $key => $id){
+			if(!is_numeric($key) && !isset(self::$itemTranslationJava[$id])){
+				self::$itemTranslationBedrock[mb_strtoupper($key)] = [$id, 0];
+				self::$itemTranslationJava[$id][0] = "minecraft:" . mb_strtolower($key);
+			}
 		}
 
 		ResourceData::from();
@@ -328,5 +356,25 @@ class BlockConvertor
 	public static function getAllKnownStates(): array
 	{
 		return self::$paletteTo;
+	}
+
+	/**
+	 * @param string $item
+	 * @return array|null
+	 */
+	public static function getTranslatedItemBedrock(string $item): ?array
+	{
+		$item = strtolower(str_replace([" ", "minecraft:"], ["_", ""], trim($item)));
+		return self::$itemTranslationBedrock[mb_strtoupper($item)] ?? null;
+	}
+
+	/**
+	 * @param int $id
+	 * @param int $meta
+	 * @return string|null
+	 */
+	public static function getTranslatedItemJava(int $id, int $meta): ?string
+	{
+		return self::$itemTranslationJava[$id][$meta] ?? null;
 	}
 }
