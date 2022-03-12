@@ -54,11 +54,11 @@ class ChunkCollector
 	 */
 	public static function collectInput(ChunkInputData $data): void
 	{
-		self::$ready = true;
-
 		if (self::$manager === null) {
 			throw new BadMethodCallException("Collector was never initialized");
 		}
+
+		self::$ready = true;
 
 		$chunks = new ExtendedBinaryStream($data->getChunkData());
 		while (!$chunks->feof()) {
