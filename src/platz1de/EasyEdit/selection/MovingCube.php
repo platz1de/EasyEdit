@@ -8,6 +8,7 @@ use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class MovingCube extends Selection
 {
@@ -21,9 +22,9 @@ class MovingCube extends Selection
 	 * @param Vector3|null $pos2
 	 * @param Vector3|null $direction
 	 */
-	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null, bool $piece = false)
 	{
-		parent::__construct($player, $world, $pos1, $pos2);
+		parent::__construct($player, $world, $pos1, $pos2, $piece);
 		$this->direction = $direction ?? Vector3::zero();
 	}
 
@@ -78,8 +79,7 @@ class MovingCube extends Selection
 	 */
 	public function shouldBeCached(int $x, int $z): bool
 	{
-		// TODO: Implement shouldBeCached() method.
-		return false;
+		return false; //no overlapping chunks
 	}
 
 	/**
@@ -144,7 +144,20 @@ class MovingCube extends Selection
 	 */
 	public function split(Vector3 $offset): array
 	{
-		//TODO
-		return parent::split($offset);
+		if ($this->piece) {
+			throw new UnexpectedValueException("Pieces are not split able");
+		}
+
+		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset));
+		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset));
+
+		$pieces = [];
+		//only 2x2 as we need 2 areas
+		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 2) {
+			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 2) {
+				$pieces[] = new MovingCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), true);
+			}
+		}
+		return $pieces;
 	}
 }
