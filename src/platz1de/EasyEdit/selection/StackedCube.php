@@ -15,6 +15,7 @@ class StackedCube extends Selection
 	private Vector3 $direction;
 	private Vector3 $min;
 	private Vector3 $max;
+	private bool $copyMode;
 
 	/**
 	 * StackedCube constructor.
@@ -26,8 +27,9 @@ class StackedCube extends Selection
 	 * @param Vector3|null $min
 	 * @param Vector3|null $max
 	 * @param bool         $piece
+	 * @param bool         $copyMode
 	 */
-	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false)
+	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false, bool $copyMode = false)
 	{
 		parent::__construct($player, $world, $pos1, $pos2, $piece);
 		$this->direction = $direction ?? Vector3::zero();
@@ -37,6 +39,7 @@ class StackedCube extends Selection
 		if ($max !== null) {
 			$this->max = $max;
 		}
+		$this->copyMode = $copyMode;
 	}
 
 	/**
@@ -134,6 +137,22 @@ class StackedCube extends Selection
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isCopyMode(): bool
+	{
+		return $this->copyMode;
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getCopyOffset(): Vector3
+	{
+		return $this->pos1->subtractVector($this->min);
+	}
+
+	/**
 	 * @param Vector3 $offset
 	 * @return Selection[]
 	 */
@@ -157,11 +176,14 @@ class StackedCube extends Selection
 				if ($this->direction->getY() !== 0) { //y-Axis does not need additional splitting
 					$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($z << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $max->getZ())), true);
 				} elseif ($hasEmpty) {
-					$xSize = min(32, $pos2->getX() - $pos1->getX());
-					$zSize = min(32, $pos2->getZ() - $pos1->getZ());
-					for ($ox = $this->direction->getX(); $ox > 0; $ox--) {
-						for ($oz = $this->direction->getZ(); $oz > 0; $oz--) {
-							$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX() + $ox * $xSize, $min->getX()), $min->getY(), max(($z << 4) - $offset->getZ() + $oz * $zSize, $min->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX() + $ox * $xSize, $max->getX()), $max->getY(), min((($z + 1) << 4) + 15 - $offset->getZ() + $oz * $zSize, $max->getZ())), true);
+					$xSize = $pos2->getX() - $pos1->getX() + 1;
+					$zSize = $pos2->getZ() - $pos1->getZ() + 1;
+					for ($ox = 0; abs($ox) <= abs($this->direction->getX()); $this->direction->getX() > 0 ? $ox++ : $ox--) {
+						for ($oz = 0; abs($oz) <= abs($this->direction->getZ()); $this->direction->getX() > 0 ? $oz++ : $oz--) {
+							if ($ox === 0 && $oz === 0) {
+								continue;
+							}
+							$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()), $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()), $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()) + $ox * $xSize, $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ()) + $oz * $zSize), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()) + $ox * $xSize, $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ()) + $oz * $zSize), true, true);
 						}
 					}
 				} else if ($this->direction->getX() !== 0) {

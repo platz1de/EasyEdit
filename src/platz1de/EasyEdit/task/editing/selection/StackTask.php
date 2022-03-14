@@ -67,6 +67,23 @@ class StackTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
+		if ($selection->isCopyMode()) {
+			$offset = $selection->getCopyOffset();
+			if ($this->insert) {
+				$ignore = HeightMapCache::getIgnore();
+				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($offset, $ignore, $handler): void {
+					$block = $handler->getBlock($offset->getFloorX() + $x, $offset->getFloorY() + $y, $offset->getFloorZ() + $z);
+					if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+						$handler->changeBlock($x, $y, $z, $block);
+					}
+				}, SelectionContext::full(), $this->getTotalSelection());
+			} else {
+				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($offset, $handler): void {
+					$handler->copyBlock($x, $y, $z, $offset->getFloorX() + $x, $offset->getFloorY() + $y, $offset->getFloorZ() + $z);
+				}, SelectionContext::full(), $this->getTotalSelection());
+			}
+			return;
+		}
 		$originalSize = $selection->getPos2()->subtractVector($selection->getPos1())->add(1, 1, 1);
 		$start = $selection->getPos1();
 		if ($this->insert) {
