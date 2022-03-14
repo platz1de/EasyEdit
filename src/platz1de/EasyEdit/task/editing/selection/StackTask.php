@@ -72,14 +72,14 @@ class StackTask extends SelectionEditTask
 		if ($this->insert) {
 			$ignore = HeightMapCache::getIgnore();
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ignore, $handler, $originalSize, $start): void {
-				$block = $handler->getBlock($start->getFloorX() + abs($x - $start->getX()) % $originalSize->getX(), $start->getFloorY() + abs($y - $start->getY()) % $originalSize->getY(), $start->getFloorZ() + abs($z - $start->getZ()) % $originalSize->getZ());
+				$block = $handler->getBlock($start->getFloorX() + (($x - $start->getX()) % $originalSize->getX() + $originalSize->getX()) % $originalSize->getX(), $start->getFloorY() + (($y - $start->getY()) % $originalSize->getY() + $originalSize->getY()) % $originalSize->getY(), $start->getFloorZ() + (($z - $start->getZ()) % $originalSize->getZ() + $originalSize->getZ()) % $originalSize->getZ());
 				if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, SelectionContext::full(), $this->getTotalSelection());
 		} else {
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $originalSize, $start): void {
-				$handler->copyBlock($x, $y, $z, $start->getFloorX() + abs($x - $start->getX()) % $originalSize->getX(), $start->getFloorY() + abs($y - $start->getY()) % $originalSize->getY(), $start->getFloorZ() + abs($z - $start->getZ()) % $originalSize->getZ());
+				$handler->copyBlock($x, $y, $z, $start->getFloorX() + (($x - $start->getX()) % $originalSize->getX() + $originalSize->getX()) % $originalSize->getX(), $start->getFloorY() + (($y - $start->getY()) % $originalSize->getY() + $originalSize->getY()) % $originalSize->getY(), $start->getFloorZ() + (($z - $start->getZ()) % $originalSize->getZ() + $originalSize->getZ()) % $originalSize->getZ());
 			}, SelectionContext::full(), $this->getTotalSelection());
 		}
 	}
