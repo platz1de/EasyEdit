@@ -65,7 +65,7 @@ class EditThread extends Thread
 				ThreadData::setTask($task);
 				if ($task === null) {
 					$this->synchronized(function (): void {
-						if ($this->inputData === "") {
+						if ($this->inputData === "" && !$this->isKilled) {
 							$this->wait();
 						}
 					});
@@ -87,7 +87,7 @@ class EditThread extends Thread
 				}
 			} else {
 				$this->synchronized(function (): void {
-					if ($this->inputData === "") {
+					if ($this->inputData === "" && !$this->isKilled) {
 						$this->wait(10 * 1000 * 1000);
 					}
 				});
@@ -101,7 +101,7 @@ class EditThread extends Thread
 	public function waitForData(): void
 	{
 		$this->synchronized(function (): void {
-			if ($this->inputData === "") {
+			if ($this->inputData === "" && !$this->isKilled) {
 				$this->wait();
 			}
 		});
