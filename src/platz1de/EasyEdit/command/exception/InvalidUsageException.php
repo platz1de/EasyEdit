@@ -15,7 +15,7 @@ class InvalidUsageException extends CommandException
 		if ($command->getUsage() instanceof Translatable) {
 			throw new UnexpectedValueException("EasyEdit commands should not use translatable usages");
 		}
-		parent::__construct($command->getUsage());
+		parent::__construct($command->getCompactHelp());
 	}
 
 	public function sendWarning(Player $player): void
