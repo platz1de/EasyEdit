@@ -166,14 +166,15 @@ class EditTaskHandler
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
-	 * @param int $block
+	 * @param int  $x
+	 * @param int  $y
+	 * @param int  $z
+	 * @param int  $block
+	 * @param bool $overwrite
 	 */
-	public function changeBlock(int $x, int $y, int $z, int $block): void
+	public function changeBlock(int $x, int $y, int $z, int $block, bool $overwrite = true): void
 	{
-		$this->changes->addBlock($x, $y, $z, $this->origin->getBlockAt($x, $y, $z));
+		$this->changes->addBlock($x, $y, $z, $this->origin->getBlockAt($x, $y, $z), $overwrite);
 
 		//This currently blocks tiles being set before changing the block properly
 		if (isset($this->tiles[World::blockHash($x, $y, $z)])) {
@@ -186,16 +187,17 @@ class EditTaskHandler
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
-	 * @param int $ox x of block to be copied
-	 * @param int $oy y of block to be copied
-	 * @param int $oz z of block to be copied
+	 * @param int  $x
+	 * @param int  $y
+	 * @param int  $z
+	 * @param int  $ox x of block to be copied
+	 * @param int  $oy y of block to be copied
+	 * @param int  $oz z of block to be copied
+	 * @param bool $overwrite
 	 */
-	public function copyBlock(int $x, int $y, int $z, int $ox, int $oy, int $oz): void
+	public function copyBlock(int $x, int $y, int $z, int $ox, int $oy, int $oz, bool $overwrite = true): void
 	{
-		$this->changeBlock($x, $y, $z, $this->origin->getBlockAt($ox, $oy, $oz));
+		$this->changeBlock($x, $y, $z, $this->origin->getBlockAt($ox, $oy, $oz), $overwrite);
 
 		//This currently blocks tiles being set before changing the block properly
 		if (isset($this->tiles[World::blockHash($ox, $oy, $oz)])) {

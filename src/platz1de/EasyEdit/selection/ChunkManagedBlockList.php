@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\selection;
 use BadMethodCallException;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\task\ReferencedChunkManager;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\SafeSubChunkExplorer;
@@ -132,6 +133,20 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 			//TODO: only create Chunks which are really needed
 			if (LoaderManager::isChunkUsed($chunk)) {
 				$this->getManager()->setChunk($x, $z, $chunk);
+			}
+		}
+	}
+
+	public function checkCachedData(): void
+	{
+		$collected = StorageModule::getCurrentCollected();
+		if (!$collected instanceof self) {
+			return;
+		}
+		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
+			if (isset($collected->getManager()->getChunks()[$hash])) {
+				World::getXZ($hash, $x, $z);
+				$this->getManager()->setChunk($x, $z, $collected->getManager()->getChunks()[$hash]);
 			}
 		}
 	}

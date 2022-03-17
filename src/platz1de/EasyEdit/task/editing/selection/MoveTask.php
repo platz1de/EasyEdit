@@ -60,9 +60,10 @@ class MoveTask extends SelectionEditTask
 	{
 		$selection = $this->current;
 		$direction = $selection->getDirection();
+		$handler->getChanges()->checkCachedData();
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->changeBlock($x, $y, $z, 0);
-			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z);
+			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
 		}, SelectionContext::full(), $this->getTotalSelection());
 	}
 }

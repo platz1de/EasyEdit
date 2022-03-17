@@ -153,8 +153,8 @@ class MovingCube extends Selection
 
 		$pieces = [];
 		//only 2x2 as we need 2 areas
-		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 2) {
-			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 2) {
+		for ($this->direction->getX() > 0 ? $x = $max->getX() >> 4 : $x = $min->getX() >> 4; $this->direction->getX() > 0 ? $x >= $min->getX() >> 4 : $x <= $max->getX() >> 4; $this->direction->getX() > 0 ? $x -= 2 : $x += 2) {
+			for ($this->direction->getZ() > 0 ? $z = $max->getZ() >> 4 : $z = $min->getZ() >> 4; $this->direction->getZ() > 0 ? $z >= $min->getZ() >> 4 : $z <= $max->getZ() >> 4; $this->direction->getZ() > 0 ? $z -= 2 : $z += 2) {
 				$pieces[] = new MovingCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), true);
 			}
 		}

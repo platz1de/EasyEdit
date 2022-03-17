@@ -79,4 +79,6 @@ abstract class BlockListSelection extends Selection
 			$this->addTile($tile);
 		}
 	}
+
+	public function checkCachedData(): void { }
 }

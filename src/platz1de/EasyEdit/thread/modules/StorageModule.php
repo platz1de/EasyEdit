@@ -141,4 +141,12 @@ class StorageModule
 	{
 		return count(self::$storage);
 	}
+
+	/**
+	 * @return BlockListSelection|null
+	 */
+	public static function getCurrentCollected(): ?BlockListSelection
+	{
+		return self::$collected;
+	}
 }
