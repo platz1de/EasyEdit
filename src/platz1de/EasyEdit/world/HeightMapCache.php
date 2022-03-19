@@ -77,7 +77,7 @@ class HeightMapCache
 			$search++;
 		}
 		$depth = $search - $y + 1;
-		return $depth > 0 ? $depth : 0;
+		return max($depth, 0);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class HeightMapCache
 			$search--;
 		}
 		$depth = $y - $search + 1;
-		return $depth > 0 ? $depth : 0;
+		return max($depth, 0);
 	}
 
 	/**
@@ -123,7 +123,7 @@ class HeightMapCache
 			$search++;
 		}
 		$depth = $search - $y;
-		return $depth > 0 ? $depth : 0;
+		return max($depth, 0);
 	}
 
 	/**
@@ -140,7 +140,7 @@ class HeightMapCache
 			$search--;
 		}
 		$depth = $y - $search;
-		return $depth > 0 ? $depth : 0;
+		return max($depth, 0);
 	}
 
 	/**
