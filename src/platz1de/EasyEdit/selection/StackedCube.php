@@ -173,9 +173,7 @@ class StackedCube extends Selection
 		//only 2x2 as we need 2 areas
 		for ($x = $pos1->getX() >> 4; $x <= $pos2->getX() >> 4; $x += 2) {
 			for ($z = $pos1->getZ() >> 4; $z <= $pos2->getZ() >> 4; $z += 2) {
-				if ($this->direction->getY() !== 0) { //y-Axis does not need additional splitting
-					$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($z << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $max->getZ())), true);
-				} elseif ($hasEmpty) {
+				if ($hasEmpty) {
 					$xSize = $pos2->getX() - $pos1->getX() + 1;
 					$zSize = $pos2->getZ() - $pos1->getZ() + 1;
 					for ($ox = 0; abs($ox) <= abs($this->direction->getX()); $this->direction->getX() > 0 ? $ox++ : $ox--) {
@@ -186,13 +184,15 @@ class StackedCube extends Selection
 							$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()), $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()), $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()) + $ox * $xSize, $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ()) + $oz * $zSize), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()) + $ox * $xSize, $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ()) + $oz * $zSize), true, true);
 						}
 					}
-				} else if ($this->direction->getX() !== 0) {
-					for ($ox = $min->getX() >> 4; $ox <= $max->getX() >> 4; $ox += 2) {
-						$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($ox << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($z << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($ox + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $max->getZ())), true);
-					}
 				} else {
-					for ($oz = $min->getZ() >> 4; $oz <= $max->getZ() >> 4; $oz += 2) {
-						$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($oz << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($oz + 1) << 4) + 15 - $offset->getZ(), $max->getZ())), true);
+					$splitMinX = $this->direction->getX() === 0 ? $x : $min->getX() >> 4;
+					$splitMaxX = $this->direction->getX() === 0 ? $x + 1 : $max->getX() >> 4;
+					$splitMinZ = $this->direction->getZ() === 0 ? $z : $min->getZ() >> 4;
+					$splitMaxZ = $this->direction->getZ() === 0 ? $z + 1 : $max->getZ() >> 4;
+					for ($ox = $splitMinX; $ox <= $splitMaxX; $ox += 2) {
+						for ($oz = $splitMinZ; $oz <= $splitMaxZ; $oz += 2) {
+							$pieces[] = new StackedCube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($ox << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($oz << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($ox + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($oz + 1) << 4) + 15 - $offset->getZ(), $max->getZ())), true);
+						}
 					}
 				}
 			}
