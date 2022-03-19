@@ -113,37 +113,16 @@ class PathfindingTask extends EditTask
 				return;
 			}
 			if ($handler->getBlock($current->x, $current->y, $current->z) === 0) {
-				if ($this->allowDiagonal) {
-					for ($xi = -1; $xi <= 1; $xi++) {
-						for ($yi = -1; $yi <= 1; $yi++) {
-							for ($zi = -1; $zi <= 1; $zi++) {
-								if ($xi === 0 && $yi === 0 && $zi === 0) {
-									continue;
-								}
-								$hash = World::blockHash($x = $current->x + $xi, $y = $current->y + $yi, $z = $current->z + $zi);
-								if ($y < World::Y_MIN || $y >= World::Y_MAX || isset($closed[$hash])) {
-									continue;
-								}
-								if (isset($collection[$hash])) {
-									$collection[$hash]->checkG($current);
-									continue;
-								}
-								$open->insert($collection[$hash] = new Node($x, $y, $z, $current, $endX, $endY, $endZ));
-							}
-						}
+				foreach ($current->getSides($this->allowDiagonal) as $side) {
+					$hash = World::blockHash($side->x, $side->y, $side->z);
+					if ($side->y < World::Y_MIN || $side->y >= World::Y_MAX || isset($closed[$hash])) {
+						continue;
 					}
-				} else {
-					foreach ((new Vector3($current->x, $current->y, $current->z))->sides() as $side) {
-						$hash = World::blockHash($x = $side->getFloorX(), $y = $side->getFloorY(), $z = $side->getFloorZ());
-						if ($y < World::Y_MIN || $y >= World::Y_MAX || isset($closed[$hash])) {
-							continue;
-						}
-						if (isset($collection[$hash])) {
-							$collection[$hash]->checkG($current);
-							continue;
-						}
-						$open->insert($collection[$hash] = new Node($x, $y, $z, $current, $endX, $endY, $endZ));
+					if (isset($collection[$hash])) {
+						$collection[$hash]->checkG($current);
+						continue;
 					}
+					$open->insert($collection[$hash] = new Node($side->x, $side->y, $side->z, $current, $endX, $endY, $endZ));
 				}
 			}
 		}
