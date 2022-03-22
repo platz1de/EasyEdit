@@ -9,6 +9,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\ShulkerBox;
+use pocketmine\block\utils\SkullType;
 use pocketmine\nbt\tag\CompoundTag;
 use Throwable;
 use UnexpectedValueException;
@@ -87,6 +88,13 @@ class BlockStateConvertor
 						default => throw new UnexpectedValueException("Unknown facing $data")
 					});
 			}
+			foreach ($tileDataPalette[TileConvertor::DATA_SKULL_TYPE] ?? [] as $state => $data) {
+				self::$compoundMapping[$state] = CompoundTag::create()
+					->setByte("SkullType", SkullType::getAll()[mb_strtoupper($data)]->getMagicNumber());
+			}
+			foreach ($tileDataPalette[TileConvertor::DATA_SKULL_ROTATION] ?? [] as $state => $data) {
+				self::$compoundMapping[$state]?->setByte("Rot", (int) $data);
+			}
 
 			/** @var array<string, array<string, array<string, string>>> $javaTilePalette */
 			$javaTilePalette = MixedUtils::getJsonData($javaTileSource, 4);
@@ -138,6 +146,19 @@ class BlockStateConvertor
 					}
 				}
 			}
+			foreach ($javaTilePalette[TileConvertor::DATA_SKULL_TYPE] ?? [] as $state => $data) {
+				self::$compoundTagKeys[$state] = ["SkullType", "Rot"];
+				foreach ($data as $type => $result) {
+					if (isset($javaTilePalette[TileConvertor::DATA_SKULL_ROTATION][$result])) {
+						/** @var int $rotation */
+						foreach ($javaTilePalette[TileConvertor::DATA_SKULL_ROTATION][$result] as $rotation => $rotated) {
+							self::$reverseCompoundMapping[$state][((string) SkullType::getAll()[mb_strtoupper($type)]->getMagicNumber()) . ";" . ((string) $rotation)] = $rotated;
+						}
+					} else {
+						self::$reverseCompoundMapping[$state][((string) SkullType::getAll()[mb_strtoupper($type)]->getMagicNumber()) . ";0"] = $result;
+					}
+				}
+			}
 			self::$available = true;
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse state data, Sponge schematic conversion is not available");
@@ -181,11 +202,13 @@ class BlockStateConvertor
 		$values = [];
 		foreach (self::$compoundTagKeys[$state] as $key) {
 			$value = $tag->getTag($key);
-			if ($value === null) {
-				return $state;
+			if ($value !== null) {
+				$values[] = (string) $value->getValue();
+				$tag->removeTag($key);
 			}
-			$values[] = (string) $value->getValue();
-			$tag->removeTag($key);
+		}
+		if ($values === []) {
+			return $state;
 		}
 		if (!isset(self::$reverseCompoundMapping[$state][implode(";", $values)])) {
 			EditThread::getInstance()->debug("Unknown state $state with magical values " . implode(";", $values));

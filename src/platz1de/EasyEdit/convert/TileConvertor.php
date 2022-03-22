@@ -12,6 +12,7 @@ use pocketmine\block\tile\Container;
 use pocketmine\block\tile\Hopper;
 use pocketmine\block\tile\ShulkerBox;
 use pocketmine\block\tile\Sign;
+use pocketmine\block\tile\Skull;
 use pocketmine\block\tile\Tile;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\block\VanillaBlocks;
@@ -25,6 +26,8 @@ class TileConvertor
 {
 	public const DATA_CHEST_RELATION = "chest_relation";
 	public const DATA_SHULKER_BOX_FACING = "shulker_box_facing";
+	public const DATA_SKULL_TYPE = "skull_type";
+	public const DATA_SKULL_ROTATION = "skull_rotation";
 
 	public const TILE_CHEST = "minecraft:chest";
 	public const TILE_DISPENSER = "minecraft:dispenser";
@@ -32,6 +35,7 @@ class TileConvertor
 	public const TILE_HOPPER = "minecraft:hopper";
 	public const TILE_SHULKER_BOX = "minecraft:shulker_box";
 	public const TILE_SIGN = "minecraft:sign";
+	public const TILE_SKULL = "minecraft:skull";
 	public const TILE_TRAPPED_CHEST = "minecraft:trapped_chest";
 
 	/**
@@ -64,7 +68,6 @@ class TileConvertor
 	 * Enchanting Table
 	 * End Portal
 	 * Ender Chest
-	 * Mob Head
 	 * Command Block
 	 * End Gateway
 	 * Structure Block
@@ -151,6 +154,8 @@ class TileConvertor
 				case self::TILE_HOPPER:
 					self::convertItemsBedrock($tile);
 					break;
+				case self::TILE_SKULL:
+					break;
 				default:
 					EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
 					return;
@@ -201,6 +206,8 @@ class TileConvertor
 			case self::TILE_HOPPER:
 				self::convertItemsJava($tile);
 				break;
+			case self::TILE_SKULL:
+				break;
 			default:
 				EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
 				return false;
@@ -221,6 +228,7 @@ class TileConvertor
 			TileFactory::getInstance()->getSaveId(Hopper::class) => self::TILE_HOPPER,
 			TileFactory::getInstance()->getSaveId(ShulkerBox::class) => self::TILE_SHULKER_BOX,
 			TileFactory::getInstance()->getSaveId(Sign::class) => self::TILE_SIGN,
+			TileFactory::getInstance()->getSaveId(Skull::class) => self::TILE_SKULL,
 			default => $tile //just attempt it
 		};
 	}
@@ -246,7 +254,7 @@ class TileConvertor
 				continue; //probably already bedrock format, or at least not convertable
 			}
 			try {
-				$i = self::$itemTranslationBedrock[str_replace([" ", "minecraft:"], ["_", ""], trim($item))];
+				$i = self::$itemTranslationBedrock[str_replace([" ", "minecraft:"], ["_", ""], trim($javaId))];
 			} catch (Throwable) {
 				EditThread::getInstance()->debug("Couldn't convert item " . $javaId);
 				continue;
