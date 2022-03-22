@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
-use platz1de\EasyEdit\schematic\BlockConvertor;
+use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ResourceData extends OutputData
@@ -20,11 +20,11 @@ class ResourceData extends OutputData
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString(BlockConvertor::getResourceData());
+		$stream->putString(BlockStateConvertor::getResourceData());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		BlockConvertor::loadResourceData($stream->getString());
+		BlockStateConvertor::loadResourceData($stream->getString());
 	}
 }

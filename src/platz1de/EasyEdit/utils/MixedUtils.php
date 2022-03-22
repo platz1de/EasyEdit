@@ -2,7 +2,10 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use JsonException;
 use pocketmine\Server;
+use pocketmine\utils\Internet;
+use pocketmine\utils\InternetException;
 
 class MixedUtils
 {
@@ -47,5 +50,33 @@ class MixedUtils
 		$previous = Server::getInstance()->getWorldManager()->getAutoSaveInterval();
 		Server::getInstance()->getWorldManager()->setAutoSaveInterval($cooldown);
 		return $previous;
+	}
+
+	/**
+	 * @param string $url
+	 * @param int    $depth
+	 * @return array<string, mixed>
+	 */
+	public static function getJsonData(string $url, int $depth): array
+	{
+		$data = Internet::getURL($url, 10, [], $err);
+		if ($data === null) {
+			if (isset($err)) {
+				throw new InternetException($err);
+			}
+			throw new InternetException("Loaded Data is empty");
+		}
+
+		try {
+			$parsed = json_decode($data->getBody(), true, max(1, $depth), JSON_THROW_ON_ERROR);
+		} catch (JsonException $e) {
+			throw new InternetException("Invalid JSON: " . $e->getMessage());
+		}
+
+		if (!is_array($parsed)) {
+			throw new InternetException("Loaded Data does not represent an array");
+		}
+
+		return $parsed;
 	}
 }

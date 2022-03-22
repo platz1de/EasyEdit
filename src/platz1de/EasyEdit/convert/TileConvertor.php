@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\schematic;
+namespace platz1de\EasyEdit\convert;
 
 use JsonException;
 use platz1de\EasyEdit\selection\BlockListSelection;
@@ -14,6 +14,9 @@ use pocketmine\block\tile\ShulkerBox;
 use pocketmine\block\tile\Sign;
 use pocketmine\block\tile\Tile;
 use pocketmine\block\tile\TileFactory;
+use pocketmine\block\VanillaBlocks;
+use pocketmine\item\LegacyStringToItemParser;
+use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use Throwable;
 use UnexpectedValueException;
@@ -30,6 +33,15 @@ class TileConvertor
 	public const TILE_SHULKER_BOX = "minecraft:shulker_box";
 	public const TILE_SIGN = "minecraft:sign";
 	public const TILE_TRAPPED_CHEST = "minecraft:trapped_chest";
+
+	/**
+	 * @var array<string, array{int, int}>
+	 */
+	private static array $itemTranslationBedrock;
+	/**
+	 * @var array<int, array<int, string>>
+	 */
+	private static array $itemTranslationJava;
 
 	/**
 	 * TODO: Add all of the tiles underneath
@@ -69,6 +81,27 @@ class TileConvertor
 	 *
 	 * Item Frame (entity in java)
 	 */
+
+	public static function load(): void
+	{
+		/** @var string $blockId */
+		foreach (VanillaBlocks::getAll() as $blockId => $block) {
+			$item = $block->asItem();
+			self::$itemTranslationBedrock[$blockId] = [$item->getId(), $item->getMeta()];
+			self::$itemTranslationJava[$item->getId()][$item->getMeta()] = "minecraft:" . mb_strtolower($blockId);
+		}
+		/** @var string $itemId */
+		foreach (VanillaItems::getAll() as $itemId => $item) {
+			self::$itemTranslationBedrock[$itemId] = [$item->getId(), $item->getMeta()];
+			self::$itemTranslationJava[$item->getId()][$item->getMeta()] = "minecraft:" . mb_strtolower($itemId);
+		}
+		foreach (LegacyStringToItemParser::getInstance()->getMappings() as $key => $id) {
+			if (!is_numeric($key) && !isset(self::$itemTranslationJava[$id])) {
+				self::$itemTranslationBedrock[mb_strtoupper($key)] = [$id, 0];
+				self::$itemTranslationJava[$id][0] = "minecraft:" . mb_strtolower($key);
+			}
+		}
+	}
 
 	/**
 	 * @param CompoundTag        $tile
@@ -212,8 +245,9 @@ class TileConvertor
 			} catch (Throwable) {
 				continue; //probably already bedrock format, or at least not convertable
 			}
-			$i = BlockConvertor::getTranslatedItemBedrock($javaId);
-			if ($i === null) {
+			try {
+				$i = self::$itemTranslationBedrock[str_replace([" ", "minecraft:"], ["_", ""], trim($item))];
+			} catch (Throwable) {
 				EditThread::getInstance()->debug("Couldn't convert item " . $javaId);
 				continue;
 			}
@@ -236,8 +270,9 @@ class TileConvertor
 			if (!$item instanceof CompoundTag) {
 				throw new UnexpectedValueException("Items need to be represented as compound tags");
 			}
-			$i = BlockConvertor::getTranslatedItemJava($item->getShort("id"), $item->getShort("Damage"));
-			if ($i === null) {
+			try {
+				$i = self::$itemTranslationJava[$item->getShort("id")][$item->getShort("Damage")];
+			} catch (Throwable) {
 				EditThread::getInstance()->debug("Couldn't convert item " . $item->getShort("id") . ":" . $item->getShort("Damage"));
 				continue;
 			}

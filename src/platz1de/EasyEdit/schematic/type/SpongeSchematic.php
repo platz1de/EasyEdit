@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\schematic\type;
 
-use platz1de\EasyEdit\schematic\BlockConvertor;
-use platz1de\EasyEdit\schematic\TileConvertor;
+use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
@@ -11,6 +11,7 @@ use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\utils\BinaryStream;
+use pocketmine\utils\InternetException;
 use pocketmine\world\World;
 use Throwable;
 use UnexpectedValueException;
@@ -36,6 +37,9 @@ class SpongeSchematic extends SchematicType
 
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
+		if (!BlockStateConvertor::isAvailable()) {
+			throw new InternetException("Couldn't load needed data files");
+		}
 		$version = $nbt->getInt(self::FORMAT_VERSION, 1);
 		$offset = Vector3::zero();
 		$metaData = $nbt->getCompoundTag(self::METADATA);
@@ -84,8 +88,8 @@ class SpongeSchematic extends SchematicType
 		$palette = [];
 		$tilePalette = [];
 		foreach ($paletteData->getValue() as $name => $id) {
-			$palette[$id->getValue()] = BlockConvertor::getFromState($name);
-			$tilePalette[$id->getValue()] = BlockConvertor::getTileDataFromState($name);
+			$palette[$id->getValue()] = BlockStateConvertor::getFromState($name);
+			$tilePalette[$id->getValue()] = BlockStateConvertor::getTileDataFromState($name);
 		}
 
 		$tileData = [];
@@ -132,6 +136,9 @@ class SpongeSchematic extends SchematicType
 
 	public static function writeFromSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
+		if (!BlockStateConvertor::isAvailable()) {
+			throw new InternetException("Couldn't load needed data files");
+		}
 		$nbt->setInt(self::FORMAT_VERSION, 2);
 		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
@@ -167,14 +174,14 @@ class SpongeSchematic extends SchematicType
 					$block = $target->getIterator()->getBlockAt($x, $y, $z);
 
 					if (!isset($translation[$block])) {
-						$translation[$block] = BlockConvertor::getState($block);
+						$translation[$block] = BlockStateConvertor::getState($block);
 					}
 					$state = $translation[$block];
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {
 						$tile = $tileData[World::blockHash($x, $y, $z)];
 						if (TileConvertor::toJava($block, $tile)) {
-							$state = BlockConvertor::processTileData($state, $tile);
+							$state = BlockStateConvertor::processTileData($state, $tile);
 							$id = $tile->getString(Tile::TAG_ID);
 							$x = $tile->getInt(Tile::TAG_X);
 							$y = $tile->getInt(Tile::TAG_Y);

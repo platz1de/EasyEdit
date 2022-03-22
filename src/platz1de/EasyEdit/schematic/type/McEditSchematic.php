@@ -2,11 +2,12 @@
 
 namespace platz1de\EasyEdit\schematic\type;
 
-use platz1de\EasyEdit\schematic\BlockConvertor;
+use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\utils\InternetException;
 use pocketmine\world\World;
 
 class McEditSchematic extends SchematicType
@@ -19,6 +20,9 @@ class McEditSchematic extends SchematicType
 
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
+		if (!LegacyBlockIdConvertor::isAvailable()) {
+			throw new InternetException("Couldn't load needed data files");
+		}
 		$xSize = $nbt->getShort(self::TAG_WIDTH);
 		$ySize = $nbt->getShort(self::TAG_HEIGHT);
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
@@ -40,7 +44,7 @@ class McEditSchematic extends SchematicType
 					$id = ord($blockIdData[$i]);
 					$meta = ord($blockMetaData[$i]);
 
-					$target->addBlock($x, $y, $z, BlockConvertor::convertFromJava(($id << Block::INTERNAL_METADATA_BITS) | $meta));
+					$target->addBlock($x, $y, $z, LegacyBlockIdConvertor::convertFromJava(($id << Block::INTERNAL_METADATA_BITS) | $meta));
 					$i++;
 				}
 			}

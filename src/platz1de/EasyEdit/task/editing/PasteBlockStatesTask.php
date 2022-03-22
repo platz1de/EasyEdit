@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
+use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -62,7 +62,7 @@ class PasteBlockStatesTask extends EditTask
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
-		$states = BlockConvertor::getAllKnownStates();
+		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
 		$loadedChunks = [];
 		$x = $this->start->getFloorX();

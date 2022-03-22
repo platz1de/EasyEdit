@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
@@ -16,6 +16,7 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
+use pocketmine\utils\InternetException;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -58,6 +59,9 @@ class DynamicStoredFlipTask extends ExecutableTask
 
 	public function execute(): void
 	{
+		if (!BlockRotationManipulator::isAvailable()) {
+			throw new InternetException("Couldn't load needed data files");
+		}
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		$flipped = new DynamicBlockListSelection($selection->getPlayer());
@@ -71,7 +75,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
-					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockConvertor::flip(Axis::X, $block));
+					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flip(Axis::X, $block));
 				}, SelectionContext::full(), $selection);
 				foreach ($selection->getTiles() as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::X, $tile, $selection->getPos2()->getFloorX()));
@@ -83,7 +87,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
-					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockConvertor::flip(Axis::Y, $block));
+					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flip(Axis::Y, $block));
 				}, SelectionContext::full(), $selection);
 				foreach ($selection->getTiles() as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Y, $tile, $selection->getPos2()->getFloorY()));
@@ -95,7 +99,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 					Selection::processBlock($block);
-					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockConvertor::flip(Axis::Z, $block));
+					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flip(Axis::Z, $block));
 				}, SelectionContext::full(), $selection);
 				foreach ($selection->getTiles() as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Z, $tile, $selection->getPos2()->getFloorZ()));

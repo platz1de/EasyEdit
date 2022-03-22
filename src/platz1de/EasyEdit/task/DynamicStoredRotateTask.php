@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
@@ -15,6 +15,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Vector3;
+use pocketmine\utils\InternetException;
 use pocketmine\world\World;
 
 class DynamicStoredRotateTask extends ExecutableTask
@@ -52,6 +53,9 @@ class DynamicStoredRotateTask extends ExecutableTask
 
 	public function execute(): void
 	{
+		if (!BlockRotationManipulator::isAvailable()) {
+			throw new InternetException("Couldn't load needed data files");
+		}
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		$rotated = new DynamicBlockListSelection($selection->getPlayer());
@@ -63,7 +67,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $rotated): void {
 			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
 			Selection::processBlock($block);
-			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockConvertor::rotate($block));
+			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockRotationManipulator::rotate($block));
 		}, SelectionContext::full(), $selection);
 		foreach ($selection->getTiles() as $tile) {
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));

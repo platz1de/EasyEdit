@@ -2,9 +2,12 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\convert\BlockRotationManipulator;
+use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
+use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
-use platz1de\EasyEdit\schematic\BlockConvertor;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\utils\AssumptionFailedError;
@@ -244,7 +247,10 @@ class ConfigManager
 	public static function distributeData(): void
 	{
 		HeightMapCache::setIgnore(self::$terrainIgnored);
-		BlockConvertor::load(self::$bedrockConversionDataSource, self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$rotationDataSource, self::$flipDataSource, self::$tileDataStatesSource, self::$javaTileStatesSource);
+		LegacyBlockIdConvertor::load(self::$bedrockConversionDataSource);
+		BlockStateConvertor::load(self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$tileDataStatesSource, self::$javaTileStatesSource);
+		BlockRotationManipulator::load(self::$rotationDataSource, self::$flipDataSource);
+		TileConvertor::load();
 	}
 
 	private static function loadConfig(): Config

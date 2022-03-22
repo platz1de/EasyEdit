@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\Messages;
-use platz1de\EasyEdit\schematic\BlockConvertor;
-use platz1de\EasyEdit\schematic\TileConvertor;
 use pocketmine\block\Block;
 use pocketmine\block\tile\Tile;
 
@@ -16,11 +16,11 @@ class BlockInfoTool
 	 */
 	public static function display(string $player, Block $block): void
 	{
-		$state = BlockConvertor::getState($block->getFullId());
-		if(($t = $block->getPosition()->getWorld()->getTile($block->getPosition())) instanceof Tile) {
+		$state = BlockStateConvertor::getState($block->getFullId());
+		if (($t = $block->getPosition()->getWorld()->getTile($block->getPosition())) instanceof Tile) {
 			$tile = $t->saveNBT();
 			if (TileConvertor::toJava($block->getFullId(), $tile)) {
-				$state = BlockConvertor::processTileData($state, $tile);
+				$state = BlockStateConvertor::processTileData($state, $tile);
 			}
 		}
 		Messages::send($player, "block-info", [
