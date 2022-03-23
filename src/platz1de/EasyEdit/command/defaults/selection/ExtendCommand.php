@@ -27,19 +27,19 @@ class ExtendCommand extends EasyEditCommand
 		$pos2 = $selection->getPos2();
 
 		if (($args[0] ?? "") === "vert" || ($args[0] ?? "") === "vertical") {
-			$pos1 = new Vector3($pos1->getX(), World::Y_MIN, $pos1->getZ());
-			$pos2 = new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ());
-		} else {
-			$offset = ArgumentParser::parseDirectionVector($player, $args[0] ?? null, $args[1] ?? null, $count);
-			if ($count < 0 xor $offset->abs()->equals($offset)) {
-				$pos2 = $pos2->addVector($offset);
-			} else {
-				$pos1 = $pos1->addVector($offset);
-			}
+			$selection->setPos1(new Vector3($pos1->getX(), World::Y_MIN, $pos1->getZ()));
+			$selection->setPos2(new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ()));
+			return;
 		}
 
-		$selection->setPos1($pos1);
-		$selection->setPos2($pos2);
+		$offset = ArgumentParser::parseDirectionVector($player, $args[0] ?? null, $args[1] ?? null, $count);
+		if ($count < 0 xor $offset->abs()->equals($offset)) {
+			$selection->setPos1($pos1);
+			$selection->setPos2($pos2->addVector($offset));
+		} else {
+			$selection->setPos2($pos2);
+			$selection->setPos1($pos1->addVector($offset));
+		}
 	}
 
 	public function getCompactHelp(): string
