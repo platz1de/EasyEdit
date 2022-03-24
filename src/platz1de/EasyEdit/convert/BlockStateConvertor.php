@@ -155,6 +155,7 @@ class BlockStateConvertor
 							self::$reverseCompoundMapping[$state][((string) SkullType::getAll()[mb_strtoupper($type)]->getMagicNumber()) . ";" . ((string) $rotation)] = $rotated;
 						}
 					} else {
+						self::$reverseCompoundMapping[$state][((string) SkullType::getAll()[mb_strtoupper($type)]->getMagicNumber())] = $result;
 						self::$reverseCompoundMapping[$state][((string) SkullType::getAll()[mb_strtoupper($type)]->getMagicNumber()) . ";0"] = $result;
 					}
 				}
