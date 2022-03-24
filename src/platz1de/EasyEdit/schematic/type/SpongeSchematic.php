@@ -92,29 +92,10 @@ class SpongeSchematic extends SchematicType
 			$tilePalette[$id->getValue()] = BlockStateConvertor::getTileDataFromState($name);
 		}
 
-		$tileData = [];
 		if ($tiles !== null && $tiles->getTagType() === NBT::TAG_Compound) {
-			try {
-				/** @var CompoundTag $tile */
-				foreach ($tiles as $tile) {
-					$id = $tile->getString(self::ENTITY_ID);
-					$pos = $tile->getIntArray(self::ENTITY_POSITION);
-					$position = new Vector3($pos[0], $pos[1], $pos[2]);
-					if ($version === 3) {
-						$data = $tile->getCompoundTag(self::ENTITY_EXTRA_DATA) ?? new CompoundTag();
-					} else {
-						$tile->removeTag(self::ENTITY_ID, self::ENTITY_POSITION);
-						$data = $tile;
-					}
-					$data->setString(Tile::TAG_ID, $id);
-					$data->setInt(Tile::TAG_X, $position->getFloorX());
-					$data->setInt(Tile::TAG_Y, $position->getFloorY());
-					$data->setInt(Tile::TAG_Z, $position->getFloorZ());
-					$tileData[World::blockHash($position->getFloorX(), $position->getFloorY(), $position->getFloorZ())] = $data;
-				}
-			} catch (Throwable $e) {
-				throw new UnexpectedValueException("Schematic contains malformed tiles: " . $e->getMessage());
-			}
+			/** @var CompoundTag[] $t */
+			$t = $tiles->getValue();
+			$tileData = self::loadTileData($t, $version);
 		}
 
 		$blockData = new BinaryStream($blockDataRaw);
@@ -179,20 +160,7 @@ class SpongeSchematic extends SchematicType
 					$state = $translation[$block];
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {
-						$tile = $tileData[World::blockHash($x, $y, $z)];
-						if (TileConvertor::toJava($block, $tile)) {
-							$state = BlockStateConvertor::processTileData($state, $tile);
-							$id = $tile->getString(Tile::TAG_ID);
-							$x = $tile->getInt(Tile::TAG_X);
-							$y = $tile->getInt(Tile::TAG_Y);
-							$z = $tile->getInt(Tile::TAG_Z);
-							$tile->removeTag(Tile::TAG_ID, Tile::TAG_X, Tile::TAG_Y, Tile::TAG_Z);
-							//$data = new CompoundTag();
-							//data->setTag(self::ENTITY_EXTRA_DATA, $tile);
-							$tile->setString(self::ENTITY_ID, $id);
-							$tile->setIntArray(self::ENTITY_POSITION, [$x, $y, $z]);
-							$tiles[] = $tile; //filter
-						}
+						self::writeTileData($tileData[World::blockHash($x, $y, $z)], $block, $tiles, $state);
 					}
 
 					if (!isset($palette[$state])) {
@@ -222,5 +190,59 @@ class SpongeSchematic extends SchematicType
 		$nbt->setTag(self::BLOCK_ENTITY_DATA, new ListTag($tiles, NBT::TAG_Compound));
 
 		//TODO: entities
+	}
+
+	/**
+	 * @param CompoundTag[] $tiles
+	 * @return CompoundTag[]
+	 */
+	private static function loadTileData(array $tiles, int $version): array
+	{
+		$tileData = [];
+		try {
+			foreach ($tiles as $tile) {
+				$id = $tile->getString(self::ENTITY_ID);
+				$pos = $tile->getIntArray(self::ENTITY_POSITION);
+				$position = new Vector3($pos[0], $pos[1], $pos[2]);
+				if ($version === 3) {
+					$data = $tile->getCompoundTag(self::ENTITY_EXTRA_DATA) ?? new CompoundTag();
+				} else {
+					$tile->removeTag(self::ENTITY_ID, self::ENTITY_POSITION);
+					$data = $tile;
+				}
+				$data->setString(Tile::TAG_ID, $id);
+				$data->setInt(Tile::TAG_X, $position->getFloorX());
+				$data->setInt(Tile::TAG_Y, $position->getFloorY());
+				$data->setInt(Tile::TAG_Z, $position->getFloorZ());
+				$tileData[World::blockHash($position->getFloorX(), $position->getFloorY(), $position->getFloorZ())] = $data;
+			}
+		} catch (Throwable $e) {
+			throw new UnexpectedValueException("Schematic contains malformed tiles: " . $e->getMessage());
+		}
+		return $tileData;
+	}
+
+	/**
+	 * @param CompoundTag $tile
+	 * @param int         $blockId
+	 * @param array       $tiles
+	 * @param string      $state
+	 * @return void
+	 */
+	private static function writeTileData(CompoundTag $tile, int $blockId, array &$tiles, string &$state): void
+	{
+		if (TileConvertor::toJava($blockId, $tile)) {
+			$state = BlockStateConvertor::processTileData($state, $tile);
+			$id = $tile->getString(Tile::TAG_ID);
+			$x = $tile->getInt(Tile::TAG_X);
+			$y = $tile->getInt(Tile::TAG_Y);
+			$z = $tile->getInt(Tile::TAG_Z);
+			$tile->removeTag(Tile::TAG_ID, Tile::TAG_X, Tile::TAG_Y, Tile::TAG_Z);
+			//$data = new CompoundTag();
+			//data->setTag(self::ENTITY_EXTRA_DATA, $tile);
+			$tile->setString(self::ENTITY_ID, $id);
+			$tile->setIntArray(self::ENTITY_POSITION, [$x, $y, $z]);
+			$tiles[] = $tile; //filter
+		}
 	}
 }
