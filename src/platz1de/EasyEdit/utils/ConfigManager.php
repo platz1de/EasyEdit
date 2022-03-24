@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
-use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
@@ -250,7 +250,7 @@ class ConfigManager
 		LegacyBlockIdConvertor::load(self::$bedrockConversionDataSource);
 		BlockStateConvertor::load(self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$tileDataStatesSource, self::$javaTileStatesSource);
 		BlockRotationManipulator::load(self::$rotationDataSource, self::$flipDataSource);
-		TileConvertor::load();
+		ItemConvertor::load();
 	}
 
 	private static function loadConfig(): Config
