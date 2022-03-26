@@ -16,6 +16,7 @@ use platz1de\EasyEdit\pattern\logic\relation\BelowPattern;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\logic\relation\EmbedPattern;
 use platz1de\EasyEdit\pattern\logic\relation\HorizontalPattern;
+use platz1de\EasyEdit\pattern\logic\relation\SolidPattern;
 use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
@@ -160,6 +161,7 @@ class PatternParser
 			"center", "middle" => CenterPattern::from($children),
 			"gravity" => GravityPattern::from($children),
 			"embed", "embeded" => EmbedPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
+			"solid" => SolidPattern::from($children),
 			default => throw new ParseError("Unknown Pattern " . $pattern, true)
 		};
 	}
