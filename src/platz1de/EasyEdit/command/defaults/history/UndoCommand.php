@@ -13,7 +13,7 @@ class UndoCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/undo", "Revert your latest change", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT], "//undo [count]\n//undo <target> [count]");
+		parent::__construct("/undo", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**
@@ -38,10 +38,5 @@ class UndoCommand extends EasyEditCommand
 		for ($i = 0; $i < $count; $i++) {
 			HistoryCache::undoStep($target, $player->getName());
 		}
-	}
-
-	public function getCompactHelp(): string
-	{
-		return "//undo [player] [count] - Revert your latest change";
 	}
 }

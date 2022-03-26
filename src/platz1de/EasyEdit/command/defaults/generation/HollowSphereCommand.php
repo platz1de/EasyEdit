@@ -18,7 +18,7 @@ class HollowSphereCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/hsphere", "Set a hollow sphere", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//hsphere <radius> <pattern> [thickness]", ["/hsph", "/hollowsphere"]);
+		parent::__construct("/hsphere", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], ["/hsph", "/hollowsphere"]);
 	}
 
 	/**

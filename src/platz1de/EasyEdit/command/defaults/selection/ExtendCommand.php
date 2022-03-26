@@ -13,7 +13,7 @@ class ExtendCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extend", "Extend the selected Area", [KnownPermissions::PERMISSION_SELECT], "//extend [direction] [count]\n//extend vertical", ["/expand"]);
+		parent::__construct("/extend", [KnownPermissions::PERMISSION_SELECT],  ["/expand"]);
 	}
 
 	/**
@@ -40,10 +40,5 @@ class ExtendCommand extends EasyEditCommand
 			$selection->setPos2($pos2);
 			$selection->setPos1($pos1->addVector($offset));
 		}
-	}
-
-	public function getCompactHelp(): string
-	{
-		return "//extend [count] - Extend the selected Area\n//extend vertical - Fully extend the selected Area vertically";
 	}
 }

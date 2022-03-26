@@ -12,7 +12,7 @@ class SecondPositionCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/pos2", "Set the second Position", [KnownPermissions::PERMISSION_SELECT], "//pos2 [x] [y] [z]", ["/2"]);
+		parent::__construct("/pos2", [KnownPermissions::PERMISSION_SELECT], ["/2"]);
 	}
 
 	/**

@@ -11,7 +11,7 @@ class SidesCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/sides", "Set sides of the selected area", "//sides [pattern]", ["/side"]);
+		parent::__construct("/sides", ["/side"]);
 	}
 
 	/**

@@ -12,7 +12,7 @@ class PasteCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/paste", "Paste the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/paste", [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

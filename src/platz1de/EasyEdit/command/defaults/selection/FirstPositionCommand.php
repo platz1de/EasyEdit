@@ -12,7 +12,7 @@ class FirstPositionCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/pos1", "Set the first Position", [KnownPermissions::PERMISSION_SELECT], "//pos1 [x] [y] [z]", ["/1"]);
+		parent::__construct("/pos1", [KnownPermissions::PERMISSION_SELECT], ["/1"]);
 	}
 
 	/**

@@ -3,13 +3,12 @@
 namespace platz1de\EasyEdit\command;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\Messages;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\lang\Translatable;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
-use UnexpectedValueException;
 
 abstract class EasyEditCommand extends Command implements PluginOwned
 {
@@ -19,18 +18,14 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	private array $permissions;
 
 	/**
-	 * @param string      $name
-	 * @param string      $description
-	 * @param string[]    $permissions
-	 * @param string|null $usage
-	 * @param string[]    $aliases
+	 * @param string   $name
+	 * @param string[] $permissions
+	 * @param string[] $aliases
 	 */
-	public function __construct(string $name, string $description, array $permissions, string $usage = null, array $aliases = [])
+	public function __construct(string $name, array $permissions, array $aliases = [])
 	{
-		if ($usage === null) {
-			$usage = "/" . $name;
-		}
-		parent::__construct($name, $description, $usage, $aliases);
+		$realName = str_starts_with($name, "/") ? substr($name, 1) : $name;
+		parent::__construct($name, Messages::translate("command-$realName-description"), $this->prepareUsage($realName), $aliases);
 		$this->permissions = $permissions;
 	}
 
@@ -69,13 +64,15 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	}
 
 	/**
+	 * @param string $commandName
 	 * @return string
 	 */
-	public function getCompactHelp(): string
+	public function prepareUsage(string $commandName): string
 	{
-		if ($this->getUsage() instanceof Translatable || $this->getDescription() instanceof Translatable) {
-			throw new UnexpectedValueException("EasyEdit commands should not use translatable usages or descriptions");
+		$usages = [];
+		foreach (explode(PHP_EOL, Messages::translate("command-$commandName-usage")) as $help) {
+			$usages[] = str_contains($help, "-") ? $help : $help . " - " . Messages::translate("command-$commandName-description");
 		}
-		return $this->getUsage() . " - " . $this->getDescription();
+		return implode(PHP_EOL, $usages);
 	}
 }

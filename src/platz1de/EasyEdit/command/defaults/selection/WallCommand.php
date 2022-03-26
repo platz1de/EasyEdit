@@ -11,7 +11,7 @@ class WallCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/walls", "Set walls of the selected area", "//walls [pattern]", ["/wall"]);
+		parent::__construct("/walls", ["/wall"]);
 	}
 
 	/**

@@ -15,7 +15,7 @@ class StackInsertCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/istack", "Stack the selected area without overwriting existing terrain", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//istack [direction] [count]");
+		parent::__construct("/istack", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

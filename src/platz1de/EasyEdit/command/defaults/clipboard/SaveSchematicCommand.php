@@ -13,7 +13,7 @@ class SaveSchematicCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/saveschematic", "Save your clipboard into a schematic", [KnownPermissions::PERMISSION_WRITEDISK, KnownPermissions::PERMISSION_CLIPBOARD], "//saveschematic <schematicName>", ["/save"]);
+		parent::__construct("/saveschematic", [KnownPermissions::PERMISSION_WRITEDISK, KnownPermissions::PERMISSION_CLIPBOARD], ["/save"]);
 	}
 
 	/**

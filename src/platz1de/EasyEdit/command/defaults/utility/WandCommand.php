@@ -11,7 +11,7 @@ class WandCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/wand", "Get a wooden axe", [KnownPermissions::PERMISSION_UTIL]);
+		parent::__construct("/wand", [KnownPermissions::PERMISSION_UTIL]);
 	}
 
 	/**

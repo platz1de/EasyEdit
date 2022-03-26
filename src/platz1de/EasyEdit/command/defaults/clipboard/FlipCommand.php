@@ -13,7 +13,7 @@ class FlipCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/flip", "Flip the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD], "//flip [direction]");
+		parent::__construct("/flip", [KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**

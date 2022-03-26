@@ -12,14 +12,12 @@ use pocketmine\player\Player;
 abstract class AliasedPatternCommand extends EasyEditCommand
 {
 	/**
-	 * @param string      $name
-	 * @param string      $description
-	 * @param string|null $usage
-	 * @param string[]    $aliases
+	 * @param string   $name
+	 * @param string[] $aliases
 	 */
-	public function __construct(string $name, string $description, string $usage = null, array $aliases = [])
+	public function __construct(string $name, array $aliases = [])
 	{
-		parent::__construct($name, $description, [KnownPermissions::PERMISSION_EDIT], $usage, $aliases);
+		parent::__construct($name, [KnownPermissions::PERMISSION_EDIT], $aliases);
 	}
 
 	/**

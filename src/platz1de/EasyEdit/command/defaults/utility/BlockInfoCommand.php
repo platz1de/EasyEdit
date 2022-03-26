@@ -13,7 +13,7 @@ class BlockInfoCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/blockinfo", "Get a blockinfo stick", [KnownPermissions::PERMISSION_UTIL], "//blockinfo", ["/bi"]);
+		parent::__construct("/blockinfo", [KnownPermissions::PERMISSION_UTIL], ["/bi"]);
 	}
 
 	/**

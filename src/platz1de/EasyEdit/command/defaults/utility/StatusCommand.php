@@ -14,7 +14,7 @@ class StatusCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/status", "Check on the EditThread", [KnownPermissions::PERMISSION_MANAGE]);
+		parent::__construct("/status", [KnownPermissions::PERMISSION_MANAGE]);
 	}
 
 	/**

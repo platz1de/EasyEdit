@@ -12,7 +12,7 @@ class RotateCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/rotate", "Rotate the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/rotate", [KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**

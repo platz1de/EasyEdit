@@ -13,7 +13,7 @@ class RedoCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/redo", "Revert your latest undo", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT], "//redo [count]\n//redo <target> [count]");
+		parent::__construct("/redo", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**
@@ -38,10 +38,5 @@ class RedoCommand extends EasyEditCommand
 		for ($i = 0; $i < $count; $i++) {
 			HistoryCache::redoStep($target, $player->getName());
 		}
-	}
-
-	public function getCompactHelp(): string
-	{
-		return "//redo [player] [count] - Revert your latest undo";
 	}
 }

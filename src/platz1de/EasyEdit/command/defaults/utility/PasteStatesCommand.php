@@ -11,7 +11,7 @@ class PasteStatesCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/pastestates", "Paste all known blockstates (debug command)", [KnownPermissions::PERMISSION_MANAGE, KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/pastestates", [KnownPermissions::PERMISSION_MANAGE, KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	public function process(Player $player, array $args): void

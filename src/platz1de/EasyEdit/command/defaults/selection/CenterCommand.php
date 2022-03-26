@@ -11,7 +11,7 @@ class CenterCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/center", "Set the center Blocks (1-8)", "//center [block]", ["/middle"]);
+		parent::__construct("/center", ["/middle"]);
 	}
 
 	/**

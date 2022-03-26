@@ -12,7 +12,7 @@ class ViewCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/view", "View the selected area", [KnownPermissions::PERMISSION_SELECT], "//view", ["/show"]);
+		parent::__construct("/view", [KnownPermissions::PERMISSION_SELECT], ["/show"]);
 	}
 
 	/**

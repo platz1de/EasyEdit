@@ -15,7 +15,7 @@ class StackCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/stack", "Stack the selected area", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//stack [direction] [count]");
+		parent::__construct("/stack", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

@@ -18,7 +18,7 @@ class ExtinguishCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extinguish", "Extinguish fire", [KnownPermissions::PERMISSION_EDIT], "//extinguish [radius]", ["/ext"]);
+		parent::__construct("/extinguish", [KnownPermissions::PERMISSION_EDIT],  ["/ext"]);
 	}
 
 	/**

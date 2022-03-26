@@ -1,4 +1,4 @@
-message-version: "2.0.3" #Please don't change this manually
+message-version: "2.0.5" #Please don't change this manually
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
@@ -58,3 +58,130 @@ block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "Set the first position"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "Set the second position"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "Extend the selected area"
+command-extend-usage:
+  - "//extend [direction] [count]"
+  - "//extend [count] - Extend the selected area into your looking direction"
+  - "//extend vertical - Fully extend the selected Area vertically"
+command-set-description: "Set blocks in the selected area"
+command-set-usage: "//set <pattern>"
+command-replace-description: "Replace blocks in the selected area"
+command-replace-usage: "//replace <block> <pattern>"
+command-naturalize-description: "Naturalize the selected area"
+command-naturalize-usage: "//naturalize [pattern] [pattern] [pattern]"
+command-smooth-description: "Smooth the selected area"
+command-smooth-usage: "//smooth"
+command-center-description: "Set the center blocks of the selected area"
+command-center-usage: "//center [pattern]"
+command-walls-description: "Set the walls of the selected area"
+command-walls-usage: "//walls [pattern]"
+command-sides-description: "Set the sides of the selected area"
+command-sides-usage: "//sides [pattern]"
+command-move-description: "Move the selected area"
+command-move-usage:
+  - "//move [direction] [count]"
+  - "//move [count] - Move the selected area into your looking direction"
+command-stack-description: "Stack the selected area"
+command-stack-usage:
+  - "//stack [direction] [count]"
+  - "//stack [count] - Look in the direction you want to stack to"
+command-istack-description: "Stack the selected area without overwriting existing terrain"
+command-istack-usage:
+  - "//istack [direction] [count]"
+  - "//istack [count] - Stack the selected area into your looking direction"
+command-count-description: "Count blocks in the selected area"
+command-count-usage:
+  - "//count"
+  - "//count [radius] - Count blocks in the area around you"
+command-extinguish-description: "Extinguish fire in the selected area"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [radius] - Extinguish fire in the area around you"
+command-view-description: "View the selected area"
+command-view-usage: "//view"
+
+
+command-undo-description: "Revert your latest change"
+command-undo-usage:
+  - "//undo [count]"
+  - "//undo <target> [count] - Revert the latest change of the target"
+command-redo-description: "Redo your latest change"
+command-redo-usage:
+  - "//redo [count]"
+  - "//redo <target> [count] - Redo the latest change of the target"
+
+
+command-copy-description: "Copy the selected area"
+command-copy-usage:
+  - "//copy - Copy relative to the player"
+  - "//copy center - Copy relative to center of the selection"
+command-cut-description: "Cut the selected area and copy it to your clipboard"
+command-cut-usage:
+  - "//cut - Cut relative to the player"
+  - "//cut center - Cut relative to center of the selection"
+command-paste-description: "Paste the clipboard"
+command-paste-usage: "//paste"
+command-insert-description: "Insert the clipboard"
+command-insert-usage: "//insert"
+command-rotate-description: "Rotate the clipboard"
+command-rotate-usage: "//rotate"
+command-flip-description: "Flip the clipboard, mirroring at copied position"
+command-flip-usage:
+  - "//flip [direction]"
+  - "//flip - Flip the clipboard into your looking direction"
+command-loadschematic-description: "Load a saved schematic from disk"
+command-loadschematic-usage: "//loadschematic <schematicName>"
+command-saveschematic-description: "Save your clipboard as a schematic to disk"
+command-saveschematic-usage: "//saveschematic <schematicName>"
+
+
+command-sphere-description: "Generate a sphere"
+command-sphere-usage: "//sphere <radius> <pattern>"
+command-hsphere-description: "Generate a hollow sphere"
+command-hsphere-usage: "//hsphere <radius> <pattern> [thickness]"
+command-cylinder-description: "Generate a cylinder"
+command-cylinder-usage: "//cylinder <radius> <height> <pattern>"
+command-hcylinder-description: "Generate a hollow cylinder"
+command-hcylinder-usage: "//hcylinder <radius> <height> <pattern> [thickness]"
+command-noise-description: "Generate using a simple noise function"
+command-noise-usage: "//noise"
+
+
+command-commands-description: "List all EasyEdit commands"
+command-commands-usage: "//commands [page]"
+command-brush-description: "Create a new brush"
+command-brush-usage:
+  - "//brush sphere [radius] [pattern] [gravity] - Create a spherical brush"
+  - "//brush smooth [radius] - Create a smoothing brush"
+  - "//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Create a naturalize brush"
+  - "//brush cylinder [radius] [height] [pattern] [gravity] - Create a cylindrical brush"
+  - "//brush paste [insert] - Create a pasting brush"
+command-fill-description: "Fill an Area"
+command-fill-usage:
+  - "//fill <block> [direction]"
+  - "//fill <block> - Fill into your looking direction"
+command-line-description: "Generate a line"
+command-line-usage:
+  - "//line <x> <y> <z> [pattern] - Draw a direct line to given position"
+  - "//line find <x> <y> <z> [pattern] - Find a valid path to the destination (slow)"
+  - "//line solid <x> <y> <z> [pattern] - Find a solid path to the destination (slow)"
+command-blockinfo-description: "Get a blockinfo stick"
+command-blockinfo-usage: "//blockinfo"
+command-status-description: "Get the status of the editing thread"
+command-status-usage: "//status"
+command-cancel-description: "Cancel the current task"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "Start a benchmark"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "Paste all known block states"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "Get a wooden axe"
+command-wand-usage: "//wand"

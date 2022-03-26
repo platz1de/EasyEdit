@@ -20,7 +20,7 @@ class LineCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/line", "Draw a line", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE], "//line <x> <y> <z> [pattern]\n//line find <x> <y> <z> [pattern]\n//line solid <x> <y> <z> [pattern]");
+		parent::__construct("/line", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE]);
 	}
 
 	/**
@@ -65,10 +65,5 @@ class LineCommand extends EasyEditCommand
 				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, StaticBlock::fromFullId($block));
 				break;
 		}
-	}
-
-	public function getCompactHelp(): string
-	{
-		return "//line <x> <y> <z> [pattern] - Draw a direct line to given position\n//line find <x> <y> <z> [pattern] - Find a valid path to the destination, " . Messages::RESOURCE_WARNING . "\n//line solid <x> <y> <z> [pattern] - Find a solid path to the destination, " . Messages::RESOURCE_WARNING;
 	}
 }

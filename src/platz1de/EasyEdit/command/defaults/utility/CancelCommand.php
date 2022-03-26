@@ -13,7 +13,7 @@ class CancelCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/cancel", "Cancel the current task", [KnownPermissions::PERMISSION_MANAGE]);
+		parent::__construct("/cancel", [KnownPermissions::PERMISSION_MANAGE]);
 	}
 
 	/**

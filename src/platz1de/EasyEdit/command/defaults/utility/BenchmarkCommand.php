@@ -13,7 +13,7 @@ class BenchmarkCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/benchmark", "Start a benchmark", [KnownPermissions::PERMISSION_MANAGE]);
+		parent::__construct("/benchmark", [KnownPermissions::PERMISSION_MANAGE]);
 	}
 
 	/**

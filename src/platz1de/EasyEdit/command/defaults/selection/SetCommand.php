@@ -12,7 +12,7 @@ class SetCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/set", "Set the selected Area", [KnownPermissions::PERMISSION_EDIT], "//set <pattern>");
+		parent::__construct("/set", [KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

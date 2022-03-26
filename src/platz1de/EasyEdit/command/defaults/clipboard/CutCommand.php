@@ -12,7 +12,7 @@ class CutCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/cut", "Cut the selected Area", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_CLIPBOARD], "//cut\n//cut center");
+		parent::__construct("/cut", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**
@@ -22,10 +22,5 @@ class CutCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		CutTask::queue(ArgumentParser::getSelection($player), ArgumentParser::parseRelativePosition($player, $args[0] ?? null));
-	}
-
-	public function getCompactHelp(): string
-	{
-		return "//cut - Cut the selected Area, relative to your current position\n//cut center - Cut the selected Area, relative to the center";
 	}
 }

@@ -12,7 +12,7 @@ class NoiseCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/noise", "Generate with a simple noise function", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//noise [type]");
+		parent::__construct("/noise", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

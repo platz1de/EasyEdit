@@ -12,7 +12,7 @@ class SmoothCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/smooth", "Smooth the selected Area", [KnownPermissions::PERMISSION_EDIT], "//smooth");
+		parent::__construct("/smooth", [KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

@@ -16,7 +16,7 @@ class FillCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/fill", "Fill an area", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE], "//fill <Block> [direction]");
+		parent::__construct("/fill", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE]);
 	}
 
 	/**

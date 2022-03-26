@@ -14,7 +14,7 @@ class MoveCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/move", "Move the selected area", [KnownPermissions::PERMISSION_EDIT], "//move [direction] [count]");
+		parent::__construct("/move", [KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

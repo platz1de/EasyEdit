@@ -11,10 +11,7 @@ use UnexpectedValueException;
 
 class Messages
 {
-	private const MESSAGE_VERSION = "2.0.3";
-
-	//TODO: All command strings should be translatable
-	public const RESOURCE_WARNING = TextFormat::RED . "RESOURCE HEAVY" . TextFormat::RESET;
+	private const MESSAGE_VERSION = "2.0.5";
 
 	/**
 	 * @var string[]
@@ -31,50 +28,21 @@ class Messages
 			throw new UnexpectedValueException("message-version is not a string");
 		}
 		if ($current !== self::MESSAGE_VERSION) {
-			$cMajor = explode(".", $current)[0];
-			$gMajor = explode(".", self::MESSAGE_VERSION)[0];
+			copy($messages->getPath(), $messages->getPath() . ".old");
+			EasyEdit::getInstance()->saveResource("messages.yml", true);
 
-			if ($cMajor === $gMajor) {
-				//Updating the config while remaining current values
-				$new = EasyEdit::getInstance()->getResource("messages.yml");
-				if ($new === null || ($data = stream_get_contents($new)) === false) {
-					throw new UnexpectedValueException("Couldn't read update data");
-				}
-				fclose($new);
-
-				//Allow different line endings
-				preg_match_all("/(.*)(?:\r\n|\n|\r|$)/", $data, $newConfig);
-				$newConfig = $newConfig[1];
-
-				//We can't just use yaml_parse as we want to preserve comments
-				/** @var string $value */
-				foreach ($messages->getAll() as $key => $value) {
-					if ($key === "message-version") {
-						continue;
-					}
-					$position = array_filter($newConfig, static function (string $line) use ($key): bool {
-						return str_starts_with($line, $key . ":");
-					});
-					if (count($position) === 1) {
-						$newConfig[key($position)] = $key . ': "' . str_replace(["\n", '"'], ["ARG_NEWLINE", '\"'], $value) . '"';
-					}
-				}
-
-				file_put_contents($messages->getPath(), str_replace("ARG_NEWLINE", '\n', implode(PHP_EOL, $newConfig)));
-
-				EasyEdit::getInstance()->getLogger()->notice("Your messages were updated to the newest Version");
-			} else {
-				//We can't update for major releases
-				copy($messages->getPath(), $messages->getPath() . ".old");
-				EasyEdit::getInstance()->saveResource("messages.yml", true);
-
-				EasyEdit::getInstance()->getLogger()->warning("Your messages were replaced with a newer Version");
-			}
+			EasyEdit::getInstance()->getLogger()->warning("Your messages were replaced with a newer Version");
 			$messages->reload();
 		}
 
-		/** @var string[] $data */
 		$data = $messages->getAll();
+		foreach ($data as $key => $value) {
+			/** @var string|array $value */
+			if (is_array($value)) {
+				$data[$key] = implode(PHP_EOL, $value);
+			}
+		}
+		/** @var string[] $data */
 		self::$messages = $data;
 
 		MessageInputData::from(self::$messages);

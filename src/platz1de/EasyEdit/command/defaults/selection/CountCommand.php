@@ -13,7 +13,7 @@ class CountCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/count", "Count selected blocks", [KnownPermissions::PERMISSION_SELECT], "//count [radius]");
+		parent::__construct("/count", [KnownPermissions::PERMISSION_SELECT]);
 	}
 
 	/**

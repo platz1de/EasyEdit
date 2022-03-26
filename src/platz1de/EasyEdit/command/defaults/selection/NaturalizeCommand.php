@@ -16,7 +16,7 @@ class NaturalizeCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/naturalize", "Naturalize the selected Area", [KnownPermissions::PERMISSION_EDIT], "//naturalize [pattern] [pattern] [pattern]");
+		parent::__construct("/naturalize");
 	}
 
 	/**

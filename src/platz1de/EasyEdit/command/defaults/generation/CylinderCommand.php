@@ -13,7 +13,7 @@ class CylinderCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/cylinder", "Set a cylinder", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], "//cylinder <radius> <height> <pattern>", ["/cy"]);
+		parent::__construct("/cylinder", [KnownPermissions::PERMISSION_GENERATE, KnownPermissions::PERMISSION_EDIT], ["/cy"]);
 	}
 
 	/**

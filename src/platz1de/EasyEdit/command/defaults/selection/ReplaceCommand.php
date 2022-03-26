@@ -15,7 +15,7 @@ class ReplaceCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/replace", "Replace the selected Area", "//replace <block> <pattern>");
+		parent::__construct("/replace");
 	}
 
 	/**

@@ -12,7 +12,7 @@ class InsertCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/insert", "Insert the Clipboard", [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/insert", [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

@@ -14,7 +14,7 @@ class LoadSchematicCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/loadschematic", "Load a saved schematic", [KnownPermissions::PERMISSION_READDISK, KnownPermissions::PERMISSION_CLIPBOARD], "//loadschematic <schematicName>", ["/load"]);
+		parent::__construct("/loadschematic", [KnownPermissions::PERMISSION_READDISK, KnownPermissions::PERMISSION_CLIPBOARD], ["/load"]);
 	}
 
 	/**
