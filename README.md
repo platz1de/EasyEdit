@@ -28,21 +28,21 @@ Selection:
 
 | Command                                           | Description                                                  | Permission      | Aliases/Notice                                                                  |
 |---------------------------------------------------|--------------------------------------------------------------|-----------------|---------------------------------------------------------------------------------|
-| //pos1 [x] [y] [z]                                | Set the first Position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
-| //pos2 [x] [y] [z]                                | Set the first Position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
-| //extend [direction] [count]<br>//extend vertical | Extend the selected Area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
-| //set \<pattern>                                  | Set the selected Area                                        | easyedit.edit   |
-| //replace \<block> \<pattern>                     | Replace the selected Area                                    | easyedit.edit   |
-| //naturalize \[pattern] \[pattern] \[pattern]     | Naturalize the selected Area                                 | easyedit.edit   |
-| //smooth                                          | Smooth the selected Area                                     | easyedit.edit   |
-| //center [block]                                  | Set the center Blocks (1-8)                                  | easyedit.edit   | //middle                                                                        |
-| //walls [pattern]                                 | Set walls of the selected area                               | easyedit.edit   | //wall                                                                          |
-| //sides [pattern]                                 | Set sides of the selected area                               | easyedit.edit   | //side                                                                          |
+| //pos1 [x] [y] [z]                                | Set the first position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
+| //pos2 [x] [y] [z]                                | Set the first position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
+| //extend [direction] [count]<br>//extend vertical | Extend the selected area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
+| //set \<pattern>                                  | Set blocks in the selected area                              | easyedit.edit   |
+| //replace \<block> \<pattern>                     | Replace blocks in the selected area                          | easyedit.edit   |
+| //naturalize \[pattern] \[pattern] \[pattern]     | Naturalize the selected area                                 | easyedit.edit   |
+| //smooth                                          | Smooth the selected area                                     | easyedit.edit   |
+| //center [pattern]                                | Set the center blocks of the selected area                   | easyedit.edit   | //middle                                                                        |
+| //walls [pattern]                                 | Set the walls of the selected area                           | easyedit.edit   | //wall                                                                          |
+| //sides [pattern]                                 | Set the sides of the selected area                           | easyedit.edit   | //side                                                                          |
 | //move [direction] [count]                        | Move the selected area                                       | easyedit.edit   | Look into the direction you want the selected blocks to move into               |
 | //stack [direction] [count]                       | Stack the selected area                                      | easyedit.edit   | Look into the direction you want the selected blocks to stack into              |
 | //istack [direction] [count]                      | Stack the selected area without overwriting existing terrain | easyedit.edit   |
-| //count [radius]                                  | Count selected blocks                                        | easyedit.select |
-| //extinguish [radius]                             | Extinguish fire                                              | easyedit.edit   | //ext                                                                           |
+| //count [radius]                                  | Count blocks in the selected area                            | easyedit.select |
+| //extinguish [radius]                             | Extinguish fire in the selected area                         | easyedit.edit   | //ext                                                                           |
 | //view                                            | View the selected area                                       | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures) |
 
 History:
@@ -56,41 +56,45 @@ History:
 
 Clipboard:
 
-| Command                          | Description                          | Permission                            | Aliases/Notice                                                    |
-|----------------------------------|--------------------------------------|---------------------------------------|-------------------------------------------------------------------|
-| //copy\n//copy center            | Copy the selected Area               | easyedit.clipboard                    |                                                                   |
-| //cut\n//cut copy                | Cut the selected Area                | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
-| //paste                          | Paste the Clipboard                  | easyedit.clipboard easyedit.edit      |                                                                   |
-| //insert                         | Insert the Clipboard                 | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
-| //rotate                         | Rotate the Clipboard                 | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
-| //flip [direction]               | Flip the Clipboard                   | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
-| //loadschematic \<schematicName> | Load a saved schematic               | easyedit.readdisk easyedit.clipboard  | //load                                                            |
-| //saveschematic \<schematicName> | Save your clipboard into a schematic | easyedit.writedisk easyedit.clipboard | //save                                                            |
+| Command                          | Description                                         | Permission                            | Aliases/Notice                                                    |
+|----------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------------------------------|
+| //copy\n//copy center            | Copy the selected area                              | easyedit.clipboard                    |                                                                   |
+| //cut\n//cut copy                | Cut the selected area and copy it to your clipboard | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
+| //paste                          | Paste the clipboard                                 | easyedit.clipboard easyedit.edit      |                                                                   |
+| //insert                         | Insert the clipboard                                | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
+| //rotate                         | Rotate the clipboard                                | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
+| //flip [direction]               | Flip the clipboard, mirroring at copied position    | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
+| //loadschematic \<schematicName> | Load a saved schematic from disk                    | easyedit.readdisk easyedit.clipboard  | //load                                                            |
+| //saveschematic \<schematicName> | Save your clipboard as a schematic to disk          | easyedit.writedisk easyedit.clipboard | //save                                                            |
 
 Generation:
 
-| Command                                                | Description                           | Permission                      | Aliases/Notice         |
-|--------------------------------------------------------|---------------------------------------|---------------------------------|------------------------|
-| //sphere \<radius> \<pattern>                          | Set a sphere                          | easyedit.generate easyedit.edit | //sph                  |
-| //hsphere \<radius> \<pattern> [thickness]             | Set a hollow sphere                   | easyedit.generate easyedit.edit | //hsph //hollowsphere  |
-| //cylinder \<radius> \<height> \<pattern>              | Set a cylinder                        | easyedit.generate easyedit.edit | //cy                   |
-| //hcylinder \<radius> \<height> \<pattern> [thickness] | Set a hollow cylinder                 | easyedit.generate easyedit.edit | //hcy //hollowcylinder |
-| //noise [type]                                         | Generate with a simple noise function | easyedit.generate easyedit.edit |                        |
+| Command                                                | Description                            | Permission                      | Aliases/Notice         |
+|--------------------------------------------------------|----------------------------------------|---------------------------------|------------------------|
+| //sphere \<radius> \<pattern>                          | Generate a sphere                      | easyedit.generate easyedit.edit | //sph                  |
+| //hsphere \<radius> \<pattern> [thickness]             | Generate a hollow sphere               | easyedit.generate easyedit.edit | //hsph //hollowsphere  |
+| //cylinder \<radius> \<height> \<pattern>              | Generate a cylinder                    | easyedit.generate easyedit.edit | //cy                   |
+| //hcylinder \<radius> \<height> \<pattern> [thickness] | Generate a hollow cylinder             | easyedit.generate easyedit.edit | //hcy //hollowcylinder |
+| //noise                                                | Generate using a simple noise function | easyedit.generate easyedit.edit |                        |
 
 Utility:
 
-| Command                                                                                                                                                                                                                                  | Description                 | Permission                                      | Aliases/Notice                                                                            |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|-------------------------------------------------|-------------------------------------------------------------------------------------------|
-| //commands [page]                                                                                                                                                                                                                        | List all EasyEdit commands  | -                                               | //h //cmd                                                                                 |
-| //brush sphere \[radius] \[pattern] [gravity]<br>//brush smooth \[radius]<br>//brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock]<br>//brush cylinder \[radius] \[height] \[pattern] [gravity]\n//brush paste [insert] | Create a new Brush          | easyedit.brush <br> (To use: easyedit.edit)     | //br                                                                                      |
-| //fill \<Block> [direction]                                                                                                                                                                                                              | Fill an area                | easyedit.edit easyedit.generate                 | Fills into looking direction                                                              |
-| //line \<x> \<y> \<z> \[pattern]                                                                                                                                                                                                         | Draw a line                 | easyedit.edit easyedit.generate                 |                                                                                           |
-| //blockinfo                                                                                                                                                                                                                              | Get a blockinfo stick       | easyedit.util                                   | //bi                                                                                      |
-| //status                                                                                                                                                                                                                                 | Check on the EditThread     | easyedit.manage                                 |                                                                                           |
-| //cancel                                                                                                                                                                                                                                 | Cancel the current task     | easyedit.manage                                 |                                                                                           |
-| //benchmark                                                                                                                                                                                                                              | Start a benchmark           | easyedit.manage                                 | This will create a temporary world and edit a few preset actions                          |
-| //pastestates                                                                                                                                                                                                                            | Paste all known blockstates | easyedit.edit easyedit.generate easyedit.manage | Mainly for debugging (can be used as an oversight of all existing blocks though)          |
-| //wand                                                                                                                                                                                                                                   | Get a wooden Axe            | easyedit.util                                   | Every normal axe works as well (as long as you have permissions and are in creative mode) |
+| Command                                                                | Description                 | Permission                                      | Aliases/Notice                                                                            |
+|------------------------------------------------------------------------|-----------------------------|-------------------------------------------------|-------------------------------------------------------------------------------------------|
+| //commands [page]                                                      | List all EasyEdit commands  | -                                               | //h //cmd                                                                                 |
+| //brush sphere \[radius] \[pattern] [gravity]                          | Create a spherical Brush    | easyedit.brush <br> (To use: easyedit.edit)     | //br sph                                                                                  |
+| //brush smooth \[radius]                                               | Create a smoothing Brush    | easyedit.brush <br> (To use: easyedit.edit)     | //br smooth                                                                               |
+| //brush naturalize \[radius] \[topBlock] \[middleBlock] \[bottomBlock] | Create a naturalize Brush   | easyedit.brush <br> (To use: easyedit.edit)     | //br nat                                                                                  |
+| //brush cylinder \[radius] \[height] \[pattern] [gravity]              | Create a cylindrical Brush  | easyedit.brush <br> (To use: easyedit.edit)     | //br cy                                                                                   |
+| //brush paste [insert]                                                 | Create a pasting Brush      | easyedit.brush <br> (To use: easyedit.edit)     | //br paste                                                                                |                                                                                                                                                                                                                                  |                             |                                                 |                                                                                          
+| //fill \<Block> [direction]                                            | Fill an area                | easyedit.edit easyedit.generate                 | Fills into looking direction                                                              |
+| //line \<x> \<y> \<z> \[pattern]                                       | Draw a line                 | easyedit.edit easyedit.generate                 |                                                                                           |
+| //blockinfo                                                            | Get a blockinfo stick       | easyedit.util                                   | //bi                                                                                      |
+| //status                                                               | Check on the EditThread     | easyedit.manage                                 |                                                                                           |
+| //cancel                                                               | Cancel the current task     | easyedit.manage                                 |                                                                                           |
+| //benchmark                                                            | Start a benchmark           | easyedit.manage                                 | This will create a temporary world and edit a few preset actions                          |
+| //pastestates                                                          | Paste all known blockstates | easyedit.edit easyedit.generate easyedit.manage | Mainly for debugging (can be used as an oversight of all existing blocks though)          |
+| //wand                                                                 | Get a wooden Axe            | easyedit.util                                   | Every normal axe works as well (as long as you have permissions and are in creative mode) |
 
 ## Patterns
 
