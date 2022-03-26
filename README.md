@@ -33,6 +33,7 @@ Selection:
 | //extend [direction] [count]<br>//extend vertical | Extend the selected area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
 | //set \<pattern>                                  | Set blocks in the selected area                              | easyedit.edit   |
 | //replace \<block> \<pattern>                     | Replace blocks in the selected area                          | easyedit.edit   |
+| //replace \<pattern>                              | Replace all solid blocks in the selected area                | easyedit.edit   |
 | //naturalize \[pattern] \[pattern] \[pattern]     | Naturalize the selected area                                 | easyedit.edit   |
 | //smooth                                          | Smooth the selected area                                     | easyedit.edit   |
 | //center [pattern]                                | Set the center blocks of the selected area                   | easyedit.edit   | //middle                                                                        |

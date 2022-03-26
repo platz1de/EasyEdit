@@ -1,4 +1,4 @@
-message-version: "2.0.5" #Please don't change this manually
+message-version: "2.0.6" #Please don't change this manually
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
@@ -74,7 +74,9 @@ command-extend-usage:
 command-set-description: "Set blocks in the selected area"
 command-set-usage: "//set <pattern>"
 command-replace-description: "Replace blocks in the selected area"
-command-replace-usage: "//replace <block> <pattern>"
+command-replace-usage:
+  - "//replace <block> <pattern>"
+  - "//replace <pattern> - Replace all solid blocks in the selected area"
 command-naturalize-description: "Naturalize the selected area"
 command-naturalize-usage: "//naturalize [pattern] [pattern] [pattern]"
 command-smooth-description: "Smooth the selected area"
