@@ -2,17 +2,14 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\PatternParseException;
-use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
-use platz1de\EasyEdit\utils\ArgumentParser;
+use platz1de\EasyEdit\pattern\Pattern;
 use pocketmine\player\Player;
 
-class NaturalizeCommand extends EasyEditCommand
+class NaturalizeCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
@@ -20,10 +17,11 @@ class NaturalizeCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
-	 * @param string[] $args
+	 * @param Player $player
+	 * @param array  $args
+	 * @return Pattern
 	 */
-	public function process(Player $player, array $args): void
+	public function parsePattern(Player $player, array $args): Pattern
 	{
 		try {
 			$top = PatternParser::parseInput($args[0] ?? "grass", $player);
@@ -33,6 +31,6 @@ class NaturalizeCommand extends EasyEditCommand
 			throw new PatternParseException($exception);
 		}
 
-		SetTask::queue(ArgumentParser::getSelection($player), NaturalizePattern::from([$top, $middle, $bottom]), $player->getPosition());
+		return NaturalizePattern::from([$top, $middle, $bottom]);
 	}
 }
