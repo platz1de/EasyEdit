@@ -64,17 +64,25 @@ class Node
 	public function getSides(bool $allowDiagonal): Generator
 	{
 		if ($allowDiagonal) {
-			for ($xi = -1; $xi <= 1; $xi++) {
-				for ($yi = -1; $yi <= 1; $yi++) {
-					for ($zi = -1; $zi <= 1; $zi++) {
-						if ($xi !== 0 || $yi !== 0 || $zi !== 0) {
-							yield new Vector3($this->x + $xi, $this->y + $yi, $this->z + $zi);
-						}
+			yield from $this->getSidesDiagonal();
+		} else {
+			yield from (new Vector3($this->x, $this->y, $this->z))->sides();
+		}
+	}
+
+	/**
+	 * @return Generator<Vector3>
+	 */
+	public function getSidesDiagonal(): Generator
+	{
+		for ($xi = -1; $xi <= 1; $xi++) {
+			for ($yi = -1; $yi <= 1; $yi++) {
+				for ($zi = -1; $zi <= 1; $zi++) {
+					if ($xi !== 0 || $yi !== 0 || $zi !== 0) {
+						yield new Vector3($this->x + $xi, $this->y + $yi, $this->z + $zi);
 					}
 				}
 			}
-		} else {
-			yield from (new Vector3($this->x, $this->y, $this->z))->sides();
 		}
 	}
 }
