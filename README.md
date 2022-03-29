@@ -19,7 +19,7 @@ Feature-rich WorldEditor for PocketMine-MP
 - load & save java selections (load MCEdit & Sponge format, save to Sponge)
 - rotate & flip support
 - Translation support
-  - [help translate EasyEdit](https://github.com/platz1de/EasyEdit/blob/dev/resources/lang/TRANSLATE.md)
+    - [help translate EasyEdit](https://github.com/platz1de/EasyEdit/blob/dev/resources/lang/TRANSLATE.md)
 
 ## Commands
 
@@ -36,6 +36,7 @@ Selection:
 | //set \<pattern>                                  | Set blocks in the selected area                              | easyedit.edit   |
 | //replace \<block> \<pattern>                     | Replace blocks in the selected area                          | easyedit.edit   |
 | //replace \<pattern>                              | Replace all solid blocks in the selected area                | easyedit.edit   |
+| //overlay \<pattern>                              | Overlay blocks in the selected area                          | easyedit.edit   | Set blocks above existing blocks                                                |
 | //naturalize \[pattern] \[pattern] \[pattern]     | Naturalize the selected area                                 | easyedit.edit   |
 | //smooth                                          | Smooth the selected area                                     | easyedit.edit   |
 | //center [pattern]                                | Set the center blocks of the selected area                   | easyedit.edit   | //middle                                                                        |

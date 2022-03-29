@@ -25,6 +25,7 @@ use platz1de\EasyEdit\command\defaults\selection\ExtinguishCommand;
 use platz1de\EasyEdit\command\defaults\selection\FirstPositionCommand;
 use platz1de\EasyEdit\command\defaults\selection\MoveCommand;
 use platz1de\EasyEdit\command\defaults\selection\NaturalizeCommand;
+use platz1de\EasyEdit\command\defaults\selection\OverlayCommand;
 use platz1de\EasyEdit\command\defaults\selection\ReplaceCommand;
 use platz1de\EasyEdit\command\defaults\selection\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\selection\SetCommand;
@@ -82,6 +83,7 @@ class EasyEdit extends PluginBase
 			new ExtendCommand(),
 			new SetCommand(),
 			new ReplaceCommand(),
+			new OverlayCommand(),
 			new NaturalizeCommand(),
 			new SmoothCommand(),
 			new CenterCommand(),

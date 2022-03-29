@@ -80,6 +80,8 @@ command-replace-description: "Ersetze Blöcke in dem ausgewählten Bereich"
 command-replace-usage:
   - "//replace <block> <muster>"
   - "//replace <muster> - Ersetze alle soliden Blöcke im ausgewählten Bereich"
+command-overlay-description: "Bedecke Blöcke in dem ausgewählten Bereich"
+command-overlay-usage: "//overlay <muster>"
 command-naturalize-description: "Mache den ausgewählten Bereich natürlicher"
 command-naturalize-usage: "//naturalize [muster] [muster] [muster]"
 command-smooth-description: "Glätte den ausgewählten Bereich"

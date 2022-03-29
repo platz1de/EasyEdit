@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\exception\PatternParseException;
+use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
-use platz1de\EasyEdit\pattern\logic\relation\SolidPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
@@ -35,6 +35,6 @@ class ReplaceCommand extends AliasedPatternCommand
 			}
 			return BlockPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 1)], PatternArgumentData::create()->setBlock($block));
 		}
-		return SolidPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 0)]);
+		return BlockPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 0)], PatternArgumentData::create()->setBlock(SolidBlock::create()));
 	}
 }

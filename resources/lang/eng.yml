@@ -80,6 +80,8 @@ command-replace-description: "Replace blocks in the selected area"
 command-replace-usage:
   - "//replace <block> <pattern>"
   - "//replace <pattern> - Replace all solid blocks in the selected area"
+command-overlay-description: "Overlay blocks in the selected area"
+command-overlay-usage: "//overlay <pattern>"
 command-naturalize-description: "Naturalize the selected area"
 command-naturalize-usage: "//naturalize [pattern] [pattern] [pattern]"
 command-smooth-description: "Smooth the selected area"
