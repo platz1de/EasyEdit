@@ -16,7 +16,7 @@ class BlockParser
 	 */
 	public static function isStatic(string $string): bool
 	{
-		if (isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
+		if (str_starts_with($string, "#") || isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
 			return true; //given with meta value
 		}
 		try {
@@ -52,6 +52,9 @@ class BlockParser
 	 */
 	public static function parseBlockIdentifier(string $string): int
 	{
+		if (str_starts_with($string, "#")) {
+			$string = substr($string, 1);
+		}
 		if (!ConfigManager::isAllowingUnregisteredBlocks()) {
 			return self::getBlock($string)->getFullId(); //Use regular block parser
 		}
