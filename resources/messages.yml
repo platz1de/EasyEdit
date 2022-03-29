@@ -94,7 +94,7 @@ command-move-usage:
 command-stack-description: "Stack the selected area"
 command-stack-usage:
   - "//stack [direction] [count]"
-  - "//stack [count] - Look in the direction you want to stack to"
+  - "//stack [count] - Stack the selected area into your looking direction"
 command-istack-description: "Stack the selected area without overwriting existing terrain"
 command-istack-usage:
   - "//istack [direction] [count]"
