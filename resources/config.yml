@@ -1,4 +1,12 @@
-config-version: "2.0.7" #Please don't change this manually
+config-version: "2.0.8" #Please don't change this manually
+
+#Used language
+#Available:
+# auto - Detect from pocketmine
+# eng - English
+# deu - German
+# custom - Allows to modify the language file directly
+language: auto
 
 #Tool cooldown length in seconds (defaults to half a second)
 #Used for brushes, selection axes and more

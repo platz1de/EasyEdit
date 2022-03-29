@@ -69,7 +69,6 @@ class EasyEdit extends PluginBase
 		$thread = new EditThread(Server::getInstance()->getLogger());
 		$thread->start(PTHREADS_INHERIT_INI | PTHREADS_INHERIT_CONSTANTS);
 
-		Messages::load();
 		ConfigManager::load();
 
 		$this->getScheduler()->scheduleRepeatingTask(new EditAdapter(), 1);

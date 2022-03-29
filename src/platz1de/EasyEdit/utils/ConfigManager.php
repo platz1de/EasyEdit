@@ -8,6 +8,7 @@ use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\utils\AssumptionFailedError;
@@ -16,7 +17,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.7";
+	private const CONFIG_VERSION = "2.0.8";
 
 	/**
 	 * @var int[]
@@ -40,6 +41,8 @@ class ConfigManager
 	public static function load(): void
 	{
 		$config = self::loadConfig();
+
+		Messages::load(strtolower(self::mustGetString($config, "language", "auto")));
 
 		self::$terrainIgnored = array_map(static function (string $block): int {
 			return BlockParser::getBlock($block)->getId();

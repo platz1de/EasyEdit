@@ -1,0 +1,192 @@
+#German language file
+#Author: platz1de
+#Last translated for: v2.1.0
+
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
+
+prefix: "§l§aEasy§bEdit §r> "
+
+#Args: {x} {y} {z}
+selected-pos1: "Die erste Position wurde auf {x} {y} {z} gesetzt"
+selected-pos2: "Die zweite Position wurde auf {x} {y} {z} gesetzt"
+
+no-selection: "Es wurde keine Auswahl getroffen"
+no-clipboard: "Die Zwischenablage ist leer"
+
+#Args: {given} {expected}
+wrong-selection: "Auswahl ist des Typs {given}, {expected} wird allerdings benötigt"
+
+no-history: "Nichts zum Rückgängigmachen vorhanden"
+no-future: "Nichts zum Wiederherstellen vorhanden"
+
+no-task: "Momentan ist kein Auftrag aktiv"
+task-cancelled: "Der momentane Auftrag wurde abgebrochen"
+
+#Args: {usage}
+wrong-usage: "Fehlerhafte Befehlsnutzung:\n{usage}"
+
+#Args: {commands} {start} {end} {total}
+command-list: "Befehle ({start} bis {end} von {total}):\n{commands}"
+
+#Args: {message}
+task-crash: "§cDer Auftrag konnte nicht ausgeführt werden!\n{message}"
+
+#Args: {time} {changed}
+blocks-set: "{changed} Blöcke wurden in {time}s gesetzt"
+blocks-copied: "{changed} Blöcke wurden in {time}s kopiert"
+blocks-pasted: "{changed} Blöcke wurden in {time}s eingefügt"
+blocks-counted: "{changed} Blöcke wurden in {time}s gezählt"
+blocks-rotated: "{changed} Blöcke wurden in {time}s gedreht"
+blocks-flipped: "{changed} Blöcke wurden in {time}s gespiegelt"
+blocks-cut: "{changed} Blöcke wurden in {time}s ausgeschnitten"
+
+#Args: {time} {changed} {name}
+schematic-created: "{changed} Blöcke wurden als \"{name}\" in {time}s gespeichert"
+
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Status des EditThreads:\nStatus: {status}\nMomentaner Auftrag: {task}\nFortschritt: {progress}\nWartende Aufträge: {queue}\nGespeicherte Auswahlen: {storage}\nThread Arbeitsspeicher: {mem_current}MB ({mem_max}MB)"
+
+benchmark-start: "Benchmark wurde gestartet, dies kann bis zu einer Minute dauern!"
+benchmark-running: "Es läuft bereits ein Benchmark"
+benchmark-cancel: "Benchmarks können nicht abgebrochen werden"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "Resultate des Benchmarks:\nDurchschnittliche TPS: {tps_avg} ({load_avg}%)\nSchlechteste TPS: {tps_min} ({load_max}%)\n{tasks} Aufträge in {time}s ausgeführt:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} in {time}s"
+
+#Args: {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlockzustand: {java_state}"
+
+#Args: {schematic} {known}
+unknown-schematic: "Unbekannte Struktur \"{schematic}\"\nBekannte Strukturen:{known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "Setze die erste Position"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "Setze die zweite Position"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "Vergrößere die Auswahl"
+command-extend-usage:
+  - "//extend [richtung] [anzahl]"
+  - "//extend [anzahl] - Vergrößere die Auswahl in Sichtrichtung"
+  - "//extend vertical - Vergrößere die Auswahl vertikal komplett"
+command-set-description: "Setze Blöcke in dem ausgewählten Bereich"
+command-set-usage: "//set <muster>"
+command-replace-description: "Ersetze Blöcke in dem ausgewählten Bereich"
+command-replace-usage:
+  - "//replace <block> <muster>"
+  - "//replace <muster> - Ersetze alle soliden Blöcke im ausgewählten Bereich"
+command-naturalize-description: "Mache den ausgewählten Bereich natürlicher"
+command-naturalize-usage: "//naturalize [muster] [muster] [muster]"
+command-smooth-description: "Glätte den ausgewählten Bereich"
+command-smooth-usage: "//smooth"
+command-center-description: "Setze die mittleren Blöcke des ausgewählten Bereiches"
+command-center-usage: "//center [muster]"
+command-walls-description: "Setze die Wände des ausgewählten Bereiches"
+command-walls-usage: "//walls [muster]"
+command-sides-description: "Setze die Seiten des ausgewählten Bereiches"
+command-sides-usage: "//sides [muster]"
+command-move-description: "Verschiebe den ausgewählten Bereich"
+command-move-usage:
+  - "//move [richtung] [anzahl]"
+  - "//move [anzahl] - Verschiebe den ausgewählten Bereich in Sichtrichtung"
+command-stack-description: "Staple den ausgewählten Bereich"
+command-stack-usage:
+  - "//stack [richtung] [anzahl]"
+  - "//stack [anzahl] - Staple den ausgewählten Bereich in Sichtrichtung"
+command-istack-description: "Staple den ausgewählten Bereich und beachte existierende Blöcke"
+command-istack-usage:
+  - "//istack [richtung] [anzahl]"
+  - "//istack [anzahl] - Staple den ausgewählten Bereich in Sichtrichtung und beachte existierende Blöcke"
+command-count-description: "Zähle Blöcke im ausgewählten Bereich"
+command-count-usage:
+  - "//count"
+  - "//count [radius] - Zähle Blöcke in der Umgebung"
+command-extinguish-description: "Lösche Feuer im ausgewählten Bereich"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [radius] - Lösche Feuer in der Umgebung"
+command-view-description: "Sehe den ausgewählten Bereich"
+command-view-usage: "//view"
+
+
+command-undo-description: "Mache die letzte Änderung rückgängig"
+command-undo-usage:
+  - "//undo [anzahl]"
+  - "//undo <ziel> [anzahl] - Mache die letzte Änderung des Ziels rückgängig"
+command-redo-description: "Stelle deine letzte Änderung wieder her"
+command-redo-usage:
+  - "//redo [anzahl]"
+  - "//redo <ziel> [anzahl] - Stelle die letzte Änderung des Ziels wieder her"
+
+
+command-copy-description: "Kopiere den ausgewählten Bereich in die Zwischenablage"
+command-copy-usage:
+  - "//copy - Kopiere relativ zum Spieler"
+  - "//copy center - Kopiere relativ zum Zentrum der Auswahl"
+command-cut-description: "Schneide die ausgewählten Blöcke aus und kopiere sie in die Zwischenablage"
+command-cut-usage:
+  - "//cut - Schneide relativ zum Spieler aus"
+  - "//cut center - Schneide relativ zum Zentrum der Auswahl aus"
+command-paste-description: "Füge die Zwischenablage ein"
+command-paste-usage: "//paste"
+command-insert-description: "Füge die Zwischenablage ein und beachte existierende Blöcke"
+command-insert-usage: "//insert"
+command-rotate-description: "Drehe die Zwischenablage"
+command-rotate-usage: "//rotate"
+command-flip-description: "Spiegle die Zwischenablage an der kopierten Position"
+command-flip-usage:
+  - "//flip [richtung]"
+  - "//flip - Spiegle die Zwischenablage in Sichtrichtung"
+command-loadschematic-description: "Lade eine gespeicherte Struktur aus dem Speicher"
+command-loadschematic-usage: "//loadschematic <strukturName>"
+command-saveschematic-description: "Speichere die Zwischenablage als Struktur"
+command-saveschematic-usage: "//saveschematic <strukturName>"
+
+
+command-sphere-description: "Erzeuge eine Kugel"
+command-sphere-usage: "//sphere <radius> <muster>"
+command-hsphere-description: "Erzeuge eine hohle Kugel"
+command-hsphere-usage: "//hsphere <radius> <muster> [dicke]"
+command-cylinder-description: "Erzeuge einen Zylinder"
+command-cylinder-usage: "//cylinder <radius> <höhe> <muster>"
+command-hcylinder-description: "Erzeuge einen hohlen Zylinder"
+command-hcylinder-usage: "//hcylinder <radius> <höhe> <muster> [dicke]"
+command-noise-description: "Erzeuge mit einer simplen Rauschfunktion"
+command-noise-usage: "//noise"
+
+
+command-commands-description: "Liste alle EasyEdit Befehle auf"
+command-commands-usage: "//commands [seite]"
+command-brush-description: "Erstelle einen neuen Pinsel"
+command-brush-usage:
+  - "//brush sphere [radius] [muster] [schwerkraft] - Erstelle einen kugelförmigen Pinsel"
+  - "//brush smooth [radius] - Erstelle einen glättenden Pinsel"
+  - "//brush naturalize [radius] [obererBlock] [mittlererBlock] [untererBlock] - Erstelle einen Pinsel zum natürlicher machen"
+  - "//brush cylinder [radius] [höhe] [muster] [schwerkraft] - Erstelle einen zylinderförmigen Pinsel"
+  - "//brush paste [blöckeBeachten] - Erstelle einen einfügenden Pinsel"
+command-fill-description: "Fülle einen Bereich"
+command-fill-usage:
+  - "//fill <block> [richtung]"
+  - "//fill <block> - Fülle den Bereich in Sichtrichtung"
+command-line-description: "Erzeuge eine Linie"
+command-line-usage:
+  - "//line <x> <y> <z> [muster] - Erzeuge eine Linie zum Zielpunkt"
+  - "//line find <x> <y> <z> [muster] - Finde einen möglichen Pfad zum Zielpunkt (langsam)"
+  - "//line solid <x> <y> <z> [muster] - Finde einen möglichen soliden Pfad zum Zielpunkt (langsam)"
+command-blockinfo-description: "Erstelle einen blockinfo Stab"
+command-blockinfo-usage: "//blockinfo"
+command-status-description: "Frage den Status des edit threads ab"
+command-status-usage: "//status"
+command-cancel-description: "Breche den aktuelle Auftrag ab"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "Starte einen Benchmark"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "Füge alle bekannten Blockzustände ein"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "Bekomme eine Holzaxt"
+command-wand-usage: "//wand"
