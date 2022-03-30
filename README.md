@@ -62,8 +62,8 @@ Clipboard:
 
 | Command                          | Description                                         | Permission                            | Aliases/Notice                                                    |
 |----------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------------------------------|
-| //copy\n//copy center            | Copy the selected area                              | easyedit.clipboard                    |                                                                   |
-| //cut\n//cut copy                | Cut the selected area and copy it to your clipboard | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
+| //copy<br>//copy center          | Copy the selected area                              | easyedit.clipboard                    |                                                                   |
+| //cut<br>//cut copy              | Cut the selected area and copy it to your clipboard | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
 | //paste                          | Paste the clipboard                                 | easyedit.clipboard easyedit.edit      |                                                                   |
 | //insert                         | Insert the clipboard                                | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
 | //rotate                         | Rotate the clipboard                                | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
