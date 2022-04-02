@@ -24,16 +24,16 @@ abstract class EditTask extends ExecutableTask
 	private AdditionalDataManager $data;
 
 	/**
-	 * @param EditTask              $instance
+	 * @param string                $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
-	 * @return void
 	 */
-	public static function initEditTask(EditTask $instance, string $world, AdditionalDataManager $data): void
+	public function __construct(string $owner, string $world, AdditionalDataManager $data)
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
-		$instance->world = $world;
-		$instance->data = $data;
+		parent::__construct($owner);
+		$this->world = $world;
+		$this->data = $data;
 	}
 
 	/**

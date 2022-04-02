@@ -34,8 +34,7 @@ class PasteBlockStatesTask extends EditTask
 	 */
 	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockstatesTask
 	{
-		$instance = new self($owner);
-		EditTask::initEditTask($instance, $world, $data);
+		$instance = new self($owner, $world, $data);
 		$instance->start = $start;
 		return $instance;
 	}
