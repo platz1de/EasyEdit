@@ -113,7 +113,7 @@ class PathfindingTask extends EditTask
 			}
 			if ($handler->getBlock($current->x, $current->y, $current->z) === 0) {
 				foreach ($current->getSides($this->allowDiagonal) as $side) {
-					$hash = World::blockHash($side->x, $side->y, $side->z);
+					$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ());
 					if ($side->y < World::Y_MIN || $side->y >= World::Y_MAX || isset($closed[$hash])) {
 						continue;
 					}
@@ -121,7 +121,7 @@ class PathfindingTask extends EditTask
 						$collection[$hash]->checkG($current);
 						continue;
 					}
-					$open->insert($collection[$hash] = new Node($side->x, $side->y, $side->z, $current, $endX, $endY, $endZ));
+					$open->insert($collection[$hash] = new Node($side->getFloorX(), $side->getFloorY(), $side->getFloorZ(), $current, $endX, $endY, $endZ));
 				}
 			}
 		}

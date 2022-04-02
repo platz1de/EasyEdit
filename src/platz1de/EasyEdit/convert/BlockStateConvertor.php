@@ -10,7 +10,11 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\ShulkerBox;
 use pocketmine\block\utils\SkullType;
+use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ShortTag;
+use pocketmine\nbt\tag\StringTag;
 use Throwable;
 use UnexpectedValueException;
 
@@ -93,7 +97,7 @@ class BlockStateConvertor
 					->setByte("SkullType", SkullType::getAll()[mb_strtoupper($data)]->getMagicNumber());
 			}
 			foreach ($tileDataPalette[TileConvertor::DATA_SKULL_ROTATION] ?? [] as $state => $data) {
-				self::$compoundMapping[$state]?->setByte("Rot", (int) $data);
+				self::$compoundMapping[$state]->setByte("Rot", (int) $data);
 			}
 
 			/** @var array<string, array<string, array<string, string>>> $javaTilePalette */
@@ -204,7 +208,11 @@ class BlockStateConvertor
 		foreach (self::$compoundTagKeys[$state] as $key) {
 			$value = $tag->getTag($key);
 			if ($value !== null) {
-				$values[] = (string) $value->getValue();
+				/** @var StringTag|IntTag|ShortTag|ByteTag $value */
+				$values[] = match ($value::class) {
+					StringTag::class, IntTag::class, ShortTag::class, ByteTag::class => (string) $value->getValue(),
+					default => throw new UnexpectedValueException("Invalid tag type " . $value::class . " found when processing tile states")
+				};
 				$tag->removeTag($key);
 			}
 		}

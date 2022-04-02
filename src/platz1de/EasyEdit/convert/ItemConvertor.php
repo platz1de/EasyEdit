@@ -61,10 +61,6 @@ class ItemConvertor
 	 */
 	public static function convertItemJava(int $id, int $meta): string
 	{
-		try {
-			return self::$itemTranslationJava[$id][$meta];
-		} catch (Throwable) {
-			throw new UnexpectedValueException("Couldn't convert item " . $id . ":" . $meta);
-		}
+		return self::$itemTranslationJava[$id][$meta] ?? throw new UnexpectedValueException("Couldn't convert item " . $id . ":" . $meta);
 	}
 }

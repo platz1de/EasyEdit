@@ -52,9 +52,12 @@ class Messages
 				fclose($langData);
 			}
 			$messages = yaml_parse($data);
+			if (!is_array($messages)) {
+				throw new UnexpectedValueException("Couldn't parse language file $lang.yml");
+			}
 		}
 		foreach ($messages as $key => $value) {
-			/** @var string|array $value */
+			/** @var string|string[] $value */
 			if (is_array($value)) {
 				$messages[$key] = implode(PHP_EOL, $value);
 			}

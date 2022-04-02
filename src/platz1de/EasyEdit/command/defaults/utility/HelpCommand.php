@@ -5,7 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\Messages;
+use pocketmine\lang\Translatable;
 use pocketmine\player\Player;
+use UnexpectedValueException;
 
 class HelpCommand extends EasyEditCommand
 {
@@ -25,7 +27,11 @@ class HelpCommand extends EasyEditCommand
 		$page = isset($args[0]) ? (int) $args[0] : 1;
 		$commands = [];
 		foreach (CommandManager::getCommands() as $command) {
-			foreach (explode(PHP_EOL, $command->getUsage()) as $help) {
+			$usage = $command->getUsage();
+			if ($usage instanceof Translatable) {
+				throw new UnexpectedValueException("EasyEdit commands shouldn't contain translatable data");
+			}
+			foreach (explode(PHP_EOL, $usage) as $help) {
 				$commands[] = $help;
 			}
 		}

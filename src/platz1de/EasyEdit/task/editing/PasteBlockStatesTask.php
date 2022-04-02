@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
-use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -20,8 +19,6 @@ class PasteBlockStatesTask extends EditTask
 	use SettingNotifier;
 
 	private Vector3 $start;
-	private int $direction;
-	private StaticBlock $block;
 
 	private float $progress = 0;
 
@@ -30,9 +27,9 @@ class PasteBlockStatesTask extends EditTask
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
-	 * @return PasteBlockstatesTask
+	 * @return PasteBlockStatesTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockstatesTask
+	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
 	{
 		$instance = new self($owner, $world, $data);
 		$instance->start = $start;
@@ -77,7 +74,7 @@ class PasteBlockStatesTask extends EditTask
 					return;
 				}
 			}
-			$handler->changeBlock($x + floor($i / 100) * 2, $y, $z + ($i % 100) * 2, $id);
+			$handler->changeBlock((int) ($x + floor($i / 100) * 2), $y, $z + ($i % 100) * 2, $id);
 			$i++;
 		}
 	}

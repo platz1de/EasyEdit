@@ -17,8 +17,8 @@ class NaturalizeCommand extends AliasedPatternCommand
 	}
 
 	/**
-	 * @param Player $player
-	 * @param array  $args
+	 * @param Player   $player
+	 * @param string[] $args
 	 * @return Pattern
 	 */
 	public function parsePattern(Player $player, array $args): Pattern
