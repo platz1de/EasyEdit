@@ -34,9 +34,7 @@ abstract class ExecutableTask
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString(static::class);
-		$stream->putString($this->owner);
-		$this->putData($stream);
+		$stream->putString(igbinary_serialize($this));
 		return $stream->getBuffer();
 	}
 
@@ -47,12 +45,21 @@ abstract class ExecutableTask
 	public static function fastDeserialize(string $data): ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream($data);
-		/** @phpstan-var class-string<ExecutableTask> $type */
-		$type = $stream->getString();
 		/** @var ExecutableTask $task */
-		$task = new $type($stream->getString());
+		$task = igbinary_unserialize($stream->getString());
 		$task->parseData($stream);
 		return $task;
+	}
+
+	public function __serialize(): array
+	{
+		return [$this->owner, $this->taskId];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		$this->owner = $data[0];
+		$this->taskId = $data[1];
 	}
 
 	/**
