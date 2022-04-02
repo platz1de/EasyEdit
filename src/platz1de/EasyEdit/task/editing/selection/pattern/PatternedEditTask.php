@@ -15,13 +15,12 @@ abstract class PatternedEditTask extends SelectionEditTask
 	/**
 	 * @param PatternedEditTask $instance
 	 * @param Selection         $selection
-	 * @param Vector3           $position
 	 * @param Vector3           $splitOffset
 	 * @param Pattern           $pattern
 	 */
-	public static function initPattern(PatternedEditTask $instance, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): void
+	public static function initPattern(PatternedEditTask $instance, Selection $selection, Vector3 $splitOffset, Pattern $pattern): void
 	{
-		SelectionEditTask::initSelection($instance, $selection, $position, $splitOffset);
+		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		$instance->pattern = $pattern;
 	}
 

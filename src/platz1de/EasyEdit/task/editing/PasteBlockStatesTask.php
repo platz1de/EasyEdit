@@ -10,15 +10,12 @@ use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class PasteBlockStatesTask extends EditTask
 {
 	use SettingNotifier;
-
-	private Vector3 $start;
 
 	private float $progress = 0;
 
@@ -31,9 +28,7 @@ class PasteBlockStatesTask extends EditTask
 	 */
 	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
 	{
-		$instance = new self($owner, $world, $data);
-		$instance->start = $start;
-		return $instance;
+		return new self($owner, $world, $data, $start);
 	}
 
 	/**
@@ -61,9 +56,9 @@ class PasteBlockStatesTask extends EditTask
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
 		$loadedChunks = [];
-		$x = $this->start->getFloorX();
-		$y = $this->start->getFloorY();
-		$z = $this->start->getFloorZ();
+		$x = $this->getPosition()->getFloorX();
+		$y = $this->getPosition()->getFloorY();
+		$z = $this->getPosition()->getFloorZ();
 		$i = 0;
 		foreach ($states as $id => $state) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);
@@ -81,7 +76,7 @@ class PasteBlockStatesTask extends EditTask
 
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->start);
+		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->getPosition());
 	}
 
 	public function getTaskName(): string
@@ -92,17 +87,5 @@ class PasteBlockStatesTask extends EditTask
 	public function getProgress(): float
 	{
 		return $this->progress;
-	}
-
-	public function putData(ExtendedBinaryStream $stream): void
-	{
-		parent::putData($stream);
-		$stream->putVector($this->start);
-	}
-
-	public function parseData(ExtendedBinaryStream $stream): void
-	{
-		parent::parseData($stream);
-		$this->start = $stream->getVector();
 	}
 }

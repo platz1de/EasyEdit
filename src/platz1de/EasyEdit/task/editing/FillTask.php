@@ -25,7 +25,6 @@ class FillTask extends EditTask
 {
 	use SettingNotifier;
 
-	private Vector3 $start;
 	private int $direction;
 	private StaticBlock $block;
 
@@ -42,8 +41,7 @@ class FillTask extends EditTask
 	 */
 	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
 	{
-		$instance = new self($owner, $world, $data);
-		$instance->start = $start;
+		$instance = new self($owner, $world, $data, $start);
 		$instance->direction = $direction;
 		$instance->block = $block;
 		return $instance;
@@ -80,9 +78,9 @@ class FillTask extends EditTask
 		$scheduled = [];
 		$loadedChunks = [];
 		$id = $this->block->get();
-		$startX = $this->start->getFloorX();
-		$startY = $this->start->getFloorY();
-		$startZ = $this->start->getFloorZ();
+		$startX = $this->getPosition()->getFloorX();
+		$startY = $this->getPosition()->getFloorY();
+		$startZ = $this->getPosition()->getFloorZ();
 		$validate = match ($this->direction) {
 			Facing::DOWN => static function (Vector3 $pos) use ($startY) {
 				return $pos->getFloorY() <= $startY;
@@ -139,7 +137,7 @@ class FillTask extends EditTask
 
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->start);
+		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->getPosition());
 	}
 
 	public function getTaskName(): string
@@ -155,7 +153,6 @@ class FillTask extends EditTask
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putVector($this->start);
 		$stream->putByte($this->direction);
 		$stream->putInt($this->block->get());
 	}
@@ -163,7 +160,6 @@ class FillTask extends EditTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->start = $stream->getVector();
 		$this->direction = $stream->getByte();
 		$this->block = StaticBlock::fromBlock(BlockFactory::getInstance()->fromFullBlock($stream->getInt()));
 	}
