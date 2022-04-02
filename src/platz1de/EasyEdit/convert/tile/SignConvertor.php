@@ -9,7 +9,7 @@ use UnexpectedValueException;
 
 class SignConvertor extends TileConvertorPiece
 {
-	public static function toBedrock($tile): void
+	public static function toBedrock(CompoundTag $tile): void
 	{
 		//TODO: glowing & color
 		for ($i = 1; $i <= 4; $i++) {
