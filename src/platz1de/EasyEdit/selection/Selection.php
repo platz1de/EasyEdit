@@ -218,8 +218,6 @@ abstract class Selection
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString($this->world);
-
 		$stream->putVector($this->pos1);
 		$stream->putVector($this->pos2);
 	}
@@ -229,8 +227,6 @@ abstract class Selection
 	 */
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->world = $stream->getString();
-
 		$this->pos1 = $stream->getVector();
 		$this->pos2 = $stream->getVector();
 	}
@@ -241,8 +237,7 @@ abstract class Selection
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString(static::class);
-		$stream->putString($this->player);
+		$stream->putString(igbinary_serialize($this));
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -254,10 +249,19 @@ abstract class Selection
 	public static function fastDeserialize(string $data): Selection
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$type = $stream->getString();
 		/** @var Selection $selection */
-		$selection = new $type($stream->getString());
+		$selection = igbinary_unserialize($stream->getString());
 		$selection->parseData($stream);
 		return $selection;
+	}
+
+	public function __serialize(): array
+	{
+		return [$this->world];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		$this->world = $data[0];
 	}
 }
