@@ -32,8 +32,8 @@ class StreamPasteTask extends SelectionEditTask
 	 */
 	public static function from(string $owner, string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position, Vector3 $splitOffset): StreamPasteTask
 	{
-		$instance = new self($owner);
-		SelectionEditTask::initSelection($instance, $world, $data, $selection, $position, $splitOffset);
+		$instance = new self($owner, $world, $data, $position);
+		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		return $instance;
 	}
 

@@ -15,6 +15,7 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
+use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
@@ -22,18 +23,21 @@ abstract class EditTask extends ExecutableTask
 {
 	private string $world;
 	private AdditionalDataManager $data;
+	private Vector3 $position;
 
 	/**
-	 * @param EditTask              $instance
+	 * @param string                $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
-	 * @return void
+	 * @param Vector3               $position
 	 */
-	public static function initEditTask(EditTask $instance, string $world, AdditionalDataManager $data): void
+	public function __construct(string $owner, string $world, AdditionalDataManager $data, Vector3 $position)
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
-		$instance->world = $world;
-		$instance->data = $data;
+		parent::__construct($owner);
+		$this->world = $world;
+		$this->data = $data;
+		$this->position = $position;
 	}
 
 	/**
@@ -198,6 +202,14 @@ abstract class EditTask extends ExecutableTask
 	}
 
 	/**
+	 * @return Vector3
+	 */
+	public function getPosition(): Vector3
+	{
+		return $this->position;
+	}
+
+	/**
 	 * @return AdditionalDataManager
 	 */
 	public function getDataManager(): AdditionalDataManager
@@ -209,11 +221,13 @@ abstract class EditTask extends ExecutableTask
 	{
 		$stream->putString($this->world);
 		$stream->putString($this->data->fastSerialize());
+		$stream->putVector($this->position);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
 		$this->data = AdditionalDataManager::fastDeserialize($stream->getString());
+		$this->position = $stream->getVector();
 	}
 }

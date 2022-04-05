@@ -173,6 +173,7 @@ class SpongeSchematic extends SchematicType
 		}
 
 		$paletteData = new CompoundTag();
+		/** @var string $id */
 		foreach ($palette as $id => $index) {
 			$paletteData->setInt($id, $index);
 		}
@@ -223,10 +224,10 @@ class SpongeSchematic extends SchematicType
 	}
 
 	/**
-	 * @param CompoundTag $tile
-	 * @param int         $blockId
-	 * @param array       $tiles
-	 * @param string      $state
+	 * @param CompoundTag   $tile
+	 * @param int           $blockId
+	 * @param CompoundTag[] $tiles
+	 * @param string        $state
 	 * @return void
 	 */
 	private static function writeTileData(CompoundTag $tile, int $blockId, array &$tiles, string &$state): void

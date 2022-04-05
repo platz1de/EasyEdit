@@ -61,7 +61,7 @@ class BlockParser
 		if (is_numeric($string)) {
 			return ((int) $string) << Block::INTERNAL_METADATA_BITS;
 		}
-		if (preg_match("/(.*):(.*)/", $string, $matches) && is_numeric($matches[1]) && is_numeric($matches[2])) {
+		if (preg_match("/(.*):(.*)/", $string, $matches) !== false && is_numeric($matches[1]) && is_numeric($matches[2])) {
 			return ((int) $matches[1] << Block::INTERNAL_METADATA_BITS) | (int) $matches[2];
 		}
 

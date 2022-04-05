@@ -11,7 +11,7 @@ use UnexpectedValueException;
 
 class InventoryConvertor extends TileConvertorPiece
 {
-	public static function toBedrock($tile): void
+	public static function toBedrock(CompoundTag $tile): void
 	{
 		$items = $tile->getListTag(Container::TAG_ITEMS);
 		if ($items === null) {

@@ -20,7 +20,6 @@ class LineTask extends EditTask
 {
 	use SettingNotifier;
 
-	private Vector3 $start;
 	private Vector3 $end;
 	private StaticBlock $block;
 
@@ -41,9 +40,7 @@ class LineTask extends EditTask
 	 */
 	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
 	{
-		$instance = new self($owner);
-		EditTask::initEditTask($instance, $world, $data);
-		$instance->start = $start;
+		$instance = new self($owner, $world, $data, $start);
 		$instance->end = $end;
 		$instance->block = $block;
 		return $instance;
@@ -67,7 +64,7 @@ class LineTask extends EditTask
 		ChunkCollector::init($this->getWorld());
 		$current = null;
 		//offset points to not yield blocks beyond the endings
-		foreach (VoxelRayTrace::betweenPoints($this->start->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
+		foreach (VoxelRayTrace::betweenPoints($this->getPosition()->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
 			if ($current === null) {
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
@@ -109,14 +106,13 @@ class LineTask extends EditTask
 
 	public function getProgress(): float
 	{
-		$current = $this->blocks[0] ?? $this->start;
-		return $current->distance($this->start) / $this->start->distance($this->end);
+		$current = $this->blocks[0] ?? $this->getPosition();
+		return $current->distance($this->end) / $this->getPosition()->distance($this->end);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putVector($this->start);
 		$stream->putVector($this->end);
 		$stream->putInt($this->block->get());
 	}
@@ -124,7 +120,6 @@ class LineTask extends EditTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->start = $stream->getVector();
 		$this->end = $stream->getVector();
 		$this->block = StaticBlock::fromBlock(BlockFactory::getInstance()->fromFullBlock($stream->getInt()));
 	}

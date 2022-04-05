@@ -6,7 +6,6 @@ use Closure;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
@@ -18,25 +17,19 @@ abstract class SelectionEditTask extends EditTask
 {
 	protected Selection $selection;
 	protected Selection $current;
-	private Vector3 $position;
 	private Vector3 $splitOffset;
 	private int $totalPieces;
 	private int $piecesLeft;
 
 	/**
-	 * @param SelectionEditTask     $instance
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
+	 * @param SelectionEditTask $instance
+	 * @param Selection         $selection
+	 * @param Vector3           $splitOffset
 	 * @return void
 	 */
-	public static function initSelection(SelectionEditTask $instance, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): void
+	public static function initSelection(SelectionEditTask $instance, Selection $selection, Vector3 $splitOffset): void
 	{
-		EditTask::initEditTask($instance, $world, $data);
 		$instance->selection = $selection;
-		$instance->position = $position;
 		$instance->splitOffset = $splitOffset;
 	}
 
@@ -103,7 +96,6 @@ abstract class SelectionEditTask extends EditTask
 	{
 		parent::putData($stream);
 		$stream->putString($this->selection->fastSerialize());
-		$stream->putVector($this->position);
 		$stream->putVector($this->splitOffset);
 	}
 
@@ -111,7 +103,6 @@ abstract class SelectionEditTask extends EditTask
 	{
 		parent::parseData($stream);
 		$this->selection = Selection::fastDeserialize($stream->getString());
-		$this->position = $stream->getVector();
 		$this->splitOffset = $stream->getVector();
 	}
 
@@ -129,14 +120,6 @@ abstract class SelectionEditTask extends EditTask
 	public function getTotalSelection(): Selection
 	{
 		return $this->selection;
-	}
-
-	/**
-	 * @return Vector3
-	 */
-	public function getPosition(): Vector3
-	{
-		return $this->position;
 	}
 
 	/**

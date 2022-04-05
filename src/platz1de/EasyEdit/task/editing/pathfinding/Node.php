@@ -59,7 +59,9 @@ class Node
 
 	/**
 	 * @param bool $allowDiagonal
-	 * @return Generator<Vector3>
+	 * @return Generator|Vector3[]
+	 * @phpstan-return Generator<int, Vector3, void, void>
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	public function getSides(bool $allowDiagonal): Generator
 	{
@@ -72,6 +74,7 @@ class Node
 
 	/**
 	 * @return Generator<Vector3>
+	 * @phpstan-return Generator<int, Vector3, void, void>
 	 */
 	public function getSidesDiagonal(): Generator
 	{

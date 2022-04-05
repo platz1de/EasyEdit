@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\editing\selection\pattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 
@@ -14,17 +13,14 @@ abstract class PatternedEditTask extends SelectionEditTask
 	protected Pattern $pattern;
 
 	/**
-	 * @param PatternedEditTask     $instance
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
-	 * @param Pattern               $pattern
+	 * @param PatternedEditTask $instance
+	 * @param Selection         $selection
+	 * @param Vector3           $splitOffset
+	 * @param Pattern           $pattern
 	 */
-	public static function initPattern(PatternedEditTask $instance, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): void
+	public static function initPattern(PatternedEditTask $instance, Selection $selection, Vector3 $splitOffset, Pattern $pattern): void
 	{
-		SelectionEditTask::initSelection($instance, $world, $data, $selection, $position, $splitOffset);
+		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		$instance->pattern = $pattern;
 	}
 

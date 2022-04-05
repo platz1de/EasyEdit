@@ -11,7 +11,7 @@ use pocketmine\nbt\tag\CompoundTag;
 
 class ChestConvertor extends InventoryConvertor
 {
-	public static function toBedrock($tile): void
+	public static function toBedrock(CompoundTag $tile): void
 	{
 		$tile->setString(Tile::TAG_ID, TileConvertor::TILE_CHEST); //Trapped chests are using chest tiles
 		if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {

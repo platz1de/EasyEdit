@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
-use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -11,17 +10,12 @@ use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class PasteBlockStatesTask extends EditTask
 {
 	use SettingNotifier;
-
-	private Vector3 $start;
-	private int $direction;
-	private StaticBlock $block;
 
 	private float $progress = 0;
 
@@ -30,14 +24,11 @@ class PasteBlockStatesTask extends EditTask
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
-	 * @return PasteBlockstatesTask
+	 * @return PasteBlockStatesTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockstatesTask
+	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
 	{
-		$instance = new self($owner);
-		EditTask::initEditTask($instance, $world, $data);
-		$instance->start = $start;
-		return $instance;
+		return new self($owner, $world, $data, $start);
 	}
 
 	/**
@@ -65,9 +56,9 @@ class PasteBlockStatesTask extends EditTask
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
 		$loadedChunks = [];
-		$x = $this->start->getFloorX();
-		$y = $this->start->getFloorY();
-		$z = $this->start->getFloorZ();
+		$x = $this->getPosition()->getFloorX();
+		$y = $this->getPosition()->getFloorY();
+		$z = $this->getPosition()->getFloorZ();
 		$i = 0;
 		foreach ($states as $id => $state) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);
@@ -78,14 +69,14 @@ class PasteBlockStatesTask extends EditTask
 					return;
 				}
 			}
-			$handler->changeBlock($x + floor($i / 100) * 2, $y, $z + ($i % 100) * 2, $id);
+			$handler->changeBlock((int) ($x + floor($i / 100) * 2), $y, $z + ($i % 100) * 2, $id);
 			$i++;
 		}
 	}
 
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->start);
+		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->getPosition());
 	}
 
 	public function getTaskName(): string
@@ -96,17 +87,5 @@ class PasteBlockStatesTask extends EditTask
 	public function getProgress(): float
 	{
 		return $this->progress;
-	}
-
-	public function putData(ExtendedBinaryStream $stream): void
-	{
-		parent::putData($stream);
-		$stream->putVector($this->start);
-	}
-
-	public function parseData(ExtendedBinaryStream $stream): void
-	{
-		parent::parseData($stream);
-		$this->start = $stream->getVector();
 	}
 }
