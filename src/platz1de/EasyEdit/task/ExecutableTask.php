@@ -35,6 +35,7 @@ abstract class ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putString(igbinary_serialize($this));
+		$this->putData($stream);
 		return $stream->getBuffer();
 	}
 

@@ -218,6 +218,8 @@ abstract class Selection
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
 	{
+		$stream->putString($this->world);
+
 		$stream->putVector($this->pos1);
 		$stream->putVector($this->pos2);
 	}
@@ -227,6 +229,8 @@ abstract class Selection
 	 */
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
+		$this->world = $stream->getString();
+
 		$this->pos1 = $stream->getVector();
 		$this->pos2 = $stream->getVector();
 	}
@@ -257,11 +261,12 @@ abstract class Selection
 
 	public function __serialize(): array
 	{
-		return [$this->world];
+		return [$this->player];
 	}
 
 	public function __unserialize(array $data): void
 	{
-		$this->world = $data[0];
+		$this->player = $data[0];
+		$this->piece = false;
 	}
 }
