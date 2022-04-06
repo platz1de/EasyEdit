@@ -8,16 +8,14 @@ use pocketmine\math\Vector3;
 class ExpandingStaticBlockListSelection extends StaticBlockListSelection
 {
 	/**
-	 * @param string       $player
-	 * @param string       $world
-	 * @param Vector3|null $pos
+	 * @param string  $player
+	 * @param string  $world
+	 * @param Vector3 $pos
 	 */
-	public function __construct(string $player, string $world = "", Vector3 $pos = null)
+	public function __construct(string $player, string $world, Vector3 $pos)
 	{
 		parent::__construct($player, $world, $pos, $pos);
-		if ($pos !== null) {
-			$this->getManager()->loadIfNeeded($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4);
-		}
+		$this->getManager()->loadIfNeeded($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4);
 	}
 
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void

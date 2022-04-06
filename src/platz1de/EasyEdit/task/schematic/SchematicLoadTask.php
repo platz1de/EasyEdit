@@ -13,6 +13,7 @@ use platz1de\EasyEdit\thread\output\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
+use pocketmine\math\Vector3;
 
 class SchematicLoadTask extends ExecutableTask
 {
@@ -50,7 +51,7 @@ class SchematicLoadTask extends ExecutableTask
 	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = new DynamicBlockListSelection($this->getOwner());
+		$selection = new DynamicBlockListSelection($this->getOwner(), Vector3::zero(), Vector3::zero());
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();

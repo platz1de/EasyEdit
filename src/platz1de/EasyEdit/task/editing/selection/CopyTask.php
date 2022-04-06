@@ -59,7 +59,7 @@ class CopyTask extends SelectionEditTask
 	public function getUndoBlockList(): BlockListSelection
 	{
 		//TODO: Make this optional
-		return new DynamicBlockListSelection($this->getOwner(), $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return DynamicBlockListSelection::fromWorldPositions($this->getOwner(), $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
 	}
 
 	/**

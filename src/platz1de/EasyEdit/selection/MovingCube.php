@@ -21,6 +21,7 @@ class MovingCube extends Selection
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
 	 * @param Vector3|null $direction
+	 * @param bool         $piece
 	 */
 	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null, bool $piece = false)
 	{
