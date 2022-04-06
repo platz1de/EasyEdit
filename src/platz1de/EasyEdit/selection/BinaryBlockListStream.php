@@ -145,4 +145,14 @@ class BinaryBlockListStream extends BlockListSelection
 		}
 		return $pieces;
 	}
+
+	public function createSafeClone(): BinaryBlockListStream
+	{
+		$clone = new self($this->getPlayer(), $this->getWorldName());
+		$clone->setData($this->getData());
+		foreach ($this->getTiles() as $tile) {
+			$this->addTile($tile);
+		}
+		return $clone;
+	}
 }

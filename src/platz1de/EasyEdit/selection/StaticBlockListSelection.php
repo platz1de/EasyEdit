@@ -64,4 +64,17 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 		}
 		return $pieces;
 	}
+
+	public function createSafeClone(): StaticBlockListSelection
+	{
+		$clone = new self($this->getPlayer(), $this->getWorldName(), $this->getPos1(), $this->getPos2());
+		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			$clone->getManager()->setChunk($x, $z, $chunk);
+		}
+		foreach ($this->getTiles() as $tile) {
+			$this->addTile($tile);
+		}
+		return $clone;
+	}
 }

@@ -169,4 +169,17 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 		$this->getManager()->cleanChunks();
 		return $pieces;
 	}
+
+	public function createSafeClone(): DynamicBlockListSelection
+	{
+		$clone = new self($this->getPlayer(), $this->getPos2(), $this->getPoint(), $this->getPos1());
+		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
+			World::getXZ($hash, $x, $z);
+			$clone->getManager()->setChunk($x, $z, $chunk);
+		}
+		foreach ($this->getTiles() as $tile) {
+			$this->addTile($tile);
+		}
+		return $clone;
+	}
 }

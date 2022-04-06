@@ -80,5 +80,7 @@ abstract class BlockListSelection extends Selection
 		}
 	}
 
+	abstract public function createSafeClone(): BlockListSelection;
+
 	public function checkCachedData(): void { }
 }
