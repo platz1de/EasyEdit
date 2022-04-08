@@ -72,7 +72,9 @@ class FillTask extends EditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$ignore = HeightMapCache::getIgnore();
-		unset($ignore[array_search($this->block->getId(), $ignore, true)]);
+		if (($k = array_search($this->block->getId(), $ignore)) !== false) {
+			unset($ignore[$k]);
+		}
 
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
