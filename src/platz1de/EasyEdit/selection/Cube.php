@@ -129,7 +129,7 @@ class Cube extends Selection implements Patterned
 			$selection->close();
 		} catch (Throwable) { //no selection
 		}
-		$selection = new Cube($player->getName(), $player->getWorld()->getFolderName());
+		$selection = new Cube($player->getName(), $player->getWorld()->getFolderName(), null, null);
 		SelectionManager::setForPlayer($player->getName(), $selection);
 		return $selection;
 	}

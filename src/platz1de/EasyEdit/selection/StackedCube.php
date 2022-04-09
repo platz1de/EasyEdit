@@ -21,18 +21,18 @@ class StackedCube extends Selection
 	 * StackedCube constructor.
 	 * @param string       $player
 	 * @param string       $world
-	 * @param Vector3|null $pos1
-	 * @param Vector3|null $pos2
-	 * @param Vector3|null $direction
+	 * @param Vector3      $pos1
+	 * @param Vector3      $pos2
+	 * @param Vector3      $direction
 	 * @param Vector3|null $min
 	 * @param Vector3|null $max
 	 * @param bool         $piece
 	 * @param bool         $copyMode
 	 */
-	public function __construct(string $player, string $world = "", ?Vector3 $pos1 = null, ?Vector3 $pos2 = null, ?Vector3 $direction = null, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false, bool $copyMode = false)
+	public function __construct(string $player, string $world, Vector3 $pos1, Vector3 $pos2, Vector3 $direction, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false, bool $copyMode = false)
 	{
 		parent::__construct($player, $world, $pos1, $pos2, $piece);
-		$this->direction = $direction ?? Vector3::zero();
+		$this->direction = $direction;
 		if ($min !== null) {
 			$this->min = $min;
 		}
