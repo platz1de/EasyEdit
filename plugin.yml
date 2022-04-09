@@ -34,6 +34,9 @@ permissions:
   easyedit.brush:
     default: op
     description: "Allows the user to use brushes"
+  easyedit.rod:
+    default: op
+    description: "Allows the user to use the builder rod"
   easyedit.util:
     default: op
     description: "Allows the user to use utility tools"

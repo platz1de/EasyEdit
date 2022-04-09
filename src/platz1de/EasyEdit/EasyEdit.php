@@ -38,6 +38,7 @@ use platz1de\EasyEdit\command\defaults\selection\WallCommand;
 use platz1de\EasyEdit\command\defaults\utility\BenchmarkCommand;
 use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
 use platz1de\EasyEdit\command\defaults\utility\BrushCommand;
+use platz1de\EasyEdit\command\defaults\utility\BuilderRodCommand;
 use platz1de\EasyEdit\command\defaults\utility\CancelCommand;
 use platz1de\EasyEdit\command\defaults\utility\FillCommand;
 use platz1de\EasyEdit\command\defaults\utility\HelpCommand;
@@ -123,6 +124,7 @@ class EasyEdit extends PluginBase
 			new FillCommand(),
 			new LineCommand(),
 			new BlockInfoCommand(),
+			new BuilderRodCommand(),
 			new StatusCommand(),
 			new CancelCommand(),
 			new BenchmarkCommand(),

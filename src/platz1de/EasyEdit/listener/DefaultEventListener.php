@@ -6,6 +6,7 @@ use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\task\editing\ExtendBlockFaceTask;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\world\HighlightingManager;
@@ -17,6 +18,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\item\Axe;
+use pocketmine\item\BlazeRod;
 use pocketmine\item\Shovel;
 use pocketmine\item\Stick;
 use pocketmine\item\TieredTool;
@@ -69,6 +71,9 @@ class DefaultEventListener implements Listener
 					$event->cancel();
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
+			} elseif ($item instanceof BlazeRod && $item->getNamedTag()->getByte("isBuilderRod", 0) === 1 && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT) && $event->getPlayer()->isCreative()) {
+				$event->cancel();
+				ExtendBlockFaceTask::queue($event->getPlayer()->getName(), $event->getPlayer()->getWorld()->getFolderName(), $event->getBlock()->getPosition(), $event->getFace());
 			}
 		}
 	}

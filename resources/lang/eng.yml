@@ -182,6 +182,8 @@ command-line-usage:
   - "//line solid <x> <y> <z> [pattern] - Find a solid path to the destination (slow)"
 command-blockinfo-description: "Get a blockinfo stick"
 command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "Create a builder rod"
+command-builderrod-usage: "//builderrod"
 command-status-description: "Get the status of the editing thread"
 command-status-usage: "//status"
 command-cancel-description: "Cancel the current task"

@@ -29,8 +29,8 @@ allow-unregistered-blocks: false
 #This is also somewhat harsh on client and network performance, so better not set this to high; default:256000
 fast-set-max: 256000
 
-#Distance to check while filling; default:200
-fill-distance: 200
+#Distance to check while filling; default:100
+fill-distance: 100
 
 #Max blocks checked when pathfinding, default: 1000000 (1M)
 pathfinding-max: 1000000

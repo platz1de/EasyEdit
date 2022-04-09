@@ -14,5 +14,6 @@ class KnownPermissions
 	public const PERMISSION_MANAGE = "easyedit.manage";
 	public const PERMISSION_SELECT = "easyedit.select";
 	public const PERMISSION_BRUSH = "easyedit.brush";
+	public const PERMISSION_ROD = "easyedit.rod";
 	public const PERMISSION_UTIL = "easyedit.util";
 }

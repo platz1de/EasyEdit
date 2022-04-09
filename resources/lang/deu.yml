@@ -182,6 +182,8 @@ command-line-usage:
   - "//line solid <x> <y> <z> [muster] - Finde einen möglichen soliden Pfad zum Zielpunkt (langsam)"
 command-blockinfo-description: "Erstelle einen Informationsstab"
 command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "Erstelle einen Erweiterungsstab"
+command-builderrod-usage: "//builderrod"
 command-status-description: "Frage den Status des edit threads ab"
 command-status-usage: "//status"
 command-cancel-description: "Breche den aktuelle Auftrag ab"
