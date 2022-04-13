@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2022-03-29
+#Last updated at: 2022-04-09
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -175,6 +175,8 @@ command-fill-description: "Fülle einen Bereich"
 command-fill-usage:
   - "//fill <block> [richtung]"
   - "//fill <block> - Fülle den Bereich in Sichtrichtung"
+command-drain-description: "Trockne einen Bereich"
+command-drain-usage: "//drain"
 command-line-description: "Erzeuge eine Linie"
 command-line-usage:
   - "//line <x> <y> <z> [muster] - Erzeuge eine Linie zum Zielpunkt"
