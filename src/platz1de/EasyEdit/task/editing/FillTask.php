@@ -83,6 +83,7 @@ class FillTask extends EditTask
 		$startX = $this->getPosition()->getFloorX();
 		$startY = $this->getPosition()->getFloorY();
 		$startZ = $this->getPosition()->getFloorZ();
+		$requestedChunks = [World::chunkHash($startX >> 4, $startZ >> 4) => 1];
 		$validate = match ($this->direction) {
 			Facing::DOWN => static function (Vector3 $pos) use ($startY) {
 				return $pos->getFloorY() <= $startY;
@@ -123,7 +124,12 @@ class FillTask extends EditTask
 					return;
 				}
 			}
+			$requestedChunks[$chunk]--;
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+				if ($requestedChunks[$chunk] <= 0) {
+					unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
+					$this->sendRuntimeChunks($handler, [$chunk]);
+				}
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $id);
@@ -131,8 +137,16 @@ class FillTask extends EditTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if ($validate($side) && !isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
+					if (!isset($requestedChunks[$h = World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4)])) {
+						$requestedChunks[$h] = 0;
+					}
+					$requestedChunks[$h]++;
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
+			}
+			if ($requestedChunks[$chunk] <= 0) {
+				unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
+				$this->sendRuntimeChunks($handler, [$chunk]);
 			}
 		}
 	}

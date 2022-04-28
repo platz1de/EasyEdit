@@ -95,6 +95,25 @@ abstract class EditTask extends ExecutableTask
 		return false;
 	}
 
+	/**
+	 * @param int[] $chunks
+	 * Send chunks while staying in the same execution
+	 */
+	public function sendRuntimeChunks(EditTaskHandler $handler, array $chunks): void
+	{
+		ChunkCollector::getChunks()?->filterChunks(function (array $c) use ($chunks): array {
+			foreach ($chunks as $hash) {
+				unset($c[$hash]);
+			}
+			return $c;
+		});
+		if ($this->data->isUsingFastSet()) {
+			ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles(), $handler->prepareInjectionData());
+		} else {
+			ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles());
+		}
+	}
+
 	public function run(): void
 	{
 		$start = microtime(true);

@@ -78,6 +78,7 @@ class ExtendBlockFaceTask extends EditTask
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$loadedChunks = [$startChunk];
+		$requestedChunks = [World::chunkHash($this->getPosition()->getFloorX() >> 4, $this->getPosition()->getFloorZ() >> 4) => 1];
 		$offsetX = $offset->getFloorX();
 		$offsetY = $offset->getFloorY();
 		$offsetZ = $offset->getFloorZ();
@@ -107,7 +108,12 @@ class ExtendBlockFaceTask extends EditTask
 					return;
 				}
 			}
+			$requestedChunks[$chunk]--;
 			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+				if ($requestedChunks[$chunk] <= 0) {
+					unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
+					$this->sendRuntimeChunks($handler, [$chunk]);
+				}
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $target);
@@ -118,8 +124,16 @@ class ExtendBlockFaceTask extends EditTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
+					if (!isset($requestedChunks[$h = World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4)])) {
+						$requestedChunks[$h] = 0;
+					}
+					$requestedChunks[$h]++;
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
+			}
+			if ($requestedChunks[$chunk] <= 0) {
+				unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
+				$this->sendRuntimeChunks($handler, [$chunk]);
 			}
 		}
 	}
