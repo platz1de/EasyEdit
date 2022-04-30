@@ -1,12 +1,11 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing;
+namespace platz1de\EasyEdit\task\editing\expanding;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\ChunkCollector;
-use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -18,13 +17,11 @@ use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use SplPriorityQueue;
 
-class ExtendBlockFaceTask extends EditTask
+class ExtendBlockFaceTask extends ExpandingTask
 {
 	use SettingNotifier;
 
 	private int $face;
-
-	private float $progress = 0; //worst case scenario
 
 	/**
 	 * @param string                $owner
@@ -50,16 +47,6 @@ class ExtendBlockFaceTask extends EditTask
 	public static function queue(string $player, string $world, Vector3 $block, int $face): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $block, $face));
-	}
-
-	public function execute(): void
-	{
-		$this->getDataManager()->useFastSet();
-		$this->getDataManager()->setFinal();
-		ChunkCollector::init($this->getWorld());
-		ChunkCollector::collectInput(ChunkInputData::empty());
-		$this->run();
-		ChunkCollector::clear();
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
@@ -156,19 +143,9 @@ class ExtendBlockFaceTask extends EditTask
 		}
 	}
 
-	public function getUndoBlockList(): BlockListSelection
-	{
-		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->getPosition());
-	}
-
 	public function getTaskName(): string
 	{
 		return "expand";
-	}
-
-	public function getProgress(): float
-	{
-		return $this->progress; //Unknown
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

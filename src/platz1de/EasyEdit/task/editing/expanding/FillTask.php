@@ -1,14 +1,13 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing;
+namespace platz1de\EasyEdit\task\editing\expanding;
 
 use BadMethodCallException;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\ChunkCollector;
-use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -21,14 +20,12 @@ use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use SplPriorityQueue;
 
-class FillTask extends EditTask
+class FillTask extends ExpandingTask
 {
 	use SettingNotifier;
 
 	private int $direction;
 	private StaticBlock $block;
-
-	private float $progress = 0; //worst case scenario
 
 	/**
 	 * @param string                $owner
@@ -57,16 +54,6 @@ class FillTask extends EditTask
 	public static function queue(string $player, string $world, Vector3 $start, int $direction, StaticBlock $block): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $direction, $block));
-	}
-
-	public function execute(): void
-	{
-		$this->getDataManager()->useFastSet();
-		$this->getDataManager()->setFinal();
-		ChunkCollector::init($this->getWorld());
-		ChunkCollector::collectInput(ChunkInputData::empty());
-		$this->run();
-		ChunkCollector::clear();
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
@@ -151,19 +138,9 @@ class FillTask extends EditTask
 		}
 	}
 
-	public function getUndoBlockList(): BlockListSelection
-	{
-		return new ExpandingStaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->getPosition());
-	}
-
 	public function getTaskName(): string
 	{
 		return "fill";
-	}
-
-	public function getProgress(): float
-	{
-		return $this->progress; //Unknown
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

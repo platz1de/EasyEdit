@@ -6,7 +6,7 @@ use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\task\editing\ExtendBlockFaceTask;
+use platz1de\EasyEdit\task\editing\expanding\ExtendBlockFaceTask;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\world\HighlightingManager;
