@@ -1,0 +1,198 @@
+#Japanese language file
+#Author: yuko fuyutsuki
+#Last updated at: 2022-05-01
+
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
+
+prefix: "§l§aEasy§bEdit §r> "
+
+#Args: {x} {y} {z}
+selected-pos1: "始点を指定しました: {x} {y} {z}"
+selected-pos2: "終点を指定しました: {x} {y} {z}"
+
+no-selection: "まだ項目を選択していません"
+no-clipboard: "まだクリップボードに何もコピーしていません"
+
+#Args: {given} {expected}
+wrong-selection: "選択した項目は {given} 型ですが、 {expected} が必要です"
+
+no-history: "元に戻すものがありません"
+no-future: "やり直すものがありません"
+
+no-task: "現在タスクは実行されていません"
+task-cancelled: "現在実行中のタスクはキャンセルされました"
+
+#Args: {usage}
+wrong-usage: "コマンドの使用方法が間違っています:\n{usage}"
+
+#Args: {commands} {start} {end} {total}
+command-list: "コマンド一覧 ( {total} つのうち {start} から {end} を表示):\n{commands}"
+
+#Args: {message}
+task-crash: "§cタスクがクラッシュしました。開発者に報告してください！\n{message}"
+
+#Args: {time} {changed}
+blocks-set: "{changed} ブロックを {time} 秒で設置しました"
+blocks-copied: "{changed} ブロックを {time} 秒でコピーしました"
+blocks-pasted: "{changed} ブロックを {time} 秒でペーストしました"
+blocks-counted: "{changed} ブロックを {time} 秒でカウントしました"
+blocks-rotated: "{changed} ブロックを {time} 秒で回転しました"
+blocks-flipped: "{changed} ブロックを {time} 秒で反転しました"
+blocks-cut: "{changed} ブロックを {time} 秒で除去しました"
+
+#Args: {time} {changed} {name}
+schematic-created: "{changed} ブロックを {time} 秒で \"{name}\" という名前で保存しました"
+
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Editスレッドの状況:\n状況: {status}\n現在実行中のタスク: {task}\n進捗: {progress}\n待機中のタスク: {queue}\n保存された項目: {storage}\nスレッドのメモリ使用量: {mem_current}MB (最大: {mem_max}MB)"
+
+benchmark-start: "ベンチマークを開始しました。これには数分かかる場合があります"
+benchmark-running: "既に実行中のベンチマークがあります"
+benchmark-cancel: "ベンチマークは中断できません"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "あなたのベンチマークのスコア:\n平均TPS: {tps_avg} ({load_avg}%)\n最小TPS: {tps_min} ({load_max}%)\n{tasks} つのタスクを {time} 秒で実行:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} を {time} 秒で処理"
+
+#Args: {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) {x} {y} {z}\nブロックステート: {java_state}"
+
+#Args: {schematic} {known}
+unknown-schematic: "不明なschematic: \"{schematic}\"\n既知のschematic: {known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "始点を指定する"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "終点を指定する"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "選択した領域を拡張する"
+command-extend-usage:
+  - "//extend [拡張する方角] [拡張ブロック数]"
+  - "//extend [拡張ブロック数] - 今向いている方角に指定したブロック数領域を拡張する"
+  - "//extend vertical - 垂直方向に領域を最大限拡張する"
+command-set-description: "選択した領域にブロックを設置する"
+command-set-usage: "//set <パターン>"
+command-replace-description: "選択した領域のブロックを置換する"
+command-replace-usage:
+  - "//replace <ブロック> <パターン>"
+  - "//replace <パターン> - 選択した領域の全ての固体ブロックを置換する"
+command-overlay-description: "選択した領域にブロックをオーバーレイする"
+command-overlay-usage: "//overlay <パターン>"
+command-naturalize-description: "選択した領域を自然にする"
+command-naturalize-usage: "//naturalize [パターン] [パターン] [パターン]"
+command-smooth-description: "選択した領域を滑らかにする"
+command-smooth-usage: "//smooth"
+command-center-description: "選択した領域の中心にブロックを設置する"
+command-center-usage: "//center [パターン]"
+command-walls-description: "選択した領域に壁を設置する"
+command-walls-usage: "//walls [パターン]"
+command-sides-description: "選択した領域の脇にブロックを設置する"
+command-sides-usage: "//sides [パターン]"
+command-move-description: "選択した領域を移動する"
+command-move-usage:
+  - "//move [移動する方角] [移動ブロック数]"
+  - "//move [移動ブロック数] - 今向いている方角に指定したブロック数領域を移動する"
+command-stack-description: "選択した領域にブロックを積み重ねる"
+command-stack-usage:
+  - "//stack [積み重ねる方角] [積み重ねるブロック数]"
+  - "//stack [積み重ねるブロック数] - 今向いている方角に指定したブロック数領域を積み重ねる"
+command-istack-description: "選択した領域を既存の地形を上書きせずに積み重ねる"
+command-istack-usage:
+  - "//istack [積み重ねる方角] [積み重ねるブロック数]"
+  - "//istack [積み重ねるブロック数] - 今向いている方角に指定したブロック数領域を積み重ねる"
+command-count-description: "選択した領域のブロックをカウントする"
+command-count-usage:
+  - "//count"
+  - "//count [半径] - 指定した半径のブロックをカウントする"
+command-extinguish-description: "選択した領域の消火をする"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [半径] - 指定した半径の消火をする"
+command-view-description: "選択した領域を見る"
+command-view-usage: "//view"
+
+
+command-undo-description: "最後の変更を元に戻す"
+command-undo-usage:
+  - "//undo [元に戻す回数]"
+  - "//undo <対象> [元に戻す回数] - 対象の最後の変更を元に戻す"
+command-redo-description: "最後の変更をやり直す"
+command-redo-usage:
+  - "//redo [やり直す回数]"
+  - "//redo <対象> [やり直す回数] - 対象の最後の変更をやり直す"
+
+
+command-copy-description: "選択した領域をコピーする"
+command-copy-usage:
+  - "//copy - プレイヤーとの相対座標でコピーする"
+  - "//copy center - 選択した領域の中心からの相対座標でコピーする"
+command-cut-description: "選択した領域を切り取ってクリップボードにコピーする"
+command-cut-usage:
+  - "//cut - プレイヤーとの相対座標で切り取る"
+  - "//cut center - 選択した領域の中心からの相対座標でコピーする"
+command-paste-description: "クリップボードから貼り付ける"
+command-paste-usage: "//paste"
+command-insert-description: "クリップボードに挿入する"
+command-insert-usage: "//insert"
+command-rotate-description: "クリップボードの領域を回転する"
+command-rotate-usage: "//rotate"
+command-flip-description: "クリップボードの領域をコピー位置を中心として反転する"
+command-flip-usage:
+  - "//flip [反転する方角]"
+  - "//flip - 今向いている方角にクリップボードの領域を反転する"
+command-loadschematic-description: "保存されているschematicを読み出す"
+command-loadschematic-usage: "//loadschematic <schematic名>"
+command-saveschematic-description: "クリップボード内の領域をschematicに保存する"
+command-saveschematic-usage: "//saveschematic <schematic名>"
+
+
+command-sphere-description: "球を生成します"
+command-sphere-usage: "//sphere <半径> <パターン>"
+command-hsphere-description: "中空の球を生成します"
+command-hsphere-usage: "//hsphere <半径> <パターン> <厚さ>"
+command-cylinder-description: "円柱を生成します"
+command-cylinder-usage: "//cylinder <半径> <高さ> <パターン>"
+command-hcylinder-description: "中空の円柱を生成します"
+command-hcylinder-usage: "//hcylinder <半径> <高さ> <パターン> <厚さ>"
+command-noise-description: "シンプルノイズを生成します"
+command-noise-usage: "//noise"
+
+
+command-commands-description: "全てのEasyEditのコマンド"
+command-commands-usage: "//commands [ページ数]"
+command-brush-description: "新しいブラシを作成する"
+command-brush-usage:
+  - "//brush sphere [半径] [パターン] [重力] - 球ブラシを作成する"
+  - "//brush smooth [半径] - 滑らかにするブラシを作成する"
+  - "//brush naturalize [半径] [上部ブロック] [中部ブロック] [下部ブロック] - 自然化ブラシを作成する"
+  - "//brush cylinder [半径] [高さ] [パターン] [重力] - 円柱ブラシを作成する"
+  - "//brush paste [挿入] - ペーストブラシを作成する"
+command-fill-description: "領域を埋める"
+command-fill-usage:
+  - "//fill <ブロック> [方角]"
+  - "//fill <ブロック> - 今向いている方角に領域を埋める"
+command-drain-description: "指定した領域に溝を作る"
+command-drain-usage: "//drain"
+command-line-description: "線を生成する"
+command-line-usage:
+  - "//line <x> <y> <z> [パターン] - 指定した座標への直線を描く"
+  - "//line find <x> <y> <z> [パターン] - 指定した座標への有効なルートを探索する (低速)"
+  - "//line solid <x> <y> <z> [パターン] - 指定した座標への着実なルートを探索する (低速)"
+command-blockinfo-description: "ブロックの情報を見れる棒を手に入れる"
+command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "ビルダーの杖を授ける"
+command-builderrod-usage: "//builderrod"
+command-status-description: "変更を行っているスレッドの状況を確認する"
+command-status-usage: "//status"
+command-cancel-description: "現在実行中のスレッドを中断する"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "ベンチマークを開始する"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "全ての既知のブロックステートを貼り付ける"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "領域指定用の木の斧を手に入れる"
+command-wand-usage: "//wand"
