@@ -2,8 +2,6 @@
 
 namespace platz1de\EasyEdit\task\editing\expanding;
 
-use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
