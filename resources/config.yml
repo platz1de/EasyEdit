@@ -5,6 +5,7 @@ config-version: "2.0.8" #Please don't change this manually
 # auto - Detect from pocketmine
 # eng - English
 # deu - German
+# jpn - Japanese
 # custom - Allows to modify the language file directly
 language: auto
 
