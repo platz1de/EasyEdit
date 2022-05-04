@@ -151,7 +151,7 @@ class BinaryBlockListStream extends BlockListSelection
 		$clone = new self($this->getPlayer(), $this->getWorldName());
 		$clone->setData($this->getData());
 		foreach ($this->getTiles() as $tile) {
-			$this->addTile($tile);
+			$clone->addTile($tile);
 		}
 		return $clone;
 	}

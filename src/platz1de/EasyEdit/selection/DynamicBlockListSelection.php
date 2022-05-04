@@ -184,7 +184,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 			$clone->getManager()->setChunk($x, $z, $chunk);
 		}
 		foreach ($this->getTiles() as $tile) {
-			$this->addTile($tile);
+			$clone->addTile($tile);
 		}
 		return $clone;
 	}
