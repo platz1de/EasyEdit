@@ -1,0 +1,3 @@
+[submodule "resources/repo"]
+	path = resources/repo
+	url = git@github.com:platz1de/EasyEdit-Data.git
