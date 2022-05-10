@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\pattern\parser;
 
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
+use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
@@ -16,7 +17,6 @@ use platz1de\EasyEdit\pattern\logic\relation\BelowPattern;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\logic\relation\EmbedPattern;
 use platz1de\EasyEdit\pattern\logic\relation\HorizontalPattern;
-use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
@@ -107,6 +107,10 @@ class PatternParser
 
 		if ($patternString === "") {
 			throw new ParseError("No pattern given");
+		}
+
+		if (!is_numeric($weight)) {
+			throw new ParseError("Invalid pattern weight");
 		}
 
 		//blocks have priority
