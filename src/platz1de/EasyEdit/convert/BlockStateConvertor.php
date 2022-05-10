@@ -55,15 +55,15 @@ class BlockStateConvertor
 
 		try {
 			/** @var string $bedrockStringId */
-			foreach (MixedUtils::getJsonData($bedrockPaletteSource, 2) as $javaState => $bedrockStringId) {
+			foreach (MixedUtils::getRepoJsonData($bedrockPaletteSource, 2, "repo/bedrock_palette.json") as $javaState => $bedrockStringId) {
 				self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
 			}
 			/** @var string $javaState */
-			foreach (MixedUtils::getJsonData($javaPaletteSource, 2) as $bedrockStringId => $javaState) {
+			foreach (MixedUtils::getRepoJsonData($javaPaletteSource, 2, "repo/java_palette.json") as $bedrockStringId => $javaState) {
 				self::$paletteTo[BlockParser::fromStringId($bedrockStringId)] = $javaState;
 			}
 			/** @var array<string, array<string, string>> $tileDataPalette */
-			$tileDataPalette = MixedUtils::getJsonData($tileDataSourcePalette, 3);
+			$tileDataPalette = MixedUtils::getRepoJsonData($tileDataSourcePalette, 3, "repo/tile-data-states.json");
 			if (!isset($tileDataPalette[TileConvertor::DATA_CHEST_RELATION])) {
 				EditThread::getInstance()->debug("Couldn't find chest relation data");
 			}
@@ -101,7 +101,7 @@ class BlockStateConvertor
 			}
 
 			/** @var array<string, array<string, array<string, string>>> $javaTilePalette */
-			$javaTilePalette = MixedUtils::getJsonData($javaTileSource, 4);
+			$javaTilePalette = MixedUtils::getRepoJsonData($javaTileSource, 4, "repo/java-tile-states.json");
 			foreach ($javaTilePalette[TileConvertor::DATA_CHEST_RELATION] ?? [] as $state => $data) {
 				self::$compoundTagKeys[$state] = [Chest::TAG_PAIRX, Chest::TAG_PAIRZ];
 				foreach ($data as $type => $result) {

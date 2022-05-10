@@ -31,11 +31,11 @@ class BlockRotationManipulator
 
 		try {
 			/** @var string $pastRotationId */
-			foreach (MixedUtils::getJsonData($rotationSource, 2) as $preRotationId => $pastRotationId) {
+			foreach (MixedUtils::getRepoJsonData($rotationSource, 2, "repo/rotation-data.json") as $preRotationId => $pastRotationId) {
 				self::$rotationData[BlockParser::fromStringId($preRotationId)] = BlockParser::fromStringId($pastRotationId);
 			}
 			/** @var array<string, string> $axisFlips */
-			foreach (MixedUtils::getJsonData($flipSource, 3) as $axisName => $axisFlips) {
+			foreach (MixedUtils::getRepoJsonData($flipSource, 3, "repo/flip-data.json") as $axisName => $axisFlips) {
 				$axis = match ($axisName) {
 					"xAxis" => Axis::X,
 					"yAxis" => Axis::Y,

@@ -3,9 +3,12 @@
 namespace platz1de\EasyEdit\utils;
 
 use JsonException;
+use platz1de\EasyEdit\thread\EditThread;
+use pocketmine\plugin\DiskResourceProvider;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
 use pocketmine\utils\InternetException;
+use UnexpectedValueException;
 
 class MixedUtils
 {
@@ -78,5 +81,31 @@ class MixedUtils
 		}
 
 		return $parsed;
+	}
+
+	public static function getRepoJsonData(string $url, int $depth, string $fallback): array
+	{
+		try {
+			return self::getJsonData($url, $depth);
+		} catch (InternetException $e) {
+			EditThread::getInstance()->getLogger()->debug("Could not download datafile " . $url . ": " . $e->getMessage());
+			$stream = (new DiskResourceProvider(ConfigManager::getResourcePath()))->getResource($fallback);
+			if ($stream === null || ($data = stream_get_contents($stream)) === false) {
+				throw new UnexpectedValueException("Couldn't read fallback datafile " . $fallback);
+			}
+			fclose($stream);
+
+			try {
+				$parsed = json_decode($data, true, max(1, $depth), JSON_THROW_ON_ERROR);
+			} catch (JsonException $e) {
+				throw new InternetException("Invalid JSON: " . $e->getMessage());
+			}
+
+			if (!is_array($parsed)) {
+				throw new InternetException("Loaded Data does not represent an array");
+			}
+
+			return $parsed;
+		}
 	}
 }

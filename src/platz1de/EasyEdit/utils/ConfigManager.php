@@ -38,6 +38,8 @@ class ConfigManager
 	private static string $tileDataStatesSource;
 	private static string $javaTileStatesSource;
 
+	private static string $resourcePath;
+
 	public static function load(): void
 	{
 		$config = self::loadConfig();
@@ -209,6 +211,14 @@ class ConfigManager
 		return self::$toolCooldown;
 	}
 
+	/**
+	 * @return string
+	 */
+	public static function getResourcePath(): string
+	{
+		return self::$resourcePath;
+	}
+
 	public static function putRawData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt(count(self::$terrainIgnored));
@@ -226,6 +236,7 @@ class ConfigManager
 		$stream->putString(self::$tileDataStatesSource);
 		$stream->putString(self::$javaTileStatesSource);
 		$stream->putBool(self::$sendDebug);
+		$stream->putString(EasyEdit::getResourcePath());
 	}
 
 	public static function parseRawData(ExtendedBinaryStream $stream): void
@@ -245,6 +256,7 @@ class ConfigManager
 		self::$tileDataStatesSource = $stream->getString();
 		self::$javaTileStatesSource = $stream->getString();
 		self::$sendDebug = $stream->getBool();
+		self::$resourcePath = $stream->getString();
 	}
 
 	public static function distributeData(): void

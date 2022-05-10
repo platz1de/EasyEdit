@@ -25,7 +25,7 @@ class LegacyBlockIdConvertor
 
 		try {
 			/** @var string $bedrockStringId */
-			foreach (MixedUtils::getJsonData($legacyBedrockSource, 2) as $javaStringId => $bedrockStringId) {
+			foreach (MixedUtils::getRepoJsonData($legacyBedrockSource, 2, "repo/bedrock-conversion-map.json") as $javaStringId => $bedrockStringId) {
 				self::$conversionFrom[BlockParser::fromStringId($javaStringId)] = BlockParser::fromStringId($bedrockStringId);
 			}
 			self::$available = true;
