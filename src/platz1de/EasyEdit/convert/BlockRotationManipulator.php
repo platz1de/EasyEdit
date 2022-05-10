@@ -48,7 +48,7 @@ class BlockRotationManipulator
 			}
 			self::$available = true;
 		} catch (Throwable $e) {
-			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, schematic conversion is not available");
+			EditThread::getInstance()->getLogger()->error("Failed to parse rotation data, block rotating is not available");
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
 	}
