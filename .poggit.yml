@@ -1,5 +1,6 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/platz1de/EasyEdit
 build-by-default: true
+submodule: true
 projects:
   EasyEdit:
     path: ""
