@@ -167,7 +167,7 @@ class BlockStateConvertor
 			self::$available = true;
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse state data, Sponge schematic conversion is not available");
-			EditThread::getInstance()->getLogger()->logException($e);
+			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
 
 		ResourceData::from();
