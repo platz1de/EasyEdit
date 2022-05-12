@@ -25,6 +25,7 @@ use pocketmine\item\TieredTool;
 use pocketmine\item\ToolTier;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
+use Throwable;
 
 class DefaultEventListener implements Listener
 {
@@ -84,13 +85,25 @@ class DefaultEventListener implements Listener
 	 */
 	public function onUse(PlayerItemUseEvent $event): void
 	{
-		$block = $event->getPlayer()->getTargetBlock(self::CREATIVE_REACH);
+		try {
+			$block = $event->getPlayer()->getTargetBlock(self::CREATIVE_REACH);
+		} catch (Throwable) {
+			//No idea why this is crashing for some users, probably caused by weird binaries / plugins
+			EasyEdit::getInstance()->getLogger()->warning("Player " . $event->getPlayer()->getName() . " has thrown an exception while trying to get a target block");
+			return;
+		}
 		$item = $event->getItem();
 		if ($block === null || $block->getId() === 0) {
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
-					$target = $event->getPlayer()->getTargetBlock(100);
+					try {
+						$target = $event->getPlayer()->getTargetBlock(100);
+					} catch (Throwable) {
+						//No idea why this is crashing for some users, probably caused by weird binaries / plugins
+						EasyEdit::getInstance()->getLogger()->warning("Player " . $event->getPlayer()->getName() . " has thrown an exception while trying to get a target block");
+						return;
+					}
 					if ($target instanceof Block) {
 						//HACK: Touch control sends Itemuse when starting to break a block
 						//This gets triggered when breaking a block which isn't focused

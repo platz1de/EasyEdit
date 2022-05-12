@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\brush;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
@@ -32,7 +33,13 @@ class BrushHandler
 	 */
 	public static function handleBrush(CompoundTag $brush, Player $player): void
 	{
-		$target = $player->getTargetBlock(100);
+		try {
+			$target = $player->getTargetBlock(100);
+		} catch (Throwable) {
+			//No idea why this is crashing for some users, probably caused by weird binaries / plugins
+			EasyEdit::getInstance()->getLogger()->warning("Player " . $player->getName() . " has thrown an exception while trying to get a target block");
+			return;
+		}
 		if ($target !== null) {
 			try {
 				switch (self::nameToIdentifier($brush->getString("brushType", ""))) {
