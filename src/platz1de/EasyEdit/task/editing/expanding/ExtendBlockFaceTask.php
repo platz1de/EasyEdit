@@ -50,9 +50,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$startChunk = World::chunkHash($this->getPosition()->getFloorX() >> 4, $this->getPosition()->getFloorZ() >> 4);
-		if (!$this->requestRuntimeChunks($handler, [$startChunk])) {
-			return;
-		}
+		$this->checkRuntimeChunk($handler, $startChunk, 0, 1);
 		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
 		$offset = $this->getPosition()->subtractVector($start = $this->getPosition()->getSide($this->face));
 		$ignore = HeightMapCache::getIgnore();
@@ -62,17 +60,12 @@ class ExtendBlockFaceTask extends ExpandingTask
 
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
-		$loadedChunks = [$startChunk];
 		$offsetX = $offset->getFloorX();
 		$offsetY = $offset->getFloorY();
 		$offsetZ = $offset->getFloorZ();
 		$max = ConfigManager::getFillDistance();
-		$requestedChunks = [World::chunkHash($start->getFloorX() >> 4, $start->getFloorZ() >> 4) => 1];
-		if (isset($requestedChunks[$off = World::chunkHash(($start->getFloorX() + $offsetX) >> 4, ($start->getFloorZ() + $offsetZ) >> 4)])) {
-			$requestedChunks[$off]++;
-		} else {
-			$requestedChunks[$off] = 1;
-		}
+		$this->registerRequestedChunks(World::chunkHash($start->getFloorX() >> 4, $start->getFloorZ() >> 4));
+		$this->registerRequestedChunks(World::chunkHash(($start->getFloorX() + $offsetX) >> 4, ($start->getFloorZ() + $offsetZ) >> 4));
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
 		$queue->insert(World::blockHash($start->getFloorX(), $start->getFloorY(), $start->getFloorZ()), 0);
@@ -84,31 +77,12 @@ class ExtendBlockFaceTask extends ExpandingTask
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!isset($loadedChunks[$chunk])) {
-				$loadedChunks[$chunk] = true;
-				$this->progress = -$current["priority"] / $max;
-				if (!$this->requestRuntimeChunks($handler, [$chunk])) {
-					return;
-				}
-			}
 			$c = World::chunkHash(($x + $offsetX) >> 4, ($z + $offsetZ) >> 4);
-			if (!isset($loadedChunks[$c])) {
-				$loadedChunks[$c] = true;
-				if (!$this->requestRuntimeChunks($handler, [$c])) {
-					return;
-				}
-			}
-			$requestedChunks[$chunk]--;
-			$requestedChunks[$c]--;
+			$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max);
+			$this->checkRuntimeChunk($handler, $c, -$current["priority"], $max);
 			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
-				if ($requestedChunks[$chunk] <= 0) {
-					unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
-					$this->sendRuntimeChunks($handler, [$chunk]);
-				}
-				if (isset($requestedChunks[$c]) && $requestedChunks[$c] <= 0) {
-					unset($requestedChunks[$c], $loadedChunks[$c]);
-					$this->sendRuntimeChunks($handler, [$c]);
-				}
+				$this->checkUnload($handler, $chunk);
+				$this->checkUnload($handler, $c);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $target);
@@ -119,25 +93,13 @@ class ExtendBlockFaceTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					if (!isset($requestedChunks[$h = World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4)])) {
-						$requestedChunks[$h] = 0;
-					}
-					if (!isset($requestedChunks[$ho = World::chunkHash(($side->getFloorX() + $offsetX) >> 4, ($side->getFloorZ() + $offsetZ) >> 4)])) {
-						$requestedChunks[$h0] = 0;
-					}
-					$requestedChunks[$h]++;
-					$requestedChunks[$ho]++;
+					$this->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$this->registerRequestedChunks(World::chunkHash(($side->getFloorX() + $offsetX) >> 4, ($side->getFloorZ() + $offsetZ) >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			if ($requestedChunks[$chunk] <= 0) {
-				unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
-				$this->sendRuntimeChunks($handler, [$chunk]);
-			}
-			if (isset($requestedChunks[$c]) && $requestedChunks[$c] <= 0) {
-				unset($requestedChunks[$c], $loadedChunks[$c]);
-				$this->sendRuntimeChunks($handler, [$c]);
-			}
+			$this->checkUnload($handler, $chunk);
+			$this->checkUnload($handler, $c);
 		}
 	}
 

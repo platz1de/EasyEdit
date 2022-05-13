@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\task\editing\PasteBlockStatesTask;
+use platz1de\EasyEdit\task\editing\expanding\PasteBlockStatesTask;
 use pocketmine\player\Player;
 
 class PasteStatesCommand extends EasyEditCommand

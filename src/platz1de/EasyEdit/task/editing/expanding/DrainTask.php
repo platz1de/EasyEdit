@@ -46,11 +46,10 @@ class DrainTask extends ExpandingTask
 
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
-		$loadedChunks = [];
 		$startX = $this->getPosition()->getFloorX();
 		$startY = $this->getPosition()->getFloorY();
 		$startZ = $this->getPosition()->getFloorZ();
-		$requestedChunks = [World::chunkHash($startX >> 4, $startZ >> 4) => 1];
+		$this->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$max = ConfigManager::getFillDistance();
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
@@ -63,19 +62,11 @@ class DrainTask extends ExpandingTask
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!isset($loadedChunks[$chunk])) {
-				$loadedChunks[$chunk] = true;
-				$this->progress = -$current["priority"] / $max;
-				if (!$this->requestRuntimeChunks($handler, [$chunk])) {
-					return;
-				}
+			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max)) {
+				return;
 			}
-			$requestedChunks[$chunk]--;
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $target, true)) {
-				if ($requestedChunks[$chunk] <= 0) {
-					unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
-					$this->sendRuntimeChunks($handler, [$chunk]);
-				}
+				$this->checkUnload($handler, $chunk);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, 0);
@@ -83,17 +74,11 @@ class DrainTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					if (!isset($requestedChunks[$h = World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4)])) {
-						$requestedChunks[$h] = 0;
-					}
-					$requestedChunks[$h]++;
+					$this->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			if ($requestedChunks[$chunk] <= 0) {
-				unset($requestedChunks[$chunk], $loadedChunks[$chunk]);
-				$this->sendRuntimeChunks($handler, [$chunk]);
-			}
+			$this->checkUnload($handler, $chunk);
 		}
 	}
 

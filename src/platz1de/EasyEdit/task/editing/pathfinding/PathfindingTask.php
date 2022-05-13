@@ -5,12 +5,10 @@ namespace platz1de\EasyEdit\task\editing\pathfinding;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\expanding\ExpandingTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -19,7 +17,7 @@ use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
-class PathfindingTask extends EditTask
+class PathfindingTask extends ExpandingTask
 {
 	use SettingNotifier;
 
@@ -59,16 +57,6 @@ class PathfindingTask extends EditTask
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $end, $allowDiagonal, $block));
 	}
 
-	public function execute(): void
-	{
-		$this->getDataManager()->useFastSet();
-		$this->getDataManager()->setFinal();
-		ChunkCollector::init($this->getWorld());
-		ChunkCollector::collectInput(ChunkInputData::empty());
-		$this->run();
-		ChunkCollector::clear();
-	}
-
 	/**
 	 * @param EditTaskHandler $handler
 	 */
@@ -80,7 +68,7 @@ class PathfindingTask extends EditTask
 		$collection = [];
 		$closed = [];
 		$checked = 0;
-		$loadedChunks = []; //TODO: unload chunks after a set amount
+		//TODO: unload chunks after a set amount
 		$max = ConfigManager::getPathfindingMax();
 
 		$endX = $this->end->getFloorX();
@@ -94,12 +82,7 @@ class PathfindingTask extends EditTask
 			unset($collection[$current->hash]);
 			$closed[$current->hash] = $current->parentHash;
 			$chunk = World::chunkHash($current->x >> 4, $current->z >> 4);
-			if (!isset($loadedChunks[$chunk])) {
-				$loadedChunks[$chunk] = true;
-				if (!$this->requestRuntimeChunks($handler, [$chunk])) {
-					return;
-				}
-			}
+			$this->checkRuntimeChunk($handler, $chunk, $checked, $max);
 			if ($current->equals($endX, $endY, $endZ)) {
 				$hash = $current->hash;
 				while (isset($closed[$hash])) {
@@ -137,12 +120,6 @@ class PathfindingTask extends EditTask
 	public function getTaskName(): string
 	{
 		return "line";
-	}
-
-	public function getProgress(): float
-	{
-		//TODO
-		return 0;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
