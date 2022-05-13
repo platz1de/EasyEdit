@@ -65,7 +65,7 @@ class EasyEdit extends PluginBase
 	{
 		self::$instance = $this;
 
-		if (!is_dir(self::getSchematicPath()) && !mkdir(self::getSchematicPath()) && !is_dir(self::getSchematicPath())) {
+		if (!is_dir(self::getSchematicPath()) && !mkdir(self::getSchematicPath(), 0777, true) && !is_dir(self::getSchematicPath())) {
 			throw new AssumptionFailedError("Failed to created schematic directory");
 		}
 
