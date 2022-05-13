@@ -9,10 +9,10 @@ config-version: "2.0.8" #Please don't change this manually
 # custom - Allows to modify the language file directly
 language: auto
 
-#Tool cooldown length in seconds (defaults to half a second)
+#Tool cooldown length in seconds (defaults to a fifth of a second)
 #Used for brushes, selection axes and more
 #Lowering this might cause some unintended behavior on mobile devices
-tool-cooldown: 0.5
+tool-cooldown: 0.2
 
 #Whether to allow user with "easyedit.history.other" permission to undo/redo other people's actions
 allow-history-other: true
