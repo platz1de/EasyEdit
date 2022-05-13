@@ -87,19 +87,13 @@ class TileConvertor
 			}
 		}
 		try {
-			try {
-				$class = self::getConvertor($tile->getString(Tile::TAG_ID));
-			} catch (UnexpectedValueException) {
-				EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
-				return;
-			}
+			$class = self::getConvertor($tile->getString(Tile::TAG_ID));
 			if ($class !== null) {
 				$class::toBedrock($tile);
 			}
 			$selection->addTile($tile);
 		} catch (Throwable $exception) {
 			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID) . ": " . $exception->getMessage());
-			return;
 		}
 	}
 
