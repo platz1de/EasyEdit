@@ -3,52 +3,45 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\utils\TileUtils;
-use platz1de\EasyEdit\utils\UpdateSubChunkBlocksInjector;
-use platz1de\EasyEdit\world\InjectingSubChunkExplorer;
-use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\blockupdate\InjectingData;
+use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
+use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\world\World;
 use UnexpectedValueException;
 
 class EditTaskHandler
 {
-	private SafeSubChunkExplorer $origin; //Read-only
-	private SafeSubChunkExplorer $result; //Write-only
+	private ChunkController $origin; //Read-only
+	private ChunkController $result; //Write-only
 	private BlockListSelection $changes;
 
 	/**
-	 * @var CompoundTag[]
-	 */
-	private array $originalTiles;
-	/**
-	 * @var CompoundTag[]
-	 */
-	private array $tiles;
-
-	private int $affectedTiles = 0;
-
-	/**
 	 * @param ReferencedChunkManager $origin  Edited Chunks
-	 * @param CompoundTag[]          $tiles   CompoundTags of tiles in edited area
 	 * @param BlockListSelection     $changes Saves made changes, used for undoing
+	 * @param bool                   $isFastSet
 	 */
-	public function __construct(ReferencedChunkManager $origin, array $tiles, BlockListSelection $changes, bool $isFastSet)
+	public function __construct(ReferencedChunkManager $origin, BlockListSelection $changes, bool $isFastSet)
 	{
 		//TODO: Never use changes as result (eg. copy)
-		$this->origin = new SafeSubChunkExplorer($origin);
+		$this->origin = new ChunkController($origin);
 		if ($isFastSet) {
-			$this->result = new InjectingSubChunkExplorer(clone $origin);
+			$this->result = new InjectingSubChunkController(clone $origin);
 		} else {
-			$this->result = new SafeSubChunkExplorer(clone $origin);
+			$this->result = new ChunkController(clone $origin);
 		}
 		$this->changes = $changes;
-		$this->originalTiles = $tiles;
-		$this->tiles = array_map(static function (CompoundTag $tile): CompoundTag {
-			return clone $tile;
-		}, $tiles);
+	}
+
+	/**
+	 * Tasks with empty chunks will need to call this after loading the first runtime chunk
+	 */
+	public function postInit(): void
+	{
+		$this->origin->init();
+		$this->result->init();
 	}
 
 	/**
@@ -85,14 +78,6 @@ class EditTaskHandler
 	}
 
 	/**
-	 * @return int
-	 */
-	public function getChangedTileCount(): int
-	{
-		return $this->affectedTiles;
-	}
-
-	/**
 	 * @return ReferencedChunkManager
 	 */
 	public function getResult(): ReferencedChunkManager
@@ -105,16 +90,12 @@ class EditTaskHandler
 	 */
 	public function prepareInjectionData(): array
 	{
-		if (!$this->result instanceof InjectingSubChunkExplorer) {
+		if (!$this->result instanceof InjectingSubChunkController) {
 			throw new UnexpectedValueException("Handler wasn't caching for injection of result");
 		}
-		$injections = $this->result->getInjections();
-		$return = [];
-		foreach ($injections[0] as $hash => $injection) {
-			World::getBlockXYZ($hash, $x, $y, $z);
-			$return[$hash] = UpdateSubChunkBlocksInjector::getDataFrom($x, $y, $z, $injections[1][$hash], $injection->getBuffer());
-		}
-		return $return;
+		return array_map(static function (InjectingData $injection) {
+			return $injection->toProtocol();
+		}, $this->result->getInjections());
 	}
 
 	/**
@@ -126,21 +107,13 @@ class EditTaskHandler
 	}
 
 	/**
-	 * @return SafeSubChunkExplorer
+	 * @return ChunkController
 	 *
 	 * @deprecated
 	 */
-	public function getOrigin(): SafeSubChunkExplorer
+	public function getOrigin(): ChunkController
 	{
 		return $this->origin;
-	}
-
-	/**
-	 * @return CompoundTag[]
-	 */
-	public function getTiles(): array
-	{
-		return $this->tiles;
 	}
 
 	/**
@@ -151,7 +124,7 @@ class EditTaskHandler
 	 */
 	public function getBlock(int $x, int $y, int $z): int
 	{
-		return $this->origin->getBlockAt($x, $y, $z);
+		return $this->origin->getBlock($x, $y, $z);
 	}
 
 	/**
@@ -162,7 +135,7 @@ class EditTaskHandler
 	 */
 	public function getResultingBlock(int $x, int $y, int $z): int
 	{
-		return $this->result->getBlockAt($x, $y, $z);
+		return $this->result->getBlock($x, $y, $z);
 	}
 
 	/**
@@ -174,16 +147,10 @@ class EditTaskHandler
 	 */
 	public function changeBlock(int $x, int $y, int $z, int $block, bool $overwrite = true): void
 	{
-		$this->changes->addBlock($x, $y, $z, $this->origin->getBlockAt($x, $y, $z), $overwrite);
+		$this->changes->addBlock($x, $y, $z, $this->origin->getBlock($x, $y, $z), $overwrite);
+		$this->changes->addTile($this->origin->getTile($x, $y, $z));
 
-		//This currently blocks tiles being set before changing the block properly
-		if (isset($this->tiles[World::blockHash($x, $y, $z)])) {
-			$this->changes->addTile($this->originalTiles[World::blockHash($x, $y, $z)]);
-			unset($this->tiles[World::blockHash($x, $y, $z)]);
-			$this->affectedTiles++;
-		}
-
-		$this->result->setBlockAt($x, $y, $z, $block);
+		$this->result->setBlock($x, $y, $z, $block);
 	}
 
 	/**
@@ -197,13 +164,8 @@ class EditTaskHandler
 	 */
 	public function copyBlock(int $x, int $y, int $z, int $ox, int $oy, int $oz, bool $overwrite = true): void
 	{
-		$this->changeBlock($x, $y, $z, $this->origin->getBlockAt($ox, $oy, $oz), $overwrite);
-
-		//This currently blocks tiles being set before changing the block properly
-		if (isset($this->tiles[World::blockHash($ox, $oy, $oz)])) {
-			$this->addTile(TileUtils::offsetCompound($this->tiles[World::blockHash($ox, $oy, $oz)], $x - $ox, $y - $oy, $z - $oz));
-			$this->affectedTiles++;
-		}
+		$this->changeBlock($x, $y, $z, $this->origin->getBlock($ox, $oy, $oz), $overwrite);
+		$this->addTile(TileUtils::offsetCompound($this->origin->getTile($ox, $oy, $oz), $x - $ox, $y - $oy, $z - $oz));
 	}
 
 	/**
@@ -217,20 +179,17 @@ class EditTaskHandler
 	 */
 	public function addToUndo(int $x, int $y, int $z, int $ox, int $oy, int $oz): void
 	{
-		$this->changes->addBlock($x + $ox, $y + $oy, $z + $oz, $this->origin->getBlockAt($x, $y, $z));
-
-		if (isset($this->originalTiles[World::blockHash($x, $y, $z)])) {
-			$this->changes->addTile(TileUtils::offsetCompound($this->originalTiles[World::blockHash($x, $y, $z)], $ox, $oy, $oz));
-			$this->affectedTiles++;
-		}
+		$this->changes->addBlock($x + $ox, $y + $oy, $z + $oz, $this->origin->getBlock($x, $y, $z));
+		$this->changes->addTile(TileUtils::offsetCompound($this->origin->getTile($x, $y, $z), $ox, $oy, $oz));
 	}
 
 	/**
-	 * @param CompoundTag $tile
+	 * @param CompoundTag|null $tile
 	 */
-	public function addTile(CompoundTag $tile): void
+	public function addTile(?CompoundTag $tile): void
 	{
-		$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
-		$this->affectedTiles++;
+		if ($tile !== null) {
+			$this->result->setTile($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z), $tile);
+		}
 	}
 }

@@ -24,11 +24,13 @@ abstract class BlockListSelection extends Selection
 	abstract public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void;
 
 	/**
-	 * @param CompoundTag $tile
+	 * @param CompoundTag|null $tile
 	 */
-	public function addTile(CompoundTag $tile): void
+	public function addTile(?CompoundTag $tile): void
 	{
-		$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+		if ($tile !== null) {
+			$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+		}
 	}
 
 	/**

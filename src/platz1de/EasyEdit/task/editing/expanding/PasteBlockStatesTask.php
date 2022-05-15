@@ -43,6 +43,12 @@ class PasteBlockStatesTask extends ExpandingTask
 		$x = $this->getPosition()->getFloorX();
 		$y = $this->getPosition()->getFloorY();
 		$z = $this->getPosition()->getFloorZ();
+
+		if (!$this->checkRuntimeChunk($handler, World::chunkHash($x, $z), 0, 1)) {
+			return;
+		}
+		$handler->postInit();
+
 		$i = 0;
 		foreach ($states as $id => $state) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);

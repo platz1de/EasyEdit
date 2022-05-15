@@ -69,7 +69,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$flipped->setPoint(new Vector3(-$selection->getPos2()->getX() - $selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
 				$selection->setPoint(Vector3::zero());
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
-					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
+					$block = $selection->getIterator()->getBlock($x, $y, $z);
 					Selection::processBlock($block);
 					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flip(Axis::X, $block));
 				}, SelectionContext::full(), $selection);
@@ -81,7 +81,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), -$selection->getPos2()->getY() - $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
 				$selection->setPoint(Vector3::zero());
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
-					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
+					$block = $selection->getIterator()->getBlock($x, $y, $z);
 					Selection::processBlock($block);
 					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flip(Axis::Y, $block));
 				}, SelectionContext::full(), $selection);
@@ -93,7 +93,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), $selection->getPoint()->getY(), -$selection->getPos2()->getZ() - $selection->getPoint()->getZ()));
 				$selection->setPoint(Vector3::zero());
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $flipped): void {
-					$block = $selection->getIterator()->getBlockAt($x, $y, $z);
+					$block = $selection->getIterator()->getBlock($x, $y, $z);
 					Selection::processBlock($block);
 					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flip(Axis::Z, $block));
 				}, SelectionContext::full(), $selection);

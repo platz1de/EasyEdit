@@ -7,9 +7,10 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
+use pocketmine\block\tile\Tile;
 use pocketmine\world\format\io\ChunkData;
-use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -41,41 +42,37 @@ class ChunkRequestData extends OutputData
 
 	public function handle(): void
 	{
-		$this->prepareNextChunk($this->chunks, $this->getWorld(), new ExtendedBinaryStream(), new ExtendedBinaryStream());
+		$this->prepareNextChunk($this->chunks, $this->getWorld(), new ExtendedBinaryStream());
 	}
 
 	/**
 	 * @param int[]                $chunks
 	 * @param World                $world
-	 * @param ExtendedBinaryStream $chunkData
-	 * @param ExtendedBinaryStream $tileData
+	 * @param ExtendedBinaryStream $data
 	 */
-	private function prepareNextChunk(array $chunks, World $world, ExtendedBinaryStream $chunkData, ExtendedBinaryStream $tileData): void
+	private function prepareNextChunk(array $chunks, World $world, ExtendedBinaryStream $data): void
 	{
 		World::getXZ((int) array_pop($chunks), $x, $z);
 
 		$world->orderChunkPopulation($x, $z, null)->onCompletion(
-			function () use ($tileData, $chunkData, $z, $x, $world, $chunks): void {
-				$chunkData->putInt($x);
-				$chunkData->putInt($z);
+			function () use ($data, $z, $x, $world, $chunks): void {
+				$data->putInt($x);
+				$data->putInt($z);
 				$chunk = LoaderManager::getChunk($world, $x, $z);
 				if ($chunk instanceof ChunkData) {
-					foreach ($chunk->getTileNBT() as $tile) {
-						$tileData->putCompound($tile);
-					}
-
+					$tiles = $chunk->getTileNBT();
 					$chunk = $chunk->getChunk();
 				} else {
-					foreach ($chunk->getTiles() as $tile) {
-						$tileData->putCompound($tile->saveNBT());
-					}
+					$tiles = array_map(static function (Tile $tile) {
+						return $tile->saveNBT();
+					}, $chunk->getTiles());
 				}
-				$chunkData->putString(FastChunkSerializer::serializeTerrain($chunk));
+				(new ChunkInformation($chunk, $tiles))->putData($data);
 
 				if ($chunks === []) {
-					ChunkInputData::from($chunkData->getBuffer(), $tileData->getBuffer());
+					ChunkInputData::from($data->getBuffer());
 				} else {
-					$this->prepareNextChunk($chunks, $world, $chunkData, $tileData);
+					$this->prepareNextChunk($chunks, $world, $data);
 				}
 			},
 			function () use ($x, $z): void {

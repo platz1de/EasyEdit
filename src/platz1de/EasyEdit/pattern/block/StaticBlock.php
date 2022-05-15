@@ -7,7 +7,7 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\block\Block;
 use pocketmine\utils\AssumptionFailedError;
 use Throwable;
@@ -15,15 +15,15 @@ use Throwable;
 class StaticBlock extends Pattern
 {
 	/**
-	 * @param int                  $x
-	 * @param int                  $y
-	 * @param int                  $z
-	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $current
-	 * @param Selection            $total
+	 * @param int             $x
+	 * @param int             $y
+	 * @param int             $z
+	 * @param ChunkController $iterator
+	 * @param Selection       $current
+	 * @param Selection       $total
 	 * @return int
 	 */
-	public function getFor(int $x, int &$y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
 	{
 		return $this->args->getRealBlock();
 	}

@@ -50,7 +50,10 @@ class ExtendBlockFaceTask extends ExpandingTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$startChunk = World::chunkHash($this->getPosition()->getFloorX() >> 4, $this->getPosition()->getFloorZ() >> 4);
-		$this->checkRuntimeChunk($handler, $startChunk, 0, 1);
+		if (!$this->checkRuntimeChunk($handler, $startChunk, 0, 1)) {
+			return;
+		}
+		$handler->postInit();
 		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
 		$offset = $this->getPosition()->subtractVector($start = $this->getPosition()->getSide($this->face));
 		$ignore = HeightMapCache::getIgnore();

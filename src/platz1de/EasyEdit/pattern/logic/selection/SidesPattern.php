@@ -9,20 +9,20 @@ use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\ChunkController;
 
 class SidesPattern extends Pattern
 {
 	/**
-	 * @param int                  $x
-	 * @param int                  $y
-	 * @param int                  $z
-	 * @param SafeSubChunkExplorer $iterator
-	 * @param Selection            $current
-	 * @param Selection            $total
+	 * @param int             $x
+	 * @param int             $y
+	 * @param int             $z
+	 * @param ChunkController $iterator
+	 * @param Selection       $current
+	 * @param Selection       $total
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
 	{
 		$thickness = $this->args->getFloat("thickness");
 		if ($current instanceof Cube) {

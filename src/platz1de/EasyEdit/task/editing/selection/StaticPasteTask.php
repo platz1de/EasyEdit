@@ -58,7 +58,7 @@ class StaticPasteTask extends SelectionEditTask
 	{
 		$selection = $this->current;
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $selection): void {
-			$block = $selection->getIterator()->getBlockAt($x, $y, $z);
+			$block = $selection->getIterator()->getBlock($x, $y, $z);
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}

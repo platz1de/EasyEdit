@@ -4,13 +4,13 @@ namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
-use platz1de\EasyEdit\task\ReferencedChunkManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\ChunkInformation;
+use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\math\Vector3;
-use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
 
 abstract class ChunkManagedBlockList extends BlockListSelection
@@ -18,7 +18,7 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	use CubicChunkLoader;
 
 	private ReferencedChunkManager $manager;
-	private SafeSubChunkExplorer $iterator;
+	private ChunkController $iterator;
 
 	/**
 	 * BlockListSelection constructor.
@@ -32,8 +32,8 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	{
 		parent::__construct($player, $world, $pos1, $pos2, $piece);
 		$this->manager = new ReferencedChunkManager($world);
-		$this->getManager()->load($this->pos1, $this->pos2);
-		$this->iterator = new SafeSubChunkExplorer($this->manager);
+		$this->getManager()->loadBetween($this->pos1, $this->pos2);
+		$this->iterator = new ChunkController($this->manager);
 	}
 
 	/**
@@ -59,15 +59,15 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		if ($id === 0) {
 			$id = 0xD90; //structure_void
 		}
-		if ($overwrite || $this->iterator->getBlockAt($x, $y, $z) === 0) {
-			$this->iterator->setBlockAt($x, $y, $z, $id);
+		if ($overwrite || $this->iterator->getBlock($x, $y, $z) === 0) {
+			$this->iterator->setBlock($x, $y, $z, $id);
 		}
 	}
 
 	/**
-	 * @return SafeSubChunkExplorer
+	 * @return ChunkController
 	 */
-	public function getIterator(): SafeSubChunkExplorer
+	public function getIterator(): ChunkController
 	{
 		return $this->iterator;
 	}
@@ -85,9 +85,9 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		$count = 0;
 		foreach ($this->manager->getChunks() as $hash => $chunk) {
 			World::getXZ($hash, $x, $z);
-			$chunks->putString(FastChunkSerializer::serializeTerrain($chunk));
 			$chunks->putInt($x);
 			$chunks->putInt($z);
+			$chunk->putData($stream);
 			$count++;
 		}
 		$stream->putInt($count);
@@ -102,11 +102,10 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$chunk = FastChunkSerializer::deserializeTerrain($stream->getString());
-			$this->manager->setChunk($stream->getInt(), $stream->getInt(), $chunk);
+			$this->manager->setChunk($stream->getInt(), $stream->getInt(), ChunkInformation::readFrom($stream));
 		}
 
-		$this->iterator = new SafeSubChunkExplorer($this->manager);
+		$this->iterator = new ChunkController($this->manager);
 	}
 
 	public function free(): void

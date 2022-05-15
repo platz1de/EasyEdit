@@ -29,7 +29,7 @@ class McEditSchematic extends SchematicType
 		$target->setPoint(new Vector3($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0), $nbt->getInt(self::OFFSET_Z, 0)));
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
-		$target->getManager()->load($target->getPos1(), $target->getPos2());
+		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
 
 		//"AddBlocks" allows ids over 255
 		//this can be ignored as java pre-flattening only had 255 block ids in use and later didn't support block ids at all

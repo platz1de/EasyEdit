@@ -2,10 +2,11 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\world\blockupdate\UpdateSubChunkBlocksInjector;
+use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\block\tile\Tile;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\ChunkData;
@@ -36,25 +37,12 @@ class LoaderManager
 	}
 
 	/**
-	 * @param World         $world
-	 * @param Chunk[]       $chunks
-	 * @param CompoundTag[] $tiles
-	 * @param string[]      $injections
-	 * @return void
+	 * @param World              $world
+	 * @param ChunkInformation[] $chunks
+	 * @param string[]           $injections
 	 */
-	public static function setChunks(World $world, array $chunks, array $tiles, array $injections): void
+	public static function setChunks(World $world, array $chunks, array $injections): void
 	{
-		foreach ($tiles as $rawTile) {
-			$hash = World::chunkHash($rawTile->getInt(Tile::TAG_X) >> 4, $rawTile->getInt(Tile::TAG_Z) >> 4);
-			if (isset($chunks[$hash])) {
-				//Note: this deletes any tiles at the given position even if the tile is never used (ty pmmp)
-				$tile = TileFactory::getInstance()->createFromData($world, $rawTile);
-				if ($tile !== null) {
-					$chunks[$hash]->addTile($tile);
-				}
-			}
-		}
-
 		$preparedInjections = [];
 		foreach ($injections as $hash => $injection) {
 			World::getBlockXYZ($hash, $x, $y, $z);
@@ -66,28 +54,21 @@ class LoaderManager
 			self::injectChunk($world, $x, $z, $chunk, $preparedInjections[$x][$z] ?? []);
 			$world->unloadChunk($x, $z);
 		}
-
-		if ($injections !== []) {
-			foreach ($tiles as $tile) {
-				foreach ($world->getChunkPlayers($tile->getInt(Tile::TAG_X) >> 4, $tile->getInt(Tile::TAG_Z) >> 4) as $player) {
-					PacketUtils::resendBlock(new Vector3($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z)), $world, $player);
-				}
-			}
-		}
 	}
 
 	/**
 	 * Implementation of World::setChunk without loading unnecessary Chunks which get overwritten anyways
-	 * @param World    $world
-	 * @param int      $x
-	 * @param int      $z
-	 * @param Chunk    $chunk
-	 * @param string[] $preparedInjections
+	 * @param World            $world
+	 * @param int              $x
+	 * @param int              $z
+	 * @param ChunkInformation $chunkInformation
+	 * @param string[]         $preparedInjections
 	 * @see          World::setChunk()
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
-	public static function injectChunk(World $world, int $x, int $z, Chunk $chunk, array $preparedInjections): void
+	public static function injectChunk(World $world, int $x, int $z, ChunkInformation $chunkInformation, array $preparedInjections): void
 	{
+		$chunk = $chunkInformation->getChunk();
 		$chunkHash = World::chunkHash($x, $z);
 
 		//TODO: this deletes entities in unloaded chunks (load entities to EditThread)
@@ -119,15 +100,30 @@ class LoaderManager
 				}
 			}
 		})->call($world);
+
+		foreach ($chunkInformation->getTiles() as $rawTile) {
+			$tile = TileFactory::getInstance()->createFromData($world, $rawTile);
+			if ($tile !== null) {
+				$chunk->addTile($tile);
+			}
+		}
+
+		if ($preparedInjections !== []) {
+			foreach ($chunkInformation->getTiles() as $tile) {
+				foreach ($world->getChunkPlayers($tile->getInt(Tile::TAG_X) >> 4, $tile->getInt(Tile::TAG_Z) >> 4) as $player) {
+					PacketUtils::resendBlock(new Vector3($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z)), $world, $player);
+				}
+			}
+		}
 	}
 
 	/**
-	 * @param Chunk $chunk
+	 * @param ChunkInformation $chunk
 	 * @return bool
 	 */
-	public static function isChunkUsed(Chunk $chunk): bool
+	public static function isChunkUsed(ChunkInformation $chunk): bool
 	{
-		foreach ($chunk->getSubChunks() as $subChunk) {
+		foreach ($chunk->getChunk()->getSubChunks() as $subChunk) {
 			if (!$subChunk->isEmptyFast()) {
 				return true;
 			}

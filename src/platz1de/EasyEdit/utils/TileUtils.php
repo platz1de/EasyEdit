@@ -12,14 +12,17 @@ use pocketmine\nbt\tag\IntTag;
 class TileUtils
 {
 	/**
-	 * @param CompoundTag $compoundTag
-	 * @param int         $x
-	 * @param int         $y
-	 * @param int         $z
-	 * @return CompoundTag
+	 * @param CompoundTag|null $compoundTag
+	 * @param int              $x
+	 * @param int              $y
+	 * @param int              $z
+	 * @return CompoundTag|null
 	 */
-	public static function offsetCompound(CompoundTag $compoundTag, int $x, int $y, int $z): CompoundTag
+	public static function offsetCompound(?CompoundTag $compoundTag, int $x, int $y, int $z): ?CompoundTag
 	{
+		if ($compoundTag === null) {
+			return null;
+		}
 		$compoundTag = clone $compoundTag;
 		$compoundTag->setInt(Tile::TAG_X, $compoundTag->getInt(Tile::TAG_X) + $x);
 		$compoundTag->setInt(Tile::TAG_Y, $compoundTag->getInt(Tile::TAG_Y) + $y);

@@ -8,17 +8,14 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 class ChunkInputData extends InputData
 {
 	private string $chunkData;
-	private string $tileData;
 
 	/**
 	 * @param string $chunkData
-	 * @param string $tileData
 	 */
-	public static function from(string $chunkData, string $tileData): void
+	public static function from(string $chunkData): void
 	{
 		$data = new self();
 		$data->chunkData = $chunkData;
-		$data->tileData = $tileData;
 		$data->send();
 	}
 
@@ -29,7 +26,6 @@ class ChunkInputData extends InputData
 	{
 		$data = new self();
 		$data->chunkData = "";
-		$data->tileData = "";
 		return $data;
 	}
 
@@ -41,13 +37,11 @@ class ChunkInputData extends InputData
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->chunkData);
-		$stream->putString($this->tileData);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->chunkData = $stream->getString();
-		$this->tileData = $stream->getString();
 	}
 
 	/**
@@ -56,13 +50,5 @@ class ChunkInputData extends InputData
 	public function getChunkData(): string
 	{
 		return $this->chunkData;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTileData(): string
-	{
-		return $this->tileData;
 	}
 }

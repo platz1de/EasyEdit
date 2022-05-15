@@ -14,9 +14,9 @@ use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\math\Vector3;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
 abstract class EditTask extends ExecutableTask
@@ -82,9 +82,7 @@ abstract class EditTask extends ExecutableTask
 			if (ChunkCollector::hasReceivedInput()) {
 				foreach ($chunks as $hash) {
 					World::getXZ($hash, $x, $z);
-					if (($c = $handler->getOrigin()->getManager()->getChunk($x, $z)) === null) {
-						continue;
-					}
+					$c = $handler->getOrigin()->getManager()->getChunk($x, $z);
 					$handler->getResult()->setChunk($x, $z, clone $c);
 				}
 				return true;
@@ -101,16 +99,16 @@ abstract class EditTask extends ExecutableTask
 	 */
 	public function sendRuntimeChunks(EditTaskHandler $handler, array $chunks): void
 	{
-		ChunkCollector::getChunks()?->filterChunks(function (array $c) use ($chunks): array {
+		ChunkCollector::getChunks()->filterChunks(function (array $c) use ($chunks): array {
 			foreach ($chunks as $hash) {
 				unset($c[$hash]);
 			}
 			return $c;
 		});
 		if ($this->data->isUsingFastSet()) {
-			ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles(), $handler->prepareInjectionData());
+			ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareInjectionData());
 		} else {
-			ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles());
+			ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()));
 		}
 	}
 
@@ -118,14 +116,14 @@ abstract class EditTask extends ExecutableTask
 	{
 		$start = microtime(true);
 
-		$handler = new EditTaskHandler(ChunkCollector::getChunks(), ChunkCollector::getTiles(), $this->getUndoBlockList(), $this->data->isUsingFastSet());
+		$handler = new EditTaskHandler(ChunkCollector::getChunks(), $this->getUndoBlockList(), $this->data->isUsingFastSet());
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($this->data->isUsingFastSet() ? "true" : "false"));
 
 		HeightMapCache::prepare();
 
 		$this->executeEdit($handler);
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written, " . $handler->getChangedTileCount() . " affected tiles)");
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
 
 		if ($this->data->isSavingUndo()) {
 			StorageModule::collect($handler->getChanges());
@@ -134,9 +132,9 @@ abstract class EditTask extends ExecutableTask
 
 		if ($this->data->isSavingChunks()) {
 			if ($this->data->isUsingFastSet()) {
-				ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles(), $handler->prepareInjectionData());
+				ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareInjectionData());
 			} else {
-				ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->getTiles());
+				ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()));
 			}
 		}
 
@@ -182,16 +180,15 @@ abstract class EditTask extends ExecutableTask
 
 	/**
 	 * Filters actually edited chunks
-	 * @param Chunk[] $chunks
-	 * @return Chunk[]
+	 * @param ChunkInformation[] $chunks
+	 * @return ChunkInformation[]
 	 */
 	public function filterChunks(array $chunks): array
 	{
 		foreach ($chunks as $hash => $chunk) {
-			if (!$chunk->isTerrainDirty()) {
+			if (!$chunk->wasUsed()) {
 				unset($chunks[$hash]);
 			}
-			$chunk->clearTerrainDirtyFlags();
 		}
 		return $chunks;
 	}

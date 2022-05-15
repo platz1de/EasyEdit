@@ -79,14 +79,14 @@ class DynamicPasteTask extends SelectionEditTask
 		if ($this->insert) {
 			$ignore = HeightMapCache::getIgnore();
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
-				$block = $selection->getIterator()->getBlockAt($x - $ox, $y - $oy, $z - $oz);
+				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, SelectionContext::full(), $this->getTotalSelection());
 		} else {
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
-				$block = $selection->getIterator()->getBlockAt($x - $ox, $y - $oy, $z - $oz);
+				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 				if (Selection::processBlock($block)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}

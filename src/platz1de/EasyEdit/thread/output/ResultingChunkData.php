@@ -4,10 +4,8 @@ namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
+use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\world\format\Chunk;
-use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
 
 class ResultingChunkData extends OutputData
@@ -15,24 +13,19 @@ class ResultingChunkData extends OutputData
 	use ReferencedWorldHolder;
 
 	/**
-	 * @var Chunk[]
+	 * @var ChunkInformation[]
 	 */
 	private array $chunkData;
-	/**
-	 * @var CompoundTag[]
-	 */
-	private array $tileData;
 	/**
 	 * @var string[]
 	 */
 	private array $injections = [];
 
 	/**
-	 * @param string        $world
-	 * @param Chunk[]       $chunks
-	 * @param CompoundTag[] $tiles
+	 * @param string             $world
+	 * @param ChunkInformation[] $chunks
 	 */
-	public static function from(string $world, array $chunks, array $tiles): void
+	public static function from(string $world, array $chunks): void
 	{
 		if ($chunks === []) {
 			return;
@@ -40,17 +33,15 @@ class ResultingChunkData extends OutputData
 		$data = new self();
 		$data->world = $world;
 		$data->chunkData = $chunks;
-		$data->tileData = $tiles;
 		$data->send();
 	}
 
 	/**
-	 * @param string        $world
-	 * @param Chunk[]       $chunks
-	 * @param CompoundTag[] $tiles
-	 * @param string[]      $injections UpdateSubChunkBlocksPacket data
+	 * @param string             $world
+	 * @param ChunkInformation[] $chunks
+	 * @param string[]           $injections UpdateSubChunkBlocksPacket data
 	 */
-	public static function withInjection(string $world, array $chunks, array $tiles, array $injections): void
+	public static function withInjection(string $world, array $chunks, array $injections): void
 	{
 		if ($chunks === [] && $injections === []) {
 			return;
@@ -58,14 +49,13 @@ class ResultingChunkData extends OutputData
 		$data = new self();
 		$data->world = $world;
 		$data->chunkData = $chunks;
-		$data->tileData = $tiles;
 		$data->injections = $injections;
 		$data->send();
 	}
 
 	public function handle(): void
 	{
-		LoaderManager::setChunks($this->getWorld(), $this->getChunks(), $this->getTiles(), $this->getInjections());
+		LoaderManager::setChunks($this->getWorld(), $this->getChunks(), $this->getInjections());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -78,13 +68,11 @@ class ResultingChunkData extends OutputData
 			World::getXZ($hash, $x, $z);
 			$chunks->putInt($x);
 			$chunks->putInt($z);
-			$chunks->putString(FastChunkSerializer::serializeTerrain($chunk));
+			$chunk->putData($chunks);
 			$count++;
 		}
 		$stream->putInt($count);
 		$stream->put($chunks->getBuffer());
-
-		$stream->putCompounds($this->tileData);
 
 		$stream->putInt(count($this->injections));
 		foreach ($this->injections as $hash => $injection) {
@@ -100,10 +88,8 @@ class ResultingChunkData extends OutputData
 		$count = $stream->getInt();
 		$this->chunkData = [];
 		for ($i = 0; $i < $count; $i++) {
-			$this->chunkData[World::chunkHash($stream->getInt(), $stream->getInt())] = FastChunkSerializer::deserializeTerrain($stream->getString());
+			$this->chunkData[World::chunkHash($stream->getInt(), $stream->getInt())] = ChunkInformation::readFrom($stream);
 		}
-
-		$this->tileData = $stream->getCompounds();
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
@@ -112,19 +98,11 @@ class ResultingChunkData extends OutputData
 	}
 
 	/**
-	 * @return Chunk[]
+	 * @return ChunkInformation[]
 	 */
 	public function getChunks(): array
 	{
 		return $this->chunkData;
-	}
-
-	/**
-	 * @return CompoundTag[]
-	 */
-	public function getTiles(): array
-	{
-		return $this->tileData;
 	}
 
 	/**

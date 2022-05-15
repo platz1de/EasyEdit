@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\pattern;
 
 use Exception;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\world\SafeSubChunkExplorer;
+use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\utils\AssumptionFailedError;
 
 final class PatternConstruct extends Pattern
@@ -23,7 +23,7 @@ final class PatternConstruct extends Pattern
 		return parent::from($pieces, $args);
 	}
 
-	public function getFor(int $x, int &$y, int $z, SafeSubChunkExplorer $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
 	{
 		foreach ($this->pieces as $piece) {
 			try {

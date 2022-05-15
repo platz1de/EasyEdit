@@ -60,7 +60,7 @@ class SpongeSchematic extends SchematicType
 		$target->setPoint($offset);
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
-		$target->getManager()->load($target->getPos1(), $target->getPos2());
+		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
 
 		switch ($version) {
 			case 1:
@@ -152,7 +152,7 @@ class SpongeSchematic extends SchematicType
 		for ($y = 0; $y < $ySize; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
-					$block = $target->getIterator()->getBlockAt($x, $y, $z);
+					$block = $target->getIterator()->getBlock($x, $y, $z);
 
 					if (!isset($translation[$block])) {
 						$translation[$block] = BlockStateConvertor::getState($block);

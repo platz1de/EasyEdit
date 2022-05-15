@@ -9,8 +9,8 @@ use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
+use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\math\Vector3;
-use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
 abstract class SelectionEditTask extends EditTask
@@ -59,8 +59,8 @@ abstract class SelectionEditTask extends EditTask
 	}
 
 	/**
-	 * @param Chunk[] $chunks
-	 * @return Chunk[]
+	 * @param ChunkInformation[] $chunks
+	 * @return ChunkInformation[]
 	 */
 	public function filterChunks(array $chunks): array
 	{
