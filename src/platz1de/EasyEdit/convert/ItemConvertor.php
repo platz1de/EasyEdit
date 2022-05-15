@@ -162,7 +162,7 @@ class ItemConvertor
 							$text = $line->getValue();
 							try {
 								/** @var string $json */
-								$json = json_encode([["text" => $customName]], JSON_THROW_ON_ERROR);
+								$json = json_encode([["text" => $text]], JSON_THROW_ON_ERROR);
 							} catch (JsonException) {
 								throw new UnexpectedValueException("Failed to encode JSON for item lore");
 							}
