@@ -179,9 +179,9 @@ patterns - children patterns, can be separated by a comma
 | odd;\[x];\[y];\[z](patterns)                 | Executes Patterns if the block is at odd coordinates at x, y and z Axis, the x, y and z can be left out (only given ones will be checked) |
 | even;\[x];\[y];\[z](patterns)                | Executes Patterns if the block is at even coordinates (see odd for more info)                                                             |
 | divisible;\<number>;\[x];\[y];\[z](patterns) | Executes Patterns if the block is at coordinates which are divisible by the given number (see odd for more info)                          |
-| walls;\[thickness](patterns)                 | Executes Patterns if the block is one of the walls of the selections                                                                      |
-| sides;\[thickness](patterns)                 | Executes Patterns if the block is one of the sides of the selections (walls + bottom and top)                                             |
-| center(patterns)                             | Executes Patterns if the block is in the center of the selections                                                                         |
+| walls;\[thickness](patterns)                 | Executes Patterns if the block is one of the walls of the selection                                                                       |
+| sides;\[thickness](patterns)                 | Executes Patterns if the block is one of the sides of the selection (walls + bottom and top)                                              |
+| center(patterns)                             | Executes Patterns if the block is in the center of the selection                                                                          |
 | embed;\<block>(patterns)                     | Executes Patterns if the block is around a higher specified block                                                                         |
 
 ### Functional Patterns
@@ -192,10 +192,10 @@ These Patterns have a unique use and are mostly used for the default commands
 [argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
-| Pattern                                      | Description                                                                       |
-|----------------------------------------------|-----------------------------------------------------------------------------------|
-| naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer pattern1, 3 layers pattern2, pattern3) |
-| gravity(\[pattern])                          | makes your blocks fall down until they reach the ground                           |
+| Pattern                                      | Description                                                                                                                             |
+|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer of pattern1 (eg. grass), 3 layers of pattern2 (eg. dirt), all below pattern3 (eg. stone)) |
+| gravity(\[pattern])                          | makes your blocks fall down until they reach the ground                                                                                 |
 
 ## Blame Mojang
 
