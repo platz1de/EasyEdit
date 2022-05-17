@@ -94,7 +94,6 @@ class FillTask extends ExpandingTask
 		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
 		}
-		$handler->postInit();
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
 		$queue->insert(World::blockHash($startX, $startY, $startZ), 0);

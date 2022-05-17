@@ -3,9 +3,9 @@
 namespace platz1de\EasyEdit\world;
 
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\utils\Limits;
 use pocketmine\world\format\SubChunk;
 use pocketmine\world\World;
-use UnexpectedValueException;
 
 class ChunkController
 {
@@ -17,32 +17,13 @@ class ChunkController
 	public ChunkInformation $currentChunk;
 	public SubChunk $currentSubChunk;
 
-	protected int $currentX;
+	protected int $currentX = (Limits::INT32_MAX + 1) >> 4; //invalid chunk coordinate
 	protected int $currentY;
 	protected int $currentZ;
 
 	public function __construct(ReferencedChunkManager $world)
 	{
 		$this->world = $world;
-		try {
-			$this->init();
-		} catch (UnexpectedValueException) { //needs to be init later
-		}
-	}
-
-	public function init(): void
-	{
-		$chunks = $this->world->getChunks();
-		if (count($chunks) === 0) {
-			throw new UnexpectedValueException("No chunks loaded");
-		}
-		$this->currentChunk = current($chunks); //just a random chunk
-		$this->currentChunk->use();
-		$this->currentSubChunk = $this->currentChunk->getChunk()->getSubChunk(World::Y_MIN >> 4);
-		World::getXZ(key($chunks), $x, $z);
-		$this->currentX = $x;
-		$this->currentY = World::Y_MIN >> 4;
-		$this->currentZ = $z;
 	}
 
 	/**

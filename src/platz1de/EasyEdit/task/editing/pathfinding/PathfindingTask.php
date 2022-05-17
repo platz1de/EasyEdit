@@ -78,7 +78,6 @@ class PathfindingTask extends ExpandingTask
 		if (!$this->checkRuntimeChunk($handler, World::chunkHash($this->getPosition()->getFloorX(), $this->getPosition()->getFloorZ()), 0, 1)) {
 			return;
 		}
-		$handler->postInit();
 
 		$open->insert(new Node($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ(), null, $endX, $endY, $endZ));
 		while ($checked++ < $max) {

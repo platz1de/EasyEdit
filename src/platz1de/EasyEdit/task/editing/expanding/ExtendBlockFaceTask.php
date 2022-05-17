@@ -53,7 +53,6 @@ class ExtendBlockFaceTask extends ExpandingTask
 		if (!$this->checkRuntimeChunk($handler, $startChunk, 0, 1)) {
 			return;
 		}
-		$handler->postInit();
 		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
 		$offset = $this->getPosition()->subtractVector($start = $this->getPosition()->getSide($this->face));
 		$ignore = HeightMapCache::getIgnore();

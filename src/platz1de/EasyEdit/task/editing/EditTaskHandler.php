@@ -36,15 +36,6 @@ class EditTaskHandler
 	}
 
 	/**
-	 * Tasks with empty chunks will need to call this after loading the first runtime chunk
-	 */
-	public function postInit(): void
-	{
-		$this->origin->init();
-		$this->result->init();
-	}
-
-	/**
 	 * @return int
 	 */
 	public function getChunkCount(): int

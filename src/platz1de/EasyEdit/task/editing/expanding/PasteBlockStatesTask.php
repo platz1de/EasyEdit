@@ -47,7 +47,6 @@ class PasteBlockStatesTask extends ExpandingTask
 		if (!$this->checkRuntimeChunk($handler, World::chunkHash($x, $z), 0, 1)) {
 			return;
 		}
-		$handler->postInit();
 
 		$i = 0;
 		foreach ($states as $id => $state) {
