@@ -64,7 +64,8 @@ class SidesPattern extends Pattern
 	 * @param ExtendedBinaryStream $stream
 	 * @return void
 	 */
-	public function putData(ExtendedBinaryStream $stream): void {
+	public function putData(ExtendedBinaryStream $stream): void
+	{
 		$stream->putFloat($this->thickness);
 	}
 
@@ -72,7 +73,8 @@ class SidesPattern extends Pattern
 	 * @param ExtendedBinaryStream $stream
 	 * @return void
 	 */
-	public function parseData(ExtendedBinaryStream $stream): void {
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
 		$this->thickness = $stream->getFloat();
 	}
 }

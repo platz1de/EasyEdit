@@ -60,9 +60,9 @@ class SchematicFileAdapter
 
 		$nbtParser = new BigEndianNbtSerializer();
 		$data = zlib_encode($nbtParser->write(new TreeRoot($nbt)), ZLIB_ENCODING_GZIP);
-		if($data === false) {
-            throw new UnexpectedValueException("Failed to compress schematic data");
-        }
+		if ($data === false) {
+			throw new UnexpectedValueException("Failed to compress schematic data");
+		}
 		file_put_contents($path, $data);
 	}
 

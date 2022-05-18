@@ -9,6 +9,6 @@ trait ToggleableEventListener
 {
 	public static function init(): void
 	{
-	    Server::getInstance()->getPluginManager()->registerEvents(new self(), EasyEdit::getInstance());
-    }
+		Server::getInstance()->getPluginManager()->registerEvents(new self(), EasyEdit::getInstance());
+	}
 }

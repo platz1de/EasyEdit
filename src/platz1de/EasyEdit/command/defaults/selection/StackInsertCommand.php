@@ -7,8 +7,6 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\task\editing\selection\StackTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 
 class StackInsertCommand extends EasyEditCommand

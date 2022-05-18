@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\pattern\functional;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\HeightMapCache;
 
 class GravityPattern extends Pattern
 {

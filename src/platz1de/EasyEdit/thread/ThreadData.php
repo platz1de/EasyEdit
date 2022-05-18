@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\input\ChunkInputData;
 
 /**
  * @internal
