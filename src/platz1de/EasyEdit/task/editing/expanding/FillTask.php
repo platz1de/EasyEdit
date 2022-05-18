@@ -141,6 +141,6 @@ class FillTask extends ExpandingTask
 	{
 		parent::parseData($stream);
 		$this->direction = $stream->getByte();
-		$this->block = StaticBlock::fromBlock(BlockFactory::getInstance()->fromFullBlock($stream->getInt()));
+		$this->block = new StaticBlock($stream->getInt());
 	}
 }
