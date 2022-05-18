@@ -4,12 +4,13 @@ namespace platz1de\EasyEdit\pattern\block;
 
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\world\HeightMapCache;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\utils\AssumptionFailedError;
 
-class SolidBlock extends StaticBlock
+class SolidBlock extends BlockType
 {
 	/**
 	 * @param int             $x
@@ -23,44 +24,6 @@ class SolidBlock extends StaticBlock
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
 	{
 		throw new AssumptionFailedError("Solid block group should only be used in comparison context");
-	}
-
-	/**
-	 * @return int
-	 */
-	public function get(): int
-	{
-		throw new AssumptionFailedError("Solid block group should only be used in comparison context");
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getId(): int
-	{
-		throw new AssumptionFailedError("Solid block group should only be used in comparison context");
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMeta(): int
-	{
-		throw new AssumptionFailedError("Solid block group should only be used in comparison context");
-	}
-
-	public function check(): void { }
-
-	/**
-	 * @return SolidBlock
-	 */
-	public static function create(): SolidBlock
-	{
-		$pattern = self::from([]);
-		if (!$pattern instanceof self) {
-			throw new AssumptionFailedError("SolidBlock was wrapped into a parent pattern while creating instance");
-		}
-		return $pattern;
 	}
 
 	/**
@@ -79,4 +42,16 @@ class SolidBlock extends StaticBlock
 	{
 		throw new AssumptionFailedError("Solid block group should only be used in comparison context");
 	}
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function putData(ExtendedBinaryStream $stream): void { }
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function parseData(ExtendedBinaryStream $stream): void { }
 }

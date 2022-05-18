@@ -74,7 +74,7 @@ class CutTask extends ExecutableTask
 			HistoryCacheData::from($task->getOwner(), $changeId, false);
 			CutTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		$this->executor2 = SetTask::from($this->getOwner(), $this->world, $setData, $this->selection, $this->position, Vector3::zero(), StaticBlock::from([], PatternArgumentData::create()->setRealBlock(0)));
+		$this->executor2 = SetTask::from($this->getOwner(), $this->world, $setData, $this->selection, $this->position, Vector3::zero(), new StaticBlock(0));
 		$this->executor2->execute();
 	}
 

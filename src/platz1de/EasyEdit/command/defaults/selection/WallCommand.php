@@ -21,6 +21,6 @@ class WallCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Player $player, array $args): Pattern
 	{
-		return WallPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 0, "stone")]);
+		return new WallPattern(1, [ArgumentParser::parseCombinedPattern($player, $args, 0, "stone")]);
 	}
 }

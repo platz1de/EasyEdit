@@ -5,10 +5,39 @@ namespace platz1de\EasyEdit\pattern\logic\math;
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class DivisiblePattern extends Pattern
 {
+	private int $divisor;
+	private bool $xAxis;
+	private bool $yAxis;
+	private bool $zAxis;
+
+	/**
+	 * @param int   $divisor
+	 * @param bool  $xAxis
+	 * @param bool  $yAxis
+	 * @param bool  $zAxis
+	 * @param array $pieces
+	 */
+	public function __construct(int $divisor, bool $xAxis, bool $yAxis, bool $zAxis, array $pieces)
+	{
+		parent::__construct($pieces);
+		$this->divisor = $divisor;
+		$this->xAxis = $xAxis;
+		$this->yAxis = $yAxis;
+		$this->zAxis = $zAxis;
+
+		if ($divisor === 0) {
+			throw new WrongPatternUsageException("Divisible needs a non-zero divisor");
+		}
+		if (!($xAxis || $yAxis || $zAxis)) {
+			throw new WrongPatternUsageException("Odd needs at least one axis, zero given");
+		}
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -20,28 +49,31 @@ class DivisiblePattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
 	{
-		if ($this->args->checkXAxis() && abs($x) % $this->args->getInt("number") !== 0) {
+		if ($this->xAxis && abs($x) % $this->divisor !== 0) {
 			return false;
 		}
-		if ($this->args->checkXAxis() && abs($y) % $this->args->getInt("number") !== 0) {
+		if ($this->yAxis && abs($y) % $this->divisor !== 0) {
 			return false;
 		}
-		if ($this->args->checkXAxis() && abs($z) % $this->args->getInt("number") !== 0) {
+		if ($this->zAxis && abs($z) % $this->divisor !== 0) {
 			return false;
 		}
 		return true;
 	}
 
-	public function check(): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
-		if ($this->args->getInt("count") === -1) {
-			throw new WrongPatternUsageException("Divisible needs a count argument");
-		}
-		if ($this->args->getInt("count") === 0) {
-			throw new WrongPatternUsageException("Divisible can't be used with a count of zero");
-		}
-		if (!($this->args->checkXAxis() || $this->args->checkYAxis() || $this->args->checkZAxis())) {
-			throw new WrongPatternUsageException("Even needs at least one axis, zero given");
-		}
+		$stream->putInt($this->divisor);
+		$stream->putBool($this->xAxis);
+		$stream->putBool($this->yAxis);
+		$stream->putBool($this->zAxis);
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->divisor = $stream->getInt();
+		$this->xAxis = $stream->getBool();
+		$this->yAxis = $stream->getBool();
+		$this->zAxis = $stream->getBool();
 	}
 }

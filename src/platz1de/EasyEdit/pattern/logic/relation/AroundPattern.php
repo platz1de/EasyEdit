@@ -2,15 +2,27 @@
 
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
-use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
+use platz1de\EasyEdit\pattern\block\BlockType;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\math\Vector3;
-use Throwable;
 
 class AroundPattern extends Pattern
 {
+	private BlockType $block;
+
+	/**
+	 * @param BlockType $block
+	 * @param array     $pieces
+	 */
+	public function __construct(BlockType $block, array $pieces)
+	{
+		parent::__construct($pieces);
+		$this->block = $block;
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -23,7 +35,7 @@ class AroundPattern extends Pattern
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
 	{
 		foreach ((new Vector3($x, $y, $z))->sides() as $side) {
-			if ($this->args->getBlock()->equals($iterator->getBlock($side->getFloorX(), $side->getFloorY(), $side->getFloorZ()))) {
+			if ($this->block->equals($iterator->getBlock($side->getFloorX(), $side->getFloorY(), $side->getFloorZ()))) {
 				return true;
 			}
 		}
@@ -31,13 +43,13 @@ class AroundPattern extends Pattern
 		return false;
 	}
 
-	public function check(): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
-		try {
-			//shut up phpstorm
-			$this->args->setBlock($this->args->getBlock());
-		} catch (Throwable) {
-			throw new WrongPatternUsageException("Around needs a block as first Argument");
-		}
+		$stream->putString($this->block->fastSerialize());
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->block = BlockType::fastDeserialize($stream->getString());
 	}
 }

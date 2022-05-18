@@ -13,7 +13,6 @@ use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -139,6 +138,6 @@ class PathfindingTask extends ExpandingTask
 		parent::parseData($stream);
 		$this->end = $stream->getVector();
 		$this->allowDiagonal = $stream->getBool();
-		$this->block = StaticBlock::fromBlock(BlockFactory::getInstance()->fromFullBlock($stream->getInt()));
+		$this->block = new StaticBlock($stream->getInt());
 	}
 }

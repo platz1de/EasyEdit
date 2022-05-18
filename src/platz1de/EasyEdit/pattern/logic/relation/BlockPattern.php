@@ -2,14 +2,26 @@
 
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
-use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
+use platz1de\EasyEdit\pattern\block\BlockType;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
-use Throwable;
 
 class BlockPattern extends Pattern
 {
+	private BlockType $block;
+
+	/**
+	 * @param BlockType $block
+	 * @param array     $pieces
+	 */
+	public function __construct(BlockType $block, array $pieces)
+	{
+		parent::__construct($pieces);
+		$this->block = $block;
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -21,16 +33,16 @@ class BlockPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
 	{
-		return $this->args->getBlock()->equals($iterator->getBlock($x, $y, $z));
+		return $this->block->equals($iterator->getBlock($x, $y, $z));
 	}
 
-	public function check(): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
-		try {
-			//shut up phpstorm
-			$this->args->setBlock($this->args->getBlock());
-		} catch (Throwable) {
-			throw new WrongPatternUsageException("Block needs a block as first Argument");
-		}
+		$stream->putString($this->block->fastSerialize());
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->block = BlockType::fastDeserialize($stream->getString());
 	}
 }

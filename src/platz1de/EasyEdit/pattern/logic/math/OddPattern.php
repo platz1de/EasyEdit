@@ -5,10 +5,33 @@ namespace platz1de\EasyEdit\pattern\logic\math;
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class OddPattern extends Pattern
 {
+	private bool $xAxis;
+	private bool $yAxis;
+	private bool $zAxis;
+
+	/**
+	 * @param bool  $xAxis
+	 * @param bool  $yAxis
+	 * @param bool  $zAxis
+	 * @param array $pieces
+	 */
+	public function __construct(bool $xAxis, bool $yAxis, bool $zAxis, array $pieces)
+	{
+		parent::__construct($pieces);
+		$this->xAxis = $xAxis;
+		$this->yAxis = $yAxis;
+		$this->zAxis = $zAxis;
+
+		if (!($xAxis || $yAxis || $zAxis)) {
+			throw new WrongPatternUsageException("Odd needs at least one axis, zero given");
+		}
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -20,22 +43,29 @@ class OddPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
 	{
-		if ($this->args->checkXAxis() && abs($x) % 2 !== 1) {
+		if ($this->xAxis && abs($x) % 2 !== 1) {
 			return false;
 		}
-		if ($this->args->checkYAxis() && abs($y) % 2 !== 1) {
+		if ($this->yAxis && abs($y) % 2 !== 1) {
 			return false;
 		}
-		if ($this->args->checkZAxis() && abs($z) % 2 !== 1) {
+		if ($this->zAxis && abs($z) % 2 !== 1) {
 			return false;
 		}
 		return true;
 	}
 
-	public function check(): void
+	public function putData(ExtendedBinaryStream $stream): void
 	{
-		if (!($this->args->checkXAxis() || $this->args->checkYAxis() || $this->args->checkZAxis())) {
-			throw new WrongPatternUsageException("Odd needs at least one axis, zero given");
-		}
+		$stream->putBool($this->xAxis);
+		$stream->putBool($this->yAxis);
+		$stream->putBool($this->zAxis);
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->xAxis = $stream->getBool();
+		$this->yAxis = $stream->getBool();
+		$this->zAxis = $stream->getBool();
 	}
 }

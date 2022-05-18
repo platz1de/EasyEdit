@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class CenterPattern extends Pattern
@@ -47,4 +48,16 @@ class CenterPattern extends Pattern
 	{
 		$context->includeCenter();
 	}
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function putData(ExtendedBinaryStream $stream): void { }
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function parseData(ExtendedBinaryStream $stream): void { }
 }

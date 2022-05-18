@@ -8,7 +8,6 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -29,7 +28,7 @@ class HollowSphereCommand extends EasyEditCommand
 	{
 		ArgumentParser::requireArgumentCount($args, 2, $this);
 		try {
-			$pattern = SidesPattern::from([PatternParser::parseInput($args[1], $player)], PatternArgumentData::create()->setFloat("thickness", (float) ($args[2] ?? 1.0)));
+			$pattern = new SidesPattern((float) ($args[2] ?? 1.0), [PatternParser::parseInput($args[1], $player)]);
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}

@@ -9,47 +9,24 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\utils\AssumptionFailedError;
 
-class Pattern
+abstract class Pattern
 {
 	/**
 	 * @var Pattern[]
 	 */
 	protected array $pieces;
-	protected PatternArgumentData $args;
-
-	/**
-	 * @param Pattern[]                $pieces
-	 * @param PatternArgumentData|null $args
-	 * @return Pattern
-	 */
-	public static function from(array $pieces, ?PatternArgumentData $args = null): Pattern
-	{
-		if ((static::class === __CLASS__) && count($pieces) === 1 && $pieces[0]->getWeight() === 100) {
-			return $pieces[0]; //no need to wrap single patterns
-		}
-
-		if (count($pieces) === 1 && $pieces[0]::class === __CLASS__) {
-			$pieces = $pieces[0]->pieces; //no double-wrapping
-		}
-
-		$name = static::class;
-		return new $name($pieces, $args);
-	}
+	private int $weight = 100;
 
 	/**
 	 * Pattern constructor.
-	 * @param Pattern[]                $pieces
-	 * @param PatternArgumentData|null $args
+	 * @param Pattern[] $pieces
 	 */
-	final private function __construct(array $pieces, ?PatternArgumentData $args = null)
+	public function __construct(array $pieces)
 	{
+		if (count($pieces) === 1 && ($pieces[0] instanceof PatternWrapper || $pieces[0] instanceof PatternConstruct) && $pieces[0]->getWeight() === 100) {
+			$pieces = $pieces[0]->pieces;
+		}
 		$this->pieces = $pieces;
-		$this->args = $args ?? new PatternArgumentData();
-		$this->check();
-	}
-
-	public function check(): void
-	{
 	}
 
 	/**
@@ -126,7 +103,7 @@ class Pattern
 	 */
 	public function getWeight(): int
 	{
-		return $this->args->getWeight();
+		return $this->weight;
 	}
 
 	/**
@@ -134,7 +111,7 @@ class Pattern
 	 */
 	public function setWeight(int $weight): void
 	{
-		$this->args->setWeight($weight);
+		$this->weight = $weight;
 	}
 
 	/**
@@ -161,17 +138,27 @@ class Pattern
 	}
 
 	/**
+	 * @param ExtendedBinaryStream $stream
+	 */
+	abstract public function putData(ExtendedBinaryStream $stream): void;
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 */
+	abstract public function parseData(ExtendedBinaryStream $stream): void;
+
+	/**
 	 * @return string
 	 */
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString($this->args->fastSerialize());
+		$stream->putString(igbinary_serialize($this));
+		$this->putData($stream);
 		$stream->putInt(count($this->pieces));
 		foreach ($this->pieces as $piece) {
 			$stream->putString($piece->fastSerialize());
 		}
-		$stream->putString(static::class);
 		return $stream->getBuffer();
 	}
 
@@ -182,13 +169,24 @@ class Pattern
 	public static function fastDeserialize(string $data): Pattern
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$args = PatternArgumentData::fastDeserialize($stream->getString());
+		/** @var Pattern $pattern */
+		$pattern = igbinary_unserialize($stream->getString());
+		$pattern->parseData($stream);
 		$pieces = [];
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$pieces[] = self::fastDeserialize($stream->getString());
 		}
-		/** @phpstan-var class-string<Pattern> $type */
-		$type = $stream->getString();
-		return new $type($pieces, $args);
+		$pattern->pieces = $pieces;
+		return $pattern;
+	}
+
+	public function __serialize(): array
+	{
+		return [$this->weight];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		$this->weight = $data[0];
 	}
 }

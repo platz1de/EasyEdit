@@ -21,6 +21,6 @@ class CenterCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Player $player, array $args): Pattern
 	{
-		return CenterPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 0, "stone")]);
+		return new CenterPattern([ArgumentParser::parseCombinedPattern($player, $args, 0, "stone")]);
 	}
 }

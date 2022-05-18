@@ -2,14 +2,22 @@
 
 namespace platz1de\EasyEdit\pattern\logic;
 
-
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class NotPattern extends Pattern
 {
+	public function __construct(Pattern $piece)
+	{
+		parent::__construct([$piece]);
+		if (count($this->pieces) !== 1) {
+			throw new WrongPatternUsageException("Not needs exactly one child pattern");
+		}
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -38,10 +46,15 @@ class NotPattern extends Pattern
 		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total);
 	}
 
-	public function check(): void
-	{
-		if (count($this->pieces) !== 1) {
-			throw new WrongPatternUsageException("Not needs exactly one child pattern");
-		}
-	}
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function putData(ExtendedBinaryStream $stream): void { }
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function parseData(ExtendedBinaryStream $stream): void { }
 }

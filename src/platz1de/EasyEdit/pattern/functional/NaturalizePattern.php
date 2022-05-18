@@ -6,13 +6,31 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\world\HeightMapCache;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 
 class NaturalizePattern extends Pattern
 {
+	private Pattern $surface;
+	private Pattern $ground;
+	private Pattern $deep;
+
+	/**
+	 * @param Pattern|null $surface
+	 * @param Pattern|null $ground
+	 * @param Pattern|null $deep
+	 */
+	public function __construct(?Pattern $surface = null, ?Pattern $ground = null, ?Pattern $deep = null)
+	{
+		$this->surface = $surface ?? StaticBlock::from(VanillaBlocks::GRASS());
+		$this->ground = $ground ?? StaticBlock::from(VanillaBlocks::DIRT());
+		$this->deep = $deep ?? StaticBlock::from(VanillaBlocks::STONE());
+		parent::__construct([]);
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -40,23 +58,10 @@ class NaturalizePattern extends Pattern
 	{
 		HeightMapCache::load($iterator, $current);
 		return match (HeightMapCache::searchAirUpwards($x, $y, $z)) {
-			1 => $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total),
-			2, 3 => $this->pieces[1]->getFor($x, $y, $z, $iterator, $current, $total),
-			default => $this->pieces[2]->getFor($x, $y, $z, $iterator, $current, $total),
+			1 => $this->surface->getFor($x, $y, $z, $iterator, $current, $total),
+			2, 3 => $this->ground->getFor($x, $y, $z, $iterator, $current, $total),
+			default => $this->deep->getFor($x, $y, $z, $iterator, $current, $total),
 		};
-	}
-
-	public function check(): void
-	{
-		if (!isset($this->pieces[0])) {
-			$this->pieces[0] = StaticBlock::fromBlock(VanillaBlocks::GRASS());
-		}
-		if (!isset($this->pieces[1])) {
-			$this->pieces[1] = StaticBlock::fromBlock(VanillaBlocks::DIRT());
-		}
-		if (!isset($this->pieces[2])) {
-			$this->pieces[2] = StaticBlock::fromBlock(VanillaBlocks::STONE());
-		}
 	}
 
 	/**
@@ -65,5 +70,19 @@ class NaturalizePattern extends Pattern
 	public function applySelectionContext(SelectionContext $context): void
 	{
 		$context->includeWalls()->includeVerticals()->includeFilling();
+	}
+
+	public function putData(ExtendedBinaryStream $stream): void
+	{
+		$stream->putString($this->surface->fastSerialize());
+		$stream->putString($this->ground->fastSerialize());
+		$stream->putString($this->deep->fastSerialize());
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->surface = Pattern::fastDeserialize($stream->getString());
+		$this->ground = Pattern::fastDeserialize($stream->getString());
+		$this->deep = Pattern::fastDeserialize($stream->getString());
 	}
 }

@@ -9,10 +9,23 @@ use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class WallPattern extends Pattern
 {
+	private float $thickness;
+
+	/**
+	 * @param float $thickness
+	 * @param array $pieces
+	 */
+	public function __construct(float $thickness, array $pieces)
+	{
+		parent::__construct($pieces);
+		$this->thickness = $thickness;
+	}
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -24,15 +37,14 @@ class WallPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
 	{
-		$thickness = $this->args->getFloat("thickness");
 		if ($current instanceof Cube) {
 			$min = $total->getPos1();
 			$max = $total->getPos2();
 
-			return ($x - $min->getX() + 1) <= $thickness || ($max->getX() - $x + 1) <= $thickness || ($z - $min->getZ() + 1) <= $thickness || ($max->getZ() - $z - 1) <= $thickness;
+			return ($x - $min->getX() + 1) <= $this->thickness || ($max->getX() - $x + 1) <= $this->thickness || ($z - $min->getZ() + 1) <= $this->thickness || ($max->getZ() - $z - 1) <= $this->thickness;
 		}
 		if ($current instanceof Cylinder || $current instanceof Sphere) {
-			return (($x - $current->getPoint()->getFloorX()) ** 2) + (($z - $current->getPoint()->getFloorZ()) ** 2) > (($current->getRadius() - $thickness) ** 2);
+			return (($x - $current->getPoint()->getFloorX()) ** 2) + (($z - $current->getPoint()->getFloorZ()) ** 2) > (($current->getRadius() - $this->thickness) ** 2);
 		}
 		throw new ParseError("Walls pattern does not support selection of type " . $current::class);
 	}
@@ -42,13 +54,22 @@ class WallPattern extends Pattern
 	 */
 	public function applySelectionContext(SelectionContext $context): void
 	{
-		$context->includeWalls($this->args->getFloat("thickness"));
+		$context->includeWalls($this->thickness);
 	}
 
-	public function check(): void
-	{
-		if ($this->args->getFloat("thickness") === -1.0) {
-			$this->args->setFloat("thickness", 1.0);
-		}
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function putData(ExtendedBinaryStream $stream): void {
+		$stream->putFloat($this->thickness);
+	}
+
+	/**
+	 * @param ExtendedBinaryStream $stream
+	 * @return void
+	 */
+	public function parseData(ExtendedBinaryStream $stream): void {
+		$this->thickness = $stream->getFloat();
 	}
 }

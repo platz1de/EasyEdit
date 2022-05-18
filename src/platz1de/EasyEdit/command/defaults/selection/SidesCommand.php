@@ -21,6 +21,6 @@ class SidesCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Player $player, array $args): Pattern
 	{
-		return SidesPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 0, "stone")]);
+		return new SidesPattern(1, [ArgumentParser::parseCombinedPattern($player, $args, 0, "stone")]);
 	}
 }

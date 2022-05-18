@@ -8,7 +8,6 @@ use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
 
@@ -27,14 +26,14 @@ class ReplaceCommand extends AliasedPatternCommand
 	public function parsePattern(Player $player, array $args): Pattern
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
-		if(count($args) >= 2){
+		if (count($args) >= 2) {
 			try {
 				$block = PatternParser::getBlockType($args[0]);
 			} catch (ParseError $exception) {
 				throw new PatternParseException($exception);
 			}
-			return BlockPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 1)], PatternArgumentData::create()->setBlock($block));
+			return new BlockPattern($block, [ArgumentParser::parseCombinedPattern($player, $args, 1)]);
 		}
-		return BlockPattern::from([ArgumentParser::parseCombinedPattern($player, $args, 0)], PatternArgumentData::create()->setBlock(SolidBlock::create()));
+		return new BlockPattern(new SolidBlock(), [ArgumentParser::parseCombinedPattern($player, $args, 0)]);
 	}
 }

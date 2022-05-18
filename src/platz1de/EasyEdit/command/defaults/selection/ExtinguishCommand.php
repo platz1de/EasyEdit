@@ -7,7 +7,6 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
-use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -18,7 +17,7 @@ class ExtinguishCommand extends EasyEditCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/extinguish", [KnownPermissions::PERMISSION_EDIT],  ["/ext"]);
+		parent::__construct("/extinguish", [KnownPermissions::PERMISSION_EDIT], ["/ext"]);
 	}
 
 	/**
@@ -33,6 +32,6 @@ class ExtinguishCommand extends EasyEditCommand
 			$selection = ArgumentParser::getSelection($player);
 		}
 
-		SetTask::queue($selection, BlockPattern::from([StaticBlock::fromBlock(VanillaBlocks::AIR())], PatternArgumentData::create()->setBlock(DynamicBlock::fromBlock(VanillaBlocks::FIRE()))), $player->getPosition());
+		SetTask::queue($selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())]), $player->getPosition());
 	}
 }

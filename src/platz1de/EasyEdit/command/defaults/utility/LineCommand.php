@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\task\editing\LineTask;
@@ -52,17 +51,17 @@ class LineCommand extends EasyEditCommand
 			case "line":
 			case "direct":
 			default:
-				LineTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, StaticBlock::fromFullId($block));
+				LineTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, new StaticBlock($block));
 				break;
 			case "find":
 			case "search":
-				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, true, StaticBlock::fromFullId($block));
+				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, true, new StaticBlock($block));
 				break;
 			case "find-line":
 			case "find-direct":
 			case "no-diagonal":
 			case "solid":
-				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, StaticBlock::fromFullId($block));
+				PathfindingTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, new StaticBlock($block));
 				break;
 		}
 	}

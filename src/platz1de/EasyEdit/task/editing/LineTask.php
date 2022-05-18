@@ -121,6 +121,6 @@ class LineTask extends EditTask
 	{
 		parent::parseData($stream);
 		$this->end = $stream->getVector();
-		$this->block = StaticBlock::fromBlock(BlockFactory::getInstance()->fromFullBlock($stream->getInt()));
+		$this->block = new StaticBlock($stream->getInt());
 	}
 }

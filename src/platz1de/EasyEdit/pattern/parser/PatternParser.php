@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\pattern\parser;
 
+use platz1de\EasyEdit\pattern\block\BlockType;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
@@ -21,8 +22,8 @@ use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\pattern\PatternConstruct;
+use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\player\Player;
 
@@ -75,7 +76,7 @@ class PatternParser
 		foreach ($matches[0] as $piece) {
 			$pieces[] = self::parseLogical($piece);
 		}
-		return Pattern::from($pieces);
+		return PatternWrapper::wrap($pieces);
 	}
 
 	/**
@@ -94,7 +95,7 @@ class PatternParser
 		} catch (ParseError $exception) {
 			throw new ParseError('Failed to parse piece "' . $pattern . '"' . PHP_EOL . " - " . $exception->getMessage(), false);
 		}
-		return PatternConstruct::from($pieces);
+		return PatternConstruct::wrap($pieces);
 	}
 
 	/**
@@ -119,13 +120,13 @@ class PatternParser
 		//blocks have priority
 		try {
 			$invert = false; //this would be always false
-			$pattern = StaticBlock::fromFullId(BlockParser::parseBlockIdentifier($patternString));
+			$pattern = new StaticBlock(BlockParser::parseBlockIdentifier($patternString));
 		} catch (ParseError) {
 			//This still allows old syntax, starting with #
 			//I have no idea what phpstorm is doing here
 			//TODO: find a better expression without things phpstorm doesn't like
 			/** @noinspection all */
-			if (!((bool) preg_match("/#?([^()]*)(?:\(((?R)+)\))?/", $patternString, $matches))) {
+			if (!((bool) preg_match("/#?([^()]*)(?:\(((?:(?R))+)\))?/", $patternString, $matches))) {
 				throw new ParseError($patternString . " does not follow pattern rules");
 			}
 
@@ -140,8 +141,8 @@ class PatternParser
 			}
 		}
 
-		$pattern->setWeight($weight);
-		return $invert ? NotPattern::from([$pattern]) : $pattern;
+		$pattern->setWeight((int) $weight);
+		return $invert ? new NotPattern($pattern) : $pattern;
 	}
 
 	/**
@@ -153,45 +154,57 @@ class PatternParser
 	{
 		$args = explode(";", $pattern);
 		return match (array_shift($args)) {
-			"not" => NotPattern::from($children),
-			"even" => EvenPattern::from($children, PatternArgumentData::create()->parseAxes($args)),
-			"odd" => OddPattern::from($children, PatternArgumentData::create()->parseAxes($args)),
-			"divisible" => DivisiblePattern::from($children, PatternArgumentData::create()->parseAxes($args)->setInt("count", (int) ($args[0] ?? -1))),
-			"block" => BlockPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
-			"above" => AbovePattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
-			"below" => BelowPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
-			"around" => AroundPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
-			"horizontal", "horizon" => HorizontalPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
-			"nat", "naturalized" => NaturalizePattern::from($children),
-			"walls", "wall" => WallPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
-			"sides", "side" => SidesPattern::from($children, PatternArgumentData::create()->setFloat("thickness", (float) ($args[0] ?? 1.0))),
-			"center", "middle" => CenterPattern::from($children),
-			"gravity" => GravityPattern::from($children),
-			"embed", "embeded" => EmbedPattern::from($children, PatternArgumentData::fromBlockType($args[0] ?? "")),
-			"solid" => BlockPattern::from($children, PatternArgumentData::create()->setBlock(SolidBlock::create())),
+			"not" => new NotPattern(new PatternWrapper($children)),
+			"even" => new EvenPattern(self::parseAxis("x", $args), self::parseAxis("y", $args), self::parseAxis("z", $args), $children),
+			"odd" => new OddPattern(self::parseAxis("x", $args), self::parseAxis("y", $args), self::parseAxis("z", $args), $children),
+			"divisible" => new DivisiblePattern((int) ($args[0] ?? -1), self::parseAxis("x", $args), self::parseAxis("y", $args), self::parseAxis("z", $args), $children),
+			"block" => new BlockPattern(self::getBlockType($args[0] ?? ""), $children),
+			"above" => new AbovePattern(self::getBlockType($args[0] ?? ""), $children),
+			"below" => new BelowPattern(self::getBlockType($args[0] ?? ""), $children),
+			"around" => new AroundPattern(self::getBlockType($args[0] ?? ""), $children),
+			"horizontal", "horizon" => new HorizontalPattern(self::getBlockType($args[0] ?? ""), $children),
+			"nat", "naturalized" => new NaturalizePattern($children[0] ?? null, $children[1] ?? null, $children[2] ?? null),
+			"walls", "wall" => new WallPattern((float) ($args[0] ?? 1.0), $children),
+			"sides", "side" => new SidesPattern((float) ($args[0] ?? 1.0), $children),
+			"center", "middle" => new CenterPattern($children),
+			"gravity" => new GravityPattern($children),
+			"embed", "embeded" => new EmbedPattern(self::getBlockType($args[0] ?? ""), $children),
+			"solid" => new BlockPattern(new SolidBlock(), $children),
 			default => throw new ParseError("Unknown Pattern " . $pattern, true)
 		};
 	}
 
 	/**
+	 * @param string            $axis
+	 * @param array<int, mixed> $args
+	 * @return bool
+	 */
+	public static function parseAxis(string $axis, array &$args): bool
+	{
+		$a = in_array($axis, $args, true);
+		$args = array_diff($args, [$axis]);
+		return $a;
+	}
+
+	/**
 	 * @param string      $string
 	 * @param Player|null $player
-	 * @return StaticBlock
+	 * @return BlockType
 	 */
-	public static function getBlockType(string $string, ?Player $player = null): StaticBlock
+	public static function getBlockType(string $string, ?Player $player = null): BlockType
 	{
 		if ($string === "solid") {
-			return SolidBlock::create();
+			return new SolidBlock();
 		}
 
 		if ($player instanceof Player && $string === "hand") {
-			return StaticBlock::fromBlock($player->getInventory()->getItemInHand()->getBlock());
+			return StaticBlock::from($player->getInventory()->getItemInHand()->getBlock());
 		}
 
 		if (BlockParser::isStatic($string)) {
-			return StaticBlock::fromFullId(BlockParser::parseBlockIdentifier($string));
+			return new StaticBlock(BlockParser::parseBlockIdentifier($string));
 		}
 
-		return DynamicBlock::fromFullId(BlockParser::parseBlockIdentifier($string));
+		return new DynamicBlock(BlockParser::parseBlockIdentifier($string));
 	}
 }

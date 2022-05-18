@@ -27,7 +27,7 @@ class FillCommand extends EasyEditCommand
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
 		try {
-			$block = StaticBlock::fromFullId(BlockParser::parseBlockIdentifier($args[0]));
+			$block = new StaticBlock(BlockParser::parseBlockIdentifier($args[0]));
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}

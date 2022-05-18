@@ -31,6 +31,6 @@ class NaturalizeCommand extends AliasedPatternCommand
 			throw new PatternParseException($exception);
 		}
 
-		return NaturalizePattern::from([$top, $middle, $bottom]);
+		return new NaturalizePattern($top, $middle, $bottom);
 	}
 }
