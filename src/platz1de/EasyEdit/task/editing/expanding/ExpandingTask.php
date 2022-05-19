@@ -13,7 +13,7 @@ abstract class ExpandingTask extends EditTask
 {
 	private float $progress = 0; //worst case scenario
 	/**
-	 * @var int[]
+	 * @var bool[]
 	 */
 	private array $loadedChunks = [];
 	/**

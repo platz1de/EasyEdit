@@ -40,7 +40,7 @@ class BlockStateConvertor
 	 */
 	private static array $compoundTagKeys;
 	/**
-	 * @var array<string, array<string, string>>
+	 * @var array<string, string[]>
 	 */
 	private static array $reverseCompoundMapping;
 	private static bool $available = false;

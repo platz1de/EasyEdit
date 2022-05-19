@@ -15,10 +15,10 @@ class OddPattern extends Pattern
 	private bool $zAxis;
 
 	/**
-	 * @param bool  $xAxis
-	 * @param bool  $yAxis
-	 * @param bool  $zAxis
-	 * @param array $pieces
+	 * @param bool      $xAxis
+	 * @param bool      $yAxis
+	 * @param bool      $zAxis
+	 * @param Pattern[] $pieces
 	 */
 	public function __construct(bool $xAxis, bool $yAxis, bool $zAxis, array $pieces)
 	{

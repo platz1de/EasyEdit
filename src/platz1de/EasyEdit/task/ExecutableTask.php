@@ -34,7 +34,7 @@ abstract class ExecutableTask
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString(igbinary_serialize($this));
+		$stream->putString(igbinary_serialize($this) ?? "");
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -52,11 +52,17 @@ abstract class ExecutableTask
 		return $task;
 	}
 
+	/**
+	 * @return array{string, int}
+	 */
 	public function __serialize(): array
 	{
 		return [$this->owner, $this->taskId];
 	}
 
+	/**
+	 * @param array{string, int} $data
+	 */
 	public function __unserialize(array $data): void
 	{
 		$this->owner = $data[0];

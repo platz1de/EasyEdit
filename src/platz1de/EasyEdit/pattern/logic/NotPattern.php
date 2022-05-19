@@ -10,6 +10,9 @@ use platz1de\EasyEdit\world\ChunkController;
 
 class NotPattern extends Pattern
 {
+	/**
+	 * @param Pattern $piece
+	 */
 	public function __construct(Pattern $piece)
 	{
 		parent::__construct([$piece]);

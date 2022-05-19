@@ -78,7 +78,7 @@ class ItemConvertor
 						$customName = $value->getString("Name", "");
 						if ($customName !== "") {
 							try {
-								/** @var string[] $json */
+								/** @var array<array{text: string}> $json */
 								$json = json_decode($customName, true, 3, JSON_THROW_ON_ERROR);
 								if (!isset($json[0]["text"])) {
 									throw new JsonException("Missing text key");
@@ -95,11 +95,14 @@ class ItemConvertor
 						} catch (Throwable) {
 							break;
 						}
+						if ($lore === null) {
+							break;
+						}
 						$lines = new ListTag([], NBT::TAG_String);
 						/** @var StringTag $line */
 						foreach ($lore as $line) {
 							try {
-								/** @var string[] $json */
+								/** @var array<array{text: string}> $json */
 								$json = json_decode($line->getValue(), true, 3, JSON_THROW_ON_ERROR);
 								if (!isset($json[0]["text"])) {
 									throw new JsonException("Missing text key");
@@ -154,6 +157,9 @@ class ItemConvertor
 						try {
 							$lore = $value->getListTag("Lore");
 						} catch (Throwable) {
+							break;
+						}
+						if ($lore === null) {
 							break;
 						}
 						$lines = new ListTag([], NBT::TAG_String);

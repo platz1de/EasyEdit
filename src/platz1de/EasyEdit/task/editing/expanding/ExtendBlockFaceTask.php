@@ -56,7 +56,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
 		$offset = $this->getPosition()->subtractVector($start = $this->getPosition()->getSide($this->face));
 		$ignore = HeightMapCache::getIgnore();
-		if (($k = array_search($target, $ignore)) !== false) {
+		if (($k = array_search($target, $ignore, true)) !== false) {
 			unset($ignore[$k]);
 		}
 

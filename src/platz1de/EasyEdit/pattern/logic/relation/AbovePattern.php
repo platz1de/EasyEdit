@@ -14,7 +14,7 @@ class AbovePattern extends Pattern
 
 	/**
 	 * @param BlockType $block
-	 * @param array     $pieces
+	 * @param Pattern[] $pieces
 	 */
 	public function __construct(BlockType $block, array $pieces)
 	{

@@ -16,11 +16,11 @@ class DivisiblePattern extends Pattern
 	private bool $zAxis;
 
 	/**
-	 * @param int   $divisor
-	 * @param bool  $xAxis
-	 * @param bool  $yAxis
-	 * @param bool  $zAxis
-	 * @param array $pieces
+	 * @param int       $divisor
+	 * @param bool      $xAxis
+	 * @param bool      $yAxis
+	 * @param bool      $zAxis
+	 * @param Pattern[] $pieces
 	 */
 	public function __construct(int $divisor, bool $xAxis, bool $yAxis, bool $zAxis, array $pieces)
 	{

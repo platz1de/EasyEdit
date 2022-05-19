@@ -4,6 +4,9 @@ namespace platz1de\EasyEdit\task\editing\pathfinding;
 
 use SplHeap;
 
+/**
+ * @phpstan-extends SplHeap<Node>
+ */
 class NodeHeap extends SplHeap
 {
 	/**

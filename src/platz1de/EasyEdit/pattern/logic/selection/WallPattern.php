@@ -17,8 +17,8 @@ class WallPattern extends Pattern
 	private float $thickness;
 
 	/**
-	 * @param float $thickness
-	 * @param array $pieces
+	 * @param float     $thickness
+	 * @param Pattern[] $pieces
 	 */
 	public function __construct(float $thickness, array $pieces)
 	{

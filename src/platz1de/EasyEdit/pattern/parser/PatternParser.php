@@ -67,7 +67,7 @@ class PatternParser
 	 */
 	public static function parseInternal(string $pattern): Pattern
 	{
-		if (!preg_match("/[^()]*(?:\((?R)\)(?R))?[^()]*/", $pattern, $test) || $test[0] !== $pattern) {
+		if (!(bool) preg_match("/[^()]*(?:\((?R)\)(?R))?[^()]*/", $pattern, $test) || $test[0] !== $pattern) {
 			throw new ParseError("Pattern contains incomplete brackets");
 		}
 		//basically magic

@@ -241,7 +241,7 @@ abstract class Selection
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString(igbinary_serialize($this));
+		$stream->putString(igbinary_serialize($this) ?? "");
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -259,11 +259,18 @@ abstract class Selection
 		return $selection;
 	}
 
+	/**
+	 * @return array{string}
+	 */
 	public function __serialize(): array
 	{
 		return [$this->player];
 	}
 
+	/**
+	 * @param array{string} $data
+	 * @return void
+	 */
 	public function __unserialize(array $data): void
 	{
 		$this->player = $data[0];

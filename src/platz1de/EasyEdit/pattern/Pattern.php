@@ -153,7 +153,7 @@ abstract class Pattern
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString(igbinary_serialize($this));
+		$stream->putString(igbinary_serialize($this) ?? "");
 		$this->putData($stream);
 		$stream->putInt(count($this->pieces));
 		foreach ($this->pieces as $piece) {
@@ -180,11 +180,17 @@ abstract class Pattern
 		return $pattern;
 	}
 
+	/**
+	 * @return array{int}
+	 */
 	public function __serialize(): array
 	{
 		return [$this->weight];
 	}
 
+	/**
+	 * @param array{int} $data
+	 */
 	public function __unserialize(array $data): void
 	{
 		$this->weight = $data[0];

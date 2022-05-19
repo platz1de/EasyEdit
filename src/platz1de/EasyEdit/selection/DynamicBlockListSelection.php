@@ -34,9 +34,9 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 * @param Vector3 $place
 	 * @param Vector3 $pos1
 	 * @param Vector3 $pos2
-	 * @return static
+	 * @return DynamicBlockListSelection
 	 */
-	public static function fromWorldPositions(string $player, Vector3 $place, Vector3 $pos1, Vector3 $pos2): self
+	public static function fromWorldPositions(string $player, Vector3 $place, Vector3 $pos1, Vector3 $pos2): DynamicBlockListSelection
 	{
 		return new self($player, $pos2->subtractVector($pos1)->up(World::Y_MIN), $pos1->subtractVector($place));
 	}

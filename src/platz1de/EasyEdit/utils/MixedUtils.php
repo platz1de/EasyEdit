@@ -83,6 +83,12 @@ class MixedUtils
 		return $parsed;
 	}
 
+	/**
+	 * @param string $url
+	 * @param int    $depth
+	 * @param string $fallback
+	 * @return array<string, mixed>
+	 */
 	public static function getRepoJsonData(string $url, int $depth, string $fallback): array
 	{
 		try {
