@@ -24,6 +24,7 @@ use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternConstruct;
 use platz1de\EasyEdit\pattern\PatternWrapper;
+use platz1de\EasyEdit\pattern\type\AxisArgumentWrapper;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\player\Player;
 
@@ -155,9 +156,9 @@ class PatternParser
 		$args = explode(";", $pattern);
 		return match (array_shift($args)) {
 			"not" => new NotPattern(new PatternWrapper($children)),
-			"even" => new EvenPattern(self::parseAxis("x", $args), self::parseAxis("y", $args), self::parseAxis("z", $args), $children),
-			"odd" => new OddPattern(self::parseAxis("x", $args), self::parseAxis("y", $args), self::parseAxis("z", $args), $children),
-			"divisible" => new DivisiblePattern((int) ($args[0] ?? -1), self::parseAxis("x", $args), self::parseAxis("y", $args), self::parseAxis("z", $args), $children),
+			"even" => new EvenPattern(AxisArgumentWrapper::parse($args), $children),
+			"odd" => new OddPattern(AxisArgumentWrapper::parse($args), $children),
+			"divisible" => new DivisiblePattern((int) ($args[0] ?? -1), AxisArgumentWrapper::parse($args), $children),
 			"block" => new BlockPattern(self::getBlockType($args[0] ?? ""), $children),
 			"above" => new AbovePattern(self::getBlockType($args[0] ?? ""), $children),
 			"below" => new BelowPattern(self::getBlockType($args[0] ?? ""), $children),
@@ -172,18 +173,6 @@ class PatternParser
 			"solid" => new BlockPattern(new SolidBlock(), $children),
 			default => throw new ParseError("Unknown Pattern " . $pattern, true)
 		};
-	}
-
-	/**
-	 * @param string            $axis
-	 * @param array<int, mixed> $args
-	 * @return bool
-	 */
-	public static function parseAxis(string $axis, array &$args): bool
-	{
-		$a = in_array($axis, $args, true);
-		$args = array_diff($args, [$axis]);
-		return $a;
 	}
 
 	/**

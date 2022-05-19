@@ -4,12 +4,14 @@ namespace platz1de\EasyEdit\pattern\logic;
 
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\type\EmptyPatternData;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class NotPattern extends Pattern
 {
+	use EmptyPatternData;
+
 	/**
 	 * @param Pattern $piece
 	 */
@@ -48,16 +50,4 @@ class NotPattern extends Pattern
 	{
 		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total);
 	}
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function putData(ExtendedBinaryStream $stream): void { }
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function parseData(ExtendedBinaryStream $stream): void { }
 }

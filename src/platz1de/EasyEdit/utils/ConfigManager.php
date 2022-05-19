@@ -225,6 +225,7 @@ class ConfigManager
 		foreach (self::$terrainIgnored as $id) {
 			$stream->putInt($id);
 		}
+		$stream->putBool(self::$allowUnregisteredBlocks);
 		$stream->putInt(self::$fastSetMax);
 		$stream->putInt(self::$pathfindingMax);
 		$stream->putInt(self::$fillDistance);
@@ -245,6 +246,7 @@ class ConfigManager
 		for ($i = 0; $i < $count; $i++) {
 			self::$terrainIgnored[] = $stream->getInt();
 		}
+		self::$allowUnregisteredBlocks = $stream->getBool();
 		self::$fastSetMax = $stream->getInt();
 		self::$pathfindingMax = $stream->getInt();
 		self::$fillDistance = $stream->getInt();

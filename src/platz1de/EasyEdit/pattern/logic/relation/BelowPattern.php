@@ -2,26 +2,15 @@
 
 namespace platz1de\EasyEdit\pattern\logic\relation;
 
-use platz1de\EasyEdit\pattern\block\BlockType;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\type\BlockPatternData;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\world\World;
 
 class BelowPattern extends Pattern
 {
-	private BlockType $block;
-
-	/**
-	 * @param BlockType $block
-	 * @param Pattern[] $pieces
-	 */
-	public function __construct(BlockType $block, array $pieces)
-	{
-		parent::__construct($pieces);
-		$this->block = $block;
-	}
+	use BlockPatternData;
 
 	/**
 	 * @param int             $x
@@ -39,15 +28,5 @@ class BelowPattern extends Pattern
 			return $this->block->equals($iterator->getBlock($x, $y, $z));
 		}
 		return false;
-	}
-
-	public function putData(ExtendedBinaryStream $stream): void
-	{
-		$stream->putString($this->block->fastSerialize());
-	}
-
-	public function parseData(ExtendedBinaryStream $stream): void
-	{
-		$this->block = BlockType::fastDeserialize($stream->getString());
 	}
 }

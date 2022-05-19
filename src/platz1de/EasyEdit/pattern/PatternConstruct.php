@@ -3,13 +3,15 @@
 namespace platz1de\EasyEdit\pattern;
 
 use Exception;
+use platz1de\EasyEdit\pattern\type\EmptyPatternData;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\utils\AssumptionFailedError;
 
 final class PatternConstruct extends Pattern
 {
+	use EmptyPatternData;
+
 	/**
 	 * @param Pattern[] $pieces
 	 * @return Pattern
@@ -40,8 +42,4 @@ final class PatternConstruct extends Pattern
 		}
 		return -1;
 	}
-
-	public function putData(ExtendedBinaryStream $stream): void { }
-
-	public function parseData(ExtendedBinaryStream $stream): void { }
 }

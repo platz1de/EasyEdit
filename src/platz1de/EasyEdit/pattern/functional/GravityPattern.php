@@ -3,13 +3,15 @@
 namespace platz1de\EasyEdit\pattern\functional;
 
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\type\EmptyPatternData;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\HeightMapCache;
 
 class GravityPattern extends Pattern
 {
+	use EmptyPatternData;
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -29,16 +31,4 @@ class GravityPattern extends Pattern
 		}
 		return parent::getFor($x, $originalY, $z, $iterator, $current, $total);
 	}
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function putData(ExtendedBinaryStream $stream): void { }
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function parseData(ExtendedBinaryStream $stream): void { }
 }

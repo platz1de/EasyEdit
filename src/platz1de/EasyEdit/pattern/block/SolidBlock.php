@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\pattern\block;
 
+use platz1de\EasyEdit\pattern\type\EmptyPatternData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
@@ -12,6 +12,8 @@ use pocketmine\utils\AssumptionFailedError;
 
 class SolidBlock extends BlockType
 {
+	use EmptyPatternData;
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -42,16 +44,4 @@ class SolidBlock extends BlockType
 	{
 		throw new AssumptionFailedError("Solid block group should only be used in comparison context");
 	}
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function putData(ExtendedBinaryStream $stream): void { }
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function parseData(ExtendedBinaryStream $stream): void { }
 }

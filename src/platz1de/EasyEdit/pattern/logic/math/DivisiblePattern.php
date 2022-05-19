@@ -4,37 +4,35 @@ namespace platz1de\EasyEdit\pattern\logic\math;
 
 use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\type\AxisArgumentWrapper;
+use platz1de\EasyEdit\pattern\type\AxisPatternData;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class DivisiblePattern extends Pattern
 {
+	use AxisPatternData{
+		__construct as private __constructAxisPatternData;
+		putData as private putAxisPatternData;
+		parseData as private parseAxisPatternData;
+	}
+
 	private int $divisor;
-	private bool $xAxis;
-	private bool $yAxis;
-	private bool $zAxis;
 
 	/**
-	 * @param int       $divisor
-	 * @param bool      $xAxis
-	 * @param bool      $yAxis
-	 * @param bool      $zAxis
-	 * @param Pattern[] $pieces
+	 * @param int                 $divisor
+	 * @param AxisArgumentWrapper $axi
+	 * @param Pattern[]           $pieces
 	 */
-	public function __construct(int $divisor, bool $xAxis, bool $yAxis, bool $zAxis, array $pieces)
+	public function __construct(int $divisor, AxisArgumentWrapper $axi, array $pieces)
 	{
 		parent::__construct($pieces);
 		$this->divisor = $divisor;
-		$this->xAxis = $xAxis;
-		$this->yAxis = $yAxis;
-		$this->zAxis = $zAxis;
+		$this->__constructAxisPatternData($axi, $pieces);
 
 		if ($divisor === 0) {
 			throw new WrongPatternUsageException("Divisible needs a non-zero divisor");
-		}
-		if (!($xAxis || $yAxis || $zAxis)) {
-			throw new WrongPatternUsageException("Odd needs at least one axis, zero given");
 		}
 	}
 
@@ -64,16 +62,12 @@ class DivisiblePattern extends Pattern
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt($this->divisor);
-		$stream->putBool($this->xAxis);
-		$stream->putBool($this->yAxis);
-		$stream->putBool($this->zAxis);
+		$this->putAxisPatternData($stream);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->divisor = $stream->getInt();
-		$this->xAxis = $stream->getBool();
-		$this->yAxis = $stream->getBool();
-		$this->zAxis = $stream->getBool();
+		$this->parseAxisPatternData($stream);
 	}
 }

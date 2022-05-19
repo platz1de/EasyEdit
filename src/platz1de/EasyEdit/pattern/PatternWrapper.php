@@ -2,10 +2,13 @@
 
 namespace platz1de\EasyEdit\pattern;
 
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\pattern\block\SolidBlock;
+use platz1de\EasyEdit\pattern\type\EmptyPatternData;
 
 final class PatternWrapper extends Pattern
 {
+	use EmptyPatternData;
+
 	/**
 	 * @param Pattern[] $pieces
 	 * @return Pattern
@@ -18,8 +21,4 @@ final class PatternWrapper extends Pattern
 
 		return new self($pieces);
 	}
-
-	public function putData(ExtendedBinaryStream $stream): void { }
-
-	public function parseData(ExtendedBinaryStream $stream): void { }
 }

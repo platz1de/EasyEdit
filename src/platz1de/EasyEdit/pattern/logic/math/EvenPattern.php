@@ -2,35 +2,14 @@
 
 namespace platz1de\EasyEdit\pattern\logic\math;
 
-use platz1de\EasyEdit\pattern\parser\WrongPatternUsageException;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\type\AxisPatternData;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class EvenPattern extends Pattern
 {
-	private bool $xAxis;
-	private bool $yAxis;
-	private bool $zAxis;
-
-	/**
-	 * @param bool      $xAxis
-	 * @param bool      $yAxis
-	 * @param bool      $zAxis
-	 * @param Pattern[] $pieces
-	 */
-	public function __construct(bool $xAxis, bool $yAxis, bool $zAxis, array $pieces)
-	{
-		parent::__construct($pieces);
-		$this->xAxis = $xAxis;
-		$this->yAxis = $yAxis;
-		$this->zAxis = $zAxis;
-
-		if (!($xAxis || $yAxis || $zAxis)) {
-			throw new WrongPatternUsageException("Odd needs at least one axis, zero given");
-		}
-	}
+	use AxisPatternData;
 
 	/**
 	 * @param int             $x
@@ -53,19 +32,5 @@ class EvenPattern extends Pattern
 			return false;
 		}
 		return true;
-	}
-
-	public function putData(ExtendedBinaryStream $stream): void
-	{
-		$stream->putBool($this->xAxis);
-		$stream->putBool($this->yAxis);
-		$stream->putBool($this->zAxis);
-	}
-
-	public function parseData(ExtendedBinaryStream $stream): void
-	{
-		$this->xAxis = $stream->getBool();
-		$this->yAxis = $stream->getBool();
-		$this->zAxis = $stream->getBool();
 	}
 }

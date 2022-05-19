@@ -4,16 +4,18 @@ namespace platz1de\EasyEdit\pattern\logic\selection;
 
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\type\EmptyPatternData;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 
 class CenterPattern extends Pattern
 {
+	use EmptyPatternData;
+
 	/**
 	 * @param int             $x
 	 * @param int             $y
@@ -48,16 +50,4 @@ class CenterPattern extends Pattern
 	{
 		$context->includeCenter();
 	}
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function putData(ExtendedBinaryStream $stream): void { }
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 * @return void
-	 */
-	public function parseData(ExtendedBinaryStream $stream): void { }
 }
