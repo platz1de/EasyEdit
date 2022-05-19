@@ -160,7 +160,6 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
 						$chunk = $this->getManager()->getChunk($chunkX, $chunkZ);
 						$piece->getManager()->setChunk($chunkX, $chunkZ, $chunk);
-						$this->getManager()->setChunk($chunkX, $chunkZ, null);
 					}
 				}
 				foreach ($this->getTiles() as $tile) {
