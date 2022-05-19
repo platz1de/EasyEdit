@@ -23,7 +23,7 @@ abstract class Pattern
 	 */
 	public function __construct(array $pieces)
 	{
-		if (count($pieces) === 1 && ($pieces[0] instanceof PatternWrapper || $pieces[0] instanceof PatternConstruct) && $pieces[0]->getWeight() === 100) {
+		if (count($pieces) === 1 && $pieces[0] instanceof PatternWrapper && $pieces[0]->getWeight() === 100) {
 			$pieces = $pieces[0]->pieces;
 		}
 		$this->pieces = $pieces;
