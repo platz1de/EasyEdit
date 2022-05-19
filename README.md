@@ -192,10 +192,10 @@ These Patterns have a unique use and are mostly used for the default commands
 [argument] - optional Argument<br>
 patterns - children patterns, can be separated by a comma
 
-| Pattern                                      | Description                                                                                                                             |
-|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| Pattern                                      | Description                                                                                                                          |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | naturalize(\[pattern],\[pattern],\[pattern]) | makes your selection more natural (1 layer of pattern1 (eg. grass), 3 layers of pattern2 (eg. dirt), all below pattern3 (eg. stone)) |
-| gravity(\[pattern])                          | makes your blocks fall down until they reach the ground                                                                                 |
+| gravity(\[pattern])                          | makes your blocks fall down until they reach the ground                                                                              |
 
 ## Blame Mojang
 
