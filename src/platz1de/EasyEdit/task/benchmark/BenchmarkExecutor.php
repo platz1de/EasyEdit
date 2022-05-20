@@ -68,8 +68,8 @@ class BenchmarkExecutor extends ExecutableTask
 		$complexData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
 
 		//Task #2 - set complex
-		//3D-Chess Pattern with stone and dirt: even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(stone).odd;xz(stone).dirt
-		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(stone).odd;xz(stone).dirt");
+		//3D-Chess Pattern with stone and dirt
+		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = SetTask::from($this->world, $this->world, $complexData, $testCube, $pos, Vector3::zero(), $pattern);
 		$this->setComplexBenchmark->execute();
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
