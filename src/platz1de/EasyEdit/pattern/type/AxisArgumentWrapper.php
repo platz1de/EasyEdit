@@ -12,7 +12,7 @@ class AxisArgumentWrapper
 	 * @param string[] $args
 	 * @return AxisArgumentWrapper
 	 */
-	public static function parse(array $args): AxisArgumentWrapper
+	public static function parse(array &$args): AxisArgumentWrapper
 	{
 		$class = new self();
 		foreach ($args as $i => $arg) {
@@ -29,6 +29,7 @@ class AxisArgumentWrapper
 				unset($args[$i]);
 			}
 		}
+		$args = array_values($args);
 		return $class;
 	}
 
