@@ -158,7 +158,7 @@ class PatternParser
 			"not" => new NotPattern(new PatternWrapper($children)),
 			"even" => new EvenPattern(AxisArgumentWrapper::parse($args), $children),
 			"odd" => new OddPattern(AxisArgumentWrapper::parse($args), $children),
-			"divisible" => new DivisiblePattern((int) ($args[0] ?? -1), AxisArgumentWrapper::parse($args), $children),
+			"divisible" => new DivisiblePattern(AxisArgumentWrapper::parse($args), (int) ($args[0] ?? -1), $children),
 			"block" => new BlockPattern(self::getBlockType($args[0] ?? ""), $children),
 			"above" => new AbovePattern(self::getBlockType($args[0] ?? ""), $children),
 			"below" => new BelowPattern(self::getBlockType($args[0] ?? ""), $children),

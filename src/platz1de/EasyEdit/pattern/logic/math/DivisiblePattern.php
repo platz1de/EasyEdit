@@ -12,7 +12,7 @@ use platz1de\EasyEdit\world\ChunkController;
 
 class DivisiblePattern extends Pattern
 {
-	use AxisPatternData{
+	use AxisPatternData {
 		__construct as private __constructAxisPatternData;
 		putData as private putAxisPatternData;
 		parseData as private parseAxisPatternData;
@@ -21,11 +21,11 @@ class DivisiblePattern extends Pattern
 	private int $divisor;
 
 	/**
-	 * @param int                 $divisor
 	 * @param AxisArgumentWrapper $axi
+	 * @param int                 $divisor
 	 * @param Pattern[]           $pieces
 	 */
-	public function __construct(int $divisor, AxisArgumentWrapper $axi, array $pieces)
+	public function __construct(AxisArgumentWrapper $axi, int $divisor, array $pieces)
 	{
 		parent::__construct($pieces);
 		$this->divisor = $divisor;
