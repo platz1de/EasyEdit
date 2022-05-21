@@ -13,9 +13,9 @@ use platz1de\EasyEdit\world\ChunkController;
 class DivisiblePattern extends Pattern
 {
 	use AxisPatternData {
-		__construct as private __constructAxisPatternData;
-		putData as private putAxisPatternData;
-		parseData as private parseAxisPatternData;
+		AxisPatternData::__construct as private __constructAxisPatternData;
+		AxisPatternData::putData as private putAxisPatternData;
+		AxisPatternData::parseData as private parseAxisPatternData;
 	}
 
 	private int $divisor;
@@ -31,7 +31,7 @@ class DivisiblePattern extends Pattern
 		$this->divisor = $divisor;
 		$this->__constructAxisPatternData($axi, $pieces);
 
-		if ($divisor === 0) {
+		if ($divisor <= 0) {
 			throw new WrongPatternUsageException("Divisible needs a non-zero divisor");
 		}
 	}
