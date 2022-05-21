@@ -173,7 +173,7 @@ class SmoothTask extends SelectionEditTask
 			if ($depth !== 0) {
 				if ($start !== -1) {
 					for ($i = $start; $i < $y; $i++) {
-						$map[$i] = max(-1, $start - $i, $i - $y + 1);
+						$map[$i] = (int) max(-1, $start - $i, $i - $y + 1);
 					}
 				}
 				$start = -1;
@@ -185,7 +185,7 @@ class SmoothTask extends SelectionEditTask
 		}
 		if ($start !== -1) {
 			for ($i = $start; $i < World::Y_MAX; $i++) {
-				$map[$i] = max(-1, $start - $i);
+				$map[$i] = (int) max(-1, $start - $i);
 			}
 		}
 		return $map;
