@@ -3,12 +3,9 @@
 namespace platz1de\EasyEdit\utils;
 
 use JsonException;
-use platz1de\EasyEdit\thread\EditThread;
-use pocketmine\plugin\DiskResourceProvider;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
 use pocketmine\utils\InternetException;
-use UnexpectedValueException;
 
 class MixedUtils
 {
@@ -63,11 +60,11 @@ class MixedUtils
 	public static function getJsonData(string $url, int $depth): array
 	{
 		$data = Internet::getURL($url, 10, [], $err);
-		if ($data === null) {
+		if ($data === null || $data->getCode() !== 200) {
 			if (isset($err)) {
 				throw new InternetException($err);
 			}
-			throw new InternetException("Loaded Data is empty");
+			throw new InternetException("Couldn't load file: " . $data?->getCode());
 		}
 
 		try {
@@ -81,37 +78,5 @@ class MixedUtils
 		}
 
 		return $parsed;
-	}
-
-	/**
-	 * @param string $url
-	 * @param int    $depth
-	 * @param string $fallback
-	 * @return array<string, mixed>
-	 */
-	public static function getRepoJsonData(string $url, int $depth, string $fallback): array
-	{
-		try {
-			return self::getJsonData($url, $depth);
-		} catch (InternetException $e) {
-			EditThread::getInstance()->getLogger()->debug("Could not download datafile " . $url . ": " . $e->getMessage());
-			$stream = (new DiskResourceProvider(ConfigManager::getResourcePath()))->getResource($fallback);
-			if ($stream === null || ($data = stream_get_contents($stream)) === false) {
-				throw new UnexpectedValueException("Couldn't read fallback datafile " . $fallback);
-			}
-			fclose($stream);
-
-			try {
-				$parsed = json_decode($data, true, max(1, $depth), JSON_THROW_ON_ERROR);
-			} catch (JsonException $e) {
-				throw new InternetException("Invalid JSON: " . $e->getMessage());
-			}
-
-			if (!is_array($parsed)) {
-				throw new InternetException("Loaded Data does not represent an array");
-			}
-
-			return $parsed;
-		}
 	}
 }

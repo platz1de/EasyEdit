@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\convert;
 
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
-use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\math\Axis;
 use Throwable;
 use UnexpectedValueException;
@@ -24,18 +24,18 @@ class BlockRotationManipulator
 	private static array $flipData;
 	private static bool $available = false;
 
-	public static function load(string $rotationSource, string $flipSource): void
+	public static function load(): void
 	{
 		self::$rotationData = [];
 		self::$flipData = [];
 
 		try {
 			/** @var string $pastRotationId */
-			foreach (MixedUtils::getRepoJsonData($rotationSource, 2, "repo/rotation-data.json") as $preRotationId => $pastRotationId) {
+			foreach (RepoManager::getJson("rotation-data", 2) as $preRotationId => $pastRotationId) {
 				self::$rotationData[BlockParser::fromStringId($preRotationId)] = BlockParser::fromStringId($pastRotationId);
 			}
 			/** @var array<string, string> $axisFlips */
-			foreach (MixedUtils::getRepoJsonData($flipSource, 3, "repo/flip-data.json") as $axisName => $axisFlips) {
+			foreach (RepoManager::getJson("flip-data", 3) as $axisName => $axisFlips) {
 				$axis = match ($axisName) {
 					"xAxis" => Axis::X,
 					"yAxis" => Axis::Y,

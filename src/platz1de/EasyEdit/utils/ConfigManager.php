@@ -17,7 +17,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.8";
+	private const CONFIG_VERSION = "2.0.9";
 
 	/**
 	 * @var int[]
@@ -30,13 +30,8 @@ class ConfigManager
 	private static int $pathfindingMax;
 	private static int $fillDistance;
 	private static bool $sendDebug;
-	private static string $bedrockConversionDataSource;
-	private static string $bedrockPaletteDataSource;
-	private static string $javaPaletteDataSource;
-	private static string $rotationDataSource;
-	private static string $flipDataSource;
-	private static string $tileDataStatesSource;
-	private static string $javaTileStatesSource;
+	private static bool $downloadData;
+	private static string $dataRepo;
 
 	private static string $resourcePath;
 
@@ -65,13 +60,8 @@ class ConfigManager
 
 		self::$sendDebug = self::mustGetBool($config, "send-debug", true);
 
-		self::$bedrockConversionDataSource = self::mustGetString($config, "bedrock-convert-data", "");
-		self::$bedrockPaletteDataSource = self::mustGetString($config, "bedrock-palette-data", "");
-		self::$javaPaletteDataSource = self::mustGetString($config, "java-palette-data", "");
-		self::$rotationDataSource = self::mustGetString($config, "rotation-data", "");
-		self::$flipDataSource = self::mustGetString($config, "flip-data", "");
-		self::$tileDataStatesSource = self::mustGetString($config, "tile-data-states", "");
-		self::$javaTileStatesSource = self::mustGetString($config, "java-tile-states", "");
+		self::$downloadData = self::mustGetBool($config, "download-data", false);
+		self::$dataRepo = self::mustGetString($config, "data-repo", "");
 
 		ConfigInputData::create();
 	}
@@ -229,13 +219,7 @@ class ConfigManager
 		$stream->putInt(self::$fastSetMax);
 		$stream->putInt(self::$pathfindingMax);
 		$stream->putInt(self::$fillDistance);
-		$stream->putString(self::$bedrockConversionDataSource);
-		$stream->putString(self::$bedrockPaletteDataSource);
-		$stream->putString(self::$javaPaletteDataSource);
-		$stream->putString(self::$rotationDataSource);
-		$stream->putString(self::$flipDataSource);
-		$stream->putString(self::$tileDataStatesSource);
-		$stream->putString(self::$javaTileStatesSource);
+		$stream->putString(self::$downloadData ? self::$dataRepo : "");
 		$stream->putBool(self::$sendDebug);
 		$stream->putString(EasyEdit::getResourcePath());
 	}
@@ -250,23 +234,18 @@ class ConfigManager
 		self::$fastSetMax = $stream->getInt();
 		self::$pathfindingMax = $stream->getInt();
 		self::$fillDistance = $stream->getInt();
-		self::$bedrockConversionDataSource = $stream->getString();
-		self::$bedrockPaletteDataSource = $stream->getString();
-		self::$javaPaletteDataSource = $stream->getString();
-		self::$rotationDataSource = $stream->getString();
-		self::$flipDataSource = $stream->getString();
-		self::$tileDataStatesSource = $stream->getString();
-		self::$javaTileStatesSource = $stream->getString();
+		self::$dataRepo = $stream->getString();
 		self::$sendDebug = $stream->getBool();
 		self::$resourcePath = $stream->getString();
 	}
 
 	public static function distributeData(): void
 	{
+		RepoManager::init(self::$dataRepo);
 		HeightMapCache::setIgnore(self::$terrainIgnored);
-		LegacyBlockIdConvertor::load(self::$bedrockConversionDataSource);
-		BlockStateConvertor::load(self::$bedrockPaletteDataSource, self::$javaPaletteDataSource, self::$tileDataStatesSource, self::$javaTileStatesSource);
-		BlockRotationManipulator::load(self::$rotationDataSource, self::$flipDataSource);
+		LegacyBlockIdConvertor::load();
+		BlockStateConvertor::load();
+		BlockRotationManipulator::load();
 		ItemConvertor::load();
 	}
 

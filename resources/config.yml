@@ -1,4 +1,4 @@
-config-version: "2.0.8" #Please don't change this manually
+config-version: "2.0.9" #Please don't change this manually
 
 #Used language
 #Available:
@@ -43,15 +43,12 @@ terrain-ignored-blocks: [ "air", "wood", "wood2", "leaves", "leaves2", "dandelio
 #requires server to be on debug mode
 send-debug: false
 
+#Whether to automatically download newer data files from GitHub
+#Turn this off if you are on an extremely limited data plan or are not connected to the internet
+download-data: true
 
 #Better don't change this, the following is mainly for transparency
 #Conversion data source, requires specific Format
 #for more information see https://github.com/platz1de/EasyEdit-Data/tree/format-v2.0
 #If you want to use your own data, the simplest way is to fork the data repository and modify some values
-bedrock-convert-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/bedrock-conversion-map.json"
-bedrock-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/bedrock_palette.json"
-java-palette-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/java_palette.json"
-rotation-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/rotation-data.json"
-flip-data: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/flip-data.json"
-tile-data-states: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/tile-data-states.json"
-java-tile-states: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/java-tile-states.json"
+data-repo: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v2.0/dataRepo.json"

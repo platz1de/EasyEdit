@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\convert;
 
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
-use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\utils\RepoManager;
 use Throwable;
 
 /**
@@ -19,13 +19,13 @@ class LegacyBlockIdConvertor
 	private static array $conversionFrom;
 	private static bool $available = false;
 
-	public static function load(string $legacyBedrockSource): void
+	public static function load(): void
 	{
 		self::$conversionFrom = [];
 
 		try {
 			/** @var string $bedrockStringId */
-			foreach (MixedUtils::getRepoJsonData($legacyBedrockSource, 2, "repo/bedrock-conversion-map.json") as $javaStringId => $bedrockStringId) {
+			foreach (RepoManager::getJson("bedrock-conversion-map", 2) as $javaStringId => $bedrockStringId) {
 				self::$conversionFrom[BlockParser::fromStringId($javaStringId)] = BlockParser::fromStringId($bedrockStringId);
 			}
 			self::$available = true;
