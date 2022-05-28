@@ -162,4 +162,12 @@ class EasyEdit extends PluginBase
 	{
 		return self::getInstance()->getDataFolder() . "schematics" . DIRECTORY_SEPARATOR;
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function getCachePath(): string
+	{
+		return self::getInstance()->getDataFolder() . "cache" . DIRECTORY_SEPARATOR;
+	}
 }

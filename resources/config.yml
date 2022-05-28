@@ -1,4 +1,4 @@
-config-version: "2.0.9" #Please don't change this manually
+config-version: "2.0.10" #Please don't change this manually
 
 #Used language
 #Available:
@@ -46,6 +46,9 @@ send-debug: false
 #Whether to automatically download newer data files from GitHub
 #Turn this off if you are on an extremely limited data plan or are not connected to the internet
 download-data: true
+
+#Whether to cache data files locally
+cache-data: true
 
 #Better don't change this, the following is mainly for transparency
 #Conversion data source, requires specific Format

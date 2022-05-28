@@ -58,7 +58,7 @@ class BlockStateConvertor
 			foreach (RepoManager::getJson("bedrock_palette", 2) as $javaState => $bedrockStringId) {
 				self::$paletteFrom[$javaState] = BlockParser::fromStringId($bedrockStringId);
 			}
-			var_dump(count(self::$paletteFrom));
+
 			/** @var string $javaState */
 			foreach (RepoManager::getJson("java_palette", 2) as $bedrockStringId => $javaState) {
 				self::$paletteTo[BlockParser::fromStringId($bedrockStringId)] = $javaState;

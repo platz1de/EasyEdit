@@ -54,10 +54,9 @@ class MixedUtils
 
 	/**
 	 * @param string $url
-	 * @param int    $depth
-	 * @return array<string, mixed>
+	 * @return string
 	 */
-	public static function getJsonData(string $url, int $depth): array
+	public static function downloadData(string $url): string
 	{
 		$data = Internet::getURL($url, 10, [], $err);
 		if ($data === null || $data->getCode() !== 200) {
@@ -67,8 +66,18 @@ class MixedUtils
 			throw new InternetException("Couldn't load file: " . $data?->getCode());
 		}
 
+		return $data->getBody();
+	}
+
+	/**
+	 * @param string $json
+	 * @param int    $depth
+	 * @return array<string, mixed>
+	 */
+	public static function decodeJson(string $json, int $depth): array
+	{
 		try {
-			$parsed = json_decode($data->getBody(), true, max(1, $depth), JSON_THROW_ON_ERROR);
+			$parsed = json_decode($json, true, max(1, $depth), JSON_THROW_ON_ERROR);
 		} catch (JsonException $e) {
 			throw new InternetException("Invalid JSON: " . $e->getMessage());
 		}

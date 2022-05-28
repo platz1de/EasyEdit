@@ -17,7 +17,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.0.9";
+	private const CONFIG_VERSION = "2.0.10";
 
 	/**
 	 * @var int[]
@@ -31,9 +31,11 @@ class ConfigManager
 	private static int $fillDistance;
 	private static bool $sendDebug;
 	private static bool $downloadData;
+	private static bool $cacheData;
 	private static string $dataRepo;
 
 	private static string $resourcePath;
+	private static string $cachePath;
 
 	public static function load(): void
 	{
@@ -61,7 +63,12 @@ class ConfigManager
 		self::$sendDebug = self::mustGetBool($config, "send-debug", true);
 
 		self::$downloadData = self::mustGetBool($config, "download-data", false);
+		self::$cacheData = self::mustGetBool($config, "cache-data", false);
 		self::$dataRepo = self::mustGetString($config, "data-repo", "");
+
+		if (self::$cacheData && !is_dir(EasyEdit::getCachePath()) && !mkdir(EasyEdit::getCachePath(), 0777, true) && !is_dir(EasyEdit::getCachePath())) {
+			throw new AssumptionFailedError("Failed to create cache directory");
+		}
 
 		ConfigInputData::create();
 	}
@@ -209,6 +216,22 @@ class ConfigManager
 		return self::$resourcePath;
 	}
 
+	/**
+	 * @return bool
+	 */
+	public static function useCache(): bool
+	{
+		return self::$cacheData;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getCachePath(): string
+	{
+		return self::$cachePath;
+	}
+
 	public static function putRawData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt(count(self::$terrainIgnored));
@@ -221,7 +244,9 @@ class ConfigManager
 		$stream->putInt(self::$fillDistance);
 		$stream->putString(self::$downloadData ? self::$dataRepo : "");
 		$stream->putBool(self::$sendDebug);
+		$stream->putBool(self::$cacheData);
 		$stream->putString(EasyEdit::getResourcePath());
+		$stream->putString(EasyEdit::getCachePath());
 	}
 
 	public static function parseRawData(ExtendedBinaryStream $stream): void
@@ -236,7 +261,9 @@ class ConfigManager
 		self::$fillDistance = $stream->getInt();
 		self::$dataRepo = $stream->getString();
 		self::$sendDebug = $stream->getBool();
+		self::$cacheData = $stream->getBool();
 		self::$resourcePath = $stream->getString();
+		self::$cachePath = $stream->getString();
 	}
 
 	public static function distributeData(): void

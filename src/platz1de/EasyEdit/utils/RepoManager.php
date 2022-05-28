@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use JsonException;
 use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\plugin\DiskResourceProvider;
 use pocketmine\utils\InternetException;
@@ -10,6 +9,8 @@ use UnexpectedValueException;
 
 class RepoManager
 {
+	private const CACHE_PREFIX = "repo_cache_";
+
 	/**
 	 * @var array<string, mixed>
 	 */
@@ -20,8 +21,21 @@ class RepoManager
 	{
 		if ($repo !== "") {
 			try {
-				self::$repoData = MixedUtils::getJsonData($repo, 4); //leave room for more complex structures later on
+				self::$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
 				self::$available = true;
+				if (ConfigManager::useCache()) {
+					$version = self::$repoData["version"];
+					$cache = scandir(ConfigManager::getCachePath());
+					if ($cache !== false) {
+						foreach (array_diff($cache, ['.', '..']) as $file) {
+							//only delete files that are known to us
+							if (str_starts_with($file, self::CACHE_PREFIX) && !str_ends_with($file, "_" . $version . ".json")) {
+								EditThread::getInstance()->getLogger()->debug("Deleting old cache file " . $file);
+								unlink(ConfigManager::getCachePath() . $file);
+							}
+						}
+					}
+				}
 			} catch (InternetException $e) {
 				EditThread::getInstance()->getLogger()->error("Failed to load repo data: " . $e->getMessage());
 			}
@@ -36,10 +50,26 @@ class RepoManager
 	public static function getJson(string $file, int $depth): array
 	{
 		if (self::$available) {
+			if (ConfigManager::useCache()) {
+				$cache = self::CACHE_PREFIX . $file . "_" . self::$repoData["version"] . ".json";
+				if (is_file(ConfigManager::getCachePath() . $cache)) {
+					try {
+						return MixedUtils::decodeJson((string) file_get_contents(ConfigManager::getCachePath() . $cache), $depth);
+					} catch (InternetException $e) {
+						EditThread::getInstance()->getLogger()->warning("Failed to read cache " . $cache . ": " . $e->getMessage());
+						unlink(ConfigManager::getCachePath() . $cache);
+					}
+				}
+			}
 			try {
 				$url = self::$repoData[$file] ?? null;
 				if (is_string($url)) {
-					return MixedUtils::getJsonData($url, $depth);
+					$data = MixedUtils::downloadData($url);
+					if (ConfigManager::useCache()) {
+						EditThread::getInstance()->getLogger()->debug("Caching " . $file . " to " . ConfigManager::getCachePath() . self::CACHE_PREFIX . $file . "_" . self::$repoData["version"] . ".json");
+						file_put_contents(ConfigManager::getCachePath() . self::CACHE_PREFIX . $file . "_" . self::$repoData["version"] . ".json", $data);
+					}
+					return MixedUtils::decodeJson($data, $depth);
 				}
 				EditThread::getInstance()->getLogger()->error("Repo data does not contain $file");
 			} catch (InternetException $e) {
@@ -53,16 +83,6 @@ class RepoManager
 		}
 		fclose($stream);
 
-		try {
-			$parsed = json_decode($data, true, max(1, $depth), JSON_THROW_ON_ERROR);
-		} catch (JsonException $e) {
-			throw new InternetException("Invalid JSON: " . $e->getMessage());
-		}
-
-		if (!is_array($parsed)) {
-			throw new InternetException("Loaded Data does not represent an array");
-		}
-
-		return $parsed;
+		return MixedUtils::decodeJson($data, $depth);
 	}
 }
