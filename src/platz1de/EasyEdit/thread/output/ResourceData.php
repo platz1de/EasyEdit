@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\thread\input\RuntimeInputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ResourceData extends OutputData
@@ -15,7 +16,7 @@ class ResourceData extends OutputData
 
 	public function handle(): void
 	{
-		//nope
+		RuntimeInputData::create();
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
