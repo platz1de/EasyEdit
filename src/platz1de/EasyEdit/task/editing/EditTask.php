@@ -98,9 +98,9 @@ abstract class EditTask extends ExecutableTask
 	public function sendRuntimeChunk(EditTaskHandler $handler, int $chunk): void
 	{
 		if ($this->data->isUsingFastSet()) {
-			ResultingChunkData::withInjection($this->world, [$handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk));
+			ResultingChunkData::withInjection($this->world, [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk));
 		} else {
-			ResultingChunkData::from($this->world, [$handler->getResult()->getChunk($chunk)]);
+			ResultingChunkData::from($this->world, [$chunk => $handler->getResult()->getChunk($chunk)]);
 		}
 		ChunkCollector::getChunks()->filterChunks(function (array $c) use ($chunk): array {
 			unset($c[$chunk]);
