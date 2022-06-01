@@ -158,8 +158,8 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 				$piece = new DynamicBlockListSelection($this->getPlayer(), $pos2, $this->getPoint(), $pos1, true);
 				for ($chunkX = $pos1->getX() >> 4; $chunkX <= $pos2->getX() >> 4; $chunkX++) {
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
-						$chunk = $this->getManager()->getChunk($chunkX, $chunkZ);
-						$piece->getManager()->setChunk($chunkX, $chunkZ, $chunk);
+						$chunk = $this->getManager()->getChunk(World::chunkHash($chunkX, $chunkZ));
+						$piece->getManager()->setChunk(World::chunkHash($chunkX, $chunkZ), $chunk);
 					}
 				}
 				foreach ($this->getTiles() as $tile) {
@@ -178,8 +178,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	{
 		$clone = new self($this->getPlayer(), $this->getPos2(), $this->getPoint(), $this->getPos1());
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
-			World::getXZ($hash, $x, $z);
-			$clone->getManager()->setChunk($x, $z, $chunk);
+			$clone->getManager()->setChunk($hash, $chunk);
 		}
 		foreach ($this->getTiles() as $tile) {
 			$clone->addTile($tile);

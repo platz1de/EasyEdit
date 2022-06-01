@@ -35,9 +35,8 @@ class ChunkCollector
 		}
 
 		foreach ($chunks as $key => $chunk) {
-			World::getXZ($chunk, $x, $z);
 			try {
-				self::$manager->getChunk($x, $z);
+				self::$manager->getChunk($chunk);
 				unset($chunks[$key]);
 			} catch (UnexpectedValueException) {
 				//Chunk needs to be loaded
@@ -60,7 +59,7 @@ class ChunkCollector
 
 		$chunks = new ExtendedBinaryStream($data->getChunkData());
 		while (!$chunks->feof()) {
-			self::$manager->setChunk($chunks->getInt(), $chunks->getInt(), ChunkInformation::readFrom($chunks));
+			self::$manager->setChunk(World::chunkHash($chunks->getInt(), $chunks->getInt()), ChunkInformation::readFrom($chunks));
 		}
 	}
 

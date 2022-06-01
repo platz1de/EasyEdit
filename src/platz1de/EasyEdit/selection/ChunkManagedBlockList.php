@@ -102,7 +102,7 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$this->manager->setChunk($stream->getInt(), $stream->getInt(), ChunkInformation::readFrom($stream));
+			$this->manager->setChunk(World::chunkHash($stream->getInt(), $stream->getInt()), ChunkInformation::readFrom($stream));
 		}
 
 		$this->iterator = new ChunkController($this->manager);
@@ -126,10 +126,9 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		parent::merge($selection);
 
 		foreach ($selection->getManager()->getChunks() as $hash => $chunk) {
-			World::getXZ($hash, $x, $z);
 			//TODO: only create Chunks which are really needed
 			if (LoaderManager::isChunkUsed($chunk)) {
-				$this->getManager()->setChunk($x, $z, $chunk);
+				$this->getManager()->setChunk($hash, $chunk);
 			}
 		}
 	}
@@ -142,8 +141,7 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		}
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			if (isset($collected->getManager()->getChunks()[$hash])) {
-				World::getXZ($hash, $x, $z);
-				$this->getManager()->setChunk($x, $z, $collected->getManager()->getChunks()[$hash]);
+				$this->getManager()->setChunk($hash, $collected->getManager()->getChunks()[$hash]);
 			}
 		}
 	}

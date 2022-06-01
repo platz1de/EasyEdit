@@ -79,7 +79,7 @@ class EditTaskHandler
 	/**
 	 * @return string[]
 	 */
-	public function prepareInjectionData(): array
+	public function prepareAllInjectionData(): array
 	{
 		if (!$this->result instanceof InjectingSubChunkController) {
 			throw new UnexpectedValueException("Handler wasn't caching for injection of result");
@@ -87,6 +87,20 @@ class EditTaskHandler
 		return array_map(static function (InjectingData $injection) {
 			return $injection->toProtocol();
 		}, $this->result->getInjections());
+	}
+
+	/**
+	 * @param int $chunk
+	 * @return string[]
+	 */
+	public function prepareInjectionData(int $chunk): array
+	{
+		if (!$this->result instanceof InjectingSubChunkController) {
+			throw new UnexpectedValueException("Handler wasn't caching for injection of result");
+		}
+		return array_map(static function (InjectingData $injection) {
+			return $injection->toProtocol();
+		}, $this->result->getInjection($chunk));
 	}
 
 	/**

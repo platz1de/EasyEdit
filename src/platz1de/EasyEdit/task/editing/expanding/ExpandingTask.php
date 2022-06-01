@@ -53,7 +53,7 @@ abstract class ExpandingTask extends EditTask
 		if (!isset($this->loadedChunks[$chunk])) {
 			$this->loadedChunks[$chunk] = true;
 			$this->progress = $current / $max;
-			if (!$this->requestRuntimeChunks($handler, [$chunk])) {
+			if (!$this->requestRuntimeChunk($handler, $chunk)) {
 				return false;
 			}
 		}
@@ -79,7 +79,7 @@ abstract class ExpandingTask extends EditTask
 	{
 		if (isset($this->requestedChunks[$chunk]) && --$this->requestedChunks[$chunk] <= 0) {
 			unset($this->requestedChunks[$chunk], $this->loadedChunks[$chunk]);
-			$this->sendRuntimeChunks($handler, [$chunk]);
+			$this->sendRuntimeChunk($handler, $chunk);
 		}
 	}
 }

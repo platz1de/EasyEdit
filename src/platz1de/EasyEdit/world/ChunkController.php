@@ -40,7 +40,7 @@ class ChunkController
 
 			$this->currentY = (World::Y_MIN >> 4) - 1; //invalidate
 
-			$this->currentChunk = $this->world->getChunk($this->currentX, $this->currentZ);
+			$this->currentChunk = $this->world->getChunk(World::chunkHash($this->currentX, $this->currentZ));
 			$this->currentChunk->use();
 		}
 

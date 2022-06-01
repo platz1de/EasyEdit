@@ -49,11 +49,11 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 				for ($chunkX = 0; $chunkX < 3; $chunkX++) {
 					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
 						try {
-							$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, $this->getManager()->getChunk($x + $chunkX, $z + $chunkZ));
+							$piece->getManager()->setChunk(World::chunkHash($x + $chunkX, $z + $chunkZ), $this->getManager()->getChunk(World::chunkHash($x + $chunkX, $z + $chunkZ)));
 						} catch (UnexpectedValueException) {
-							$piece->getManager()->setChunk($x + $chunkX, $z + $chunkZ, ChunkInformation::empty());
+							$piece->getManager()->setChunk(World::chunkHash($x + $chunkX, $z + $chunkZ), ChunkInformation::empty());
 						}
-						$this->getManager()->setChunk($x + $chunkX, $z + $chunkZ, null);
+						$this->getManager()->setChunk(World::chunkHash($x + $chunkX, $z + $chunkZ), null);
 					}
 				}
 				foreach ($this->getTiles() as $tile) {
@@ -71,8 +71,7 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 	{
 		$clone = new self($this->getPlayer(), $this->getWorldName(), $this->getPos1(), $this->getPos2());
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
-			World::getXZ($hash, $x, $z);
-			$clone->getManager()->setChunk($x, $z, $chunk);
+			$clone->getManager()->setChunk($hash, $chunk);
 		}
 		foreach ($this->getTiles() as $tile) {
 			$clone->addTile($tile);

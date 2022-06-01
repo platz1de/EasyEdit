@@ -52,4 +52,21 @@ class InjectingSubChunkController extends ChunkController
 	{
 		return $this->injections;
 	}
+
+	/**
+	 * @param int $chunk
+	 * @return InjectingData[]
+	 */
+	public function getInjection(int $chunk): array
+	{
+		World::getXZ($chunk, $x, $z);
+		$injections = [];
+		for ($i = World::Y_MIN >> 4; $i <= World::Y_MAX >> 4; ++$i) {
+			$index = World::blockHash($x, $i, $z);
+			if (isset($this->injections[$index])) {
+				$injections[$index] = $this->injections[$index];
+			}
+		}
+		return $injections;
+	}
 }

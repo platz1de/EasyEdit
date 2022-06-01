@@ -21,17 +21,17 @@ class ReferencedChunkManager
 		$this->world = $world;
 	}
 
-	public function getChunk(int $chunkX, int $chunkZ): ChunkInformation
+	public function getChunk(int $hash): ChunkInformation
 	{
-		return $this->chunks[World::chunkHash($chunkX, $chunkZ)] ?? throw new UnexpectedValueException("Chunk " . $chunkX . " " . $chunkZ . " is not loaded");
+		return $this->chunks[$hash] ?? throw new UnexpectedValueException("Chunk " . $hash . " is not loaded");
 	}
 
-	public function setChunk(int $chunkX, int $chunkZ, ?ChunkInformation $chunk): void
+	public function setChunk(int $hash, ?ChunkInformation $chunk): void
 	{
 		if ($chunk === null) {
-			unset($this->chunks[World::chunkHash($chunkX, $chunkZ)]);
+			unset($this->chunks[$hash]);
 		} else {
-			$this->chunks[World::chunkHash($chunkX, $chunkZ)] = $chunk;
+			$this->chunks[$hash] = $chunk;
 		}
 	}
 
@@ -64,19 +64,18 @@ class ReferencedChunkManager
 	{
 		for ($x = $pos1->getX() >> 4; $x <= $pos2->getX() >> 4; $x++) {
 			for ($z = $pos1->getZ() >> 4; $z <= $pos2->getZ() >> 4; $z++) {
-				$this->setChunk($x, $z, ChunkInformation::empty());
+				$this->setChunk(World::chunkHash($x, $z), ChunkInformation::empty());
 			}
 		}
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $z
+	 * @param int $hash
 	 */
-	public function loadIfNeeded(int $x, int $z): void
+	public function loadIfNeeded(int $hash): void
 	{
-		if (!isset($this->chunks[World::chunkHash($x, $z)])) {
-			$this->setChunk($x, $z, ChunkInformation::empty());
+		if (!isset($this->chunks[$hash])) {
+			$this->setChunk($hash, ChunkInformation::empty());
 		}
 	}
 
