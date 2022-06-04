@@ -10,6 +10,7 @@ Feature-rich WorldEditor for PocketMine-MP
 - High performance:
     - async editing, allowing the server to run normally while editing in the background
     - low memory consumption by splitting your actions into multiple smaller edits
+- flicker-free editing
 - support for unique Patterns
     - set blocks in effectively infinite ways
     - see [Pattern Documentation](#Patterns)
