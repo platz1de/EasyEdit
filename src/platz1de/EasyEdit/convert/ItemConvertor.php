@@ -4,9 +4,7 @@ namespace platz1de\EasyEdit\convert;
 
 use JsonException;
 use platz1de\EasyEdit\thread\EditThread;
-use pocketmine\block\VanillaBlocks;
-use pocketmine\item\LegacyStringToItemParser;
-use pocketmine\item\VanillaItems;
+use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
@@ -27,22 +25,11 @@ class ItemConvertor
 
 	public static function load(): void
 	{
-		/** @var string $blockId */
-		foreach (VanillaBlocks::getAll() as $blockId => $block) {
-			$item = $block->asItem();
-			self::$itemTranslationBedrock[$blockId] = [$item->getId(), $item->getMeta()];
-			self::$itemTranslationJava[$item->getId()][$item->getMeta()] = "minecraft:" . mb_strtolower($blockId);
-		}
-		/** @var string $itemId */
-		foreach (VanillaItems::getAll() as $itemId => $item) {
-			self::$itemTranslationBedrock[$itemId] = [$item->getId(), $item->getMeta()];
-			self::$itemTranslationJava[$item->getId()][$item->getMeta()] = "minecraft:" . mb_strtolower($itemId);
-		}
-		foreach (LegacyStringToItemParser::getInstance()->getMappings() as $key => $id) {
-			if (!is_numeric($key) && !isset(self::$itemTranslationJava[$id])) {
-				self::$itemTranslationBedrock[mb_strtoupper($key)] = [$id, 0];
-				self::$itemTranslationJava[$id][0] = "minecraft:" . mb_strtolower($key);
-			}
+		/** @var string $bedrock */
+		foreach (RepoManager::getJson("bedrock-item-map", 2) as $java => $bedrock) {
+			$id = explode(":", $bedrock);
+			self::$itemTranslationBedrock[$java] = [(int) $id[0], (int) $id[1]];
+			self::$itemTranslationJava[(int) $id[0]][(int) $id[1]] = $java;
 		}
 	}
 
@@ -57,7 +44,7 @@ class ItemConvertor
 			return; //probably already bedrock format, or at least not convertable
 		}
 		try {
-			$i = self::$itemTranslationBedrock[mb_strtoupper(str_replace([" ", "minecraft:"], ["_", ""], trim($javaId)))];
+			$i = self::$itemTranslationBedrock["minecraft:" . mb_strtolower(str_replace([" ", "minecraft:"], ["_", ""], trim($javaId)))];
 		} catch (Throwable) {
 			EditThread::getInstance()->debug("Couldn't convert item " . $javaId);
 			return;
