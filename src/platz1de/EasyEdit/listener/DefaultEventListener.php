@@ -94,7 +94,7 @@ class DefaultEventListener implements Listener
 			return;
 		}
 		$item = $event->getItem();
-		if ($block === null || $block->getId() === 0) {
+		if ($block === null || in_array($block->getId(), [BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_LAVA, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::AIR], true)) {
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
