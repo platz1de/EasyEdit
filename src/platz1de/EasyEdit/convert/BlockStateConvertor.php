@@ -233,7 +233,7 @@ class BlockStateConvertor
 	 */
 	public static function getState(int $id): string
 	{
-		return self::$paletteTo[$id] ?? self::$paletteTo[0];
+		return self::$paletteTo[$id] ?? "minecraft:air";
 	}
 
 	public static function getResourceData(): string
