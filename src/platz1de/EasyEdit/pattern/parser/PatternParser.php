@@ -34,6 +34,18 @@ class PatternParser
 	 * Parses player input (mostly commands)
 	 * @param string $pattern
 	 * @param Player $player
+	 * @return string
+	 */
+	public static function validateInput(string $pattern, Player $player): string
+	{
+		self::parseInput($pattern, $player);
+		return str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getId() . ":" . $player->getInventory()->getItemInHand()->getBlock()->getMeta(), $pattern);
+	}
+
+	/**
+	 * Parses player input (mostly commands)
+	 * @param string $pattern
+	 * @param Player $player
 	 * @return Pattern
 	 */
 	public static function parseInput(string $pattern, Player $player): Pattern
