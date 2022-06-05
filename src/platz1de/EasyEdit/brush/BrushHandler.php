@@ -13,6 +13,7 @@ use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
@@ -34,7 +35,7 @@ class BrushHandler
 	public static function handleBrush(CompoundTag $brush, Player $player): void
 	{
 		try {
-			$target = $player->getTargetBlock(100);
+			$target = $player->getTargetBlock(100, [BlockLegacyIds::STILL_WATER => true, BlockLegacyIds::FLOWING_WATER => true, BlockLegacyIds::STILL_LAVA => true, BlockLegacyIds::FLOWING_LAVA => true, BlockLegacyIds::AIR => true]);
 		} catch (Throwable) {
 			//No idea why this is crashing for some users, probably caused by weird binaries / plugins
 			EasyEdit::getInstance()->getLogger()->warning("Player " . $player->getName() . " has thrown an exception while trying to get a target block");
