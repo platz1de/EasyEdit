@@ -56,12 +56,31 @@ class BlockParser
 	 */
 	public static function parseBlockIdentifier(string $string): int
 	{
+		$suppress = false;
 		if (str_starts_with($string, "#")) {
 			$string = substr($string, 1);
+			$suppress = true;
 		}
-		if (!ConfigManager::isAllowingUnregisteredBlocks()) {
-			return self::getBlock($string); //Use regular block parser
+		if (ConfigManager::isAllowingUnregisteredBlocks()) {
+			$id = self::parseInternal($string);
+		} else {
+			$id = self::getBlock($string);
 		}
+		if (!$suppress) {
+			$state = BlockStateConvertor::getState($id);
+			if (str_contains($state, "persistent=false")) {
+				$id = BlockStateConvertor::getFromState(str_replace("persistent=false", "persistent=true", $state));
+			}
+		}
+		return $id;
+	}
+
+	/**
+	 * @param string $string
+	 * @return int
+	 */
+	private static function parseInternal(string $string): int
+	{
 		if (is_numeric($string)) {
 			return ((int) $string) << Block::INTERNAL_METADATA_BITS;
 		}
