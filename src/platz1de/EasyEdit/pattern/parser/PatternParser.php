@@ -176,18 +176,13 @@ class PatternParser
 	}
 
 	/**
-	 * @param string      $string
-	 * @param Player|null $player
+	 * @param string $string
 	 * @return BlockType
 	 */
-	public static function getBlockType(string $string, ?Player $player = null): BlockType
+	public static function getBlockType(string $string): BlockType
 	{
 		if ($string === "solid") {
 			return new SolidBlock();
-		}
-
-		if ($player instanceof Player && $string === "hand") {
-			return StaticBlock::from($player->getInventory()->getItemInHand()->getBlock());
 		}
 
 		if (BlockParser::isStatic($string)) {
