@@ -38,7 +38,7 @@ class PatternParser
 	 */
 	public static function parseInput(string $pattern, Player $player): Pattern
 	{
-		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getName(), $pattern));
+		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getId() . ":" . $player->getInventory()->getItemInHand()->getBlock()->getMeta(), $pattern));
 	}
 
 	/**
