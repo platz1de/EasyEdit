@@ -83,11 +83,11 @@ class SmoothTask extends SelectionEditTask
 				}
 				$start = -1;
 				foreach ($reference as $height => $depth) {
-					if ($depth < 4.5) {
-						$reference[$height] = 0;
+					if ($depth < -4.5) {
+						$reference[$height] = -1;
 						if ($start !== -1) {
 							for ($i = $start; $i < $height; $i++) {
-								$reference[$i] = min($i - $start + 1, $height - $i);
+								$reference[$i] = min($i - $start, $height - $i - 1);
 							}
 							$start = -1;
 						}
@@ -103,7 +103,7 @@ class SmoothTask extends SelectionEditTask
 					}
 				}
 			}
-			if (max($map[$y], 0) === $reference[$y]) {
+			if ($map[$y] === $reference[$y]) {
 				return;
 			}
 			if ($reference[$y] <= 0) {
