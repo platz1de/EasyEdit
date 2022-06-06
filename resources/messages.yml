@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.0.8" #Please don't change this manually
+message-version: "2.1.0" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
