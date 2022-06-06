@@ -28,7 +28,7 @@ class ChunkInformation
 	{
 		$this->chunk = $chunk;
 		foreach ($tiles as $tile) {
-			$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = $tile;
+			$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X) & 0x0f, $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z) & 0x0f)] = $tile;
 		}
 	}
 
