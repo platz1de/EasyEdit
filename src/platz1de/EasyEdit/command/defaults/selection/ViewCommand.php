@@ -5,7 +5,8 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use platz1de\EasyEdit\world\HighlightingManager;
+use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
+use platz1de\EasyEdit\world\clientblock\StructureBlockWindow;
 use pocketmine\player\Player;
 
 class ViewCommand extends EasyEditCommand
@@ -22,6 +23,6 @@ class ViewCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		$selection = ArgumentParser::getCube($player);
-		HighlightingManager::showStructureView($player, $player->getWorld(), $player->getPosition()->up(2), $selection->getPos1(), $selection->getPos2());
+		ClientSideBlockManager::registerBlock($player->getName(), new StructureBlockWindow($player, $selection->getPos1(), $selection->getPos2()));
 	}
 }

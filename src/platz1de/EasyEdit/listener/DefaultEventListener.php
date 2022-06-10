@@ -9,7 +9,7 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\editing\expanding\ExtendBlockFaceTask;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\ConfigManager;
-use platz1de\EasyEdit\world\HighlightingManager;
+use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\event\block\BlockBreakEvent;
@@ -18,6 +18,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\BlazeRod;
 use pocketmine\item\Shovel;
@@ -132,13 +133,18 @@ class DefaultEventListener implements Listener
 		if ($player instanceof Player) {
 			$playerName = $player->getName();
 			EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($playerName): void {
-				HighlightingManager::resendAll($playerName);
+				ClientSideBlockManager::resendAll($playerName);
 			}));
 		}
 	}
 
 	public function onJoin(PlayerJoinEvent $event): void
 	{
-		HighlightingManager::resendAll($event->getPlayer()->getName());
+		ClientSideBlockManager::resendAll($event->getPlayer()->getName());
+	}
+
+	public function onMove(PlayerMoveEvent $event): void
+	{
+		ClientSideBlockManager::updateAll($event->getPlayer());
 	}
 }

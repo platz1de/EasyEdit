@@ -9,11 +9,11 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use platz1de\EasyEdit\world\HighlightingManager;
+use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
+use platz1de\EasyEdit\world\clientblock\StructureBlockOutline;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use pocketmine\world\World;
 use Thread;
 use Throwable;
 use UnexpectedValueException;
@@ -22,14 +22,14 @@ class Cube extends Selection implements Patterned
 {
 	use CubicChunkLoader;
 
-	private int $structure = 0;
+	private int $structure = -1;
 
 	public function update(): void
 	{
 		parent::update();
 		if (!$this->piece && $this->isValid() && !Thread::getCurrentThread() instanceof EditThread) {
 			$this->close();
-			$this->structure = HighlightingManager::highlightStaticCube($this->getPlayer(), $this->getWorld()->getFolderName(), $this->pos1, $this->pos2, new Vector3(floor(($this->pos2->getX() + $this->pos1->getX()) / 2), World::Y_MIN, floor(($this->pos2->getZ() + $this->pos1->getZ()) / 2)));
+			$this->structure = ClientSideBlockManager::registerBlock($this->getPlayer(), new StructureBlockOutline($this->getWorld()->getFolderName(), $this->pos1, $this->pos2));
 		}
 	}
 
@@ -55,8 +55,8 @@ class Cube extends Selection implements Patterned
 
 	public function close(): void
 	{
-		if (isset($this->structure)) {
-			HighlightingManager::clear($this->getPlayer(), $this->structure);
+		if ($this->structure !== -1) {
+			ClientSideBlockManager::unregisterBlock($this->getPlayer(), $this->structure);
 		}
 	}
 
