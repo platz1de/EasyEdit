@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\editing;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -29,7 +30,7 @@ class LineTask extends EditTask
 	private array $blocks = [];
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
@@ -37,7 +38,7 @@ class LineTask extends EditTask
 	 * @param StaticBlock           $block
 	 * @return LineTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
 	{
 		$instance = new self($owner, $world, $data, $start);
 		$instance->end = $end;
@@ -46,13 +47,13 @@ class LineTask extends EditTask
 	}
 
 	/**
-	 * @param string      $player
-	 * @param string      $world
-	 * @param Vector3     $start
-	 * @param Vector3     $end
-	 * @param StaticBlock $block
+	 * @param SessionIdentifier $player
+	 * @param string            $world
+	 * @param Vector3           $start
+	 * @param Vector3           $end
+	 * @param StaticBlock       $block
 	 */
-	public static function queue(string $player, string $world, Vector3 $start, Vector3 $end, StaticBlock $block): void
+	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, StaticBlock $block): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $end, $block));
 	}
@@ -95,7 +96,7 @@ class LineTask extends EditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new BinaryBlockListStream($this->getOwner(), $this->getWorld());
+		return new BinaryBlockListStream($this->getOwner()->getName(), $this->getWorld());
 	}
 
 	public function getTaskName(): string

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -21,7 +22,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	private DynamicPasteTask $executor;
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $world
 	 * @param Vector3                   $position
@@ -29,7 +30,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	 * @param bool                      $insert
 	 * @return DynamicStoredPasteTask
 	 */
-	public static function from(string $owner, StoredSelectionIdentifier $saveId, string $world, Vector3 $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
+	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, string $world, Vector3 $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -41,13 +42,13 @@ class DynamicStoredPasteTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $id
 	 * @param Position                  $place
 	 * @param bool                      $keep
 	 * @param bool                      $insert
 	 */
-	public static function queue(string $owner, StoredSelectionIdentifier $id, Position $place, bool $keep, bool $insert = false): void
+	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, Position $place, bool $keep, bool $insert = false): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id, $place->getWorld()->getFolderName(), $place->asVector3(), $keep, $insert));
 	}

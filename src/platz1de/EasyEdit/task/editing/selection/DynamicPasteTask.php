@@ -7,6 +7,8 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -34,7 +36,7 @@ class DynamicPasteTask extends SelectionEditTask
 	protected bool $insert;
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param string                    $world
 	 * @param AdditionalDataManager     $data
 	 * @param DynamicBlockListSelection $selection
@@ -43,7 +45,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 * @param bool                      $insert
 	 * @return DynamicPasteTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): DynamicPasteTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): DynamicPasteTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
@@ -58,7 +60,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public static function queue(DynamicBlockListSelection $selection, Position $place, bool $insert = false): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $place->asVector3(), $insert));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $place->asVector3(), $insert));
 	}
 
 	/**
@@ -103,7 +105,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getOwner(), $this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->addVector($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getOwner()->getName(), $this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->addVector($this->selection->getPoint()));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

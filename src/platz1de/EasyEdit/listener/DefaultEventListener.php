@@ -6,6 +6,8 @@ use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\expanding\ExtendBlockFaceTask;
 use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -76,7 +78,7 @@ class DefaultEventListener implements Listener
 				}
 			} elseif ($item instanceof BlazeRod && $item->getNamedTag()->getByte("isBuilderRod", 0) === 1 && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT) && $event->getPlayer()->isCreative()) {
 				$event->cancel();
-				ExtendBlockFaceTask::queue($event->getPlayer()->getName(), $event->getPlayer()->getWorld()->getFolderName(), $event->getBlock()->getPosition(), $event->getFace());
+				ExtendBlockFaceTask::queue(SessionManager::get($event->getPlayer())->getIdentifier(), $event->getPlayer()->getWorld()->getFolderName(), $event->getBlock()->getPosition(), $event->getFace());
 			}
 		}
 	}

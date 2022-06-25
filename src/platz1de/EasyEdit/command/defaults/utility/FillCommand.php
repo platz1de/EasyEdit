@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\expanding\FillTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
@@ -31,6 +32,6 @@ class FillCommand extends EasyEditCommand
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
-		FillTask::queue($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3(), ArgumentParser::parseFacing($player, $args[1] ?? null), $block);
+		FillTask::queue(SessionManager::get($player)->getIdentifier(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3(), ArgumentParser::parseFacing($player, $args[1] ?? null), $block);
 	}
 }

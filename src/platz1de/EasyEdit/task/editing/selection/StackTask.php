@@ -5,6 +5,8 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StackedCube;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -29,7 +31,7 @@ class StackTask extends SelectionEditTask
 	private bool $insert;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -38,7 +40,7 @@ class StackTask extends SelectionEditTask
 	 * @param bool                  $insert
 	 * @return StackTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): StackTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): StackTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
@@ -53,7 +55,7 @@ class StackTask extends SelectionEditTask
 	 */
 	public static function queue(StackedCube $selection, Position $place, bool $insert = false): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $insert));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $insert));
 	}
 
 	/**

@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\MessageSendData;
@@ -25,12 +26,12 @@ class DynamicStoredFlipTask extends ExecutableTask
 	private int $axis;
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param int                       $axis
 	 * @return DynamicStoredFlipTask
 	 */
-	public static function from(string $owner, StoredSelectionIdentifier $saveId, int $axis): DynamicStoredFlipTask
+	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, int $axis): DynamicStoredFlipTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -39,11 +40,11 @@ class DynamicStoredFlipTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $id
 	 * @param int                       $axis
 	 */
-	public static function queue(string $owner, StoredSelectionIdentifier $id, int $axis): void
+	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, int $axis): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id, $axis));
 	}

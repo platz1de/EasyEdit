@@ -7,6 +7,8 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\MessageSendData;
@@ -20,7 +22,7 @@ use pocketmine\world\World;
 class CountTask extends SelectionEditTask
 {
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -28,7 +30,7 @@ class CountTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return CountTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CountTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CountTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
@@ -41,7 +43,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**
@@ -58,16 +60,16 @@ class CountTask extends SelectionEditTask
 	public function getUndoBlockList(): BlockListSelection
 	{
 		//TODO: make this optional
-		return new StaticBlockListSelection($this->getOwner(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
+		return new StaticBlockListSelection($this->getOwner()->getName(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
 	}
 
 	/**
-	 * @param string                $player
+	 * @param SessionIdentifier     $player
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
 		MessageSendData::from($player, Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($data->getCountedBlocks())]));
 		$msg = "";

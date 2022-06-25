@@ -8,6 +8,8 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
@@ -21,7 +23,7 @@ use pocketmine\math\Vector3;
 class CopyTask extends SelectionEditTask
 {
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -29,7 +31,7 @@ class CopyTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return CopyTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CopyTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CopyTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
@@ -42,7 +44,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
 	}
 
 	/**
@@ -59,16 +61,16 @@ class CopyTask extends SelectionEditTask
 	public function getUndoBlockList(): BlockListSelection
 	{
 		//TODO: Make this optional
-		return DynamicBlockListSelection::fromWorldPositions($this->getOwner(), $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return DynamicBlockListSelection::fromWorldPositions($this->getOwner()->getName(), $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
 	}
 
 	/**
-	 * @param string                $player
+	 * @param SessionIdentifier     $player
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
 		MessageSendData::from($player, Messages::replace("blocks-copied", ["{time}" => $time, "{changed}" => $changed]));
 	}

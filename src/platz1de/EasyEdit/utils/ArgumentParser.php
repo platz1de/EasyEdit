@@ -16,6 +16,7 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\session\SessionManager;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -108,9 +109,8 @@ class ArgumentParser
 	 */
 	public static function getClipboard(Player $player): StoredSelectionIdentifier
 	{
-		try {
-			$clipboard = ClipBoardManager::getFromPlayer($player->getName());
-		} catch (Throwable) {
+		$clipboard = SessionManager::get($player)->getClipboard();
+		if (!$clipboard->isValid()) {
 			throw new NoClipboardException();
 		}
 		return $clipboard;

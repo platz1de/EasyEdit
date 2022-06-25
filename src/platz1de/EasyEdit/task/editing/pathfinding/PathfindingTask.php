@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\editing\pathfinding;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\expanding\ExpandingTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -25,7 +26,7 @@ class PathfindingTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
@@ -34,7 +35,7 @@ class PathfindingTask extends ExpandingTask
 	 * @param StaticBlock           $block
 	 * @return PathfindingTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
 	{
 		$instance = new self($owner, $world, $data, $start);
 		$instance->end = $end;
@@ -44,14 +45,14 @@ class PathfindingTask extends ExpandingTask
 	}
 
 	/**
-	 * @param string      $player
-	 * @param string      $world
-	 * @param Vector3     $start
-	 * @param Vector3     $end
-	 * @param bool        $allowDiagonal
-	 * @param StaticBlock $block
+	 * @param SessionIdentifier $player
+	 * @param string            $world
+	 * @param Vector3           $start
+	 * @param Vector3           $end
+	 * @param bool              $allowDiagonal
+	 * @param StaticBlock       $block
 	 */
-	public static function queue(string $player, string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): void
+	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $end, $allowDiagonal, $block));
 	}
@@ -116,7 +117,7 @@ class PathfindingTask extends ExpandingTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new BinaryBlockListStream($this->getOwner(), $this->getWorld());
+		return new BinaryBlockListStream($this->getOwner()->getName(), $this->getWorld());
 	}
 
 	public function getTaskName(): string

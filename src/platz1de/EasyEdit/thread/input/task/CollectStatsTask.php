@@ -32,7 +32,7 @@ class CollectStatsTask extends InputData
 		if ($task instanceof ExecutableTask) {
 			$name = $task->getTaskName();
 			$id = $task->getTaskId();
-			$player = $task->getOwner();
+			$player = $task->getOwner()->isPlayer() ? $task->getOwner()->getName() : "internal";
 			$progress = $task->getProgress();
 		}
 		StatsCollectResult::from($this->cacheId, $name, $id, $player, $progress, ThreadData::getQueueLength(), StorageModule::getSize(), memory_get_usage(), memory_get_usage(true));

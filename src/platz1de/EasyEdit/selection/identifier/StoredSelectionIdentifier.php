@@ -19,6 +19,16 @@ class StoredSelectionIdentifier
 		$this->type = $type;
 	}
 
+	public static function invalid(): StoredSelectionIdentifier
+	{
+		return new self(-1, self::class);
+	}
+
+	public function isValid(): bool
+	{
+		return $this->id >= 0;
+	}
+
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();

@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\expanding;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -22,14 +23,14 @@ class ExtendBlockFaceTask extends ExpandingTask
 	private int $face;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $block
 	 * @param int                   $face
 	 * @return ExtendBlockFaceTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
 	{
 		$instance = new self($owner, $world, $data, $block);
 		$instance->face = $face;
@@ -37,12 +38,12 @@ class ExtendBlockFaceTask extends ExpandingTask
 	}
 
 	/**
-	 * @param string  $player
-	 * @param string  $world
-	 * @param Vector3 $block
-	 * @param int     $face
+	 * @param SessionIdentifier $player
+	 * @param string            $world
+	 * @param Vector3           $block
+	 * @param int               $face
 	 */
-	public static function queue(string $player, string $world, Vector3 $block, int $face): void
+	public static function queue(SessionIdentifier $player, string $world, Vector3 $block, int $face): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $block, $face));
 	}

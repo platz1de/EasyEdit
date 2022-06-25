@@ -2,15 +2,16 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class ExecutableTask
 {
 	private int $taskId;
-	private string $owner;
+	private SessionIdentifier $owner;
 
-	public function __construct(string $owner)
+	public function __construct(SessionIdentifier $owner)
 	{
 		$this->taskId = EditAdapter::getId();
 		$this->owner = $owner;
@@ -35,6 +36,7 @@ abstract class ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putString(igbinary_serialize($this) ?? "");
+		$stream->putString($this->owner->fastSerialize());
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -48,25 +50,25 @@ abstract class ExecutableTask
 		$stream = new ExtendedBinaryStream($data);
 		/** @var ExecutableTask $task */
 		$task = igbinary_unserialize($stream->getString());
+		$task->owner = SessionIdentifier::fastDeserialize($stream->getString());
 		$task->parseData($stream);
 		return $task;
 	}
 
 	/**
-	 * @return array{string, int}
+	 * @return array{int}
 	 */
 	public function __serialize(): array
 	{
-		return [$this->owner, $this->taskId];
+		return [$this->taskId];
 	}
 
 	/**
-	 * @param array{string, int} $data
+	 * @param array{int} $data
 	 */
 	public function __unserialize(array $data): void
 	{
-		$this->owner = $data[0];
-		$this->taskId = $data[1];
+		$this->taskId = $data[0];
 	}
 
 	/**
@@ -88,9 +90,9 @@ abstract class ExecutableTask
 	}
 
 	/**
-	 * @return string
+	 * @return SessionIdentifier
 	 */
-	public function getOwner(): string
+	public function getOwner(): SessionIdentifier
 	{
 		return $this->owner;
 	}

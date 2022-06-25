@@ -6,6 +6,8 @@ use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -21,7 +23,7 @@ class SetTask extends PatternedEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -30,7 +32,7 @@ class SetTask extends PatternedEditTask
 	 * @param Pattern               $pattern
 	 * @return SetTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): SetTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): SetTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		PatternedEditTask::initPattern($instance, $selection, $splitOffset, $pattern);
@@ -44,7 +46,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
 	}
 
 	/**

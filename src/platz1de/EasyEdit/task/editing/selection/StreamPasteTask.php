@@ -6,6 +6,8 @@ use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -22,7 +24,7 @@ class StreamPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param BinaryBlockListStream $selection
@@ -30,7 +32,7 @@ class StreamPasteTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return StreamPasteTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position, Vector3 $splitOffset): StreamPasteTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position, Vector3 $splitOffset): StreamPasteTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
@@ -42,7 +44,7 @@ class StreamPasteTask extends SelectionEditTask
 	 */
 	public static function queue(BinaryBlockListStream $selection): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**
@@ -67,6 +69,6 @@ class StreamPasteTask extends SelectionEditTask
 
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new BinaryBlockListStream($this->getOwner(), $this->getWorld());
+		return new BinaryBlockListStream($this->getOwner()->getName(), $this->getWorld());
 	}
 }

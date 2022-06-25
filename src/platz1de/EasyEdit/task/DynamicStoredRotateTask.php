@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\MessageSendData;
@@ -22,11 +23,11 @@ class DynamicStoredRotateTask extends ExecutableTask
 	private StoredSelectionIdentifier $saveId;
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @return DynamicStoredRotateTask
 	 */
-	public static function from(string $owner, StoredSelectionIdentifier $saveId): DynamicStoredRotateTask
+	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId): DynamicStoredRotateTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -34,10 +35,10 @@ class DynamicStoredRotateTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $id
 	 */
-	public static function queue(string $owner, StoredSelectionIdentifier $id): void
+	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id));
 	}

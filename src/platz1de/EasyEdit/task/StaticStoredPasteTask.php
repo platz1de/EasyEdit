@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\StaticPasteTask;
@@ -24,13 +25,13 @@ class StaticStoredPasteTask extends ExecutableTask
 	private StaticPasteTask|StreamPasteTask $executor;
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param bool                      $keep
 	 * @param bool                      $isUndo
 	 * @return StaticStoredPasteTask
 	 */
-	public static function from(string $owner, StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
+	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
 	{
 		$instance = new self($owner);
 		$instance->saveId = $saveId;
@@ -40,12 +41,12 @@ class StaticStoredPasteTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $id
 	 * @param bool                      $keep
 	 * @param bool                      $isUndo
 	 */
-	public static function queue(string $owner, StoredSelectionIdentifier $id, bool $keep, bool $isUndo = false): void
+	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, bool $keep, bool $isUndo = false): void
 	{
 		TaskInputData::fromTask(self::from($owner, $id, $keep, $isUndo));
 	}

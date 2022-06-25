@@ -6,6 +6,7 @@ use platz1de\EasyEdit\cache\HistoryCache;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\player\Player;
 
@@ -29,14 +30,16 @@ class UndoCommand extends EasyEditCommand
 			$target = $player->getName();
 		}
 
-		if (!HistoryCache::canUndo($target)) {
+		$session = SessionManager::get($target);
+
+		if (!$session->canUndo()) {
 			Messages::send($player, "no-history");
 		}
 
 		$count = min(100, (int) ($args[0] ?? 1));
 
 		for ($i = 0; $i < $count; $i++) {
-			HistoryCache::undoStep($target, $player->getName());
+			$session->undoStep(SessionManager::get($player)->getIdentifier());
 		}
 	}
 }

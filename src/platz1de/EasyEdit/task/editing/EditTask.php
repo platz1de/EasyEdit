@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing;
 
 use Closure;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\EditThread;
@@ -25,12 +26,12 @@ abstract class EditTask extends ExecutableTask
 	private Vector3 $position;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $position
 	 */
-	public function __construct(string $owner, string $world, AdditionalDataManager $data, Vector3 $position)
+	public function __construct(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $position)
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
 		parent::__construct($owner);
@@ -171,12 +172,12 @@ abstract class EditTask extends ExecutableTask
 	abstract public function executeEdit(EditTaskHandler $handler): void;
 
 	/**
-	 * @param string                $player
+	 * @param SessionIdentifier     $player
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	abstract public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void;
+	abstract public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void;
 
 	/**
 	 * Filters actually edited chunks

@@ -6,6 +6,7 @@ use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -19,12 +20,12 @@ class SchematicSaveTask extends ExecutableTask
 	private StoredSelectionIdentifier $saveId;
 
 	/**
-	 * @param string                    $owner
+	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $schematicPath
 	 * @return SchematicSaveTask
 	 */
-	public static function from(string $owner, StoredSelectionIdentifier $saveId, string $schematicPath): SchematicSaveTask
+	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, string $schematicPath): SchematicSaveTask
 	{
 		$instance = new self($owner);
 		$instance->schematicPath = $schematicPath;
@@ -33,11 +34,11 @@ class SchematicSaveTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string                    $player
+	 * @param SessionIdentifier         $player
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $schematicName
 	 */
-	public static function queue(string $player, StoredSelectionIdentifier $saveId, string $schematicName): void
+	public static function queue(SessionIdentifier $player, StoredSelectionIdentifier $saveId, string $schematicName): void
 	{
 		TaskInputData::fromTask(self::from($player, $saveId, EasyEdit::getSchematicPath() . $schematicName));
 	}

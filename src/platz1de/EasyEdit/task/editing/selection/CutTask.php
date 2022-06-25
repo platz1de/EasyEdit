@@ -7,6 +7,8 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -29,13 +31,13 @@ class CutTask extends ExecutableTask
 	private SetTask $executor2;
 
 	/**
-	 * @param string    $owner
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $position
+	 * @param SessionIdentifier $owner
+	 * @param string            $world
+	 * @param Selection         $selection
+	 * @param Vector3           $position
 	 * @return CutTask
 	 */
-	public static function from(string $owner, string $world, Selection $selection, Vector3 $position): CutTask
+	public static function from(SessionIdentifier $owner, string $world, Selection $selection, Vector3 $position): CutTask
 	{
 		$instance = new self($owner);
 		$instance->world = $world;
@@ -50,7 +52,7 @@ class CutTask extends ExecutableTask
 	 */
 	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), $selection, $place));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), $selection, $place));
 	}
 
 	/**
@@ -79,12 +81,12 @@ class CutTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string                $player
+	 * @param SessionIdentifier     $player
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(string $player, string $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void
 	{
 		MessageSendData::from($player, Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed]));
 	}

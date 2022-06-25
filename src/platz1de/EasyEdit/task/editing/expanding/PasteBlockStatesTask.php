@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\expanding;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -15,23 +16,23 @@ class PasteBlockStatesTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
 	 * @return PasteBlockStatesTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
 	{
 		return new self($owner, $world, $data, $start);
 	}
 
 	/**
-	 * @param string  $player
-	 * @param string  $world
-	 * @param Vector3 $start
+	 * @param SessionIdentifier $player
+	 * @param string            $world
+	 * @param Vector3           $start
 	 */
-	public static function queue(string $player, string $world, Vector3 $start): void
+	public static function queue(SessionIdentifier $player, string $world, Vector3 $start): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start));
 	}

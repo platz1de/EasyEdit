@@ -3,23 +3,24 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class MessageSendData extends OutputData
 {
-	private string $player;
+	private SessionIdentifier $owner;
 	private string $message;
 	private bool $prefix;
 
 	/**
-	 * @param string $player
-	 * @param string $message
-	 * @param bool   $prefix
+	 * @param SessionIdentifier $owner
+	 * @param string            $message
+	 * @param bool              $prefix
 	 */
-	public static function from(string $player, string $message, bool $prefix = true): void
+	public static function from(SessionIdentifier $owner, string $message, bool $prefix = true): void
 	{
 		$data = new self();
-		$data->player = $player;
+		$data->owner = $owner;
 		$data->message = $message;
 		$data->prefix = $prefix;
 		$data->send();
@@ -27,19 +28,21 @@ class MessageSendData extends OutputData
 
 	public function handle(): void
 	{
-		Messages::send($this->player, $this->message, [], false, $this->prefix);
+		if ($this->owner->isPlayer()) {
+			Messages::send($this->owner->getName(), $this->message, [], false, $this->prefix);
+		}
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString($this->player);
+		$stream->putSessionIdentifier($this->owner);
 		$stream->putString($this->message);
 		$stream->putBool($this->prefix);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->player = $stream->getString();
+		$this->owner = $stream->getSessionIdentifier();
 		$this->message = $stream->getString();
 		$this->prefix = $stream->getBool();
 	}

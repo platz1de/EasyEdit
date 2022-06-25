@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\expanding;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -19,23 +20,23 @@ class DrainTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
 	 * @return DrainTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start): DrainTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start): DrainTask
 	{
 		return new self($owner, $world, $data, $start);
 	}
 
 	/**
-	 * @param string  $player
-	 * @param string  $world
-	 * @param Vector3 $start
+	 * @param SessionIdentifier $player
+	 * @param string            $world
+	 * @param Vector3           $start
 	 */
-	public static function queue(string $player, string $world, Vector3 $start): void
+	public static function queue(SessionIdentifier $player, string $world, Vector3 $start): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start));
 	}

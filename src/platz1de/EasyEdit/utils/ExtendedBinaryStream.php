@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
@@ -83,6 +84,22 @@ class ExtendedBinaryStream extends BinaryStream
 			$compounds[] = $this->getCompound();
 		}
 		return $compounds;
+	}
+
+	/**
+	 * @param SessionIdentifier $id
+	 */
+	public function putSessionIdentifier(SessionIdentifier $id): void
+	{
+		$this->putString($id->fastSerialize());
+	}
+
+	/**
+	 * @return SessionIdentifier
+	 */
+	public function getSessionIdentifier(): SessionIdentifier
+	{
+		return SessionIdentifier::fastDeserialize($this->getString());
 	}
 
 	/**

@@ -10,6 +10,7 @@ use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
@@ -57,13 +58,12 @@ class BrushHandler
 						SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone")), $player->getPosition());
 						break;
 					case self::BRUSH_PASTE:
-						try {
-							$clipboard = ClipBoardManager::getFromPlayer($player->getName());
-						} catch (Throwable) {
+						$clipboard = SessionManager::get($player)->getClipboard();
+						if (!$clipboard->isValid()) {
 							Messages::send($player, "no-clipboard");
 							return;
 						}
-						DynamicStoredPasteTask::queue($player->getName(), $clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1);
+						DynamicStoredPasteTask::queue(SessionManager::get($player)->getIdentifier(), $clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1);
 				}
 			} catch (ParseError $e) {
 				Messages::send($player, $e->getMessage(), [], false);

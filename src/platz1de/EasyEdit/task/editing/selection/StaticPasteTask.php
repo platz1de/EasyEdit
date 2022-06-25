@@ -5,6 +5,8 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
@@ -23,7 +25,7 @@ class StaticPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                   $owner
+	 * @param SessionIdentifier        $owner
 	 * @param string                   $world
 	 * @param AdditionalDataManager    $data
 	 * @param StaticBlockListSelection $selection
@@ -31,7 +33,7 @@ class StaticPasteTask extends SelectionEditTask
 	 * @param Vector3                  $splitOffset
 	 * @return StaticPasteTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset): StaticPasteTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset): StaticPasteTask
 	{
 		$instance = new self($owner, $world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
@@ -43,7 +45,7 @@ class StaticPasteTask extends SelectionEditTask
 	 */
 	public static function queue(StaticBlockListSelection $selection): void
 	{
-		TaskInputData::fromTask(self::from($selection->getPlayer(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**

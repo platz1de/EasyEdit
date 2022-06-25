@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\schematic\SchematicLoadTask;
 use pocketmine\player\Player;
 
@@ -29,6 +30,6 @@ class LoadSchematicCommand extends EasyEditCommand
 			return;
 		}
 
-		SchematicLoadTask::queue($player->getName(), $schematicName);
+		SchematicLoadTask::queue(SessionManager::get($player)->getIdentifier(), $schematicName);
 	}
 }

@@ -6,6 +6,7 @@ use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -20,11 +21,11 @@ class SchematicLoadTask extends ExecutableTask
 	private string $schematicPath;
 
 	/**
-	 * @param string $owner
-	 * @param string $schematicPath
+	 * @param SessionIdentifier $owner
+	 * @param string            $schematicPath
 	 * @return SchematicLoadTask
 	 */
-	public static function from(string $owner, string $schematicPath): SchematicLoadTask
+	public static function from(SessionIdentifier $owner, string $schematicPath): SchematicLoadTask
 	{
 		$instance = new self($owner);
 		$instance->schematicPath = $schematicPath;
@@ -32,10 +33,10 @@ class SchematicLoadTask extends ExecutableTask
 	}
 
 	/**
-	 * @param string $player
-	 * @param string $schematicName
+	 * @param SessionIdentifier $player
+	 * @param string            $schematicName
 	 */
-	public static function queue(string $player, string $schematicName): void
+	public static function queue(SessionIdentifier $player, string $schematicName): void
 	{
 		TaskInputData::fromTask(self::from($player, EasyEdit::getSchematicPath() . $schematicName));
 	}
@@ -51,7 +52,7 @@ class SchematicLoadTask extends ExecutableTask
 	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = new DynamicBlockListSelection($this->getOwner(), Vector3::zero(), Vector3::zero());
+		$selection = new DynamicBlockListSelection($this->getOwner()->getName(), Vector3::zero(), Vector3::zero());
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();

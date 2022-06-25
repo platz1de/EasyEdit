@@ -6,6 +6,7 @@ use platz1de\EasyEdit\cache\HistoryCache;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\player\Player;
 
@@ -29,14 +30,16 @@ class RedoCommand extends EasyEditCommand
 			$target = $player->getName();
 		}
 
-		if (!HistoryCache::canRedo($target)) {
+		$session = SessionManager::get($target);
+
+		if (!$session->canRedo()) {
 			Messages::send($player, "no-future");
 		}
 
 		$count = min(100, (int) ($args[0] ?? 1));
 
 		for ($i = 0; $i < $count; $i++) {
-			HistoryCache::redoStep($target, $player->getName());
+			$session->redoStep(SessionManager::get($player)->getIdentifier());
 		}
 	}
 }

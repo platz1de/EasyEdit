@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\DynamicStoredFlipTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\math\Facing;
@@ -22,6 +23,6 @@ class FlipCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		DynamicStoredFlipTask::queue($player->getName(), ArgumentParser::getClipboard($player), Facing::axis(ArgumentParser::parseFacing($player, $args[0] ?? null)));
+		DynamicStoredFlipTask::queue(SessionManager::get($player)->getIdentifier(), ArgumentParser::getClipboard($player), Facing::axis(ArgumentParser::parseFacing($player, $args[0] ?? null)));
 	}
 }

@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing\expanding;
 
 use BadMethodCallException;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -26,7 +27,7 @@ class FillTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param string                $owner
+	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
@@ -34,7 +35,7 @@ class FillTask extends ExpandingTask
 	 * @param StaticBlock           $block
 	 * @return FillTask
 	 */
-	public static function from(string $owner, string $world, AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
+	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
 	{
 		$instance = new self($owner, $world, $data, $start);
 		$instance->direction = $direction;
@@ -43,13 +44,13 @@ class FillTask extends ExpandingTask
 	}
 
 	/**
-	 * @param string      $player
-	 * @param string      $world
-	 * @param Vector3     $start
-	 * @param int         $direction
-	 * @param StaticBlock $block
+	 * @param SessionIdentifier $player
+	 * @param string            $world
+	 * @param Vector3           $start
+	 * @param int               $direction
+	 * @param StaticBlock       $block
 	 */
-	public static function queue(string $player, string $world, Vector3 $start, int $direction, StaticBlock $block): void
+	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, int $direction, StaticBlock $block): void
 	{
 		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $direction, $block));
 	}
