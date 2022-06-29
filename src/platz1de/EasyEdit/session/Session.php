@@ -6,19 +6,19 @@ use BadMethodCallException;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
-use SplQueue;
+use SplStack;
 
 class Session
 {
 	private SessionIdentifier $id;
 	/**
-	 * @var SplQueue<StoredSelectionIdentifier>
+	 * @var SplStack<StoredSelectionIdentifier>
 	 */
-	private SplQueue $past;
+	private SplStack $past;
 	/**
-	 * @var SplQueue<StoredSelectionIdentifier>
+	 * @var SplStack<StoredSelectionIdentifier>
 	 */
-	private SplQueue $future;
+	private SplStack $future;
 	/**
 	 * @var StoredSelectionIdentifier
 	 */
@@ -30,8 +30,8 @@ class Session
 			throw new BadMethodCallException("Session can only be created for players, plugins or internal use should use tasks directly");
 		}
 		$this->id = $id;
-		$this->past = new SplQueue();
-		$this->future = new SplQueue();
+		$this->past = new SplStack();
+		$this->future = new SplStack();
 		$this->clipboard = StoredSelectionIdentifier::invalid();
 	}
 
@@ -59,12 +59,12 @@ class Session
 	public function addToHistory(StoredSelectionIdentifier $id, bool $fromUndo): void
 	{
 		if ($fromUndo) {
-			$this->future->enqueue($id);
+			$this->future->unshift($id);
 		} else {
-			$this->past->enqueue($id);
+			$this->past->unshift($id);
 			if (!$this->future->isEmpty()) {
 				CleanStorageTask::from(iterator_to_array($this->future, false));
-				$this->future = new SplQueue();
+				$this->future = new SplStack();
 			}
 		}
 	}
@@ -91,7 +91,7 @@ class Session
 	public function undoStep(SessionIdentifier $executor): void
 	{
 		if ($this->canUndo()) {
-			StaticStoredPasteTask::queue($executor, $this->past->dequeue(), false, true);
+			StaticStoredPasteTask::queue($executor, $this->past->shift(), false, true);
 		}
 	}
 
@@ -101,7 +101,7 @@ class Session
 	public function redoStep(SessionIdentifier $executor): void
 	{
 		if ($this->canRedo()) {
-			StaticStoredPasteTask::queue($executor, $this->future->dequeue(), false, true);
+			StaticStoredPasteTask::queue($executor, $this->future->shift(), false);
 		}
 	}
 
