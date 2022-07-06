@@ -31,6 +31,7 @@ class SchematicFileAdapter
 			if (is_file($path . $extension)) {
 				$file = file_get_contents($path . $extension);
 				$usedParser = $parser;
+				break;
 			}
 		}
 
