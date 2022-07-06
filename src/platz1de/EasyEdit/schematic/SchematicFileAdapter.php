@@ -3,6 +3,8 @@
 namespace platz1de\EasyEdit\schematic;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\schematic\nbt\AbstractCompoundTag;
+use platz1de\EasyEdit\schematic\nbt\AbstractNBTSerializer;
 use platz1de\EasyEdit\schematic\type\McEditSchematic;
 use platz1de\EasyEdit\schematic\type\SchematicType;
 use platz1de\EasyEdit\schematic\type\SpongeSchematic;
@@ -29,20 +31,22 @@ class SchematicFileAdapter
 		$usedParser = null;
 		foreach (self::$knownExtensions as $extension => $parser) {
 			if (is_file($path . $extension)) {
-				$file = file_get_contents($path . $extension);
+				$file = $path . $extension;
 				$usedParser = $parser;
 				break;
 			}
 		}
 
-		if ($usedParser === null || $file === null || $file === false || ($file = zlib_decode($file)) === false) {
+		if ($usedParser === null || $file === null) {
 			throw new UnexpectedValueException("Unknown schematic " . $path);
 		}
 
-		$nbtParser = new BigEndianNbtSerializer();
-		$nbt = $nbtParser->read($file)->mustGetCompoundTag();
+		$nbtParser = new AbstractNBTSerializer();
+		$nbt = $nbtParser->readFile($file)->mustGetCompoundTag();
 
 		$usedParser::readIntoSelection($nbt, $target);
+
+		$nbtParser->close();
 	}
 
 	public static function createFromSelection(string $path, DynamicBlockListSelection $target): void

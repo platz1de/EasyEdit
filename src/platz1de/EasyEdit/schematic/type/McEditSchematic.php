@@ -3,12 +3,14 @@
 namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
+use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\InternetException;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class McEditSchematic extends SchematicType
 {
@@ -33,22 +35,35 @@ class McEditSchematic extends SchematicType
 
 		//"AddBlocks" allows ids over 255
 		//this can be ignored as java pre-flattening only had 255 block ids in use and later didn't support block ids at all
-		$blockIdData = $nbt->getByteArray(self::BLOCK_ID);
-		$blockMetaData = $nbt->getByteArray(self::BLOCK_META);
+		$blockIdData = $nbt->getTag(self::BLOCK_ID);
+		$blockMetaData = $nbt->getTag(self::BLOCK_META);
 
+		if (!$blockIdData instanceof AbstractByteArrayTag || !$blockMetaData instanceof AbstractByteArrayTag) {
+			throw new UnexpectedValueException("Invalid schematic file");
+		}
+
+		$blockIdChunk = "";
+		$blockMetaChunk = "";
 		$i = 0;
 		//McEdit why this weird order?
 		for ($y = 0; $y < $ySize; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
-					$id = ord($blockIdData[$i]);
-					$meta = ord($blockMetaData[$i]);
+					if ($i % AbstractByteArrayTag::CHUNK_SIZE === 0) {
+						$blockIdChunk = $blockIdData->nextChunk();
+						$blockMetaChunk = $blockMetaData->nextChunk();
+					}
+					$id = ord($blockIdChunk[$i % AbstractByteArrayTag::CHUNK_SIZE]);
+					$meta = ord($blockMetaChunk[$i % AbstractByteArrayTag::CHUNK_SIZE]);
 
 					$target->addBlock($x, $y, $z, LegacyBlockIdConvertor::convertFromJava(($id << Block::INTERNAL_METADATA_BITS) | $meta));
 					$i++;
 				}
 			}
 		}
+
+		$blockIdData->close();
+		$blockMetaData->close();
 
 		//TODO: tiles and entities
 	}

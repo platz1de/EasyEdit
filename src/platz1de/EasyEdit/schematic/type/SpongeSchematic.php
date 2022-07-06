@@ -4,12 +4,16 @@ namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\convert\TileConvertor;
+use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
+use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
 use pocketmine\utils\InternetException;
 use pocketmine\world\World;
@@ -65,48 +69,57 @@ class SpongeSchematic extends SchematicType
 		switch ($version) {
 			case 1:
 			case 2:
-				$blockDataRaw = $nbt->getByteArray(self::BLOCK_DATA_LEGACY);
+				$blockDataRaw = $nbt->getTag(self::BLOCK_DATA_LEGACY);
 				$paletteData = $nbt->getCompoundTag(self::PALETTE);
-				$tiles = $nbt->getListTag(self::BLOCK_ENTITY_DATA);
+				$tiles = $nbt->getTag(self::BLOCK_ENTITY_DATA);
 				break;
 			case 3:
 				$blocks = $nbt->getCompoundTag(self::DATA_BLOCKS);
 				if ($blocks === null) {
 					throw new UnexpectedValueException("Blocks tag missing");
 				}
-				$blockDataRaw = $blocks->getByteArray(self::DATA);
+				$blockDataRaw = $blocks->getTag(self::DATA);
 				$paletteData = $blocks->getCompoundTag(self::PALETTE);
-				$tiles = $blocks->getListTag(self::BLOCK_ENTITY_DATA);
+				$tiles = $blocks->getTag(self::BLOCK_ENTITY_DATA);
 				break;
 			default:
 				throw new UnexpectedValueException("Unknown schematic version");
 		}
+
 		if ($paletteData === null) {
 			throw new UnexpectedValueException("Schematic is missing palette");
 		}
 
+		if (!$blockDataRaw instanceof AbstractByteArrayTag) {
+			throw new UnexpectedValueException("Invalid schematic");
+		}
+
 		$palette = [];
 		$tilePalette = [];
+		/** @var IntTag $id */
 		foreach ($paletteData->getValue() as $name => $id) {
 			$palette[$id->getValue()] = BlockStateConvertor::getFromState($name);
 			$tilePalette[$id->getValue()] = BlockStateConvertor::getTileDataFromState($name);
 		}
 
-		if ($tiles !== null && $tiles->getTagType() === NBT::TAG_Compound) {
-			/** @var CompoundTag[] $t */
-			$t = $tiles->getValue();
-			$tileData = self::loadTileData($t, $version);
+		if ($tiles instanceof AbstractListTag && $tiles->getTagType() === NBT::TAG_Compound) {
+			$tileData = self::loadTileData($tiles, $version);
 		}
 
-		$blockData = new BinaryStream($blockDataRaw);
-
+		$blockData = $blockDataRaw->nextChunk();
+		$i = 0;
 		for ($y = 0; $y < $ySize; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
-					$target->addBlock($x, $y, $z, $palette[$i = $blockData->getUnsignedVarInt()] ?? 0);
+					if ($i + 5 > AbstractByteArrayTag::CHUNK_SIZE) {
+						$blockData = substr($blockData, -5) . $blockDataRaw->nextChunk();
+						$i -= AbstractByteArrayTag::CHUNK_SIZE - 5;
+					}
+
+					$target->addBlock($x, $y, $z, $palette[$j = Binary::readUnsignedVarInt($blockData, $i)] ?? 0);
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {
-						TileConvertor::toBedrock($tileData[World::blockHash($x, $y, $z)], $target, $tilePalette[$i] ?? null);
+						TileConvertor::toBedrock($tileData[World::blockHash($x, $y, $z)], $target, $tilePalette[$j] ?? null);
 					}
 				}
 			}
@@ -194,14 +207,18 @@ class SpongeSchematic extends SchematicType
 	}
 
 	/**
-	 * @param CompoundTag[] $tiles
+	 * @param AbstractListTag $tiles
+	 * @param int             $version
 	 * @return CompoundTag[]
 	 */
-	private static function loadTileData(array $tiles, int $version): array
+	private static function loadTileData(AbstractListTag $tiles, int $version): array
 	{
 		$tileData = [];
 		try {
-			foreach ($tiles as $tile) {
+			$count = $tiles->getLength();
+			for ($i = 0; $i < $count; $i++) {
+				/** @var CompoundTag $tile */
+				$tile = $tiles->next();
 				$id = $tile->getString(self::ENTITY_ID);
 				$pos = $tile->getIntArray(self::ENTITY_POSITION);
 				$position = new Vector3($pos[0], $pos[1], $pos[2]);
