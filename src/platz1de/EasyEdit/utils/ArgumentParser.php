@@ -66,7 +66,7 @@ class ArgumentParser
 	 */
 	public static function parseRelativePosition(Player $player, string $args = null): Vector3
 	{
-		return match ($args) {
+		return match (strtolower($args ?? "")) {
 			"center", "c", "middle" => self::getSelection($player)->getBottomCenter(),
 			default => $player->getPosition()
 		};
@@ -190,7 +190,7 @@ class ArgumentParser
 	 */
 	public static function parseBool(bool $default, string $argument = null): bool
 	{
-		return match ($argument) {
+		return match (strtolower($argument ?? "")) {
 			"true", "t", "yes", "y", "1", "+" => true,
 			"false", "f", "no", "n", "0", "-" => false,
 			default => $default
