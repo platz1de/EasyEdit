@@ -161,7 +161,7 @@ class ArgumentParser
 	 */
 	public static function parseFacing(Player $player, string $direction = null): int
 	{
-		return match ($direction) {
+		return match (strtolower($direction ?? "")) {
 			"north", "n" => Facing::NORTH,
 			"south", "s" => Facing::SOUTH,
 			"east", "e" => Facing::EAST,
