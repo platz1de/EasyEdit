@@ -22,6 +22,6 @@ class InsertCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		DynamicStoredPasteTask::queue(SessionManager::get($player)->getIdentifier(),  ArgumentParser::getClipboard($player), $player->getPosition(), true, true);
+		DynamicStoredPasteTask::queue(SessionManager::get($player)->getIdentifier(), ArgumentParser::getClipboard($player), $player->getPosition(), true, true);
 	}
 }

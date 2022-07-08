@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
-use platz1de\EasyEdit\cache\HistoryCache;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
