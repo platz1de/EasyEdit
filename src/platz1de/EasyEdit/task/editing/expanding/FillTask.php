@@ -13,7 +13,6 @@ use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -27,7 +26,6 @@ class FillTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
@@ -35,9 +33,9 @@ class FillTask extends ExpandingTask
 	 * @param StaticBlock           $block
 	 * @return FillTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
+	public static function from(string $world, AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
 	{
-		$instance = new self($owner, $world, $data, $start);
+		$instance = new self($world, $data, $start);
 		$instance->direction = $direction;
 		$instance->block = $block;
 		return $instance;
@@ -52,10 +50,10 @@ class FillTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, int $direction, StaticBlock $block): void
 	{
-		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $direction, $block));
+		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start, $direction, $block));
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($this->block->getId(), $ignore, true)) !== false) {
@@ -92,7 +90,7 @@ class FillTask extends ExpandingTask
 		};
 		$max = ConfigManager::getFillDistance();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, $executor, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
 		}
 
@@ -106,7 +104,7 @@ class FillTask extends ExpandingTask
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max)) {
+			if (!$this->checkRuntimeChunk($handler, $executor, $chunk, -$current["priority"], $max)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {

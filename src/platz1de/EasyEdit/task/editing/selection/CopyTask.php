@@ -23,7 +23,6 @@ use pocketmine\math\Vector3;
 class CopyTask extends SelectionEditTask
 {
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -31,9 +30,9 @@ class CopyTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return CopyTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CopyTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CopyTask
 	{
-		$instance = new self($owner, $world, $data, $position);
+		$instance = new self($world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		return $instance;
 	}
@@ -44,7 +43,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
+		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
 	}
 
 	/**
@@ -56,12 +55,13 @@ class CopyTask extends SelectionEditTask
 	}
 
 	/**
-	 * @return DynamicBlockListSelection
+	 * @param SessionIdentifier $executor
+	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
 		//TODO: Make this optional
-		return DynamicBlockListSelection::fromWorldPositions($this->getOwner()->getName(), $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return DynamicBlockListSelection::fromWorldPositions($executor->getName(), $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
 	}
 
 	/**
@@ -75,12 +75,12 @@ class CopyTask extends SelectionEditTask
 		MessageSendData::from($player, Messages::replace("blocks-copied", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		if (!$this->getDataManager()->hasResultHandler()) {
-			$this->getDataManager()->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
-				ClipboardCacheData::from($task->getOwner(), $changeId);
-				CopyTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
+			$this->getDataManager()->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId): void {
+				ClipboardCacheData::from($executor, $changeId);
+				CopyTask::notifyUser($executor, (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 			});
 		}
 		$offset = $this->getTotalSelection()->getPos1()->multiply(-1);

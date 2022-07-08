@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use Closure;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -33,7 +34,7 @@ abstract class SelectionEditTask extends EditTask
 		$instance->splitOffset = $splitOffset;
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$pieces = $this->selection->split($this->splitOffset);
 		$this->totalPieces = count($pieces);
@@ -48,7 +49,7 @@ abstract class SelectionEditTask extends EditTask
 			}
 			$this->current = $piece;
 			$piece->init($this->getPosition());
-			if ($this->requestChunks($piece->getNeededChunks())) {
+			if ($this->requestChunks($executor, $piece->getNeededChunks())) {
 				$this->getDataManager()->donePiece();
 				$this->piecesLeft--;
 			} else {

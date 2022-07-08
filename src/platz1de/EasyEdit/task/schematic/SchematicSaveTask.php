@@ -20,14 +20,13 @@ class SchematicSaveTask extends ExecutableTask
 	private StoredSelectionIdentifier $saveId;
 
 	/**
-	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $schematicPath
 	 * @return SchematicSaveTask
 	 */
-	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, string $schematicPath): SchematicSaveTask
+	public static function from(StoredSelectionIdentifier $saveId, string $schematicPath): SchematicSaveTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->schematicPath = $schematicPath;
 		$instance->saveId = $saveId;
 		return $instance;
@@ -40,7 +39,7 @@ class SchematicSaveTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $player, StoredSelectionIdentifier $saveId, string $schematicName): void
 	{
-		TaskInputData::fromTask(self::from($player, $saveId, EasyEdit::getSchematicPath() . $schematicName));
+		TaskInputData::fromTask($player, self::from($saveId, EasyEdit::getSchematicPath() . $schematicName));
 	}
 
 	/**
@@ -51,12 +50,12 @@ class SchematicSaveTask extends ExecutableTask
 		return "schematic_save";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		SchematicFileAdapter::createFromSelection($this->schematicPath, $selection);
-		MessageSendData::from($this->getOwner(), Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)]));
+		MessageSendData::from($executor, Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)]));
 	}
 
 	public function getProgress(): float

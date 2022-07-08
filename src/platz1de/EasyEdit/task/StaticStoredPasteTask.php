@@ -25,15 +25,14 @@ class StaticStoredPasteTask extends ExecutableTask
 	private StaticPasteTask|StreamPasteTask $executor;
 
 	/**
-	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param bool                      $keep
 	 * @param bool                      $isUndo
 	 * @return StaticStoredPasteTask
 	 */
-	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
+	public static function from(StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->saveId = $saveId;
 		$instance->keep = $keep;
 		$instance->isUndo = $isUndo;
@@ -48,7 +47,7 @@ class StaticStoredPasteTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, bool $keep, bool $isUndo = false): void
 	{
-		TaskInputData::fromTask(self::from($owner, $id, $keep, $isUndo));
+		TaskInputData::fromTask($owner, self::from($id, $keep, $isUndo));
 	}
 
 	/**
@@ -59,7 +58,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		return "static_storage_paste";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$selection = StorageModule::mustGetStatic($this->saveId);
 		if (!$this->keep) {
@@ -67,16 +66,16 @@ class StaticStoredPasteTask extends ExecutableTask
 		}
 		$data = new AdditionalDataManager(true, true);
 		$undo = $this->isUndo;
-		$data->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($undo): void {
-			HistoryCacheData::from($task->getOwner(), $changeId, $undo);
-			StaticPasteTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
+		$data->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId) use ($undo): void {
+			HistoryCacheData::from($executor, $changeId, $undo);
+			StaticPasteTask::notifyUser($executor, (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
 		if ($selection instanceof StaticBlockListSelection) {
-			$this->executor = StaticPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+			$this->executor = StaticPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
 		} else {
-			$this->executor = StreamPasteTask::from($this->getOwner(), $selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+			$this->executor = StreamPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
 		}
-		$this->executor->execute();
+		$this->executor->execute($executor);
 	}
 
 	public function getProgress(): float

@@ -22,7 +22,6 @@ use pocketmine\world\World;
 class CountTask extends SelectionEditTask
 {
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -30,9 +29,9 @@ class CountTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return CountTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CountTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CountTask
 	{
-		$instance = new self($owner, $world, $data, $position);
+		$instance = new self($world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		return $instance;
 	}
@@ -43,7 +42,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
+		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**
@@ -57,10 +56,10 @@ class CountTask extends SelectionEditTask
 	/**
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
 		//TODO: make this optional
-		return new StaticBlockListSelection($this->getOwner()->getName(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
+		return new StaticBlockListSelection($executor->getName(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
 	}
 
 	/**
@@ -79,7 +78,7 @@ class CountTask extends SelectionEditTask
 		MessageSendData::from($player, $msg, false);
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		$blocks = $this->getDataManager()->getCountedBlocks();
 		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler, &$blocks): void {

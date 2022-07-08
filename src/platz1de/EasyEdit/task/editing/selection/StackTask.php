@@ -31,7 +31,6 @@ class StackTask extends SelectionEditTask
 	private bool $insert;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -40,9 +39,9 @@ class StackTask extends SelectionEditTask
 	 * @param bool                  $insert
 	 * @return StackTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): StackTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): StackTask
 	{
-		$instance = new self($owner, $world, $data, $position);
+		$instance = new self($world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		$instance->insert = $insert;
 		return $instance;
@@ -55,7 +54,7 @@ class StackTask extends SelectionEditTask
 	 */
 	public static function queue(StackedCube $selection, Position $place, bool $insert = false): void
 	{
-		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $insert));
+		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $insert));
 	}
 
 	/**
@@ -66,7 +65,7 @@ class StackTask extends SelectionEditTask
 		return "stack";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		$selection = $this->current;
 		if ($selection->isCopyMode()) {

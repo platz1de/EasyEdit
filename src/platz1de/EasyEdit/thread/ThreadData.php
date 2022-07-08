@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\thread;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 
 /**
@@ -17,11 +18,12 @@ class ThreadData
 	private static bool $stop = false;
 
 	/**
-	 * @return ExecutableTask|null
+	 * @return ExecutableTask[]
 	 */
-	public static function getNextTask(): ?ExecutableTask
+	public static function getNextTask(): array
 	{
-		return array_shift(self::$tasks);
+		//TODO: add wrapper
+		return array_splice(self::$tasks, 0, 1);
 	}
 
 	/**
@@ -41,11 +43,12 @@ class ThreadData
 	}
 
 	/**
-	 * @param ExecutableTask $task
+	 * @param SessionIdentifier $executor
+	 * @param ExecutableTask    $task
 	 */
-	public static function addTask(ExecutableTask $task): void
+	public static function addTask(SessionIdentifier $executor, ExecutableTask $task): void
 	{
-		self::$tasks[] = $task;
+		self::$tasks[$executor->fastSerialize()] = $task;
 	}
 
 	/**

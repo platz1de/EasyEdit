@@ -16,15 +16,14 @@ class PasteBlockStatesTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
 	 * @return PasteBlockStatesTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
+	public static function from(string $world, AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
 	{
-		return new self($owner, $world, $data, $start);
+		return new self($world, $data, $start);
 	}
 
 	/**
@@ -34,10 +33,10 @@ class PasteBlockStatesTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start): void
 	{
-		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start));
+		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start));
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
@@ -45,14 +44,14 @@ class PasteBlockStatesTask extends ExpandingTask
 		$y = $this->getPosition()->getFloorY();
 		$z = $this->getPosition()->getFloorZ();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($x, $z), 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, $executor, World::chunkHash($x, $z), 0, 1)) {
 			return;
 		}
 
 		$i = 0;
 		foreach ($states as $id => $state) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);
-			if (!$this->checkRuntimeChunk($handler, $chunk, $i, $count)) {
+			if (!$this->checkRuntimeChunk($handler, $executor, $chunk, $i, $count)) {
 				return;
 			}
 			$handler->changeBlock((int) ($x + floor($i / 100) * 2), $y, $z + ($i % 100) * 2, $id);

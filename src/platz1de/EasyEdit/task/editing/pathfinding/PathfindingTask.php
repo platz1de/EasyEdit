@@ -26,7 +26,6 @@ class PathfindingTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
@@ -35,9 +34,9 @@ class PathfindingTask extends ExpandingTask
 	 * @param StaticBlock           $block
 	 * @return PathfindingTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
+	public static function from(string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
 	{
-		$instance = new self($owner, $world, $data, $start);
+		$instance = new self($world, $data, $start);
 		$instance->end = $end;
 		$instance->allowDiagonal = $allowDiagonal;
 		$instance->block = $block;
@@ -54,13 +53,14 @@ class PathfindingTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): void
 	{
-		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $end, $allowDiagonal, $block));
+		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start, $end, $allowDiagonal, $block));
 	}
 
 	/**
-	 * @param EditTaskHandler $handler
+	 * @param EditTaskHandler   $handler
+	 * @param SessionIdentifier $executor
 	 */
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		$open = new NodeHeap();
 		/** @var Node[] $collection */
@@ -74,7 +74,7 @@ class PathfindingTask extends ExpandingTask
 		$endY = $this->end->getFloorY();
 		$endZ = $this->end->getFloorZ();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($this->getPosition()->getFloorX(), $this->getPosition()->getFloorZ()), 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, $executor, World::chunkHash($this->getPosition()->getFloorX(), $this->getPosition()->getFloorZ()), 0, 1)) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ class PathfindingTask extends ExpandingTask
 			unset($collection[$current->hash]);
 			$closed[$current->hash] = $current->parentHash;
 			$chunk = World::chunkHash($current->x >> 4, $current->z >> 4);
-			$this->checkRuntimeChunk($handler, $chunk, $checked, $max);
+			$this->checkRuntimeChunk($handler, $executor, $chunk, $checked, $max);
 			if ($current->equals($endX, $endY, $endZ)) {
 				$hash = $current->hash;
 				while (isset($closed[$hash])) {
@@ -113,11 +113,12 @@ class PathfindingTask extends ExpandingTask
 	}
 
 	/**
+	 * @param SessionIdentifier $executor
 	 * @return BinaryBlockListStream
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
-		return new BinaryBlockListStream($this->getOwner()->getName(), $this->getWorld());
+		return new BinaryBlockListStream($executor->getName(), $this->getWorld());
 	}
 
 	public function getTaskName(): string

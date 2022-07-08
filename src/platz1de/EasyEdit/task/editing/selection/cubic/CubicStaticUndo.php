@@ -9,17 +9,16 @@ use platz1de\EasyEdit\session\SessionIdentifier;
 
 trait CubicStaticUndo
 {
-	abstract public function getOwner(): SessionIdentifier;
-
 	abstract public function getWorld(): string;
 
 	abstract public function getTotalSelection(): Selection;
 
 	/**
+	 * @param SessionIdentifier $executor
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getOwner()->getName(), $this->getWorld(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return new StaticBlockListSelection($executor->getName(), $this->getWorld(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
 	}
 }

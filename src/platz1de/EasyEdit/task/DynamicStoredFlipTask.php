@@ -26,14 +26,13 @@ class DynamicStoredFlipTask extends ExecutableTask
 	private int $axis;
 
 	/**
-	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param int                       $axis
 	 * @return DynamicStoredFlipTask
 	 */
-	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, int $axis): DynamicStoredFlipTask
+	public static function from(StoredSelectionIdentifier $saveId, int $axis): DynamicStoredFlipTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->saveId = $saveId;
 		$instance->axis = $axis;
 		return $instance;
@@ -46,7 +45,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, int $axis): void
 	{
-		TaskInputData::fromTask(self::from($owner, $id, $axis));
+		TaskInputData::fromTask($owner, self::from($id, $axis));
 	}
 
 	/**
@@ -57,7 +56,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		return "dynamic_storage_flip";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
@@ -106,7 +105,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				throw new UnexpectedValueException("Invalid axis " . $this->axis);
 		}
 		StorageModule::forceStore($this->saveId, $flipped);
-		MessageSendData::from($this->getOwner(), Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())]));
+		MessageSendData::from($executor, Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())]));
 	}
 
 	public function getProgress(): float

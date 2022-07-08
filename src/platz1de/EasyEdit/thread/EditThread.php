@@ -6,6 +6,7 @@
 
 namespace platz1de\EasyEdit\thread;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
@@ -61,27 +62,29 @@ class EditThread extends Thread
 				$this->logger->logException($throwable);
 			}
 			if ($this->getStatus() !== self::STATUS_CRASHED) {
-				$task = ThreadData::getNextTask();
-				ThreadData::setTask($task);
-				if ($task === null) {
+				$data = ThreadData::getNextTask();
+				if ($data === []) {
 					$this->synchronized(function (): void {
 						if ($this->inputData === "" && !$this->isKilled) {
 							$this->wait();
 						}
 					});
 				} else {
+					$session = SessionIdentifier::fastDeserialize(key($data));
+					$task = current($data);
+					ThreadData::setTask($task);
 					try {
 						$this->setStatus(self::STATUS_RUNNING);
 						ThreadData::canExecute(); //clear pending cancel requests
 						EditTaskResultCache::clear();
 						$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
-						$task->execute();
+						$task->execute($session);
 						$this->setStatus(self::STATUS_IDLE);
 					} catch (Throwable $throwable) {
 						$this->logger->logException($throwable);
 						$this->setStatus(self::STATUS_CRASHED);
 						$sleep = time() + 9;
-						CrashReportData::from($throwable, $task->getOwner());
+						CrashReportData::from($throwable, $session);
 						ChunkCollector::clear();
 					}
 				}

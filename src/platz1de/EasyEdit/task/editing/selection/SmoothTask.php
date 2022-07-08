@@ -25,7 +25,6 @@ class SmoothTask extends SelectionEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
@@ -33,9 +32,9 @@ class SmoothTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return SmoothTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): SmoothTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): SmoothTask
 	{
-		$instance = new self($owner, $world, $data, $position);
+		$instance = new self($world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		return $instance;
 	}
@@ -46,7 +45,7 @@ class SmoothTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
+		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**
@@ -59,9 +58,10 @@ class SmoothTask extends SelectionEditTask
 
 	/**
 	 * This is pretty much magic code, so better don't touch it
-	 * @param EditTaskHandler $handler
+	 * @param EditTaskHandler   $handler
+	 * @param SessionIdentifier $executor
 	 */
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		HeightMapCache::load($handler->getOrigin(), $this->getCurrentSelection());
 		$currentX = null;

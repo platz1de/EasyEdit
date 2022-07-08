@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use Closure;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTask;
 
 class AdditionalDataManager
@@ -14,7 +15,7 @@ class AdditionalDataManager
 	private bool $saveUndo;
 	private bool $useFastSet = false;
 	/**
-	 * @var Closure(EditTask, ?StoredSelectionIdentifier):void
+	 * @var Closure(EditTask, SessionIdentifier, ?StoredSelectionIdentifier):void
 	 */
 	private Closure $resultHandler;
 
@@ -114,7 +115,7 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @return Closure(EditTask, ?StoredSelectionIdentifier):void
+	 * @return Closure(EditTask, SessionIdentifier, ?StoredSelectionIdentifier):void
 	 */
 	public function getResultHandler(): Closure
 	{
@@ -122,7 +123,7 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @param Closure(EditTask, ?StoredSelectionIdentifier):void $resultHandler
+	 * @param Closure(EditTask, SessionIdentifier, ?StoredSelectionIdentifier):void $resultHandler
 	 */
 	public function setResultHandler(Closure $resultHandler): void
 	{

@@ -24,7 +24,6 @@ class StreamPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param BinaryBlockListStream $selection
@@ -32,9 +31,9 @@ class StreamPasteTask extends SelectionEditTask
 	 * @param Vector3               $splitOffset
 	 * @return StreamPasteTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position, Vector3 $splitOffset): StreamPasteTask
+	public static function from(string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position, Vector3 $splitOffset): StreamPasteTask
 	{
-		$instance = new self($owner, $world, $data, $position);
+		$instance = new self($world, $data, $position);
 		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
 		return $instance;
 	}
@@ -44,7 +43,7 @@ class StreamPasteTask extends SelectionEditTask
 	 */
 	public static function queue(BinaryBlockListStream $selection): void
 	{
-		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**
@@ -55,7 +54,7 @@ class StreamPasteTask extends SelectionEditTask
 		return "stream_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		//WARNING: This isn't the default closure style
 		$this->current->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
@@ -67,8 +66,13 @@ class StreamPasteTask extends SelectionEditTask
 		}
 	}
 
-	public function getUndoBlockList(): BlockListSelection
+
+	/**
+	 * @param SessionIdentifier $executor
+	 * @return BlockListSelection
+	 */
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
-		return new BinaryBlockListStream($this->getOwner()->getName(), $this->getWorld());
+		return new BinaryBlockListStream($executor->getName(), $this->getWorld());
 	}
 }

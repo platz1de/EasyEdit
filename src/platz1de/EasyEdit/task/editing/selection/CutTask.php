@@ -31,15 +31,14 @@ class CutTask extends ExecutableTask
 	private SetTask $executor2;
 
 	/**
-	 * @param SessionIdentifier $owner
-	 * @param string            $world
-	 * @param Selection         $selection
-	 * @param Vector3           $position
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
 	 * @return CutTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, Selection $selection, Vector3 $position): CutTask
+	public static function from(string $world, Selection $selection, Vector3 $position): CutTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->world = $world;
 		$instance->selection = $selection;
 		$instance->position = $position;
@@ -52,7 +51,7 @@ class CutTask extends ExecutableTask
 	 */
 	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(self::from(SessionManager::get($selection->getPlayer())->getIdentifier(), $selection->getWorldName(), $selection, $place));
+		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), $selection, $place));
 	}
 
 	/**
@@ -63,21 +62,21 @@ class CutTask extends ExecutableTask
 		return "cut";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$copyData = new AdditionalDataManager(false, true);
-		$copyData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
-			ClipboardCacheData::from($task->getOwner(), $changeId);
+		$copyData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId): void {
+			ClipboardCacheData::from($executor, $changeId);
 		});
-		$this->executor1 = CopyTask::from($this->getOwner(), $this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1));
-		$this->executor1->execute();
+		$this->executor1 = CopyTask::from($this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1));
+		$this->executor1->execute($executor);
 		$setData = new AdditionalDataManager(true, true);
-		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
-			HistoryCacheData::from($task->getOwner(), $changeId, false);
-			CutTask::notifyUser($task->getOwner(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
+		$setData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId): void {
+			HistoryCacheData::from($executor, $changeId, false);
+			CutTask::notifyUser($executor, (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		$this->executor2 = SetTask::from($this->getOwner(), $this->world, $setData, $this->selection, $this->position, Vector3::zero(), new StaticBlock(0));
-		$this->executor2->execute();
+		$this->executor2 = SetTask::from($this->world, $setData, $this->selection, $this->position, Vector3::zero(), new StaticBlock(0));
+		$this->executor2->execute($executor);
 	}
 
 	/**

@@ -9,15 +9,13 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 abstract class ExecutableTask
 {
 	private int $taskId;
-	private SessionIdentifier $owner;
 
-	public function __construct(SessionIdentifier $owner)
+	public function __construct()
 	{
 		$this->taskId = EditAdapter::getId();
-		$this->owner = $owner;
 	}
 
-	abstract public function execute(): void;
+	abstract public function execute(SessionIdentifier $executor): void;
 
 	/**
 	 * @param ExtendedBinaryStream $stream
@@ -36,7 +34,6 @@ abstract class ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putString(igbinary_serialize($this) ?? "");
-		$stream->putString($this->owner->fastSerialize());
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -50,7 +47,6 @@ abstract class ExecutableTask
 		$stream = new ExtendedBinaryStream($data);
 		/** @var ExecutableTask $task */
 		$task = igbinary_unserialize($stream->getString());
-		$task->owner = SessionIdentifier::fastDeserialize($stream->getString());
 		$task->parseData($stream);
 		return $task;
 	}
@@ -87,13 +83,5 @@ abstract class ExecutableTask
 	public function getTaskId(): int
 	{
 		return $this->taskId;
-	}
-
-	/**
-	 * @return SessionIdentifier
-	 */
-	public function getOwner(): SessionIdentifier
-	{
-		return $this->owner;
 	}
 }

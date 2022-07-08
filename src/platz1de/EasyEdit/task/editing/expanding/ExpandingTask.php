@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing\expanding;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\ChunkCollector;
@@ -21,19 +22,23 @@ abstract class ExpandingTask extends EditTask
 	 */
 	private array $requestedChunks = [];
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$this->getDataManager()->useFastSet();
 		$this->getDataManager()->setFinal();
 		ChunkCollector::init($this->getWorld());
 		ChunkCollector::collectInput(ChunkInputData::empty());
-		$this->run();
+		$this->run($executor);
 		ChunkCollector::clear();
 	}
 
-	public function getUndoBlockList(): BlockListSelection
+	/**
+	 * @param SessionIdentifier $executor
+	 * @return BlockListSelection
+	 */
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection($this->getOwner()->getName(), $this->getWorld(), $this->getPosition());
+		return new ExpandingStaticBlockListSelection($executor->getName(), $this->getWorld(), $this->getPosition());
 	}
 
 	public function getProgress(): float
@@ -48,12 +53,12 @@ abstract class ExpandingTask extends EditTask
 	 * @param int             $max
 	 * @return bool
 	 */
-	public function checkRuntimeChunk(EditTaskHandler $handler, int $chunk, int $current, int $max): bool
+	public function checkRuntimeChunk(EditTaskHandler $handler, SessionIdentifier $executor, int $chunk, int $current, int $max): bool
 	{
 		if (!isset($this->loadedChunks[$chunk])) {
 			$this->loadedChunks[$chunk] = true;
 			$this->progress = $current / $max;
-			if (!$this->requestRuntimeChunk($handler, $chunk)) {
+			if (!$this->requestRuntimeChunk($handler, $executor, $chunk)) {
 				return false;
 			}
 		}

@@ -23,16 +23,15 @@ class ExtendBlockFaceTask extends ExpandingTask
 	private int $face;
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $block
 	 * @param int                   $face
 	 * @return ExtendBlockFaceTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
+	public static function from(string $world, AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
 	{
-		$instance = new self($owner, $world, $data, $block);
+		$instance = new self($world, $data, $block);
 		$instance->face = $face;
 		return $instance;
 	}
@@ -45,13 +44,13 @@ class ExtendBlockFaceTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $block, int $face): void
 	{
-		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $block, $face));
+		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $block, $face));
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		$startChunk = World::chunkHash($this->getPosition()->getFloorX() >> 4, $this->getPosition()->getFloorZ() >> 4);
-		if (!$this->checkRuntimeChunk($handler, $startChunk, 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, $executor, $startChunk, 0, 1)) {
 			return;
 		}
 		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
@@ -81,8 +80,8 @@ class ExtendBlockFaceTask extends ExpandingTask
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$c = World::chunkHash(($x + $offsetX) >> 4, ($z + $offsetZ) >> 4);
-			$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max);
-			$this->checkRuntimeChunk($handler, $c, -$current["priority"], $max);
+			$this->checkRuntimeChunk($handler, $executor, $chunk, -$current["priority"], $max);
+			$this->checkRuntimeChunk($handler, $executor, $c, -$current["priority"], $max);
 			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 				$this->checkUnload($handler, $chunk);
 				$this->checkUnload($handler, $c);

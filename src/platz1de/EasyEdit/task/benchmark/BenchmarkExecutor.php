@@ -35,7 +35,7 @@ class BenchmarkExecutor extends ExecutableTask
 
 	public static function from(string $world): BenchmarkExecutor
 	{
-		$task = new self(SessionIdentifier::internal($world));
+		$task = new self();
 		$task->world = $world;
 		return $task;
 	}
@@ -44,42 +44,41 @@ class BenchmarkExecutor extends ExecutableTask
 	{
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		TaskInputData::fromTask(self::from($name));
+		TaskInputData::fromTask(SessionIdentifier::internal($name), self::from($name));
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$results = [];
 
 		$pos = new Vector3(0, World::Y_MIN, 0);
 
 		//4x 3x3 Chunk cubes
-		$testCube = new Cube($this->getOwner()->getName(), $this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
+		$testCube = new Cube($executor->getName(), $this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		$setData = new AdditionalDataManager(true, false);
-		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
+		$setData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId) { });
 
 		//Task #1 - set static
-		$this->setSimpleBenchmark = SetTask::from($this->getOwner(), $this->world, $setData, $testCube, $pos, Vector3::zero(), StaticBlock::from(VanillaBlocks::STONE()));
-		$this->setSimpleBenchmark->execute();
+		$this->setSimpleBenchmark = SetTask::from($this->world, $setData, $testCube, $pos, Vector3::zero(), StaticBlock::from(VanillaBlocks::STONE()));
+		$this->setSimpleBenchmark->execute($executor);
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
 		$complexData = new AdditionalDataManager(true, false);
-		$complexData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
+		$complexData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId) { });
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
-		$this->setComplexBenchmark = SetTask::from($this->getOwner(), $this->world, $complexData, $testCube, $pos, Vector3::zero(), $pattern);
-		$this->setComplexBenchmark->execute();
+		$this->setComplexBenchmark = SetTask::from($this->world, $complexData, $testCube, $pos, Vector3::zero(), $pattern);
+		$this->setComplexBenchmark->execute($executor);
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
 		$world = $this->world;
-		$owner = $this->getOwner();
 		$copyData = new AdditionalDataManager(false, true);
-		$copyData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($owner, $pos, &$results, $world, &$pasteBenchmark) {
+		$copyData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId) use ($pos, &$results, $world, &$pasteBenchmark) {
 			$results[] = ["copy", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			EditTaskResultCache::clear();
 
@@ -91,23 +90,23 @@ class BenchmarkExecutor extends ExecutableTask
 			StorageModule::cleanStored($changeId);
 
 			$pasteData = new AdditionalDataManager(true, false);
-			$pasteData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use (&$results) {
+			$pasteData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId) use (&$results) {
 				$results[] = ["paste", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			});
 
 			//Task #4 - paste
-			$pasteBenchmark = DynamicPasteTask::from($owner, $world, $pasteData, $copied, $pos, $pos);
+			$pasteBenchmark = DynamicPasteTask::from($world, $pasteData, $copied, $pos, $pos);
 		});
 
 		//Task #3 - copy
-		$this->copyBenchmark = CopyTask::from($this->getOwner(), $this->world, $copyData, $testCube, $pos, $pos->multiply(-1));
-		$this->copyBenchmark->execute();
+		$this->copyBenchmark = CopyTask::from($this->world, $copyData, $testCube, $pos, $pos->multiply(-1));
+		$this->copyBenchmark->execute($executor);
 
 		if ($pasteBenchmark === null) {
 			throw new UnexpectedValueException("Failed to handle result of copy benchmark");
 		}
 		$this->pasteBenchmark = $pasteBenchmark;
-		$pasteBenchmark->execute();
+		$pasteBenchmark->execute($executor);
 
 		BenchmarkCallbackData::from($world, $results);
 	}

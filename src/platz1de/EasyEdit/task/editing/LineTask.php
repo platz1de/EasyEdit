@@ -30,7 +30,6 @@ class LineTask extends EditTask
 	private array $blocks = [];
 
 	/**
-	 * @param SessionIdentifier     $owner
 	 * @param string                $world
 	 * @param AdditionalDataManager $data
 	 * @param Vector3               $start
@@ -38,9 +37,9 @@ class LineTask extends EditTask
 	 * @param StaticBlock           $block
 	 * @return LineTask
 	 */
-	public static function from(SessionIdentifier $owner, string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
+	public static function from(string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
 	{
-		$instance = new self($owner, $world, $data, $start);
+		$instance = new self($world, $data, $start);
 		$instance->end = $end;
 		$instance->block = $block;
 		return $instance;
@@ -55,10 +54,10 @@ class LineTask extends EditTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, StaticBlock $block): void
 	{
-		TaskInputData::fromTask(self::from($player, $world, new AdditionalDataManager(true, true), $start, $end, $block));
+		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start, $end, $block));
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$this->getDataManager()->useFastSet();
 		ChunkCollector::init($this->getWorld());
@@ -68,7 +67,7 @@ class LineTask extends EditTask
 			if ($current === null) {
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
-				$this->requestChunks([$current]);
+				$this->requestChunks($executor, [$current]);
 				$this->blocks = [];
 				$current = $c;
 			}
@@ -76,15 +75,16 @@ class LineTask extends EditTask
 		}
 		if ($current !== null) {
 			$this->getDataManager()->setFinal();
-			$this->requestChunks([$current]);
+			$this->requestChunks($executor, [$current]);
 		}
 		ChunkCollector::clear();
 	}
 
 	/**
-	 * @param EditTaskHandler $handler
+	 * @param EditTaskHandler   $handler
+	 * @param SessionIdentifier $executor
 	 */
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
 	{
 		foreach ($this->blocks as $pos) {
 			$handler->changeBlock((int) $pos->x, (int) $pos->y, (int) $pos->z, $this->block->get());
@@ -92,11 +92,12 @@ class LineTask extends EditTask
 	}
 
 	/**
+	 * @param SessionIdentifier $executor
 	 * @return BinaryBlockListStream
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
 	{
-		return new BinaryBlockListStream($this->getOwner()->getName(), $this->getWorld());
+		return new BinaryBlockListStream($executor->getName(), $this->getWorld());
 	}
 
 	public function getTaskName(): string

@@ -23,13 +23,12 @@ class DynamicStoredRotateTask extends ExecutableTask
 	private StoredSelectionIdentifier $saveId;
 
 	/**
-	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @return DynamicStoredRotateTask
 	 */
-	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId): DynamicStoredRotateTask
+	public static function from(StoredSelectionIdentifier $saveId): DynamicStoredRotateTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->saveId = $saveId;
 		return $instance;
 	}
@@ -40,7 +39,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id): void
 	{
-		TaskInputData::fromTask(self::from($owner, $id));
+		TaskInputData::fromTask($owner, self::from($id));
 	}
 
 	/**
@@ -51,7 +50,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 		return "dynamic_storage_rotate";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
@@ -69,7 +68,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));
 		}
 		StorageModule::forceStore($this->saveId, $rotated);
-		MessageSendData::from($this->getOwner(), Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())]));
+		MessageSendData::from($executor, Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())]));
 	}
 
 	public function getProgress(): float

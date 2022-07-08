@@ -22,7 +22,6 @@ class DynamicStoredPasteTask extends ExecutableTask
 	private DynamicPasteTask $executor;
 
 	/**
-	 * @param SessionIdentifier         $owner
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $world
 	 * @param Vector3                   $position
@@ -30,9 +29,9 @@ class DynamicStoredPasteTask extends ExecutableTask
 	 * @param bool                      $insert
 	 * @return DynamicStoredPasteTask
 	 */
-	public static function from(SessionIdentifier $owner, StoredSelectionIdentifier $saveId, string $world, Vector3 $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
+	public static function from(StoredSelectionIdentifier $saveId, string $world, Vector3 $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->saveId = $saveId;
 		$instance->world = $world;
 		$instance->position = $position;
@@ -50,7 +49,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, Position $place, bool $keep, bool $insert = false): void
 	{
-		TaskInputData::fromTask(self::from($owner, $id, $place->getWorld()->getFolderName(), $place->asVector3(), $keep, $insert));
+		TaskInputData::fromTask($owner, self::from($id, $place->getWorld()->getFolderName(), $place->asVector3(), $keep, $insert));
 	}
 
 	/**
@@ -61,14 +60,14 @@ class DynamicStoredPasteTask extends ExecutableTask
 		return "dynamic_storage_paste";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$this->executor = DynamicPasteTask::from($this->getOwner(), $this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
-		$this->executor->execute();
+		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
+		$this->executor->execute($executor);
 	}
 
 	public function getProgress(): float

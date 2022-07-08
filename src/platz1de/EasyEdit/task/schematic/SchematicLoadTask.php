@@ -21,13 +21,12 @@ class SchematicLoadTask extends ExecutableTask
 	private string $schematicPath;
 
 	/**
-	 * @param SessionIdentifier $owner
-	 * @param string            $schematicPath
+	 * @param string $schematicPath
 	 * @return SchematicLoadTask
 	 */
-	public static function from(SessionIdentifier $owner, string $schematicPath): SchematicLoadTask
+	public static function from(string $schematicPath): SchematicLoadTask
 	{
-		$instance = new self($owner);
+		$instance = new self();
 		$instance->schematicPath = $schematicPath;
 		return $instance;
 	}
@@ -38,7 +37,7 @@ class SchematicLoadTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $player, string $schematicName): void
 	{
-		TaskInputData::fromTask(self::from($player, EasyEdit::getSchematicPath() . $schematicName));
+		TaskInputData::fromTask($player, self::from(EasyEdit::getSchematicPath() . $schematicName));
 	}
 
 	/**
@@ -49,15 +48,15 @@ class SchematicLoadTask extends ExecutableTask
 		return "schematic_load";
 	}
 
-	public function execute(): void
+	public function execute(SessionIdentifier $executor): void
 	{
 		$start = microtime(true);
-		$selection = new DynamicBlockListSelection($this->getOwner()->getName(), Vector3::zero(), Vector3::zero());
+		$selection = new DynamicBlockListSelection($executor->getName(), Vector3::zero(), Vector3::zero());
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();
-		ClipboardCacheData::from($this->getOwner(), $changeId);
-		MessageSendData::from($this->getOwner(), Messages::replace("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())]));
+		ClipboardCacheData::from($executor, $changeId);
+		MessageSendData::from($executor, Messages::replace("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())]));
 	}
 
 	public function getProgress(): float
