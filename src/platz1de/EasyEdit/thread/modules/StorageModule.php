@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\thread\modules;
 
-use BadMethodCallException;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -25,7 +24,7 @@ class StorageModule
 	public static function finishCollecting(): StoredSelectionIdentifier
 	{
 		if (self::$collected === null) {
-			throw new BadMethodCallException("History should only collect existing pieces");
+			return StoredSelectionIdentifier::invalid();
 		}
 		$id = self::nextStorageId();
 		self::$storage[$id] = self::$collected;
@@ -39,6 +38,9 @@ class StorageModule
 	 */
 	public static function collect(BlockListSelection $piece): void
 	{
+		if (!$piece->containsData()) {
+			return;
+		}
 		if (self::$collected === null) {
 			self::$collected = $piece;
 		} else {

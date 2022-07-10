@@ -84,5 +84,9 @@ abstract class BlockListSelection extends Selection
 
 	abstract public function createSafeClone(): BlockListSelection;
 
+	public function containsData(): bool{
+		return count($this->tiles) > 0;
+	}
+
 	public function checkCachedData(): void { }
 }

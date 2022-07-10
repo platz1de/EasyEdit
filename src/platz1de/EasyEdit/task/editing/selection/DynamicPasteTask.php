@@ -44,7 +44,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, bool $insert = false): DynamicPasteTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
 		$instance->selection = $selection;
 		$instance->insert = $insert;
 		$instance->splitOffset = $position->asVector3();

@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\thread\output\session;
 
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\session\Session;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class HistoryCacheData extends SessionOutputData
@@ -19,6 +20,15 @@ class HistoryCacheData extends SessionOutputData
 	{
 		$this->changeId = $changeId;
 		$this->isUndo = $isUndo;
+	}
+
+	public function checkSend(): bool
+	{
+		if (!$this->changeId->isValid()) {
+			EditThread::getInstance()->debug("Not saving history");
+			return false;
+		}
+		return true;
 	}
 
 	public function handleSession(Session $session): void

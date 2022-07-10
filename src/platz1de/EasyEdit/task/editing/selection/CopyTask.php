@@ -32,7 +32,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): CopyTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
 		$instance->selection = $selection;
 		$instance->splitOffset = $selection->getPos1()->multiply(-1);
 		return $instance;
@@ -69,10 +69,7 @@ class CopyTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		if (!$this->getDataManager()->hasResultHandler()) {
-			$this->getDataManager()->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
-				if ($changeId === null) {
-					throw new RuntimeException("Could not find copied selection");
-				}
+			$this->getDataManager()->setResultHandler(function (EditTask $task, StoredSelectionIdentifier $changeId): void {
 				$this->sendOutputPacket(new ClipboardCacheData($changeId));
 				CopyTask::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 			});

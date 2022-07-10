@@ -124,9 +124,8 @@ abstract class EditTask extends ExecutableTask
 		$this->executeEdit($handler);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
 
-		if ($this->data->isSavingUndo()) {
-			StorageModule::collect($handler->getChanges());
-		}
+		StorageModule::collect($handler->getChanges());
+
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 
 		if ($this->data->isUsingFastSet()) {
@@ -136,16 +135,12 @@ abstract class EditTask extends ExecutableTask
 		}
 
 		if ($this->data->isFinalPiece()) {
-			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : null;
+			$changeId = StorageModule::finishCollecting();
 			if ($this->data->hasResultHandler()) {
 				$closure = $this->data->getResultHandler();
 				$closure($this, $changeId);
 			} else {
-				if ($changeId === null) {
-					EditThread::getInstance()->getLogger()->debug("Not saving history");
-				} else {
-					$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-				}
+				$this->sendOutputPacket(new HistoryCacheData($changeId, false));
 				/** @var class-string<EditTask> $task */
 				$task = static::class;
 				$task::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $this->data);
@@ -156,12 +151,10 @@ abstract class EditTask extends ExecutableTask
 	public function forceStop(): void
 	{
 		if (!$this->data->isFirstPiece()) {
-			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : null;
+			$changeId = StorageModule::finishCollecting();
 			if ($this->data->hasResultHandler()) {
 				$closure = $this->data->getResultHandler();
 				$closure($this, $changeId);
-			} elseif ($changeId === null) {
-				EditThread::getInstance()->getLogger()->debug("Not saving history");
 			} else {
 				$this->sendOutputPacket(new HistoryCacheData($changeId, false));
 			}

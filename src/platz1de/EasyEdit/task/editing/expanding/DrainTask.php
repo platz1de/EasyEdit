@@ -25,7 +25,7 @@ class DrainTask extends ExpandingTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start): DrainTask
 	{
-		return new self($world, $data ?? new AdditionalDataManager(true), $start);
+		return new self($world, $data ?? new AdditionalDataManager(), $start);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

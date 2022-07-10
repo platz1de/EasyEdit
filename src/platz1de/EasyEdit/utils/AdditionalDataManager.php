@@ -11,10 +11,9 @@ class AdditionalDataManager
 {
 	private bool $firstPiece = true;
 	private bool $finalPiece = false;
-	private bool $saveUndo;
 	private bool $useFastSet = false;
 	/**
-	 * @var Closure(EditTask, ?StoredSelectionIdentifier):void
+	 * @var Closure(EditTask, StoredSelectionIdentifier):void
 	 */
 	private Closure $resultHandler;
 
@@ -23,14 +22,6 @@ class AdditionalDataManager
 	 * @var int[]
 	 */
 	private array $countedBlocks = [];
-
-	/**
-	 * @param bool $saveUndo
-	 */
-	public function __construct(bool $saveUndo)
-	{
-		$this->saveUndo = $saveUndo;
-	}
 
 	/**
 	 * @return bool
@@ -56,14 +47,6 @@ class AdditionalDataManager
 	public function setFinal(): void
 	{
 		$this->finalPiece = true;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isSavingUndo(): bool
-	{
-		return $this->saveUndo;
 	}
 
 	public function useFastSet(): void
@@ -104,7 +87,7 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @return Closure(EditTask, ?StoredSelectionIdentifier):void
+	 * @return Closure(EditTask, StoredSelectionIdentifier):void
 	 */
 	public function getResultHandler(): Closure
 	{
@@ -112,7 +95,7 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @param Closure(EditTask, ?StoredSelectionIdentifier):void $resultHandler
+	 * @param Closure(EditTask, StoredSelectionIdentifier):void $resultHandler
 	 */
 	public function setResultHandler(Closure $resultHandler): void
 	{
@@ -125,7 +108,6 @@ class AdditionalDataManager
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putBool($this->saveUndo);
 
 		$count = 0;
 		foreach ($this->countedBlocks as $id => $blockCount) {
@@ -145,7 +127,7 @@ class AdditionalDataManager
 	public static function fastDeserialize(string $data): AdditionalDataManager
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$dataManager = new AdditionalDataManager($stream->getBool());
+		$dataManager = new AdditionalDataManager();
 		$count = $stream->getInt();
 
 		$counted = [];

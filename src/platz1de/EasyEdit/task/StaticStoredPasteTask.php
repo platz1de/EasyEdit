@@ -55,13 +55,9 @@ class StaticStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$data = new AdditionalDataManager(true);
+		$data = new AdditionalDataManager();
 		$undo = $this->isUndo;
-		$data->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($undo): void {
-			if ($changeId === null) {
-				EditThread::getInstance()->getLogger()->debug("Not saving history");
-				return;
-			}
+		$data->setResultHandler(function (EditTask $task, StoredSelectionIdentifier $changeId) use ($undo): void {
 			$this->sendOutputPacket(new HistoryCacheData($changeId, $undo));
 			StaticPasteTask::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});

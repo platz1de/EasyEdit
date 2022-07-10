@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\benchmark;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cube;
@@ -19,9 +18,7 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\world\World;
-use pocketmine\world\WorldCreationOptions;
 use UnexpectedValueException;
 
 class BenchmarkExecutor extends ExecutableTask
@@ -48,8 +45,8 @@ class BenchmarkExecutor extends ExecutableTask
 		//4x 3x3 Chunk cubes
 		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
-		$setData = new AdditionalDataManager(false);
-		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
+		$setData = new AdditionalDataManager();
+		$setData->setResultHandler(static function (EditTask $task, StoredSelectionIdentifier $changeId) { });
 
 		//Task #1 - set static
 		$this->setSimpleBenchmark = SetTask::from($this->world, $setData, $testCube, $pos, StaticBlock::from(VanillaBlocks::STONE()));
@@ -57,8 +54,8 @@ class BenchmarkExecutor extends ExecutableTask
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
-		$complexData = new AdditionalDataManager(false);
-		$complexData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
+		$complexData = new AdditionalDataManager();
+		$complexData->setResultHandler(static function (EditTask $task, StoredSelectionIdentifier $changeId) { });
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
@@ -69,20 +66,16 @@ class BenchmarkExecutor extends ExecutableTask
 		EditTaskResultCache::clear();
 
 		$world = $this->world;
-		$copyData = new AdditionalDataManager(true);
-		$copyData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($pos, &$results, $world, &$pasteBenchmark) {
+		$copyData = new AdditionalDataManager();
+		$copyData->setResultHandler(static function (EditTask $task, StoredSelectionIdentifier $changeId) use ($pos, &$results, $world, &$pasteBenchmark) {
 			$results[] = ["copy", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			EditTaskResultCache::clear();
-
-			if ($changeId === null) {
-				throw new UnexpectedValueException("ChangeId is null");
-			}
 
 			$copied = StorageModule::mustGetDynamic($changeId);
 			StorageModule::cleanStored($changeId);
 
-			$pasteData = new AdditionalDataManager(false);
-			$pasteData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use (&$results) {
+			$pasteData = new AdditionalDataManager();
+			$pasteData->setResultHandler(static function (EditTask $task, StoredSelectionIdentifier $changeId) use (&$results) {
 				$results[] = ["paste", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			});
 

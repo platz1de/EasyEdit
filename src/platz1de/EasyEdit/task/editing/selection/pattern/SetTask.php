@@ -28,7 +28,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
 		$instance->selection = $selection;
 		$instance->pattern = $pattern;
 		return $instance;

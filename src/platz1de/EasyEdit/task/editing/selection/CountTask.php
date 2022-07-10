@@ -27,7 +27,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): CountTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(false), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

@@ -40,7 +40,7 @@ class LineTask extends EditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $start);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $start);
 		$instance->end = $end;
 		$instance->block = $block;
 		return $instance;

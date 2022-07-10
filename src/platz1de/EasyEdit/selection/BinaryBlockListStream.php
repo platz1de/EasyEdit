@@ -154,4 +154,9 @@ class BinaryBlockListStream extends BlockListSelection
 		}
 		return $clone;
 	}
+
+	public function containsData(): bool
+	{
+		return $this->blocks->getBuffer() !== "" || parent::containsData();
+	}
 }

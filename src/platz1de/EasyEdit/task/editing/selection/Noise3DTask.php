@@ -44,7 +44,7 @@ class Noise3DTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
 		$instance->selection = $selection;
 		$instance->octaves = $octaves;
 		$instance->persistence = $persistence;

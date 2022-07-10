@@ -6,7 +6,6 @@ use BadMethodCallException;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
@@ -126,7 +125,7 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 
 		foreach ($selection->getManager()->getChunks() as $hash => $chunk) {
 			//TODO: only create Chunks which are really needed
-			if (LoaderManager::isChunkUsed($chunk)) {
+			if ($chunk->wasUsed()) {
 				$this->getManager()->setChunk($hash, $chunk);
 			}
 		}
@@ -143,5 +142,15 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 				$this->getManager()->setChunk($hash, $collected->getManager()->getChunks()[$hash]);
 			}
 		}
+	}
+
+	public function containsData(): bool
+	{
+		foreach ($this->getManager()->getChunks() as $chunk) {
+			if ($chunk->wasUsed()) {
+				return true;
+			}
+		}
+		return parent::containsData();
 	}
 }

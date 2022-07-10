@@ -33,7 +33,7 @@ class SmoothTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): SmoothTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

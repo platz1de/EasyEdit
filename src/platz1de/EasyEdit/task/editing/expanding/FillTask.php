@@ -36,7 +36,7 @@ class FillTask extends ExpandingTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true), $start);
+		$instance = new self($world, $data ?? new AdditionalDataManager(), $start);
 		$instance->direction = $direction;
 		$instance->block = $block;
 		return $instance;
