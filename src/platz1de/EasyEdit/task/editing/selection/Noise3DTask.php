@@ -32,39 +32,25 @@ class Noise3DTask extends SelectionEditTask
 	private Noise $noise;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
-	 * @param int                   $octaves
-	 * @param float                 $persistence
-	 * @param float                 $expansion
-	 * @param float                 $threshold
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Selection                  $selection
+	 * @param Vector3                    $position
+	 * @param int                        $octaves
+	 * @param float                      $persistence
+	 * @param float                      $expansion
+	 * @param float                      $threshold
 	 * @return Noise3DTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
+	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
 	{
-		$instance = new self($world, $data, $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $position);
 		$instance->selection = $selection;
 		$instance->octaves = $octaves;
 		$instance->persistence = $persistence;
 		$instance->expansion = $expansion;
 		$instance->threshold = $threshold;
 		return $instance;
-	}
-
-	/**
-	 * @param Session   $session
-	 * @param Selection $selection
-	 * @param Position  $place
-	 * @param int       $octaves
-	 * @param float     $persistence
-	 * @param float     $expansion
-	 * @param float     $threshold
-	 */
-	public static function queue(Session $session, Selection $selection, Position $place, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $octaves, $persistence, $expansion, $threshold));
 	}
 
 	/**

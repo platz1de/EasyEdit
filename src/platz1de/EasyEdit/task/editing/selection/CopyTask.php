@@ -24,28 +24,18 @@ use pocketmine\math\Vector3;
 class CopyTask extends SelectionEditTask
 {
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Selection                  $selection
+	 * @param Vector3                    $position
 	 * @return CopyTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position): CopyTask
+	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): CopyTask
 	{
-		$instance = new self($world, $data, $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(false, true), $position);
 		$instance->selection = $selection;
 		$instance->splitOffset = $selection->getPos1()->multiply(-1);
 		return $instance;
-	}
-
-	/**
-	 * @param Session   $session
-	 * @param Selection $selection
-	 * @param Vector3   $place
-	 */
-	public static function queue(Session $session, Selection $selection, Vector3 $place): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place));
 	}
 
 	/**

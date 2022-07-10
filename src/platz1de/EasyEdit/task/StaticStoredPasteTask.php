@@ -42,17 +42,6 @@ class StaticStoredPasteTask extends ExecutableTask
 	}
 
 	/**
-	 * @param SessionIdentifier         $owner
-	 * @param StoredSelectionIdentifier $id
-	 * @param bool                      $keep
-	 * @param bool                      $isUndo
-	 */
-	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, bool $keep, bool $isUndo = false): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id, $keep, $isUndo));
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

@@ -24,28 +24,17 @@ class ExtendBlockFaceTask extends ExpandingTask
 	private int $face;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Vector3               $block
-	 * @param int                   $face
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Vector3                    $block
+	 * @param int                        $face
 	 * @return ExtendBlockFaceTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
+	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
 	{
-		$instance = new self($world, $data, $block);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $block);
 		$instance->face = $face;
 		return $instance;
-	}
-
-	/**
-	 * @param SessionIdentifier $player
-	 * @param string            $world
-	 * @param Vector3           $block
-	 * @param int               $face
-	 */
-	public static function queue(SessionIdentifier $player, string $world, Vector3 $block, int $face): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $block, $face));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

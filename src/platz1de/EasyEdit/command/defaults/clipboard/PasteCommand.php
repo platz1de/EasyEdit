@@ -20,6 +20,6 @@ class PasteCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		DynamicStoredPasteTask::queue($session->getIdentifier(), $session->getClipboard(), $session->asPlayer()->getPosition(), true);
+		$session->runTask(DynamicStoredPasteTask::from($session->getClipboard(), $session->asPlayer()->getPosition(), true));
 	}
 }

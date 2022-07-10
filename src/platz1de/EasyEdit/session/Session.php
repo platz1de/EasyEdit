@@ -117,22 +117,22 @@ class Session
 	}
 
 	/**
-	 * @param SessionIdentifier $executor
+	 * @param Session $executor
 	 */
-	public function undoStep(SessionIdentifier $executor): void
+	public function undoStep(Session $executor): void
 	{
 		if ($this->canUndo()) {
-			StaticStoredPasteTask::queue($executor, $this->past->shift(), false, true);
+			$executor->runTask(StaticStoredPasteTask::from($this->past->shift(), false, true));
 		}
 	}
 
 	/**
-	 * @param SessionIdentifier $executor
+	 * @param Session $executor
 	 */
-	public function redoStep(SessionIdentifier $executor): void
+	public function redoStep(Session $executor): void
 	{
 		if ($this->canRedo()) {
-			StaticStoredPasteTask::queue($executor, $this->future->shift(), false);
+			$executor->runTask(StaticStoredPasteTask::from($this->future->shift(), false));
 		}
 	}
 

@@ -24,26 +24,17 @@ class StaticPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                   $world
-	 * @param AdditionalDataManager    $data
-	 * @param StaticBlockListSelection $selection
-	 * @param Vector3                  $position
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param StaticBlockListSelection   $selection
+	 * @param Vector3                    $position
 	 * @return StaticPasteTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position): StaticPasteTask
+	public static function from(string $world, ?AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position): StaticPasteTask
 	{
-		$instance = new self($world, $data, $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $position);
 		$instance->selection = $selection;
 		return $instance;
-	}
-
-	/**
-	 * @param Session                  $session
-	 * @param StaticBlockListSelection $selection
-	 */
-	public static function queue(Session $session, StaticBlockListSelection $selection): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero()));
 	}
 
 	/**

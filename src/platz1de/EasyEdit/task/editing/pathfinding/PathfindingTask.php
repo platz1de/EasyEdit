@@ -2,12 +2,9 @@
 
 namespace platz1de\EasyEdit\task\editing\pathfinding;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\expanding\ExpandingTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -27,34 +24,21 @@ class PathfindingTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Vector3               $start
-	 * @param Vector3               $end
-	 * @param bool                  $allowDiagonal
-	 * @param StaticBlock           $block
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Vector3                    $start
+	 * @param Vector3                    $end
+	 * @param bool                       $allowDiagonal
+	 * @param StaticBlock                $block
 	 * @return PathfindingTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
+	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
 	{
-		$instance = new self($world, $data, $start);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $start);
 		$instance->end = $end;
 		$instance->allowDiagonal = $allowDiagonal;
 		$instance->block = $block;
 		return $instance;
-	}
-
-	/**
-	 * @param SessionIdentifier $player
-	 * @param string            $world
-	 * @param Vector3           $start
-	 * @param Vector3           $end
-	 * @param bool              $allowDiagonal
-	 * @param StaticBlock       $block
-	 */
-	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $start, $end, $allowDiagonal, $block));
 	}
 
 	/**

@@ -34,16 +34,6 @@ class SchematicSaveTask extends ExecutableTask
 	}
 
 	/**
-	 * @param SessionIdentifier         $player
-	 * @param StoredSelectionIdentifier $saveId
-	 * @param string                    $schematicName
-	 */
-	public static function queue(SessionIdentifier $player, StoredSelectionIdentifier $saveId, string $schematicName): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($player), self::from($saveId, EasyEdit::getSchematicPath() . $schematicName));
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

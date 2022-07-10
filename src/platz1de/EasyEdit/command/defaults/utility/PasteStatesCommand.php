@@ -16,6 +16,6 @@ class PasteStatesCommand extends EasyEditCommand
 
 	public function process(Session $session, array $args): void
 	{
-		PasteBlockStatesTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition());
+		$session->runTask(PasteBlockStatesTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->asPlayer()->getPosition()));
 	}
 }

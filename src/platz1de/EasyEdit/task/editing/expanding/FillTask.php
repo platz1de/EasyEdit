@@ -27,31 +27,19 @@ class FillTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Vector3               $start
-	 * @param int                   $direction
-	 * @param StaticBlock           $block
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Vector3                    $start
+	 * @param int                        $direction
+	 * @param StaticBlock                $block
 	 * @return FillTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
+	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
 	{
-		$instance = new self($world, $data, $start);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $start);
 		$instance->direction = $direction;
 		$instance->block = $block;
 		return $instance;
-	}
-
-	/**
-	 * @param SessionIdentifier $player
-	 * @param string            $world
-	 * @param Vector3           $start
-	 * @param int               $direction
-	 * @param StaticBlock       $block
-	 */
-	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, int $direction, StaticBlock $block): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $start, $direction, $block));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

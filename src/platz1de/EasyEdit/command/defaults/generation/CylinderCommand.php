@@ -23,6 +23,6 @@ class CylinderCommand extends EasyEditCommand
 	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 3, $this);
-		SetTask::queue($session, Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0], (int) $args[1]), ArgumentParser::parseCombinedPattern($session, $args, 2), $session->asPlayer()->getPosition());
+		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), null, Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0], (int) $args[1]), $session->asPlayer()->getPosition(), ArgumentParser::parseCombinedPattern($session, $args, 2)));
 	}
 }

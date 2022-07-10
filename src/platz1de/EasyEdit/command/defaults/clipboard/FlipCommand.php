@@ -22,6 +22,6 @@ class FlipCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		DynamicStoredFlipTask::queue($session->getIdentifier(), $session->getClipboard(), Facing::axis(ArgumentParser::parseFacing($session, $args[0] ?? null)));
+		$session->runTask(DynamicStoredFlipTask::from($session->getClipboard(), Facing::axis(ArgumentParser::parseFacing($session, $args[0] ?? null))));
 	}
 }

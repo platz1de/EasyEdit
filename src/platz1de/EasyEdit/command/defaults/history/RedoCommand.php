@@ -36,7 +36,7 @@ class RedoCommand extends EasyEditCommand
 		$count = min(100, (int) ($args[0] ?? 1));
 
 		for ($i = 0; $i < $count; $i++) {
-			$target->redoStep($session->getIdentifier());
+			$target->redoStep($session);
 		}
 	}
 }

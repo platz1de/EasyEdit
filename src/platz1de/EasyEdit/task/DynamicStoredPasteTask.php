@@ -24,33 +24,20 @@ class DynamicStoredPasteTask extends ExecutableTask
 
 	/**
 	 * @param StoredSelectionIdentifier $saveId
-	 * @param string                    $world
-	 * @param Vector3                   $position
+	 * @param Position                  $position
 	 * @param bool                      $keep
 	 * @param bool                      $insert
 	 * @return DynamicStoredPasteTask
 	 */
-	public static function from(StoredSelectionIdentifier $saveId, string $world, Vector3 $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
+	public static function from(StoredSelectionIdentifier $saveId, Position $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
 	{
 		$instance = new self();
 		$instance->saveId = $saveId;
-		$instance->world = $world;
-		$instance->position = $position;
+		$instance->world = $position->getWorld()->getFolderName();
+		$instance->position = $position->asVector3();
 		$instance->keep = $keep;
 		$instance->insert = $insert;
 		return $instance;
-	}
-
-	/**
-	 * @param SessionIdentifier         $owner
-	 * @param StoredSelectionIdentifier $id
-	 * @param Position                  $place
-	 * @param bool                      $keep
-	 * @param bool                      $insert
-	 */
-	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, Position $place, bool $keep, bool $insert = false): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id, $place->getWorld()->getFolderName(), $place->asVector3(), $keep, $insert));
 	}
 
 	/**

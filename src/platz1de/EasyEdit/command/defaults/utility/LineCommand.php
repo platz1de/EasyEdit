@@ -51,17 +51,17 @@ class LineCommand extends EasyEditCommand
 			case "line":
 			case "direct":
 			default:
-				LineTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, new StaticBlock($block));
+				$session->runTask(LineTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->asPlayer()->getPosition(), $target, new StaticBlock($block)));
 				break;
 			case "find":
 			case "search":
-				PathfindingTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, true, new StaticBlock($block));
+				$session->runTask(PathfindingTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->asPlayer()->getPosition(), $target, true, new StaticBlock($block)));
 				break;
 			case "find-line":
 			case "find-direct":
 			case "no-diagonal":
 			case "solid":
-				PathfindingTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, false, new StaticBlock($block));
+				$session->runTask(PathfindingTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->asPlayer()->getPosition(), $target, false, new StaticBlock($block)));
 				break;
 		}
 	}

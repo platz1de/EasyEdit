@@ -10,10 +10,8 @@ use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class HollowSphereCommand extends EasyEditCommand
 {
@@ -35,6 +33,6 @@ class HollowSphereCommand extends EasyEditCommand
 			throw new PatternParseException($exception);
 		}
 
-		SetTask::queue($session, Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]), $pattern, $session->asPlayer()->getPosition());
+		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), null, Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]), $session->asPlayer()->getPosition(), $pattern));
 	}
 }

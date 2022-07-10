@@ -39,13 +39,6 @@ class BenchmarkExecutor extends ExecutableTask
 		return $task;
 	}
 
-	public static function queue(): void
-	{
-		$name = "EasyEdit-Benchmark-" . time();
-		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		EditHandler::runTask(self::from($name));
-	}
-
 	public function execute(): void
 	{
 		$results = [];

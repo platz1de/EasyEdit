@@ -31,31 +31,19 @@ class LineTask extends EditTask
 	private array $blocks = [];
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Vector3               $start
-	 * @param Vector3               $end
-	 * @param StaticBlock           $block
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Vector3                    $start
+	 * @param Vector3                    $end
+	 * @param StaticBlock                $block
 	 * @return LineTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
+	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
 	{
-		$instance = new self($world, $data, $start);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $start);
 		$instance->end = $end;
 		$instance->block = $block;
 		return $instance;
-	}
-
-	/**
-	 * @param SessionIdentifier $player
-	 * @param string            $world
-	 * @param Vector3           $start
-	 * @param Vector3           $end
-	 * @param StaticBlock       $block
-	 */
-	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, StaticBlock $block): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $start, $end, $block));
 	}
 
 	public function execute(): void

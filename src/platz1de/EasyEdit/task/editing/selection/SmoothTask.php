@@ -25,27 +25,17 @@ class SmoothTask extends SelectionEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Selection                  $selection
+	 * @param Vector3                    $position
 	 * @return SmoothTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position): SmoothTask
+	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): SmoothTask
 	{
-		$instance = new self($world, $data, $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $position);
 		$instance->selection = $selection;
 		return $instance;
-	}
-
-	/**
-	 * @param Session   $session
-	 * @param Selection $selection
-	 * @param Position  $place
-	 */
-	public static function queue(Session $session, Selection $selection, Position $place): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3()));
 	}
 
 	/**

@@ -22,6 +22,6 @@ class SetCommand extends EasyEditCommand
 	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
-		SetTask::queue($session, $session->getSelection(), ArgumentParser::parseCombinedPattern($session, $args, 0), $session->asPlayer()->getPosition());
+		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->getSelection(), $session->asPlayer()->getPosition(), ArgumentParser::parseCombinedPattern($session, $args, 0)));
 	}
 }

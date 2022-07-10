@@ -20,6 +20,6 @@ class SmoothCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		SmoothTask::queue($session, $session->getSelection(), $session->asPlayer()->getPosition());
+		$session->runTask(SmoothTask::from($session->getSelection()->getWorldName(), null, $session->getSelection(), $session->asPlayer()->getPosition()));
 	}
 }

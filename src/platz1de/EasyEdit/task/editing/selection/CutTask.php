@@ -46,16 +46,6 @@ class CutTask extends ExecutableTask
 	}
 
 	/**
-	 * @param Session   $session
-	 * @param Selection $selection
-	 * @param Vector3   $place
-	 */
-	public static function queue(Session $session, Selection $selection, Vector3 $place): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), $selection, $place));
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

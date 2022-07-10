@@ -40,16 +40,6 @@ class DynamicStoredFlipTask extends ExecutableTask
 	}
 
 	/**
-	 * @param SessionIdentifier         $owner
-	 * @param StoredSelectionIdentifier $id
-	 * @param int                       $axis
-	 */
-	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, int $axis): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id, $axis));
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

@@ -25,7 +25,7 @@ abstract class AliasedPatternCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		SetTask::queue($session, $session->getSelection(), $this->parsePattern($session, $args), $session->asPlayer()->getPosition());
+		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->getSelection(), $session->asPlayer()->getPosition(), $this->parsePattern($session, $args)));
 	}
 
 	/**

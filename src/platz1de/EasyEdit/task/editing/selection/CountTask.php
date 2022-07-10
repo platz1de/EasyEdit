@@ -2,13 +2,11 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
@@ -16,33 +14,22 @@ use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class CountTask extends SelectionEditTask
 {
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Selection                  $selection
+	 * @param Vector3                    $position
 	 * @return CountTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position): CountTask
+	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): CountTask
 	{
-		$instance = new self($world, $data, $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(false, false), $position);
 		$instance->selection = $selection;
 		return $instance;
-	}
-
-	/**
-	 * @param Session   $session
-	 * @param Selection $selection
-	 * @param Position  $place
-	 */
-	public static function queue(Session $session, Selection $selection, Position $place): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3()));
 	}
 
 	/**

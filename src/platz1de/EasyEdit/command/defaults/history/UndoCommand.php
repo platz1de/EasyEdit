@@ -36,7 +36,7 @@ class UndoCommand extends EasyEditCommand
 		$count = min(100, (int) ($args[0] ?? 1));
 
 		for ($i = 0; $i < $count; $i++) {
-			$target->undoStep($session->getIdentifier());
+			$target->undoStep($session);
 		}
 	}
 }

@@ -4,10 +4,12 @@ namespace platz1de\EasyEdit\task\benchmark;
 
 use Closure;
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
+use pocketmine\world\WorldCreationOptions;
 use UnexpectedValueException;
 
 class BenchmarkManager
@@ -35,7 +37,9 @@ class BenchmarkManager
 		self::$autoSave = MixedUtils::setAutoSave(PHP_INT_MAX);
 		self::$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
 
-		BenchmarkExecutor::queue();
+		$name = "EasyEdit-Benchmark-" . time();
+		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
+		EditHandler::runTask(BenchmarkExecutor::from($name));
 	}
 
 	/**

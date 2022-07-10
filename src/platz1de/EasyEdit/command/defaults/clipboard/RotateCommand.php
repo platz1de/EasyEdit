@@ -20,6 +20,6 @@ class RotateCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		DynamicStoredRotateTask::queue($session->getIdentifier(), $session->getClipboard());
+		$session->runTask(DynamicStoredRotateTask::from($session->getClipboard()));
 	}
 }

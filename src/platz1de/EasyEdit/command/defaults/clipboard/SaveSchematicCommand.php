@@ -28,6 +28,6 @@ class SaveSchematicCommand extends EasyEditCommand
 			throw new InvalidUsageException($this);
 		}
 
-		SchematicSaveTask::queue($session->getIdentifier(), $session->getClipboard(), $schematicName);
+		$session->runTask(SchematicSaveTask::from($session->getClipboard(), $schematicName));
 	}
 }

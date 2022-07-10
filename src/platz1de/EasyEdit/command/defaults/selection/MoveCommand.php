@@ -25,6 +25,6 @@ class MoveCommand extends EasyEditCommand
 	{
 		$selection = $session->getCube();
 
-		MoveTask::queue($session, new MovingCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)), Position::fromObject($selection->getPos1(), $session->asPlayer()->getWorld()));
+		$session->runTask(MoveTask::from($selection->getWorldName(), null, new MovingCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)), Position::fromObject($selection->getPos1(), $session->asPlayer()->getWorld())));
 	}
 }

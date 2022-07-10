@@ -22,30 +22,19 @@ class SetTask extends PatternedEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Selection             $selection
-	 * @param Vector3               $position
-	 * @param Pattern               $pattern
+	 * @param string                     $world
+	 * @param AdditionalDataManager|null $data
+	 * @param Selection                  $selection
+	 * @param Vector3                    $position
+	 * @param Pattern                    $pattern
 	 * @return SetTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
+	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
 	{
-		$instance = new self($world, $data, $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $position);
 		$instance->selection = $selection;
 		$instance->pattern = $pattern;
 		return $instance;
-	}
-
-	/**
-	 * @param Session   $session
-	 * @param Selection $selection
-	 * @param Pattern   $pattern
-	 * @param Position  $place
-	 */
-	public static function queue(Session $session, Selection $selection, Pattern $pattern, Position $place): void
-	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $pattern));
 	}
 
 	/**

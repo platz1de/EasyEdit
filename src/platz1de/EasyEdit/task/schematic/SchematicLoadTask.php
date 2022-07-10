@@ -33,15 +33,6 @@ class SchematicLoadTask extends ExecutableTask
 	}
 
 	/**
-	 * @param SessionIdentifier $player
-	 * @param string            $schematicName
-	 */
-	public static function queue(SessionIdentifier $player, string $schematicName): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($player), self::from(EasyEdit::getSchematicPath() . $schematicName));
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

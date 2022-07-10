@@ -35,15 +35,6 @@ class DynamicStoredRotateTask extends ExecutableTask
 	}
 
 	/**
-	 * @param SessionIdentifier         $owner
-	 * @param StoredSelectionIdentifier $id
-	 */
-	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id): void
-	{
-		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id));
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string
