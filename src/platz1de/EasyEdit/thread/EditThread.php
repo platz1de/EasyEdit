@@ -63,6 +63,7 @@ class EditThread extends Thread
 			}
 			if ($this->getStatus() !== self::STATUS_CRASHED) {
 				$task = ThreadData::getNextTask();
+				ThreadData::setTask($task);
 				if ($task === null) {
 					$this->synchronized(function (): void {
 						if ($this->inputData === "" && !$this->isKilled) {
@@ -70,7 +71,6 @@ class EditThread extends Thread
 						}
 					});
 				} else {
-					ThreadData::setTask($task);
 					try {
 						$this->setStatus(self::STATUS_RUNNING);
 						ThreadData::canExecute(); //clear pending cancel requests
