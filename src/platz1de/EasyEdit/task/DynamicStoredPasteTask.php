@@ -2,13 +2,9 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
@@ -54,7 +50,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(), $selection, $this->position, $this->insert);
+		$this->executor = DynamicPasteTask::from($this->world, $selection, $this->position, $this->insert);
 		$this->executor->executeAssociated($this);
 	}
 

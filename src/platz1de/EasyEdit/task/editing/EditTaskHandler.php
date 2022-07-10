@@ -10,7 +10,6 @@ use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
-use UnexpectedValueException;
 
 class EditTaskHandler
 {
@@ -82,7 +81,7 @@ class EditTaskHandler
 	public function prepareAllInjectionData(): array
 	{
 		if (!$this->result instanceof InjectingSubChunkController) {
-			throw new UnexpectedValueException("Handler wasn't caching for injection of result");
+			return [];
 		}
 		return array_map(static function (InjectingData $injection) {
 			return $injection->toProtocol();
@@ -96,7 +95,7 @@ class EditTaskHandler
 	public function prepareInjectionData(int $chunk): array
 	{
 		if (!$this->result instanceof InjectingSubChunkController) {
-			throw new UnexpectedValueException("Handler wasn't caching for injection of result");
+			return [];
 		}
 		return array_map(static function (InjectingData $injection) {
 			return $injection->toProtocol();

@@ -2,12 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\expanding;
 
-use platz1de\EasyEdit\handler\EditHandler;
-use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -24,15 +20,14 @@ class ExtendBlockFaceTask extends ExpandingTask
 	private int $face;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Vector3                    $block
-	 * @param int                        $face
+	 * @param string  $world
+	 * @param Vector3 $block
+	 * @param int     $face
 	 * @return ExtendBlockFaceTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
+	public static function from(string $world, Vector3 $block, int $face): ExtendBlockFaceTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $block);
+		$instance = new self($world, $block);
 		$instance->face = $face;
 		return $instance;
 	}

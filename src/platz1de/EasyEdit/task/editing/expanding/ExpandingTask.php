@@ -23,12 +23,10 @@ abstract class ExpandingTask extends EditTask
 
 	public function execute(): void
 	{
-		$this->getDataManager()->useFastSet();
-		$this->getDataManager()->setFinal();
 		ChunkCollector::init($this->getWorld());
 		ChunkCollector::collectInput(ChunkInputData::empty());
-		$this->run();
-		ChunkCollector::clear();
+		$this->run(true);
+		$this->finalize();
 	}
 
 	/**

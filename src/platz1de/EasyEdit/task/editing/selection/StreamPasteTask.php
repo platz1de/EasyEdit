@@ -2,15 +2,12 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\math\Vector3;
 
 class StreamPasteTask extends SelectionEditTask
@@ -23,15 +20,14 @@ class StreamPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param BinaryBlockListStream      $selection
-	 * @param Vector3                    $position
+	 * @param string                $world
+	 * @param BinaryBlockListStream $selection
+	 * @param Vector3               $position
 	 * @return StreamPasteTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position): StreamPasteTask
+	public static function from(string $world, BinaryBlockListStream $selection, Vector3 $position): StreamPasteTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

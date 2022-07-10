@@ -11,6 +11,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 abstract class ExecutableTask
 {
 	private int $taskId;
+	private bool $defaultHandler = true;
 
 	public function __construct()
 	{
@@ -19,10 +20,12 @@ abstract class ExecutableTask
 
 	/**
 	 * @param ExecutableTask $task
+	 * @param bool           $useDefaultHandler
 	 */
-	public function executeAssociated(ExecutableTask $task): void
+	public function executeAssociated(ExecutableTask $task, bool $useDefaultHandler = true): void
 	{
 		$this->taskId = $task->getTaskId();
+		$this->defaultHandler = $useDefaultHandler;
 		$this->execute();
 	}
 
@@ -108,5 +111,13 @@ abstract class ExecutableTask
 	public function getTaskId(): int
 	{
 		return $this->taskId;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function useDefaultHandler(): bool
+	{
+		return $this->defaultHandler;
 	}
 }

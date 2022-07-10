@@ -33,6 +33,6 @@ class HollowCylinderCommand extends EasyEditCommand
 			throw new PatternParseException($exception);
 		}
 
-		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), null, Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0], (int) $args[1]), $session->asPlayer()->getPosition(), $pattern));
+		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0], (int) $args[1]), $session->asPlayer()->getPosition(), $pattern));
 	}
 }

@@ -9,7 +9,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\math\Vector3;
 
@@ -19,16 +18,15 @@ class SetTask extends PatternedEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Selection                  $selection
-	 * @param Vector3                    $position
-	 * @param Pattern                    $pattern
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
+	 * @param Pattern   $pattern
 	 * @return SetTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
+	public static function from(string $world, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		$instance->pattern = $pattern;
 		return $instance;

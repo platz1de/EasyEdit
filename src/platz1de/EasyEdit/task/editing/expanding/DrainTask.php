@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task\editing\expanding;
 
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
@@ -18,14 +17,13 @@ class DrainTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Vector3                    $start
+	 * @param string  $world
+	 * @param Vector3 $start
 	 * @return DrainTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start): DrainTask
+	public static function from(string $world, Vector3 $start): DrainTask
 	{
-		return new self($world, $data ?? new AdditionalDataManager(), $start);
+		return new self($world, $start);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

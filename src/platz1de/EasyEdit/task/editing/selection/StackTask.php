@@ -2,20 +2,16 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StackedCube;
-use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 
 class StackTask extends SelectionEditTask
 {
@@ -30,16 +26,15 @@ class StackTask extends SelectionEditTask
 	private bool $insert;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Selection                  $selection
-	 * @param Vector3                    $position
-	 * @param bool                       $insert
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
+	 * @param bool      $insert
 	 * @return StackTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, bool $insert = false): StackTask
+	public static function from(string $world, Selection $selection, Vector3 $position, bool $insert = false): StackTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		$instance->insert = $insert;
 		return $instance;

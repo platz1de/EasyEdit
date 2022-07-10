@@ -33,6 +33,6 @@ class HollowSphereCommand extends EasyEditCommand
 			throw new PatternParseException($exception);
 		}
 
-		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), null, Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]), $session->asPlayer()->getPosition(), $pattern));
+		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]), $session->asPlayer()->getPosition(), $pattern));
 	}
 }

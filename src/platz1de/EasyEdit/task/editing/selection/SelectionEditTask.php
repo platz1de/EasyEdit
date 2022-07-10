@@ -6,6 +6,7 @@ use Closure;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
@@ -23,27 +24,22 @@ abstract class SelectionEditTask extends EditTask
 
 	public function execute(): void
 	{
+		StorageModule::checkFinished();
 		$pieces = $this->selection->split($this->splitOffset ?? Vector3::zero());
 		$this->totalPieces = count($pieces);
 		$this->piecesLeft = count($pieces);
-		if (VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax()) {
-			$this->getDataManager()->useFastSet();
-		}
+		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
 		ChunkCollector::init($this->getWorld());
 		foreach ($pieces as $key => $piece) {
-			if ($key === array_key_last($pieces)) {
-				$this->getDataManager()->setFinal();
-			}
 			$this->current = $piece;
 			$piece->init($this->getPosition());
-			if ($this->requestChunks($piece->getNeededChunks())) {
-				$this->getDataManager()->donePiece();
+			if ($this->requestChunks($piece->getNeededChunks(), $fastSet)) {
 				$this->piecesLeft--;
 			} else {
 				return; //task was cancelled
 			}
 		}
-		ChunkCollector::clear();
+		$this->finalize();
 	}
 
 	/**

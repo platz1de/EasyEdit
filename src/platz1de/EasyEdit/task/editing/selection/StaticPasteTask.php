@@ -2,15 +2,12 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\math\Vector3;
 
 class StaticPasteTask extends SelectionEditTask
@@ -24,15 +21,14 @@ class StaticPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param StaticBlockListSelection   $selection
-	 * @param Vector3                    $position
+	 * @param string                   $world
+	 * @param StaticBlockListSelection $selection
+	 * @param Vector3                  $position
 	 * @return StaticPasteTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position): StaticPasteTask
+	public static function from(string $world, StaticBlockListSelection $selection, Vector3 $position): StaticPasteTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

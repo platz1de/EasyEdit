@@ -2,17 +2,13 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\MovingCube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 
 class MoveTask extends SelectionEditTask
 {
@@ -25,15 +21,14 @@ class MoveTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Selection                  $selection
-	 * @param Vector3                    $position
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
 	 * @return MoveTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): MoveTask
+	public static function from(string $world, Selection $selection, Vector3 $position): MoveTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

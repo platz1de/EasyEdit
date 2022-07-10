@@ -31,6 +31,6 @@ class FillCommand extends EasyEditCommand
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
-		$session->runTask(FillTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->asPlayer()->getPosition()->asVector3(), ArgumentParser::parseFacing($session, $args[1] ?? null), $block));
+		$session->runTask(FillTask::from($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition()->asVector3(), ArgumentParser::parseFacing($session, $args[1] ?? null), $block));
 	}
 }

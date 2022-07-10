@@ -48,6 +48,18 @@ class StorageModule
 		}
 	}
 
+	public static function checkFinished(): void
+	{
+		if (self::$collected !== null) {
+			throw new UnexpectedValueException("Storage module was not properly cleaned");
+		}
+	}
+
+	public static function clear(): void
+	{
+		self::$collected = null;
+	}
+
 	/**
 	 * @return int
 	 */

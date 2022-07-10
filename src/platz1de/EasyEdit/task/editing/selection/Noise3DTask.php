@@ -2,15 +2,11 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
@@ -18,7 +14,6 @@ use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 use pocketmine\world\generator\noise\Noise;
 use pocketmine\world\generator\noise\Simplex;
-use pocketmine\world\Position;
 
 class Noise3DTask extends SelectionEditTask
 {
@@ -32,19 +27,18 @@ class Noise3DTask extends SelectionEditTask
 	private Noise $noise;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Selection                  $selection
-	 * @param Vector3                    $position
-	 * @param int                        $octaves
-	 * @param float                      $persistence
-	 * @param float                      $expansion
-	 * @param float                      $threshold
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
+	 * @param int       $octaves
+	 * @param float     $persistence
+	 * @param float     $expansion
+	 * @param float     $threshold
 	 * @return Noise3DTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
+	public static function from(string $world, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		$instance->octaves = $octaves;
 		$instance->persistence = $persistence;

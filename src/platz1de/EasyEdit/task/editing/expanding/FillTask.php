@@ -3,13 +3,9 @@
 namespace platz1de\EasyEdit\task\editing\expanding;
 
 use BadMethodCallException;
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -27,16 +23,15 @@ class FillTask extends ExpandingTask
 	private StaticBlock $block;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Vector3                    $start
-	 * @param int                        $direction
-	 * @param StaticBlock                $block
+	 * @param string      $world
+	 * @param Vector3     $start
+	 * @param int         $direction
+	 * @param StaticBlock $block
 	 * @return FillTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, int $direction, StaticBlock $block): FillTask
+	public static function from(string $world, Vector3 $start, int $direction, StaticBlock $block): FillTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $start);
+		$instance = new self($world, $start);
 		$instance->direction = $direction;
 		$instance->block = $block;
 		return $instance;

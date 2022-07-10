@@ -20,6 +20,6 @@ class NoiseCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		$session->runTask(Noise3DTask::from($session->getSelection()->getWorldName(), null, $session->getSelection(), $session->asPlayer()->getPosition()));
+		$session->runTask(Noise3DTask::from($session->getSelection()->getWorldName(), $session->getSelection(), $session->asPlayer()->getPosition()));
 	}
 }

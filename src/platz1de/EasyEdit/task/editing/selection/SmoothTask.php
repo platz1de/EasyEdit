@@ -2,21 +2,16 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class SmoothTask extends SelectionEditTask
@@ -25,15 +20,14 @@ class SmoothTask extends SelectionEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Selection                  $selection
-	 * @param Vector3                    $position
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
 	 * @return SmoothTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): SmoothTask
+	public static function from(string $world, Selection $selection, Vector3 $position): SmoothTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

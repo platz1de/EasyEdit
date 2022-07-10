@@ -2,22 +2,18 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 
 class DynamicPasteTask extends SelectionEditTask
 {
@@ -35,16 +31,15 @@ class DynamicPasteTask extends SelectionEditTask
 	protected bool $insert;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param DynamicBlockListSelection  $selection
-	 * @param Vector3                    $position
-	 * @param bool                       $insert
+	 * @param string                    $world
+	 * @param DynamicBlockListSelection $selection
+	 * @param Vector3                   $position
+	 * @param bool                      $insert
 	 * @return DynamicPasteTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, bool $insert = false): DynamicPasteTask
+	public static function from(string $world, DynamicBlockListSelection $selection, Vector3 $position, bool $insert = false): DynamicPasteTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		$instance->insert = $insert;
 		$instance->splitOffset = $position->asVector3();

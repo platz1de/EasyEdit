@@ -8,6 +8,7 @@ namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\InputData;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\session\CrashReportData;
@@ -75,12 +76,14 @@ class EditThread extends Thread
 						$this->setStatus(self::STATUS_RUNNING);
 						ThreadData::canExecute(); //clear pending cancel requests
 						EditTaskResultCache::clear();
+						StorageModule::clear();
 						$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
 						$task->execute();
 						//TODO
 						$result = new TaskResultData();
 						$result->setTaskId($task->getTaskId());
 						$this->sendOutput($result);
+						StorageModule::checkFinished();
 						$this->setStatus(self::STATUS_IDLE);
 					} catch (Throwable $throwable) {
 						$this->logger->logException($throwable);

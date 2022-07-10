@@ -11,7 +11,6 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\thread\ThreadData;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
@@ -21,43 +20,40 @@ use pocketmine\math\Vector3;
 abstract class EditTask extends ExecutableTask
 {
 	private string $world;
-	private AdditionalDataManager $data;
 	private Vector3 $position;
 
 	/**
-	 * @param string                $world
-	 * @param AdditionalDataManager $data
-	 * @param Vector3               $position
+	 * @param string  $world
+	 * @param Vector3 $position
 	 */
-	public function __construct(string $world, AdditionalDataManager $data, Vector3 $position)
+	public function __construct(string $world, Vector3 $position)
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
 		parent::__construct();
 		$this->world = $world;
-		$this->data = $data;
 		$this->position = $position;
 	}
 
 	/**
 	 * @param int[] $chunks
 	 */
-	public function requestChunks(array $chunks): bool
+	public function requestChunks(array $chunks, bool $fastSet): bool
 	{
 		ChunkCollector::request($chunks);
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
-			if ($this->checkData()) {
+			if ($this->checkData($fastSet)) {
 				return true;
 			}
 			EditThread::getInstance()->waitForData();
 		}
-		$this->forceStop();
+		$this->finalize();
 		return false;
 	}
 
-	public function checkData(): bool
+	public function checkData(bool $fastSet): bool
 	{
 		if (ChunkCollector::hasReceivedInput()) {
-			$this->run();
+			$this->run($fastSet);
 			ChunkCollector::clean($this->getCacheClosure());
 			return true;
 		}
@@ -86,7 +82,7 @@ abstract class EditTask extends ExecutableTask
 			}
 			EditThread::getInstance()->waitForData();
 		}
-		$this->forceStop();
+		$this->finalize();
 		return false;
 	}
 
@@ -96,11 +92,8 @@ abstract class EditTask extends ExecutableTask
 	 */
 	public function sendRuntimeChunk(EditTaskHandler $handler, int $chunk): void
 	{
-		if ($this->data->isUsingFastSet()) {
-			$this->sendOutputPacket(new ResultingChunkData($this->world, [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk)));
-		} else {
-			$this->sendOutputPacket(new ResultingChunkData($this->world, [$chunk => $handler->getResult()->getChunk($chunk)]));
-		}
+		$this->sendOutputPacket(new ResultingChunkData($this->world, [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk)));
+
 		ChunkCollector::getChunks()->filterChunks(function (array $c) use ($chunk): array {
 			unset($c[$chunk]);
 			return $c;
@@ -111,13 +104,13 @@ abstract class EditTask extends ExecutableTask
 		});
 	}
 
-	public function run(): void
+	public function run(bool $fastSet): void
 	{
 		$start = microtime(true);
 
-		$handler = new EditTaskHandler(ChunkCollector::getChunks(), $this->getUndoBlockList(), $this->data->isUsingFastSet());
+		$handler = new EditTaskHandler(ChunkCollector::getChunks(), $this->getUndoBlockList(), $fastSet);
 
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($this->data->isUsingFastSet() ? "true" : "false"));
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($fastSet ? "true" : "false"));
 
 		HeightMapCache::prepare();
 
@@ -128,37 +121,20 @@ abstract class EditTask extends ExecutableTask
 
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 
-		if ($this->data->isUsingFastSet()) {
-			$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
-		} else {
-			$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks())));
-		}
-
-		if ($this->data->isFinalPiece()) {
-			$changeId = StorageModule::finishCollecting();
-			if ($this->data->hasResultHandler()) {
-				$closure = $this->data->getResultHandler();
-				$closure($this, $changeId);
-			} else {
-				$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-				/** @var class-string<EditTask> $task */
-				$task = static::class;
-				$task::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $this->data);
-			}
-		}
+		$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
 	}
 
-	public function forceStop(): void
+	public function finalize(): void
 	{
-		if (!$this->data->isFirstPiece()) {
-			$changeId = StorageModule::finishCollecting();
-			if ($this->data->hasResultHandler()) {
-				$closure = $this->data->getResultHandler();
-				$closure($this, $changeId);
-			} else {
-				$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-			}
+		if (!$this->useDefaultHandler()) {
+			return;
 		}
+		$changeId = StorageModule::finishCollecting();
+		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
+		/** @var class-string<EditTask> $task */
+		$task = static::class;
+		$task::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		ChunkCollector::clear();
 	}
 
 	/**
@@ -167,12 +143,11 @@ abstract class EditTask extends ExecutableTask
 	abstract public function executeEdit(EditTaskHandler $handler): void;
 
 	/**
-	 * @param int                   $taskId
-	 * @param string                $time
-	 * @param string                $changed
-	 * @param AdditionalDataManager $data
+	 * @param int    $taskId
+	 * @param string $time
+	 * @param string $changed
 	 */
-	abstract public static function notifyUser(int $taskId, string $time, string $changed, AdditionalDataManager $data): void;
+	abstract public static function notifyUser(int $taskId, string $time, string $changed): void;
 
 	/**
 	 * Filters actually edited chunks
@@ -221,25 +196,15 @@ abstract class EditTask extends ExecutableTask
 		return $this->position;
 	}
 
-	/**
-	 * @return AdditionalDataManager
-	 */
-	public function getDataManager(): AdditionalDataManager
-	{
-		return $this->data;
-	}
-
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->world);
-		$stream->putString($this->data->fastSerialize());
 		$stream->putVector($this->position);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
-		$this->data = AdditionalDataManager::fastDeserialize($stream->getString());
 		$this->position = $stream->getVector();
 	}
 }

@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
@@ -19,15 +18,23 @@ use pocketmine\world\World;
 class CountTask extends SelectionEditTask
 {
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Selection                  $selection
-	 * @param Vector3                    $position
+	 * @var int[]
+	 */
+	private array $counted = [];
+	/**
+	 * @var int[][]
+	 */
+	private static array $stupidHack = [];
+
+	/**
+	 * @param string    $world
+	 * @param Selection $selection
+	 * @param Vector3   $position
 	 * @return CountTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): CountTask
+	public static function from(string $world, Selection $selection, Vector3 $position): CountTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(), $position);
+		$instance = new self($world, $position);
 		$instance->selection = $selection;
 		return $instance;
 	}
@@ -50,33 +57,31 @@ class CountTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param int                   $taskId
-	 * @param string                $time
-	 * @param string                $changed
-	 * @param AdditionalDataManager $data
+	 * @param int    $taskId
+	 * @param string $time
+	 * @param string $changed
 	 */
-	public static function notifyUser(int $taskId, string $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(int $taskId, string $time, string $changed): void
 	{
-		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($data->getCountedBlocks())])));
+		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum(self::$stupidHack[$taskId])])));
 		$msg = "";
-		foreach ($data->getCountedBlocks() as $block => $count) {
+		foreach (self::$stupidHack[$taskId] as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
 		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, $msg, false));
+		unset(self::$stupidHack[$taskId]);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
-		$blocks = $this->getDataManager()->getCountedBlocks();
-		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler, &$blocks): void {
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
-			if (isset($blocks[$id])) {
-				$blocks[$id]++;
+			if (isset($this->counted[$id])) {
+				$this->counted[$id]++;
 			} else {
-				$blocks[$id] = 1;
+				$this->counted[$id] = 1;
 			}
 		}, SelectionContext::full(), $this->getTotalSelection());
-		arsort($blocks, SORT_NUMERIC);
-		$this->getDataManager()->setCountedBlocks($blocks);
+		self::$stupidHack[$this->getTaskId()] = $this->counted;
 	}
 }

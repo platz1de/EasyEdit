@@ -77,7 +77,7 @@ class DefaultEventListener implements Listener
 				}
 			} elseif ($item instanceof BlazeRod && $item->getNamedTag()->getByte("isBuilderRod", 0) === 1 && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT) && $event->getPlayer()->isCreative()) {
 				$event->cancel();
-				SessionManager::get($event->getPlayer())->runTask(ExtendBlockFaceTask::from($event->getPlayer()->getWorld()->getFolderName(), null, $event->getBlock()->getPosition(), $event->getFace()));
+				SessionManager::get($event->getPlayer())->runTask(ExtendBlockFaceTask::from($event->getPlayer()->getWorld()->getFolderName(), $event->getBlock()->getPosition(), $event->getFace()));
 			}
 		}
 	}

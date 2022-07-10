@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\editing\expanding;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -14,14 +13,13 @@ class PasteBlockStatesTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param string                     $world
-	 * @param AdditionalDataManager|null $data
-	 * @param Vector3                    $start
+	 * @param string  $world
+	 * @param Vector3 $start
 	 * @return PasteBlockStatesTask
 	 */
-	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
+	public static function from(string $world, Vector3 $start): PasteBlockStatesTask
 	{
-		return new self($world, $data ?? new AdditionalDataManager(), $start);
+		return new self($world, $start);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

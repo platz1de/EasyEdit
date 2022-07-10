@@ -21,6 +21,6 @@ class CopyCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		$session->runTask(CopyTask::from($session->getSelection()->getWorldName(), null, $session->getSelection(), ArgumentParser::parseRelativePosition($session, $args[0] ?? null)));
+		$session->runTask(CopyTask::from($session->getSelection()->getWorldName(), $session->getSelection(), ArgumentParser::parseRelativePosition($session, $args[0] ?? null)));
 	}
 }

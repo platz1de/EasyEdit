@@ -3,14 +3,11 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
-use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;

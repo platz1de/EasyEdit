@@ -50,7 +50,9 @@ class InjectingSubChunkController extends ChunkController
 	 */
 	public function getInjections(): array
 	{
-		return $this->injections;
+		$injections = $this->injections;
+		unset($this->injections);
+		return $injections;
 	}
 
 	/**
@@ -65,6 +67,7 @@ class InjectingSubChunkController extends ChunkController
 			$index = World::blockHash($x, $i, $z);
 			if (isset($this->injections[$index])) {
 				$injections[$index] = $this->injections[$index];
+				unset($this->injections[$index]);
 			}
 		}
 		return $injections;

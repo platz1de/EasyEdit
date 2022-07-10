@@ -20,6 +20,6 @@ class DrainCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		$session->runTask(DrainTask::from($session->asPlayer()->getWorld()->getFolderName(), null, $session->asPlayer()->getPosition()->asVector3()));
+		$session->runTask(DrainTask::from($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition()->asVector3()));
 	}
 }
