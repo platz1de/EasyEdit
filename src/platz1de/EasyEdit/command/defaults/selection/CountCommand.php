@@ -5,10 +5,8 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CountTask;
-use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class CountCommand extends EasyEditCommand
 {
@@ -18,17 +16,17 @@ class CountCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		if (isset($args[0])) {
-			$selection = Sphere::aroundPoint($player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]);
+			$selection = Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]);
 		} else {
-			$selection = ArgumentParser::getSelection($player);
+			$selection = $session->getSelection();
 		}
 
-		CountTask::queue(SessionManager::get($player), $selection, $player->getPosition());
+		CountTask::queue($session, $selection, $session->asPlayer()->getPosition());
 	}
 }

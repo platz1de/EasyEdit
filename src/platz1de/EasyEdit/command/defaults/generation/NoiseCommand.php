@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults\generation;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\Noise3DTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -17,11 +18,11 @@ class NoiseCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		Noise3DTask::queue(SessionManager::get($player), ArgumentParser::getSelection($player), $player->getPosition());
+		Noise3DTask::queue($session, $session->getSelection(), $session->asPlayer()->getPosition());
 	}
 }

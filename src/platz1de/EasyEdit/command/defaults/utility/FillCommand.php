@@ -7,11 +7,10 @@ use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\expanding\FillTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
-use pocketmine\player\Player;
 
 class FillCommand extends EasyEditCommand
 {
@@ -21,10 +20,10 @@ class FillCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
 		try {
@@ -32,6 +31,6 @@ class FillCommand extends EasyEditCommand
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
-		FillTask::queue(SessionManager::get($player)->getIdentifier(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3(), ArgumentParser::parseFacing($player, $args[1] ?? null), $block);
+		FillTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition()->asVector3(), ArgumentParser::parseFacing($session, $args[1] ?? null), $block);
 	}
 }

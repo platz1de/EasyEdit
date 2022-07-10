@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\history;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\utils\ConfigManager;
-use pocketmine\player\Player;
 
 class UndoCommand extends EasyEditCommand
 {
@@ -17,28 +17,26 @@ class UndoCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		if (isset($args[0]) && !is_numeric($args[0]) && ConfigManager::isAllowingOtherHistory() && $player->hasPermission(KnownPermissions::PERMISSION_HISTORY_OTHER)) {
-			$target = $args[0];
+		if (isset($args[0]) && !is_numeric($args[0]) && ConfigManager::isAllowingOtherHistory() && $session->asPlayer()->hasPermission(KnownPermissions::PERMISSION_HISTORY_OTHER)) {
+			$target = SessionManager::get($args[0], false);
 			array_shift($args);
 		} else {
-			$target = $player->getName();
+			$target = $session;
 		}
 
-		$session = SessionManager::get($target);
-
-		if (!$session->canUndo()) {
-			Messages::send($player, "no-history");
+		if (!$target->canUndo()) {
+			Messages::send($session->getPlayer(), "no-history");
 		}
 
 		$count = min(100, (int) ($args[0] ?? 1));
 
 		for ($i = 0; $i < $count; $i++) {
-			$session->undoStep(SessionManager::get($player)->getIdentifier());
+			$target->undoStep($session->getIdentifier());
 		}
 	}
 }

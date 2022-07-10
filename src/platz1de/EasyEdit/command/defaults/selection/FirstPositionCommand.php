@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class FirstPositionCommand extends EasyEditCommand
 {
@@ -16,15 +16,15 @@ class FirstPositionCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		if (count($args) > 2) {
-			Cube::selectPos1($player, ArgumentParser::parseCoordinates($player, $args[0], $args[1], $args[2]));
+			Cube::selectPos1($session->asPlayer(), ArgumentParser::parseCoordinates($session, $args[0], $args[1], $args[2]));
 		} else {
-			Cube::selectPos1($player, $player->getPosition()->floor());
+			Cube::selectPos1($session->asPlayer(), $session->asPlayer()->getPosition()->floor());
 		}
 	}
 }

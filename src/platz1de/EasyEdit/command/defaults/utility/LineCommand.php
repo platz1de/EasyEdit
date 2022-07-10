@@ -7,14 +7,13 @@ use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\LineTask;
 use platz1de\EasyEdit\task\editing\pathfinding\PathfindingTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\player\Player;
 
 class LineCommand extends EasyEditCommand
 {
@@ -24,10 +23,10 @@ class LineCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 3, $this);
 		if (count($args) > 3 && !is_numeric($args[0])) {
@@ -36,7 +35,7 @@ class LineCommand extends EasyEditCommand
 			$mode = "direct"; //TODO: use a better parser
 		}
 
-		$target = ArgumentParser::parseCoordinates($player, $args[0], $args[1], $args[2]);
+		$target = ArgumentParser::parseCoordinates($session, $args[0], $args[1], $args[2]);
 
 		if (isset($args[3])) {
 			try {
@@ -52,17 +51,17 @@ class LineCommand extends EasyEditCommand
 			case "line":
 			case "direct":
 			default:
-				LineTask::queue(SessionManager::get($player)->getIdentifier(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, new StaticBlock($block));
+				LineTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, new StaticBlock($block));
 				break;
 			case "find":
 			case "search":
-				PathfindingTask::queue(SessionManager::get($player)->getIdentifier(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, true, new StaticBlock($block));
+				PathfindingTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, true, new StaticBlock($block));
 				break;
 			case "find-line":
 			case "find-direct":
 			case "no-diagonal":
 			case "solid":
-				PathfindingTask::queue(SessionManager::get($player)->getIdentifier(), $player->getWorld()->getFolderName(), $player->getPosition(), $target, false, new StaticBlock($block));
+				PathfindingTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, false, new StaticBlock($block));
 				break;
 		}
 	}

@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\Session;
 use pocketmine\item\VanillaItems;
-use pocketmine\player\Player;
 
 class WandCommand extends EasyEditCommand
 {
@@ -15,11 +15,11 @@ class WandCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		$player->getInventory()->setItem($player->getInventory()->getHeldItemIndex(), VanillaItems::WOODEN_AXE()); //some people prefer a command I guess
+		$session->asPlayer()->getInventory()->setItem($session->asPlayer()->getInventory()->getHeldItemIndex(), VanillaItems::WOODEN_AXE()); //some people prefer a command I guess
 	}
 }

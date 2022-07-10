@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\utils\MixedUtils;
-use pocketmine\player\Player;
 
 class BenchmarkCommand extends EasyEditCommand
 {
@@ -17,19 +17,19 @@ class BenchmarkCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		if (BenchmarkManager::isRunning()) {
-			Messages::send($player, "benchmark-running");
+			Messages::send($session->getPlayer(), "benchmark-running");
 			return;
 		}
 
-		Messages::send($player, "benchmark-start");
+		Messages::send($session->getPlayer(), "benchmark-start");
 
-		$executor = $player->getName();
+		$executor = $session->getPlayer();
 		BenchmarkManager::start(function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($executor): void {
 			$i = 0;
 			$resultMsg = array_map(static function (array $data) use (&$i): string {

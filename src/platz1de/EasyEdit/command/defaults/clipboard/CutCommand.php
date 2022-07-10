@@ -4,10 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CutTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class CutCommand extends EasyEditCommand
 {
@@ -17,11 +16,11 @@ class CutCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		CutTask::queue(SessionManager::get($player), ArgumentParser::getSelection($player), ArgumentParser::parseRelativePosition($player, $args[0] ?? null));
+		CutTask::queue($session, $session->getSelection(), ArgumentParser::parseRelativePosition($session, $args[0] ?? null));
 	}
 }

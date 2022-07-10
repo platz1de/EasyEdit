@@ -8,10 +8,10 @@ use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class BrushCommand extends EasyEditCommand
@@ -22,10 +22,10 @@ class BrushCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
 		$type = BrushHandler::nameToIdentifier($args[0]);
@@ -34,7 +34,7 @@ class BrushCommand extends EasyEditCommand
 		switch ($type) {
 			case BrushHandler::BRUSH_SPHERE:
 				try {
-					$args[2] = PatternParser::validateInput($args[2] ?? "stone", $player);
+					$args[2] = PatternParser::validateInput($args[2] ?? "stone", $session->asPlayer());
 				} catch (ParseError $exception) {
 					throw new PatternParseException($exception);
 				}
@@ -46,9 +46,9 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_NATURALIZE:
 				try {
-					$args[2] = PatternParser::validateInput($args[2] ?? "grass", $player);
-					$args[3] = PatternParser::validateInput($args[3] ?? "dirt", $player);
-					$args[4] = PatternParser::validateInput($args[4] ?? "stone", $player);
+					$args[2] = PatternParser::validateInput($args[2] ?? "grass", $session->asPlayer());
+					$args[3] = PatternParser::validateInput($args[3] ?? "dirt", $session->asPlayer());
+					$args[4] = PatternParser::validateInput($args[4] ?? "stone", $session->asPlayer());
 				} catch (ParseError $exception) {
 					throw new PatternParseException($exception);
 				}
@@ -59,7 +59,7 @@ class BrushCommand extends EasyEditCommand
 				break;
 			case BrushHandler::BRUSH_CYLINDER:
 				try {
-					$args[3] = PatternParser::validateInput($args[3] ?? "stone", $player);
+					$args[3] = PatternParser::validateInput($args[3] ?? "stone", $session->asPlayer());
 				} catch (ParseError $exception) {
 					throw new PatternParseException($exception);
 				}
@@ -77,6 +77,6 @@ class BrushCommand extends EasyEditCommand
 		}
 		$item->setLore($lore);
 		$item->setCustomName(TextFormat::GOLD . "Brush");
-		$player->getInventory()->setItem($player->getInventory()->getHeldItemIndex(), $item);
+		$session->asPlayer()->getInventory()->setItem($session->asPlayer()->getInventory()->getHeldItemIndex(), $item);
 	}
 }

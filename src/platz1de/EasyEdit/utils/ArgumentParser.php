@@ -4,35 +4,27 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
-use platz1de\EasyEdit\command\exception\NoClipboardException;
-use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\command\exception\PatternParseException;
-use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
-use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionManager;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
-use pocketmine\player\Player;
-use Throwable;
 
 class ArgumentParser
 {
-	public static function parseCoordinates(Player $player, string $x, string $y, string $z): Vector3
+	public static function parseCoordinates(Session $session, string $x, string $y, string $z): Vector3
 	{
-		return self::parseCoordinatesNonRounded($player, $x, $y, $z)->floor();
+		return self::parseCoordinatesNonRounded($session, $x, $y, $z)->floor();
 	}
 
 	/**
 	 * In most cases, you want the normal parseCoordinates instead (worldedit normally uses blocks when editing so...)
 	 */
-	public static function parseCoordinatesNonRounded(Player $player, string $x, string $y, string $z): Vector3
+	public static function parseCoordinatesNonRounded(Session $session, string $x, string $y, string $z): Vector3
 	{
+		$player = $session->asPlayer();
 		if ($x !== "" && $x[0] === "^") {
 			//really weird directional coordinates, this essentially rotates the whole coordinate system
 			if (($y[0] ?? "") !== "^" || ($z[0] ?? "") !== "^") {
@@ -60,85 +52,42 @@ class ArgumentParser
 	}
 
 	/**
-	 * @param Player      $player
+	 * @param Session     $session
 	 * @param string|null $args
 	 * @return Vector3
 	 */
-	public static function parseRelativePosition(Player $player, string $args = null): Vector3
+	public static function parseRelativePosition(Session $session, string $args = null): Vector3
 	{
 		return match (strtolower($args ?? "")) {
-			"center", "c", "middle" => self::getSelection($player)->getBottomCenter(),
-			default => $player->getPosition()
+			"center", "c", "middle" => $session->getSelection()->getBottomCenter(),
+			default => $session->asPlayer()->getPosition()
 		};
 	}
 
 	/**
-	 * @param Player $player
-	 * @return Selection
-	 */
-	public static function getSelection(Player $player): Selection
-	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-		} catch (Throwable) {
-			throw new NoSelectionException();
-		}
-		if (!$selection->isValid()) {
-			throw new NoSelectionException();
-		}
-		return $selection;
-	}
-
-	/**
-	 * @param Player $player
-	 * @return Cube
-	 */
-	public static function getCube(Player $player): Cube
-	{
-		$selection = self::getSelection($player);
-		if (!$selection instanceof Cube) {
-			throw new WrongSelectionTypeException($selection::class, Cube::class);
-		}
-		return $selection;
-	}
-
-	/**
-	 * @param Player $player
-	 * @return StoredSelectionIdentifier
-	 */
-	public static function getClipboard(Player $player): StoredSelectionIdentifier
-	{
-		$clipboard = SessionManager::get($player)->getClipboard();
-		if (!$clipboard->isValid()) {
-			throw new NoClipboardException();
-		}
-		return $clipboard;
-	}
-
-	/**
-	 * @param Player      $player
+	 * @param Session     $session
 	 * @param string[]    $args
 	 * @param int         $start
 	 * @param string|null $default
 	 * @return Pattern
 	 */
-	public static function parseCombinedPattern(Player $player, array $args, int $start, string $default = null): Pattern
+	public static function parseCombinedPattern(Session $session, array $args, int $start, string $default = null): Pattern
 	{
 		try {
-			return PatternParser::parseInputCombined($args, $start, $player, $default);
+			return PatternParser::parseInputCombined($args, $start, $session->asPlayer(), $default);
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
 	}
 
 	/**
-	 * @param Player      $player
+	 * @param Session     $session
 	 * @param string|null $args1
 	 * @param string|null $args2
 	 * @param int|null    $amount
 	 * @return Vector3
 	 */
-	public static function parseDirectionVector(Player $player, string $args1 = null, string $args2 = null, int &$amount = null): Vector3
+	public static function parseDirectionVector(Session $session, string $args1 = null, string $args2 = null, int &$amount = null): Vector3
 	{
 		$amount = 1;
 		if (is_numeric($args1)) {
@@ -150,15 +99,15 @@ class ArgumentParser
 				$amount = (int) $args2;
 			}
 		}
-		return Vector3::zero()->getSide(self::parseFacing($player, $direction), $amount);
+		return Vector3::zero()->getSide(self::parseFacing($session, $direction), $amount);
 	}
 
 	/**
-	 * @param Player      $player
+	 * @param Session     $session
 	 * @param string|null $direction
 	 * @return int
 	 */
-	public static function parseFacing(Player $player, string $direction = null): int
+	public static function parseFacing(Session $session, string $direction = null): int
 	{
 		return match (strtolower($direction ?? "")) {
 			"north", "n" => Facing::NORTH,
@@ -167,7 +116,7 @@ class ArgumentParser
 			"west", "w" => Facing::WEST,
 			"up", "u" => Facing::UP,
 			"down", "d" => Facing::DOWN,
-			default => VectorUtils::getFacing($player->getLocation())
+			default => VectorUtils::getFacing($session->asPlayer()->getLocation())
 		};
 	}
 

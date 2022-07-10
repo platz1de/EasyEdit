@@ -4,9 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\math\Vector3;
-use pocketmine\player\Player;
 use pocketmine\world\World;
 
 class ExtendCommand extends EasyEditCommand
@@ -17,12 +17,12 @@ class ExtendCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		$selection = ArgumentParser::getCube($player);
+		$selection = $session->getCube();
 		$pos1 = $selection->getPos1();
 		$pos2 = $selection->getPos2();
 
@@ -32,7 +32,7 @@ class ExtendCommand extends EasyEditCommand
 			return;
 		}
 
-		$offset = ArgumentParser::parseDirectionVector($player, $args[0] ?? null, $args[1] ?? null, $count);
+		$offset = ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null, $count);
 		if ($count < 0 xor $offset->abs()->equals($offset)) {
 			$selection->setPos1($pos1);
 			$selection->setPos2($pos2->addVector($offset));

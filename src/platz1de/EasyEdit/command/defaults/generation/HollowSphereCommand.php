@@ -9,6 +9,7 @@ use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -22,18 +23,18 @@ class HollowSphereCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 2, $this);
 		try {
-			$pattern = new SidesPattern((float) ($args[2] ?? 1.0), [PatternParser::parseInput($args[1], $player)]);
+			$pattern = new SidesPattern((float) ($args[2] ?? 1.0), [PatternParser::parseInput($args[1], $session->asPlayer())]);
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
 
-		SetTask::queue(SessionManager::get($player), Sphere::aroundPoint($player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]), $pattern, $player->getPosition());
+		SetTask::queue($session, Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]), $pattern, $session->asPlayer()->getPosition());
 	}
 }

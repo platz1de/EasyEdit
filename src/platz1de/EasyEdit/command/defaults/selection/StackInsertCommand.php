@@ -5,10 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\selection\StackedCube;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\StackTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class StackInsertCommand extends EasyEditCommand
 {
@@ -18,13 +17,13 @@ class StackInsertCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		$selection = ArgumentParser::getCube($player);
+		$selection = $session->getCube();
 
-		StackTask::queue(SessionManager::get($player), new StackedCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($player, $args[0] ?? null, $args[1] ?? null)), $player->getPosition(), true);
+		StackTask::queue($session, new StackedCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)), $session->asPlayer()->getPosition(), true);
 	}
 }

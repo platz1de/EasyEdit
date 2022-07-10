@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\task\CollectStatsTask;
-use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class StatusCommand extends EasyEditCommand
@@ -18,21 +18,21 @@ class StatusCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
 		if (EditThread::getInstance()->getStatus() === EditThread::STATUS_CRASHED) {
-			Messages::send($player, "thread-status", [
+			Messages::send($session->getPlayer(), "thread-status", [
 				"{task}" => "unknown",
 				"{queue}" => "unknown",
 				"{status}" => TextFormat::RED . "CRASHED" . TextFormat::RESET,
 				"{progress}" => "unknown"
 			]);
 		} else {
-			$p = $player->getName();
+			$p = $session->getPlayer();
 			CollectStatsTask::from(static function (string $taskName, int $taskId, string $responsiblePlayer, float $progress, int $queueLength, int $storageSize, int $currentMemory, int $realMemory) use ($p): void {
 				if ($taskId !== -1) {
 					$status = TextFormat::GOLD . "RUNNING" . TextFormat::RESET . ": " . self::getColoredTiming();

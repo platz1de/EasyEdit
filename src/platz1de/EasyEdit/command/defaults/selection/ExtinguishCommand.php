@@ -8,11 +8,9 @@ use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\selection\Sphere;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
-use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\player\Player;
 
 class ExtinguishCommand extends EasyEditCommand
 {
@@ -22,17 +20,17 @@ class ExtinguishCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		if (isset($args[0])) {
-			$selection = Sphere::aroundPoint($player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]);
+			$selection = Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]);
 		} else {
-			$selection = ArgumentParser::getSelection($player);
+			$selection = $session->getSelection();
 		}
 
-		SetTask::queue(SessionManager::get($player), $selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())]), $player->getPosition());
+		SetTask::queue($session, $selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())]), $session->asPlayer()->getPosition());
 	}
 }

@@ -9,10 +9,9 @@ use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class HollowCylinderCommand extends EasyEditCommand
 {
@@ -22,18 +21,18 @@ class HollowCylinderCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 3, $this);
 		try {
-			$pattern = new SidesPattern((float) ($args[3] ?? 1.0), [PatternParser::parseInput($args[2], $player)]);
+			$pattern = new SidesPattern((float) ($args[3] ?? 1.0), [PatternParser::parseInput($args[2], $session->asPlayer())]);
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);
 		}
 
-		SetTask::queue(SessionManager::get($player), Cylinder::aroundPoint($player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
+		SetTask::queue($session, Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $session->asPlayer()->getPosition());
 	}
 }

@@ -5,9 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\thread\input\task\CancelTaskData;
-use pocketmine\player\Player;
 
 class CancelCommand extends EasyEditCommand
 {
@@ -17,17 +17,17 @@ class CancelCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		if (BenchmarkManager::isRunning()) {
-			Messages::send($player, "benchmark-cancel");
+			Messages::send($session->getPlayer(), "benchmark-cancel");
 		} else {
 			//TODO: check if task is running
 			CancelTaskData::from();
-			Messages::send($player, "task-cancelled");
+			Messages::send($session->getPlayer(), "task-cancelled");
 		}
 	}
 }

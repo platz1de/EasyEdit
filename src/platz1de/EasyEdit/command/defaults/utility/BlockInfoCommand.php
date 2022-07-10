@@ -4,9 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\Session;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class BlockInfoCommand extends EasyEditCommand
@@ -17,12 +17,12 @@ class BlockInfoCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		$item = VanillaItems::STICK()->setNamedTag(CompoundTag::create()->setByte("isInfoStick", 1))->setCustomName(TextFormat::YELLOW . "InfoStick");
-		$player->getInventory()->setItem($player->getInventory()->getHeldItemIndex(), $item);
+		$session->asPlayer()->getInventory()->setItem($session->asPlayer()->getInventory()->getHeldItemIndex(), $item);
 	}
 }

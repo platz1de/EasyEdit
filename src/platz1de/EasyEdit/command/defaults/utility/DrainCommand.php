@@ -4,9 +4,8 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\expanding\DrainTask;
-use pocketmine\player\Player;
 
 class DrainCommand extends EasyEditCommand
 {
@@ -16,11 +15,11 @@ class DrainCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
-		DrainTask::queue(SessionManager::get($player)->getIdentifier(), $player->getWorld()->getFolderName(), $player->getPosition()->asVector3());
+		DrainTask::queue($session->getIdentifier(), $session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition()->asVector3());
 	}
 }

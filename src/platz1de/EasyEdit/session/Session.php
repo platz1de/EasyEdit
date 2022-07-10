@@ -3,10 +3,21 @@
 namespace platz1de\EasyEdit\session;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\command\exception\NoClipboardException;
+use platz1de\EasyEdit\command\exception\NoSelectionException;
+use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
+use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionManager;
+use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
+use pocketmine\player\Player;
+use pocketmine\Server;
 use SplStack;
+use Throwable;
 
 class Session
 {
@@ -49,6 +60,26 @@ class Session
 	public function getPlayer(): string
 	{
 		return $this->id->getName();
+	}
+
+	/**
+	 * @return Player
+	 */
+	public function asPlayer(): Player
+	{
+		$player = Server::getInstance()->getPlayerExact($this->getPlayer());
+		if ($player === null) {
+			throw new BadMethodCallException("Player is not online");
+		}
+		return $player;
+	}
+
+	/**
+	 * @param ExecutableTask $task
+	 */
+	public function runTask(ExecutableTask $task): void
+	{
+		EditHandler::runPlayerTask($this, $task);
 	}
 
 	/**
@@ -110,6 +141,9 @@ class Session
 	 */
 	public function getClipboard(): StoredSelectionIdentifier
 	{
+		if (!$this->clipboard->isValid()) {
+			throw new NoClipboardException();
+		}
 		return $this->clipboard;
 	}
 
@@ -122,5 +156,33 @@ class Session
 			CleanStorageTask::from([$this->clipboard]);
 		}
 		$this->clipboard = $id;
+	}
+
+	/**
+	 * @return Selection
+	 */
+	public function getSelection(): Selection
+	{
+		try {
+			$selection = SelectionManager::getFromPlayer($this->getPlayer());
+		} catch (Throwable) {
+			throw new NoSelectionException();
+		}
+		if (!$selection->isValid()) {
+			throw new NoSelectionException();
+		}
+		return $selection;
+	}
+
+	/**
+	 * @return Cube
+	 */
+	public function getCube(): Cube
+	{
+		$selection = $this->getSelection();
+		if (!$selection instanceof Cube) {
+			throw new WrongSelectionTypeException($selection::class, Cube::class);
+		}
+		return $selection;
 	}
 }

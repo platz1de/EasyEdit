@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\session\Session;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -50,10 +51,10 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	abstract public function process(Player $player, array $args): void;
+	abstract public function process(Session $session, array $args): void;
 
 	/**
 	 * @return EasyEdit

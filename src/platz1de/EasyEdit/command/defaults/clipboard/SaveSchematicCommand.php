@@ -5,10 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\schematic\SchematicSaveTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\player\Player;
 
 class SaveSchematicCommand extends EasyEditCommand
 {
@@ -18,10 +17,10 @@ class SaveSchematicCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Player   $player
+	 * @param Session  $session
 	 * @param string[] $args
 	 */
-	public function process(Player $player, array $args): void
+	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
 		$schematicName = pathinfo($args[0] ?? "", PATHINFO_FILENAME);
@@ -29,6 +28,6 @@ class SaveSchematicCommand extends EasyEditCommand
 			throw new InvalidUsageException($this);
 		}
 
-		SchematicSaveTask::queue(SessionManager::get($player)->getIdentifier(), ArgumentParser::getClipboard($player), $schematicName);
+		SchematicSaveTask::queue($session->getIdentifier(), $session->getClipboard(), $schematicName);
 	}
 }
