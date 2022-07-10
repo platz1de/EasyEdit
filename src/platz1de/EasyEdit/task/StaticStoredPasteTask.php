@@ -81,7 +81,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		} else {
 			$this->executor = StreamPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero());
 		}
-		$this->executor->execute();
+		$this->executor->executeAssociated($this);
 	}
 
 	public function getProgress(): float

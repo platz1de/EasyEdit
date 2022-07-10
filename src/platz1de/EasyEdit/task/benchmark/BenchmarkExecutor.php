@@ -60,7 +60,7 @@ class BenchmarkExecutor extends ExecutableTask
 
 		//Task #1 - set static
 		$this->setSimpleBenchmark = SetTask::from($this->world, $setData, $testCube, $pos, StaticBlock::from(VanillaBlocks::STONE()));
-		$this->setSimpleBenchmark->execute();
+		$this->setSimpleBenchmark->executeAssociated($this);
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
@@ -71,7 +71,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = SetTask::from($this->world, $complexData, $testCube, $pos, $pattern);
-		$this->setComplexBenchmark->execute();
+		$this->setComplexBenchmark->executeAssociated($this);
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
@@ -99,13 +99,14 @@ class BenchmarkExecutor extends ExecutableTask
 
 		//Task #3 - copy
 		$this->copyBenchmark = CopyTask::from($this->world, $copyData, $testCube, $pos);
-		$this->copyBenchmark->execute();
+		$this->copyBenchmark->executeAssociated($this);
 
 		if ($pasteBenchmark === null) {
 			throw new UnexpectedValueException("Failed to handle result of copy benchmark");
 		}
 		$this->pasteBenchmark = $pasteBenchmark;
-		$pasteBenchmark->execute();
+		/** @var DynamicPasteTask $pasteBenchmark */
+		$pasteBenchmark->executeAssociated($this);
 
 		$this->sendOutputPacket(new BenchmarkCallbackData($world, $results));
 	}

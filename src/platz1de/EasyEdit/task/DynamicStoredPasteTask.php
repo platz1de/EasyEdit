@@ -68,7 +68,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 			StorageModule::cleanStored($this->saveId);
 		}
 		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->insert);
-		$this->executor->execute();
+		$this->executor->executeAssociated($this);
 	}
 
 	public function getProgress(): float

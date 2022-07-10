@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\thread\output\OutputData;
 use pocketmine\scheduler\Task;
+use Thread;
 
 class EditAdapter extends Task
 {
@@ -30,6 +31,9 @@ class EditAdapter extends Task
 	 */
 	public static function getId(): int
 	{
+		if (Thread::getCurrentThread() instanceof EditThread) {
+			return -1;
+		}
 		return ++self::$id;
 	}
 

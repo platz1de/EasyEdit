@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\handler;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
@@ -64,6 +65,7 @@ class EditHandler
 	public static function processSessionOutput(SessionOutputData $data): void
 	{
 		if (!isset(self::$executors[$data->getTaskId()])) {
+			EasyEdit::getInstance()->getLogger()->error("Received output for invalid task " . $data->getTaskId());
 			return;
 		}
 		$data->handleSession(self::$executors[$data->getTaskId()]);

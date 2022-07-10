@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task;
 
+use InvalidArgumentException;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\OutputData;
@@ -14,6 +15,15 @@ abstract class ExecutableTask
 	public function __construct()
 	{
 		$this->taskId = EditAdapter::getId();
+	}
+
+	/**
+	 * @param ExecutableTask $task
+	 */
+	public function executeAssociated(ExecutableTask $task): void
+	{
+		$this->taskId = $task->getTaskId();
+		$this->execute();
 	}
 
 	abstract public function execute(): void;
@@ -33,6 +43,9 @@ abstract class ExecutableTask
 	 */
 	public function sendOutputPacket(OutputData $data): void
 	{
+		if ($this->taskId === -1) {
+			throw new InvalidArgumentException("Cannot send output data for executor tasks");
+		}
 		$data->setTaskId($this->taskId);
 		EditThread::getInstance()->sendOutput($data);
 	}
