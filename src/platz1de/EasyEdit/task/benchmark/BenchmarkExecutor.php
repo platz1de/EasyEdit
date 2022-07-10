@@ -48,7 +48,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//4x 3x3 Chunk cubes
 		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
-		$setData = new AdditionalDataManager(true, false);
+		$setData = new AdditionalDataManager(false);
 		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
 
 		//Task #1 - set static
@@ -57,7 +57,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 
-		$complexData = new AdditionalDataManager(true, false);
+		$complexData = new AdditionalDataManager(false);
 		$complexData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
 
 		//Task #2 - set complex
@@ -69,7 +69,7 @@ class BenchmarkExecutor extends ExecutableTask
 		EditTaskResultCache::clear();
 
 		$world = $this->world;
-		$copyData = new AdditionalDataManager(false, true);
+		$copyData = new AdditionalDataManager(true);
 		$copyData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($pos, &$results, $world, &$pasteBenchmark) {
 			$results[] = ["copy", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			EditTaskResultCache::clear();
@@ -81,7 +81,7 @@ class BenchmarkExecutor extends ExecutableTask
 			$copied = StorageModule::mustGetDynamic($changeId);
 			StorageModule::cleanStored($changeId);
 
-			$pasteData = new AdditionalDataManager(true, false);
+			$pasteData = new AdditionalDataManager(false);
 			$pasteData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) use (&$results) {
 				$results[] = ["paste", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 			});

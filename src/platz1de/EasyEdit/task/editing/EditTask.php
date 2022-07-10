@@ -129,12 +129,10 @@ abstract class EditTask extends ExecutableTask
 		}
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 
-		if ($this->data->isSavingChunks()) {
-			if ($this->data->isUsingFastSet()) {
-				$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
-			} else {
-				$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks())));
-			}
+		if ($this->data->isUsingFastSet()) {
+			$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
+		} else {
+			$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks())));
 		}
 
 		if ($this->data->isFinalPiece()) {

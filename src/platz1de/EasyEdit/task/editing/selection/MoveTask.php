@@ -33,7 +33,7 @@ class MoveTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): MoveTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

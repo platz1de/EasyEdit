@@ -11,7 +11,6 @@ class AdditionalDataManager
 {
 	private bool $firstPiece = true;
 	private bool $finalPiece = false;
-	private bool $saveEditedChunks;
 	private bool $saveUndo;
 	private bool $useFastSet = false;
 	/**
@@ -26,12 +25,10 @@ class AdditionalDataManager
 	private array $countedBlocks = [];
 
 	/**
-	 * @param bool $saveEditedChunks
 	 * @param bool $saveUndo
 	 */
-	public function __construct(bool $saveEditedChunks, bool $saveUndo)
+	public function __construct(bool $saveUndo)
 	{
-		$this->saveEditedChunks = $saveEditedChunks;
 		$this->saveUndo = $saveUndo;
 	}
 
@@ -59,14 +56,6 @@ class AdditionalDataManager
 	public function setFinal(): void
 	{
 		$this->finalPiece = true;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isSavingChunks(): bool
-	{
-		return $this->saveEditedChunks;
 	}
 
 	/**
@@ -136,7 +125,6 @@ class AdditionalDataManager
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putBool($this->saveEditedChunks);
 		$stream->putBool($this->saveUndo);
 
 		$count = 0;
@@ -157,7 +145,7 @@ class AdditionalDataManager
 	public static function fastDeserialize(string $data): AdditionalDataManager
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$dataManager = new AdditionalDataManager($stream->getBool(), $stream->getBool());
+		$dataManager = new AdditionalDataManager($stream->getBool());
 		$count = $stream->getInt();
 
 		$counted = [];

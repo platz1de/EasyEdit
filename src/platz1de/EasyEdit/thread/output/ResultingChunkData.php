@@ -2,12 +2,12 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\world\World;
-use UnexpectedValueException;
 
 class ResultingChunkData extends OutputData
 {
@@ -20,7 +20,7 @@ class ResultingChunkData extends OutputData
 	/**
 	 * @var string[]
 	 */
-	private array $injections = [];
+	private array $injections;
 
 	/**
 	 * @param string             $world
@@ -29,12 +29,18 @@ class ResultingChunkData extends OutputData
 	 */
 	public function __construct(string $world, array $chunks, array $injections = [])
 	{
-		if ($chunks === []) {
-			throw new UnexpectedValueException("No chunks given");
-		}
 		$this->world = $world;
 		$this->chunkData = $chunks;
 		$this->injections = $injections;
+	}
+
+	public function checkSend(): bool
+	{
+		if ($this->chunkData === [] && $this->injections === []) {
+			EditThread::getInstance()->debug("No chunks modified");
+			return false;
+		}
+		return true;
 	}
 
 	public function handle(): void

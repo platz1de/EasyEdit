@@ -29,13 +29,18 @@ class ChunkRequestData extends OutputData
 	 */
 	public function __construct(array $chunks, string $world)
 	{
-		if ($world === "") {
-			ChunkCollector::collectInput(ChunkInputData::empty());
-			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to unknown world");
-			throw new UnexpectedValueException("Unknown world");
-		}
 		$this->chunks = $chunks;
 		$this->world = $world;
+	}
+
+	public function checkSend(): bool
+	{
+		if ($this->world === "") {
+			ChunkCollector::collectInput(ChunkInputData::empty());
+			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to unknown world");
+			return false;
+		}
+		return true;
 	}
 
 	public function handle(): void

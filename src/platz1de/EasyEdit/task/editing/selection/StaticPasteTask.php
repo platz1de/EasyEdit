@@ -32,7 +32,7 @@ class StaticPasteTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, StaticBlockListSelection $selection, Vector3 $position): StaticPasteTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
 		$instance->selection = $selection;
 		return $instance;
 	}

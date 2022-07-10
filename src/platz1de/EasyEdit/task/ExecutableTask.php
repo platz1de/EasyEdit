@@ -47,7 +47,9 @@ abstract class ExecutableTask
 			throw new InvalidArgumentException("Cannot send output data for executor tasks");
 		}
 		$data->setTaskId($this->taskId);
-		EditThread::getInstance()->sendOutput($data);
+		if ($data->checkSend()) {
+			EditThread::getInstance()->sendOutput($data);
+		}
 	}
 
 	/**

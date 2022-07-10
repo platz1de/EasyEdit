@@ -54,7 +54,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->insert);
+		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true), $selection, $this->position, $this->insert);
 		$this->executor->executeAssociated($this);
 	}
 

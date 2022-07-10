@@ -55,7 +55,7 @@ class CutTask extends ExecutableTask
 
 	public function execute(): void
 	{
-		$copyData = new AdditionalDataManager(false, true);
+		$copyData = new AdditionalDataManager(true);
 		$copyData->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
 			if ($changeId === null) {
 				throw new RuntimeException("Could not find copied selection");
@@ -64,7 +64,7 @@ class CutTask extends ExecutableTask
 		});
 		$this->executor1 = CopyTask::from($this->world, $copyData, $this->selection, $this->position);
 		$this->executor1->executeAssociated($this);
-		$setData = new AdditionalDataManager(true, true);
+		$setData = new AdditionalDataManager(true);
 		$setData->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
 			if ($changeId === null) {
 				EditThread::getInstance()->getLogger()->debug("Not saving history");

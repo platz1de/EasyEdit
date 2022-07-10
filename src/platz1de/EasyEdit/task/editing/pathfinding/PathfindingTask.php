@@ -34,7 +34,7 @@ class PathfindingTask extends ExpandingTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $start);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true), $start);
 		$instance->end = $end;
 		$instance->allowDiagonal = $allowDiagonal;
 		$instance->block = $block;

@@ -32,7 +32,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $block, int $face): ExtendBlockFaceTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(true, true), $block);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true), $block);
 		$instance->face = $face;
 		return $instance;
 	}

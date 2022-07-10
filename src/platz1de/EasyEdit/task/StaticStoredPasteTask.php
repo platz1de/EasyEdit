@@ -55,7 +55,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$data = new AdditionalDataManager(true, true);
+		$data = new AdditionalDataManager(true);
 		$undo = $this->isUndo;
 		$data->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId) use ($undo): void {
 			if ($changeId === null) {

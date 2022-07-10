@@ -14,7 +14,7 @@ abstract class OutputData
 	 */
 	public function getTaskId(): int
 	{
-		if($this->taskId === -1) {
+		if ($this->taskId === -1) {
 			throw new UnexpectedValueException("OutputData has not been sent by a task");
 		}
 		return $this->taskId;
@@ -29,6 +29,11 @@ abstract class OutputData
 	}
 
 	abstract public function handle(): void;
+
+	public function checkSend(): bool
+	{
+		return true;
+	}
 
 	/**
 	 * @param ExtendedBinaryStream $stream

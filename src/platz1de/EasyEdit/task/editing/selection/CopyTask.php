@@ -32,7 +32,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Selection $selection, Vector3 $position): CopyTask
 	{
-		$instance = new self($world, $data ?? new AdditionalDataManager(false, true), $position);
+		$instance = new self($world, $data ?? new AdditionalDataManager(true), $position);
 		$instance->selection = $selection;
 		$instance->splitOffset = $selection->getPos1()->multiply(-1);
 		return $instance;

@@ -21,7 +21,7 @@ class PasteBlockStatesTask extends ExpandingTask
 	 */
 	public static function from(string $world, ?AdditionalDataManager $data, Vector3 $start): PasteBlockStatesTask
 	{
-		return new self($world, $data ?? new AdditionalDataManager(true, true), $start);
+		return new self($world, $data ?? new AdditionalDataManager(true), $start);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
