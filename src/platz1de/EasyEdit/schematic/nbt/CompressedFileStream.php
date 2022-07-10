@@ -68,7 +68,12 @@ class CompressedFileStream extends BinaryStream
 	public function __clone(): void
 	{
 		$offset = gztell($this->stream);
-		$this->stream = gzopen($this->fileName, "r");
+
+		$file = gzopen($this->fileName, "r");
+		if ($file === false || $offset === false) {
+			throw new BadMethodCallException("Failed to open file " . $this->fileName);
+		}
+		$this->stream = $file;
 		gzseek($this->stream, $offset);
 	}
 }
