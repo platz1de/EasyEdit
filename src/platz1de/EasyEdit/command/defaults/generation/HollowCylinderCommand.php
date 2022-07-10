@@ -9,6 +9,7 @@ use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
@@ -33,6 +34,6 @@ class HollowCylinderCommand extends EasyEditCommand
 			throw new PatternParseException($exception);
 		}
 
-		SetTask::queue(Cylinder::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
+		SetTask::queue(SessionManager::get($player), Cylinder::aroundPoint($player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0], (int) $args[1]), $pattern, $player->getPosition());
 	}
 }

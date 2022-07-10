@@ -7,7 +7,6 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
@@ -54,7 +53,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$pos = new Vector3(0, World::Y_MIN, 0);
 
 		//4x 3x3 Chunk cubes
-		$testCube = new Cube("benchmark", $this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
+		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		$setData = new AdditionalDataManager(true, false);
 		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });

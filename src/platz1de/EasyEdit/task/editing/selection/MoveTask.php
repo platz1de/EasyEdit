@@ -6,7 +6,7 @@ use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\MovingCube;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -40,12 +40,13 @@ class MoveTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param Session    $session
 	 * @param MovingCube $selection
 	 * @param Position   $place
 	 */
-	public static function queue(MovingCube $selection, Position $place): void
+	public static function queue(Session $session, MovingCube $selection, Position $place): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**

@@ -17,19 +17,17 @@ abstract class Selection
 	protected Vector3 $pos2;
 	protected Vector3 $selected1;
 	protected Vector3 $selected2;
-	protected string $player;
 	protected bool $piece;
 	protected bool $initialized = false;
 
 	/**
 	 * Selection constructor.
-	 * @param string       $player
 	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
 	 * @param bool         $piece
 	 */
-	public function __construct(string $player, string $world, ?Vector3 $pos1, ?Vector3 $pos2, bool $piece = false)
+	public function __construct(string $world, ?Vector3 $pos1, ?Vector3 $pos2, bool $piece = false)
 	{
 		$this->world = $world;
 
@@ -40,7 +38,6 @@ abstract class Selection
 			$this->pos2 = clone($this->selected2 = $pos2->floor());
 		}
 
-		$this->player = $player;
 		$this->piece = $piece;
 
 		$this->update();
@@ -175,15 +172,7 @@ abstract class Selection
 		return $this->pos2;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getPlayer(): string
-	{
-		return $this->player;
-	}
-
-	public function close(): void
+	public function close(string $player): void
 	{
 	}
 
@@ -218,8 +207,6 @@ abstract class Selection
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString($this->world);
-
 		$stream->putVector($this->pos1);
 		$stream->putVector($this->pos2);
 	}
@@ -229,8 +216,6 @@ abstract class Selection
 	 */
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->world = $stream->getString();
-
 		$this->pos1 = $stream->getVector();
 		$this->pos2 = $stream->getVector();
 	}
@@ -264,7 +249,7 @@ abstract class Selection
 	 */
 	public function __serialize(): array
 	{
-		return [$this->player];
+		return [$this->world];
 	}
 
 	/**
@@ -273,7 +258,7 @@ abstract class Selection
 	 */
 	public function __unserialize(array $data): void
 	{
-		$this->player = $data[0];
+		$this->world = $data[0];
 		$this->piece = false;
 	}
 }

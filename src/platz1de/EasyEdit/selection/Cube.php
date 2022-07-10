@@ -24,12 +24,11 @@ class Cube extends Selection implements Patterned
 
 	private int $structure = -1;
 
-	public function update(): void
+	public function updateOutline(string $player): void
 	{
-		parent::update();
-		if (!$this->piece && $this->isValid() && !Thread::getCurrentThread() instanceof EditThread) {
-			$this->close();
-			$this->structure = ClientSideBlockManager::registerBlock($this->getPlayer(), new StructureBlockOutline($this->getWorld()->getFolderName(), $this->pos1, $this->pos2));
+		if (!$this->piece && $this->isValid()) {
+			$this->close($player);
+			$this->structure = ClientSideBlockManager::registerBlock($player, new StructureBlockOutline($this->getWorld()->getFolderName(), $this->pos1, $this->pos2));
 		}
 	}
 
@@ -53,10 +52,10 @@ class Cube extends Selection implements Patterned
 		$this->structure = $stream->getInt();
 	}
 
-	public function close(): void
+	public function close(string $player): void
 	{
 		if ($this->structure !== -1) {
-			ClientSideBlockManager::unregisterBlock($this->getPlayer(), $this->structure);
+			ClientSideBlockManager::unregisterBlock($player, $this->structure);
 		}
 	}
 
@@ -77,7 +76,7 @@ class Cube extends Selection implements Patterned
 		$pieces = [];
 		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 3) {
 			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 3) {
-				$pieces[] = new Cube($this->getPlayer(), $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), true);
+				$pieces[] = new Cube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), true);
 			}
 		}
 		return $pieces;
@@ -126,10 +125,10 @@ class Cube extends Selection implements Patterned
 			if ($selection instanceof self && $selection->getWorld() === $player->getWorld()) {
 				return $selection;
 			}
-			$selection->close();
+			$selection->close($player->getName());
 		} catch (Throwable) { //no selection
 		}
-		$selection = new Cube($player->getName(), $player->getWorld()->getFolderName(), null, null);
+		$selection = new Cube($player->getWorld()->getFolderName(), null, null);
 		SelectionManager::setForPlayer($player->getName(), $selection);
 		return $selection;
 	}
@@ -143,6 +142,7 @@ class Cube extends Selection implements Patterned
 		$selection = self::createInWorld($player);
 
 		$selection->setPos1($position->floor());
+		$selection->updateOutline($player->getName());
 
 		Messages::send($player, "selected-pos1", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}
@@ -156,6 +156,7 @@ class Cube extends Selection implements Patterned
 		$selection = self::createInWorld($player);
 
 		$selection->setPos2($position->floor());
+		$selection->updateOutline($player->getName());
 
 		Messages::send($player, "selected-pos2", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}

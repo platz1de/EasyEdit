@@ -36,7 +36,7 @@ abstract class ExpandingTask extends EditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection("undo", $this->getWorld(), $this->getPosition());
+		return new ExpandingStaticBlockListSelection($this->getWorld(), $this->getPosition());
 	}
 
 	public function getProgress(): float

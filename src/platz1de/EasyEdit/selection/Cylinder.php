@@ -20,7 +20,6 @@ class Cylinder extends Selection implements Patterned
 	private int $height;
 
 	/**
-	 * @param string       $player
 	 * @param string       $world
 	 * @param Vector3      $point
 	 * @param float        $radius
@@ -30,9 +29,9 @@ class Cylinder extends Selection implements Patterned
 	 * @param bool         $piece
 	 * @return Cylinder
 	 */
-	public static function aroundPoint(string $player, string $world, Vector3 $point, float $radius, int $height, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false): Cylinder
+	public static function aroundPoint(string $world, Vector3 $point, float $radius, int $height, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false): Cylinder
 	{
-		$cylinder = new Cylinder($player, $world, $min ?? $point->subtract($radius, 0, $radius), $max ?? $point->add($radius, $height - 1, $radius), $piece);
+		$cylinder = new Cylinder($world, $min ?? $point->subtract($radius, 0, $radius), $max ?? $point->add($radius, $height - 1, $radius), $piece);
 		$cylinder->setPoint($point);
 		$cylinder->setRadius($radius);
 		$cylinder->setHeight($height);
@@ -157,7 +156,7 @@ class Cylinder extends Selection implements Patterned
 		$pieces = [];
 		for ($x = ($this->point->getX() - $radius) >> 4; $x <= ($this->point->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->point->getZ() - $radius) >> 4; $z <= ($this->point->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = self::aroundPoint($this->getPlayer(), $this->getWorldName(), $this->getPoint(), $this->getRadius(), $this->getHeight(), new Vector3(max($x << 4, $this->pos1->getFloorX()), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getFloorX()), min($this->pos2->getFloorY(), World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos2->getFloorZ())), true);
+				$pieces[] = self::aroundPoint($this->getWorldName(), $this->getPoint(), $this->getRadius(), $this->getHeight(), new Vector3(max($x << 4, $this->pos1->getFloorX()), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getFloorX()), min($this->pos2->getFloorY(), World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos2->getFloorZ())), true);
 			}
 		}
 		return $pieces;

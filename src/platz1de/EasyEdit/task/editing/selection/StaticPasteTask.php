@@ -6,6 +6,7 @@ use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -39,11 +40,12 @@ class StaticPasteTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param Session                  $session
 	 * @param StaticBlockListSelection $selection
 	 */
-	public static function queue(StaticBlockListSelection $selection): void
+	public static function queue(Session $session, StaticBlockListSelection $selection): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**

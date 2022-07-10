@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -54,6 +55,7 @@ class Noise3DTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param Session   $session
 	 * @param Selection $selection
 	 * @param Position  $place
 	 * @param int       $octaves
@@ -61,9 +63,9 @@ class Noise3DTask extends SelectionEditTask
 	 * @param float     $expansion
 	 * @param float     $threshold
 	 */
-	public static function queue(Selection $selection, Position $place, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): void
+	public static function queue(Session $session, Selection $selection, Position $place, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $octaves, $persistence, $expansion, $threshold));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $octaves, $persistence, $expansion, $threshold));
 	}
 
 	/**

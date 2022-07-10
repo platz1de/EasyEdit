@@ -7,7 +7,7 @@ use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
@@ -38,11 +38,12 @@ class StreamPasteTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param Session               $session
 	 * @param BinaryBlockListStream $selection
 	 */
-	public static function queue(BinaryBlockListStream $selection): void
+	public static function queue(Session $session, BinaryBlockListStream $selection): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**
@@ -71,6 +72,6 @@ class StreamPasteTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new BinaryBlockListStream("undo", $this->getWorld());
+		return new BinaryBlockListStream($this->getWorld());
 	}
 }

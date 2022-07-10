@@ -10,7 +10,7 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
@@ -39,12 +39,13 @@ class CopyTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param Session   $session
 	 * @param Selection $selection
 	 * @param Vector3   $place
 	 */
-	public static function queue(Selection $selection, Vector3 $place): void
+	public static function queue(Session $session, Selection $selection, Vector3 $place): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
 	}
 
 	/**
@@ -61,7 +62,7 @@ class CopyTask extends SelectionEditTask
 	public function getUndoBlockList(): BlockListSelection
 	{
 		//TODO: Make this optional
-		return DynamicBlockListSelection::fromWorldPositions("undo", $this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return DynamicBlockListSelection::fromWorldPositions($this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
 	}
 
 	/**

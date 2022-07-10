@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -39,12 +40,13 @@ class SmoothTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param Session   $session
 	 * @param Selection $selection
 	 * @param Position  $place
 	 */
-	public static function queue(Selection $selection, Position $place): void
+	public static function queue(Session $session, Selection $selection, Position $place): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**

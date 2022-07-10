@@ -8,6 +8,7 @@ use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\block\VanillaBlocks;
@@ -27,11 +28,11 @@ class ExtinguishCommand extends EasyEditCommand
 	public function process(Player $player, array $args): void
 	{
 		if (isset($args[0])) {
-			$selection = Sphere::aroundPoint($player->getName(), $player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]);
+			$selection = Sphere::aroundPoint($player->getWorld()->getFolderName(), $player->getPosition(), (float) $args[0]);
 		} else {
 			$selection = ArgumentParser::getSelection($player);
 		}
 
-		SetTask::queue($selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())]), $player->getPosition());
+		SetTask::queue(SessionManager::get($player), $selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())]), $player->getPosition());
 	}
 }

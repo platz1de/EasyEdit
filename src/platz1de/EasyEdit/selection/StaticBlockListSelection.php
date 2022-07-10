@@ -45,7 +45,7 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 		$pieces = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
-				$piece = new StaticBlockListSelection($this->getPlayer(), $this->getWorldName(), new Vector3(max($x << 4, $this->pos1->getX()), max($this->pos1->getY(), World::Y_MIN), max($z << 4, $this->pos1->getZ())), new Vector3(min(($x << 4) + 47, $this->pos2->getX()), min($this->pos2->getY(), World::Y_MAX - 1), min(($z << 4) + 47, $this->pos2->getZ())), true);
+				$piece = new StaticBlockListSelection($this->getWorldName(), new Vector3(max($x << 4, $this->pos1->getX()), max($this->pos1->getY(), World::Y_MIN), max($z << 4, $this->pos1->getZ())), new Vector3(min(($x << 4) + 47, $this->pos2->getX()), min($this->pos2->getY(), World::Y_MAX - 1), min(($z << 4) + 47, $this->pos2->getZ())), true);
 				for ($chunkX = 0; $chunkX < 3; $chunkX++) {
 					for ($chunkZ = 0; $chunkZ < 3; $chunkZ++) {
 						try {
@@ -69,7 +69,7 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 
 	public function createSafeClone(): StaticBlockListSelection
 	{
-		$clone = new self($this->getPlayer(), $this->getWorldName(), $this->getPos1(), $this->getPos2());
+		$clone = new self($this->getWorldName(), $this->getPos1(), $this->getPos2());
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			$clone->getManager()->setChunk($hash, $chunk);
 		}

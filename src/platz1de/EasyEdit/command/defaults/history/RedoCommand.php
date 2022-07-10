@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\command\defaults\history;
 
-use platz1de\EasyEdit\cache\HistoryCache;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\Messages;

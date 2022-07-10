@@ -7,7 +7,7 @@ use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -38,13 +38,14 @@ class SetTask extends PatternedEditTask
 	}
 
 	/**
+	 * @param Session   $session
 	 * @param Selection $selection
 	 * @param Pattern   $pattern
 	 * @param Position  $place
 	 */
-	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
+	public static function queue(Session $session, Selection $selection, Pattern $pattern, Position $place): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
 	}
 
 	/**

@@ -58,7 +58,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 		}
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
-		$rotated = new DynamicBlockListSelection($selection->getPlayer(), new Vector3($selection->getPos2()->getZ(), $selection->getPos2()->getY(), $selection->getPos2()->getX()), new Vector3(-$selection->getPos2()->getZ() - $selection->getPoint()->getZ(), $selection->getPoint()->getY(), $selection->getPoint()->getX()));
+		$rotated = new DynamicBlockListSelection(new Vector3($selection->getPos2()->getZ(), $selection->getPos2()->getY(), $selection->getPos2()->getX()), new Vector3(-$selection->getPos2()->getZ() - $selection->getPoint()->getZ(), $selection->getPoint()->getY(), $selection->getPoint()->getX()));
 		$selection->setPoint(Vector3::zero());
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $rotated): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);

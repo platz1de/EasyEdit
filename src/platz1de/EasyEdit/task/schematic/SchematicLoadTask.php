@@ -52,7 +52,7 @@ class SchematicLoadTask extends ExecutableTask
 	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = new DynamicBlockListSelection("schematic", Vector3::zero(), Vector3::zero());
+		$selection = new DynamicBlockListSelection(Vector3::zero(), Vector3::zero());
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();

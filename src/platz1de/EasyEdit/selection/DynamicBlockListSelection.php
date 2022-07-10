@@ -17,28 +17,26 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 
 	/**
 	 * DynamicBlockListSelection constructor.
-	 * @param string       $player
 	 * @param Vector3      $end
 	 * @param Vector3      $offset
 	 * @param Vector3|null $startingOffset
 	 * @param bool         $piece
 	 */
-	public function __construct(string $player, Vector3 $end, Vector3 $offset, ?Vector3 $startingOffset = null, bool $piece = false)
+	public function __construct(Vector3 $end, Vector3 $offset, ?Vector3 $startingOffset = null, bool $piece = false)
 	{
-		parent::__construct($player, "", $startingOffset ?? new Vector3(0, World::Y_MIN, 0), $end, $piece);
+		parent::__construct("", $startingOffset ?? new Vector3(0, World::Y_MIN, 0), $end, $piece);
 		$this->point = $offset;
 	}
 
 	/**
-	 * @param string  $player
 	 * @param Vector3 $place
 	 * @param Vector3 $pos1
 	 * @param Vector3 $pos2
 	 * @return DynamicBlockListSelection
 	 */
-	public static function fromWorldPositions(string $player, Vector3 $place, Vector3 $pos1, Vector3 $pos2): DynamicBlockListSelection
+	public static function fromWorldPositions(Vector3 $place, Vector3 $pos1, Vector3 $pos2): DynamicBlockListSelection
 	{
-		return new self($player, $pos2->subtractVector($pos1)->up(World::Y_MIN), $pos1->subtractVector($place));
+		return new self($pos2->subtractVector($pos1)->up(World::Y_MIN), $pos1->subtractVector($place));
 	}
 
 	/**
@@ -155,7 +153,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
 				$pos1 = new Vector3(max(($x << 4) - ($min->getX() & 0x0f), 0), World::Y_MIN, max(($z << 4) - ($min->getZ() & 0x0f), 0));
 				$pos2 = new Vector3(min(($x << 4) - ($min->getX() & 0x0f) + 47, $max->getX() - $min->getX()), World::Y_MIN + $max->getY() - $min->getY(), min(($z << 4) - ($min->getZ() & 0x0f) + 47, $max->getZ() - $min->getZ()));
-				$piece = new DynamicBlockListSelection($this->getPlayer(), $pos2, $this->getPoint(), $pos1, true);
+				$piece = new DynamicBlockListSelection($pos2, $this->getPoint(), $pos1, true);
 				for ($chunkX = $pos1->getX() >> 4; $chunkX <= $pos2->getX() >> 4; $chunkX++) {
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
 						$chunk = $this->getManager()->getChunk(World::chunkHash($chunkX, $chunkZ));
@@ -176,7 +174,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 
 	public function createSafeClone(): DynamicBlockListSelection
 	{
-		$clone = new self($this->getPlayer(), $this->getPos2(), $this->getPoint(), $this->getPos1());
+		$clone = new self($this->getPos2(), $this->getPoint(), $this->getPos1());
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			$clone->getManager()->setChunk($hash, $chunk);
 		}

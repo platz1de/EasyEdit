@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
@@ -21,6 +22,6 @@ class SmoothCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		SmoothTask::queue(ArgumentParser::getSelection($player), $player->getPosition());
+		SmoothTask::queue(SessionManager::get($player), ArgumentParser::getSelection($player), $player->getPosition());
 	}
 }

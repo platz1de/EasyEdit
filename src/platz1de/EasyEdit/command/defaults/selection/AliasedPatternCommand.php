@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
@@ -26,7 +27,7 @@ abstract class AliasedPatternCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		SetTask::queue(ArgumentParser::getSelection($player), $this->parsePattern($player, $args), $player->getPosition());
+		SetTask::queue(SessionManager::get($player), ArgumentParser::getSelection($player), $this->parsePattern($player, $args), $player->getPosition());
 	}
 
 	/**

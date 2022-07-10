@@ -9,13 +9,12 @@ use pocketmine\world\World;
 class ExpandingStaticBlockListSelection extends StaticBlockListSelection
 {
 	/**
-	 * @param string  $player
 	 * @param string  $world
 	 * @param Vector3 $pos
 	 */
-	public function __construct(string $player, string $world, Vector3 $pos)
+	public function __construct(string $world, Vector3 $pos)
 	{
-		parent::__construct($player, $world, $pos, $pos);
+		parent::__construct($world, $pos, $pos);
 		$this->getManager()->loadIfNeeded(World::chunkHash($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4));
 	}
 

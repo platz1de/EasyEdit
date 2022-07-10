@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\player\Player;
@@ -21,6 +22,6 @@ class CopyCommand extends EasyEditCommand
 	 */
 	public function process(Player $player, array $args): void
 	{
-		CopyTask::queue(ArgumentParser::getSelection($player), ArgumentParser::parseRelativePosition($player, $args[0] ?? null));
+		CopyTask::queue(SessionManager::get($player), ArgumentParser::getSelection($player), ArgumentParser::parseRelativePosition($player, $args[0] ?? null));
 	}
 }

@@ -7,7 +7,7 @@ use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\session\SessionManager;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -46,12 +46,13 @@ class CutTask extends ExecutableTask
 	}
 
 	/**
+	 * @param Session   $session
 	 * @param Selection $selection
 	 * @param Vector3   $place
 	 */
-	public static function queue(Selection $selection, Vector3 $place): void
+	public static function queue(Session $session, Selection $selection, Vector3 $place): void
 	{
-		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), $selection, $place));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), $selection, $place));
 	}
 
 	/**
