@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use Closure;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -18,25 +17,13 @@ abstract class SelectionEditTask extends EditTask
 {
 	protected Selection $selection;
 	protected Selection $current;
-	private Vector3 $splitOffset;
+	protected ?Vector3 $splitOffset = null;
 	private int $totalPieces;
 	private int $piecesLeft;
 
-	/**
-	 * @param SelectionEditTask $instance
-	 * @param Selection         $selection
-	 * @param Vector3           $splitOffset
-	 * @return void
-	 */
-	public static function initSelection(SelectionEditTask $instance, Selection $selection, Vector3 $splitOffset): void
-	{
-		$instance->selection = $selection;
-		$instance->splitOffset = $splitOffset;
-	}
-
 	public function execute(): void
 	{
-		$pieces = $this->selection->split($this->splitOffset);
+		$pieces = $this->selection->split($this->splitOffset ?? Vector3::zero());
 		$this->totalPieces = count($pieces);
 		$this->piecesLeft = count($pieces);
 		if (VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax()) {
@@ -97,7 +84,7 @@ abstract class SelectionEditTask extends EditTask
 	{
 		parent::putData($stream);
 		$stream->putString($this->selection->fastSerialize());
-		$stream->putVector($this->splitOffset);
+		$stream->putVector($this->splitOffset ?? Vector3::zero());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void

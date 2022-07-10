@@ -28,13 +28,13 @@ class CopyTask extends SelectionEditTask
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
 	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
 	 * @return CopyTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CopyTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position): CopyTask
 	{
 		$instance = new self($world, $data, $position);
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
+		$instance->selection = $selection;
+		$instance->splitOffset = $selection->getPos1()->multiply(-1);
 		return $instance;
 	}
 
@@ -45,7 +45,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public static function queue(Session $session, Selection $selection, Vector3 $place): void
 	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place, $selection->getPos1()->multiply(-1)));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, true), $selection, $place));
 	}
 
 	/**

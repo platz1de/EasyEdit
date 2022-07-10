@@ -59,7 +59,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$setData->setResultHandler(static function (EditTask $task, ?StoredSelectionIdentifier $changeId) { });
 
 		//Task #1 - set static
-		$this->setSimpleBenchmark = SetTask::from($this->world, $setData, $testCube, $pos, Vector3::zero(), StaticBlock::from(VanillaBlocks::STONE()));
+		$this->setSimpleBenchmark = SetTask::from($this->world, $setData, $testCube, $pos, StaticBlock::from(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->execute();
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
@@ -70,7 +70,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
-		$this->setComplexBenchmark = SetTask::from($this->world, $complexData, $testCube, $pos, Vector3::zero(), $pattern);
+		$this->setComplexBenchmark = SetTask::from($this->world, $complexData, $testCube, $pos, $pattern);
 		$this->setComplexBenchmark->execute();
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
@@ -94,11 +94,11 @@ class BenchmarkExecutor extends ExecutableTask
 			});
 
 			//Task #4 - paste
-			$pasteBenchmark = DynamicPasteTask::from($world, $pasteData, $copied, $pos, $pos);
+			$pasteBenchmark = DynamicPasteTask::from($world, $pasteData, $copied, $pos);
 		});
 
 		//Task #3 - copy
-		$this->copyBenchmark = CopyTask::from($this->world, $copyData, $testCube, $pos, $pos->multiply(-1));
+		$this->copyBenchmark = CopyTask::from($this->world, $copyData, $testCube, $pos);
 		$this->copyBenchmark->execute();
 
 		if ($pasteBenchmark === null) {

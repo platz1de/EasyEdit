@@ -12,18 +12,6 @@ abstract class PatternedEditTask extends SelectionEditTask
 {
 	protected Pattern $pattern;
 
-	/**
-	 * @param PatternedEditTask $instance
-	 * @param Selection         $selection
-	 * @param Vector3           $splitOffset
-	 * @param Pattern           $pattern
-	 */
-	public static function initPattern(PatternedEditTask $instance, Selection $selection, Vector3 $splitOffset, Pattern $pattern): void
-	{
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
-		$instance->pattern = $pattern;
-	}
-
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);

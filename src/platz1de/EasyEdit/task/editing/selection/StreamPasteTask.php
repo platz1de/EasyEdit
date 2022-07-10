@@ -27,13 +27,12 @@ class StreamPasteTask extends SelectionEditTask
 	 * @param AdditionalDataManager $data
 	 * @param BinaryBlockListStream $selection
 	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
 	 * @return StreamPasteTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position, Vector3 $splitOffset): StreamPasteTask
+	public static function from(string $world, AdditionalDataManager $data, BinaryBlockListStream $selection, Vector3 $position): StreamPasteTask
 	{
 		$instance = new self($world, $data, $position);
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
+		$instance->selection = $selection;
 		return $instance;
 	}
 
@@ -43,7 +42,7 @@ class StreamPasteTask extends SelectionEditTask
 	 */
 	public static function queue(Session $session, BinaryBlockListStream $selection): void
 	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero()));
 	}
 
 	/**

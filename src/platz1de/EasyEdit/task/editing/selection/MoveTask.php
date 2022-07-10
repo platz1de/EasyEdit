@@ -29,13 +29,12 @@ class MoveTask extends SelectionEditTask
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
 	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
 	 * @return MoveTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): MoveTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position): MoveTask
 	{
 		$instance = new self($world, $data, $position);
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
+		$instance->selection = $selection;
 		return $instance;
 	}
 
@@ -46,7 +45,7 @@ class MoveTask extends SelectionEditTask
 	 */
 	public static function queue(Session $session, MovingCube $selection, Position $place): void
 	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3()));
 	}
 
 	/**

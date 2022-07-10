@@ -39,15 +39,15 @@ class DynamicPasteTask extends SelectionEditTask
 	 * @param AdditionalDataManager     $data
 	 * @param DynamicBlockListSelection $selection
 	 * @param Vector3                   $position
-	 * @param Vector3                   $splitOffset
 	 * @param bool                      $insert
 	 * @return DynamicPasteTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, Vector3 $splitOffset, bool $insert = false): DynamicPasteTask
+	public static function from(string $world, AdditionalDataManager $data, DynamicBlockListSelection $selection, Vector3 $position, bool $insert = false): DynamicPasteTask
 	{
 		$instance = new self($world, $data, $position);
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
+		$instance->selection = $selection;
 		$instance->insert = $insert;
+		$instance->splitOffset = $position->asVector3();
 		return $instance;
 	}
 
@@ -59,7 +59,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public static function queue(Session $session, DynamicBlockListSelection $selection, Position $place, bool $insert = false): void
 	{
-		EditHandler::runPlayerTask($session, self::from($place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $place->asVector3(), $insert));
+		EditHandler::runPlayerTask($session, self::from($place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $insert));
 	}
 
 	/**

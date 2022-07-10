@@ -36,17 +36,16 @@ class Noise3DTask extends SelectionEditTask
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
 	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
 	 * @param int                   $octaves
 	 * @param float                 $persistence
 	 * @param float                 $expansion
 	 * @param float                 $threshold
 	 * @return Noise3DTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
 	{
 		$instance = new self($world, $data, $position);
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
+		$instance->selection = $selection;
 		$instance->octaves = $octaves;
 		$instance->persistence = $persistence;
 		$instance->expansion = $expansion;
@@ -65,7 +64,7 @@ class Noise3DTask extends SelectionEditTask
 	 */
 	public static function queue(Session $session, Selection $selection, Position $place, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): void
 	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $octaves, $persistence, $expansion, $threshold));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $octaves, $persistence, $expansion, $threshold));
 	}
 
 	/**

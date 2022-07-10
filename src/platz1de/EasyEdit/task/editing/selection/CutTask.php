@@ -72,7 +72,7 @@ class CutTask extends ExecutableTask
 			}
 			$this->sendOutputPacket(new ClipboardCacheData($changeId));
 		});
-		$this->executor1 = CopyTask::from($this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1));
+		$this->executor1 = CopyTask::from($this->world, $copyData, $this->selection, $this->position);
 		$this->executor1->execute();
 		$setData = new AdditionalDataManager(true, true);
 		$setData->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
@@ -83,7 +83,7 @@ class CutTask extends ExecutableTask
 			$this->sendOutputPacket(new HistoryCacheData($changeId, false));
 			CutTask::notifyUser($task->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
-		$this->executor2 = SetTask::from($this->world, $setData, $this->selection, $this->position, Vector3::zero(), new StaticBlock(0));
+		$this->executor2 = SetTask::from($this->world, $setData, $this->selection, $this->position, new StaticBlock(0));
 		$this->executor2->execute();
 	}
 

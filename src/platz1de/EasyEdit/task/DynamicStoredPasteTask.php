@@ -7,7 +7,6 @@ use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -68,7 +67,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
+		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->insert);
 		$this->executor->execute();
 	}
 

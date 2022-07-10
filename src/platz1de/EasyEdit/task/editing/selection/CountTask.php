@@ -26,13 +26,12 @@ class CountTask extends SelectionEditTask
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
 	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
 	 * @return CountTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset): CountTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position): CountTask
 	{
 		$instance = new self($world, $data, $position);
-		SelectionEditTask::initSelection($instance, $selection, $splitOffset);
+		$instance->selection = $selection;
 		return $instance;
 	}
 
@@ -43,7 +42,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public static function queue(Session $session, Selection $selection, Position $place): void
 	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3()));
 	}
 
 	/**

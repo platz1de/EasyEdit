@@ -77,9 +77,9 @@ class StaticStoredPasteTask extends ExecutableTask
 			StaticPasteTask::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
 		if ($selection instanceof StaticBlockListSelection) {
-			$this->executor = StaticPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+			$this->executor = StaticPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero());
 		} else {
-			$this->executor = StreamPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero(), Vector3::zero());
+			$this->executor = StreamPasteTask::from($selection->getWorldName(), $data, $selection, Vector3::zero());
 		}
 		$this->executor->execute();
 	}

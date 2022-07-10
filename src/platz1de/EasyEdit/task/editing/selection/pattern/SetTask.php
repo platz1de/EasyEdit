@@ -26,14 +26,14 @@ class SetTask extends PatternedEditTask
 	 * @param AdditionalDataManager $data
 	 * @param Selection             $selection
 	 * @param Vector3               $position
-	 * @param Vector3               $splitOffset
 	 * @param Pattern               $pattern
 	 * @return SetTask
 	 */
-	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Vector3 $splitOffset, Pattern $pattern): SetTask
+	public static function from(string $world, AdditionalDataManager $data, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
 	{
 		$instance = new self($world, $data, $position);
-		PatternedEditTask::initPattern($instance, $selection, $splitOffset, $pattern);
+		$instance->selection = $selection;
+		$instance->pattern = $pattern;
 		return $instance;
 	}
 
@@ -45,7 +45,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public static function queue(Session $session, Selection $selection, Pattern $pattern, Position $place): void
 	{
-		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
+		EditHandler::runPlayerTask($session, self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $pattern));
 	}
 
 	/**
