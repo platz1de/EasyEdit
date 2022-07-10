@@ -2,16 +2,16 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\thread\input\TaskInputData;
-use platz1de\EasyEdit\thread\output\MessageSendData;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\block\BlockFactory;
@@ -42,7 +42,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public static function queue(Selection $selection, Position $place): void
 	{
-		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
+		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(false, false), $selection, $place->asVector3(), Vector3::zero()));
 	}
 
 	/**
@@ -56,29 +56,29 @@ class CountTask extends SelectionEditTask
 	/**
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
+	public function getUndoBlockList(): BlockListSelection
 	{
 		//TODO: make this optional
-		return new StaticBlockListSelection($executor->getName(), "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
+		return new StaticBlockListSelection("undo", "", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
 	}
 
 	/**
-	 * @param SessionIdentifier     $player
+	 * @param int                   $taskId
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(int $taskId, string $time, string $changed, AdditionalDataManager $data): void
 	{
-		MessageSendData::from($player, Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($data->getCountedBlocks())]));
+		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($data->getCountedBlocks())])));
 		$msg = "";
 		foreach ($data->getCountedBlocks() as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
-		MessageSendData::from($player, $msg, false);
+		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, $msg, false));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$blocks = $this->getDataManager()->getCountedBlocks();
 		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler, &$blocks): void {

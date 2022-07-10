@@ -3,15 +3,16 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\MessageSendData;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
@@ -39,7 +40,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id): void
 	{
-		TaskInputData::fromTask($owner, self::from($id));
+		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id));
 	}
 
 	/**
@@ -50,7 +51,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 		return "dynamic_storage_rotate";
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
@@ -68,7 +69,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));
 		}
 		StorageModule::forceStore($this->saveId, $rotated);
-		MessageSendData::from($executor, Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())]));
+		$this->sendOutputPacket(new MessageSendData($this->getTaskId(), Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())])));
 	}
 
 	public function getProgress(): float

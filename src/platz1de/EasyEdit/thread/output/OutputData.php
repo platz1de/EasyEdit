@@ -2,16 +2,30 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
-use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use UnexpectedValueException;
 
 abstract class OutputData
 {
-	protected function __construct() { }
+	private int $taskId = -1;
 
-	protected function send(): void
+	/**
+	 * @return int
+	 */
+	public function getTaskId(): int
 	{
-		EditThread::getInstance()->sendOutput($this);
+		if($this->taskId === -1) {
+			throw new UnexpectedValueException("OutputData has not been sent by a task");
+		}
+		return $this->taskId;
+	}
+
+	/**
+	 * @param int $taskId
+	 */
+	public function setTaskId(int $taskId): void
+	{
+		$this->taskId = $taskId;
 	}
 
 	abstract public function handle(): void;
@@ -32,7 +46,7 @@ abstract class OutputData
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
-		$stream->putString(static::class);
+		$stream->putString(igbinary_serialize($this) ?? "");
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -44,10 +58,25 @@ abstract class OutputData
 	public static function fastDeserialize(string $data): OutputData
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$type = $stream->getString();
-		/** @var OutputData $data */
-		$data = new $type();
-		$data->parseData($stream);
-		return $data;
+		/** @var OutputData $instance */
+		$instance = igbinary_unserialize($stream->getString());
+		$instance->parseData($stream);
+		return $instance;
+	}
+
+	/**
+	 * @return array{int}
+	 */
+	public function __serialize(): array
+	{
+		return [$this->taskId];
+	}
+
+	/**
+	 * @param array{int} $data
+	 */
+	public function __unserialize(array $data): void
+	{
+		$this->taskId = $data[0];
 	}
 }

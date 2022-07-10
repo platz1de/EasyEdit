@@ -2,13 +2,14 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\thread\ChunkCollector;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
@@ -54,10 +55,10 @@ class LineTask extends EditTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, Vector3 $end, StaticBlock $block): void
 	{
-		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start, $end, $block));
+		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $start, $end, $block));
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		$this->getDataManager()->useFastSet();
 		ChunkCollector::init($this->getWorld());
@@ -67,7 +68,7 @@ class LineTask extends EditTask
 			if ($current === null) {
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
-				$this->requestChunks($executor, [$current]);
+				$this->requestChunks([$current]);
 				$this->blocks = [];
 				$current = $c;
 			}
@@ -75,16 +76,15 @@ class LineTask extends EditTask
 		}
 		if ($current !== null) {
 			$this->getDataManager()->setFinal();
-			$this->requestChunks($executor, [$current]);
+			$this->requestChunks([$current]);
 		}
 		ChunkCollector::clear();
 	}
 
 	/**
-	 * @param EditTaskHandler   $handler
-	 * @param SessionIdentifier $executor
+	 * @param EditTaskHandler $handler
 	 */
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		foreach ($this->blocks as $pos) {
 			$handler->changeBlock((int) $pos->x, (int) $pos->y, (int) $pos->z, $this->block->get());
@@ -92,12 +92,11 @@ class LineTask extends EditTask
 	}
 
 	/**
-	 * @param SessionIdentifier $executor
 	 * @return BinaryBlockListStream
 	 */
-	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
+	public function getUndoBlockList(): BlockListSelection
 	{
-		return new BinaryBlockListStream($executor->getName(), $this->getWorld());
+		return new BinaryBlockListStream("undo", $this->getWorld());
 	}
 
 	public function getTaskName(): string

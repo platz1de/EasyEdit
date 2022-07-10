@@ -15,7 +15,7 @@ class AdditionalDataManager
 	private bool $saveUndo;
 	private bool $useFastSet = false;
 	/**
-	 * @var Closure(EditTask, SessionIdentifier, ?StoredSelectionIdentifier):void
+	 * @var Closure(EditTask, ?StoredSelectionIdentifier):void
 	 */
 	private Closure $resultHandler;
 
@@ -115,7 +115,7 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @return Closure(EditTask, SessionIdentifier, ?StoredSelectionIdentifier):void
+	 * @return Closure(EditTask, ?StoredSelectionIdentifier):void
 	 */
 	public function getResultHandler(): Closure
 	{
@@ -123,7 +123,7 @@ class AdditionalDataManager
 	}
 
 	/**
-	 * @param Closure(EditTask, SessionIdentifier, ?StoredSelectionIdentifier):void $resultHandler
+	 * @param Closure(EditTask, ?StoredSelectionIdentifier):void $resultHandler
 	 */
 	public function setResultHandler(Closure $resultHandler): void
 	{

@@ -31,19 +31,17 @@ class StatsCollectResult extends OutputData
 	 * @param int    $currentMemory
 	 * @param int    $realMemory
 	 */
-	public static function from(int $cacheId, string $taskName, int $taskId, string $responsiblePlayer, float $progress, int $queueLength, int $storageSize, int $currentMemory, int $realMemory): void
+	public function __construct(int $cacheId, string $taskName, int $taskId, string $responsiblePlayer, float $progress, int $queueLength, int $storageSize, int $currentMemory, int $realMemory)
 	{
-		$data = new self();
-		$data->cacheId = $cacheId;
-		$data->taskName = $taskName;
-		$data->taskId = $taskId;
-		$data->responsiblePlayer = $responsiblePlayer;
-		$data->progress = $progress;
-		$data->queueLength = $queueLength;
-		$data->storageSize = $storageSize;
-		$data->currentMemory = $currentMemory;
-		$data->realMemory = $realMemory;
-		$data->send();
+		$this->cacheId = $cacheId;
+		$this->taskName = $taskName;
+		$this->taskId = $taskId;
+		$this->responsiblePlayer = $responsiblePlayer;
+		$this->progress = $progress;
+		$this->queueLength = $queueLength;
+		$this->storageSize = $storageSize;
+		$this->currentMemory = $currentMemory;
+		$this->realMemory = $realMemory;
 	}
 
 	public function handle(): void

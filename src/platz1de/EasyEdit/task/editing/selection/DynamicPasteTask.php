@@ -2,16 +2,15 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
@@ -59,7 +58,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public static function queue(DynamicBlockListSelection $selection, Position $place, bool $insert = false): void
 	{
-		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $place->asVector3(), $insert));
+		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($place->getWorld()->getFolderName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), $place->asVector3(), $insert));
 	}
 
 	/**
@@ -70,7 +69,7 @@ class DynamicPasteTask extends SelectionEditTask
 		return "dynamic_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
 		$place = $this->getPosition()->addVector($selection->getPoint());
@@ -100,12 +99,11 @@ class DynamicPasteTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param SessionIdentifier $executor
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
+	public function getUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($executor->getName(), $this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->addVector($this->selection->getPoint()));
+		return new StaticBlockListSelection("undo", $this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->addVector($this->selection->getPoint()));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

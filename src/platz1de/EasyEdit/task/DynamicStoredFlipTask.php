@@ -3,15 +3,16 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\session\SessionIdentifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\MessageSendData;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
@@ -45,7 +46,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, int $axis): void
 	{
-		TaskInputData::fromTask($owner, self::from($id, $axis));
+		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id, $axis));
 	}
 
 	/**
@@ -56,7 +57,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		return "dynamic_storage_flip";
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
@@ -105,7 +106,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				throw new UnexpectedValueException("Invalid axis " . $this->axis);
 		}
 		StorageModule::forceStore($this->saveId, $flipped);
-		MessageSendData::from($executor, Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())]));
+		$this->sendOutputPacket(new MessageSendData($this->getTaskId(), Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())])));
 	}
 
 	public function getProgress(): float

@@ -2,15 +2,14 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StackedCube;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -54,7 +53,7 @@ class StackTask extends SelectionEditTask
 	 */
 	public static function queue(StackedCube $selection, Position $place, bool $insert = false): void
 	{
-		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $insert));
+		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $insert));
 	}
 
 	/**
@@ -65,7 +64,7 @@ class StackTask extends SelectionEditTask
 		return "stack";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
 		if ($selection->isCopyMode()) {

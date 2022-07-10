@@ -21,23 +21,21 @@ class ChunkRequestData extends OutputData
 	/**
 	 * @var int[]
 	 */
-	private array $chunks = [];
+	private array $chunks;
 
 	/**
 	 * @param int[]  $chunks
 	 * @param string $world
 	 */
-	public static function from(array $chunks, string $world): void
+	public function __construct(array $chunks, string $world)
 	{
-		$data = new self();
-		$data->chunks = $chunks;
-		$data->world = $world;
-		if ($world !== "") {
-			$data->send();
-		} else {
+		if ($world === "") {
 			ChunkCollector::collectInput(ChunkInputData::empty());
 			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to unknown world");
+			throw new UnexpectedValueException("Unknown world");
 		}
+		$this->chunks = $chunks;
+		$this->world = $world;
 	}
 
 	public function handle(): void

@@ -3,15 +3,16 @@
 namespace platz1de\EasyEdit\task\schematic;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\ClipboardCacheData;
-use platz1de\EasyEdit\thread\output\MessageSendData;
+use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
@@ -37,7 +38,7 @@ class SchematicLoadTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $player, string $schematicName): void
 	{
-		TaskInputData::fromTask($player, self::from(EasyEdit::getSchematicPath() . $schematicName));
+		EditHandler::runPlayerTask(SessionManager::get($player), self::from(EasyEdit::getSchematicPath() . $schematicName));
 	}
 
 	/**
@@ -48,15 +49,15 @@ class SchematicLoadTask extends ExecutableTask
 		return "schematic_load";
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		$start = microtime(true);
-		$selection = new DynamicBlockListSelection($executor->getName(), Vector3::zero(), Vector3::zero());
+		$selection = new DynamicBlockListSelection("schematic", Vector3::zero(), Vector3::zero());
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();
-		ClipboardCacheData::from($executor, $changeId);
-		MessageSendData::from($executor, Messages::replace("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())]));
+		$this->sendOutputPacket(new ClipboardCacheData($changeId));
+		$this->sendOutputPacket(new MessageSendData($this->getTaskId(), Messages::replace("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())])));
 	}
 
 	public function getProgress(): float

@@ -8,12 +8,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ResourceData extends OutputData
 {
-	public static function from(): void
-	{
-		$data = new self();
-		$data->send();
-	}
-
 	public function handle(): void
 	{
 		RuntimeInputData::create();

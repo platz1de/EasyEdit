@@ -3,11 +3,12 @@
 namespace platz1de\EasyEdit\task\editing\expanding;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -50,10 +51,10 @@ class FillTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start, int $direction, StaticBlock $block): void
 	{
-		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start, $direction, $block));
+		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $start, $direction, $block));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($this->block->getId(), $ignore, true)) !== false) {
@@ -90,7 +91,7 @@ class FillTask extends ExpandingTask
 		};
 		$max = ConfigManager::getFillDistance();
 
-		if (!$this->checkRuntimeChunk($handler, $executor, World::chunkHash($startX, $startZ), 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
 		}
 
@@ -104,7 +105,7 @@ class FillTask extends ExpandingTask
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!$this->checkRuntimeChunk($handler, $executor, $chunk, -$current["priority"], $max)) {
+			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {

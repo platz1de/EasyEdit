@@ -7,6 +7,7 @@ use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class ResultingChunkData extends OutputData
 {
@@ -24,33 +25,16 @@ class ResultingChunkData extends OutputData
 	/**
 	 * @param string             $world
 	 * @param ChunkInformation[] $chunks
-	 */
-	public static function from(string $world, array $chunks): void
-	{
-		if ($chunks === []) {
-			return;
-		}
-		$data = new self();
-		$data->world = $world;
-		$data->chunkData = $chunks;
-		$data->send();
-	}
-
-	/**
-	 * @param string             $world
-	 * @param ChunkInformation[] $chunks
 	 * @param string[]           $injections UpdateSubChunkBlocksPacket data
 	 */
-	public static function withInjection(string $world, array $chunks, array $injections): void
+	public function __construct(string $world, array $chunks, array $injections = [])
 	{
-		if ($chunks === [] && $injections === []) {
-			return;
+		if ($chunks === []) {
+			throw new UnexpectedValueException("No chunks given");
 		}
-		$data = new self();
-		$data->world = $world;
-		$data->chunkData = $chunks;
-		$data->injections = $injections;
-		$data->send();
+		$this->world = $world;
+		$this->chunkData = $chunks;
+		$this->injections = $injections;
 	}
 
 	public function handle(): void

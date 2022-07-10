@@ -18,12 +18,11 @@ class ThreadData
 	private static bool $stop = false;
 
 	/**
-	 * @return ExecutableTask[]
+	 * @return ExecutableTask|null
 	 */
-	public static function getNextTask(): array
+	public static function getNextTask(): ?ExecutableTask
 	{
-		//TODO: add wrapper
-		return array_splice(self::$tasks, 0, 1);
+		return array_shift(self::$tasks);
 	}
 
 	/**
@@ -43,12 +42,11 @@ class ThreadData
 	}
 
 	/**
-	 * @param SessionIdentifier $executor
-	 * @param ExecutableTask    $task
+	 * @param ExecutableTask $task
 	 */
-	public static function addTask(SessionIdentifier $executor, ExecutableTask $task): void
+	public static function addTask(ExecutableTask $task): void
 	{
-		self::$tasks[$executor->fastSerialize()] = $task;
+		self::$tasks[] = $task;
 	}
 
 	/**

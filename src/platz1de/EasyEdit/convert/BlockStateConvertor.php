@@ -171,7 +171,7 @@ class BlockStateConvertor
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
 
-		ResourceData::from();
+		EditThread::getInstance()->sendOutput(new ResourceData());
 	}
 
 	/**

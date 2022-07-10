@@ -4,13 +4,12 @@ namespace platz1de\EasyEdit\task\editing;
 
 use Closure;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\HistoryCacheData;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
+use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -42,23 +41,23 @@ abstract class EditTask extends ExecutableTask
 	/**
 	 * @param int[] $chunks
 	 */
-	public function requestChunks(SessionIdentifier $executor, array $chunks): bool
+	public function requestChunks(array $chunks): bool
 	{
 		ChunkCollector::request($chunks);
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
-			if ($this->checkData($executor)) {
+			if ($this->checkData()) {
 				return true;
 			}
 			EditThread::getInstance()->waitForData();
 		}
-		$this->forceStop($executor);
+		$this->forceStop();
 		return false;
 	}
 
-	public function checkData(SessionIdentifier $executor): bool
+	public function checkData(): bool
 	{
 		if (ChunkCollector::hasReceivedInput()) {
-			$this->run($executor);
+			$this->run();
 			ChunkCollector::clean($this->getCacheClosure());
 			return true;
 		}
@@ -66,15 +65,14 @@ abstract class EditTask extends ExecutableTask
 	}
 
 	/**
-	 * @param EditTaskHandler   $handler
-	 * @param SessionIdentifier $executor
-	 * @param int               $chunk
+	 * @param EditTaskHandler $handler
+	 * @param int             $chunk
 	 * @return bool
 	 * Requests chunks while staying in the same execution
 	 * Warning: Tasks calling this need to terminate when returning false immediately
 	 * This method doesn't do memory management itself, instead this is the responsibility of the caller
 	 */
-	public function requestRuntimeChunk(EditTaskHandler $handler, SessionIdentifier $executor, int $chunk): bool
+	public function requestRuntimeChunk(EditTaskHandler $handler, int $chunk): bool
 	{
 		ChunkCollector::clean(static function (array $chunks): array {
 			return $chunks; //cache all
@@ -88,7 +86,7 @@ abstract class EditTask extends ExecutableTask
 			}
 			EditThread::getInstance()->waitForData();
 		}
-		$this->forceStop($executor);
+		$this->forceStop();
 		return false;
 	}
 
@@ -99,9 +97,9 @@ abstract class EditTask extends ExecutableTask
 	public function sendRuntimeChunk(EditTaskHandler $handler, int $chunk): void
 	{
 		if ($this->data->isUsingFastSet()) {
-			ResultingChunkData::withInjection($this->world, [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk));
+			$this->sendOutputPacket(new ResultingChunkData($this->world, [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk)));
 		} else {
-			ResultingChunkData::from($this->world, [$chunk => $handler->getResult()->getChunk($chunk)]);
+			$this->sendOutputPacket(new ResultingChunkData($this->world, [$chunk => $handler->getResult()->getChunk($chunk)]));
 		}
 		ChunkCollector::getChunks()->filterChunks(function (array $c) use ($chunk): array {
 			unset($c[$chunk]);
@@ -113,17 +111,17 @@ abstract class EditTask extends ExecutableTask
 		});
 	}
 
-	public function run(SessionIdentifier $executor): void
+	public function run(): void
 	{
 		$start = microtime(true);
 
-		$handler = new EditTaskHandler(ChunkCollector::getChunks(), $this->getUndoBlockList($executor), $this->data->isUsingFastSet());
+		$handler = new EditTaskHandler(ChunkCollector::getChunks(), $this->getUndoBlockList(), $this->data->isUsingFastSet());
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($this->data->isUsingFastSet() ? "true" : "false"));
 
 		HeightMapCache::prepare();
 
-		$this->executeEdit($handler, $executor);
+		$this->executeEdit($handler);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
 
 		if ($this->data->isSavingUndo()) {
@@ -133,9 +131,9 @@ abstract class EditTask extends ExecutableTask
 
 		if ($this->data->isSavingChunks()) {
 			if ($this->data->isUsingFastSet()) {
-				ResultingChunkData::withInjection($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData());
+				$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
 			} else {
-				ResultingChunkData::from($this->world, $this->filterChunks($handler->getResult()->getChunks()));
+				$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks())));
 			}
 		}
 
@@ -143,42 +141,47 @@ abstract class EditTask extends ExecutableTask
 			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : null;
 			if ($this->data->hasResultHandler()) {
 				$closure = $this->data->getResultHandler();
-				$closure($this, $executor, $changeId);
+				$closure($this, $changeId);
 			} else {
-				HistoryCacheData::from($executor, $changeId, false);
+				if ($changeId === null) {
+					EditThread::getInstance()->getLogger()->debug("Not saving history");
+				} else {
+					$this->sendOutputPacket(new HistoryCacheData($changeId, false));
+				}
 				/** @var class-string<EditTask> $task */
 				$task = static::class;
-				$task::notifyUser($executor, (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $this->data);
+				$task::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $this->data);
 			}
 		}
 	}
 
-	public function forceStop(SessionIdentifier $executor): void
+	public function forceStop(): void
 	{
 		if (!$this->data->isFirstPiece()) {
 			$changeId = $this->data->isSavingUndo() ? StorageModule::finishCollecting() : null;
 			if ($this->data->hasResultHandler()) {
 				$closure = $this->data->getResultHandler();
-				$closure($this, $executor, $changeId);
+				$closure($this, $changeId);
+			} elseif ($changeId === null) {
+				EditThread::getInstance()->getLogger()->debug("Not saving history");
 			} else {
-				HistoryCacheData::from($executor, $changeId, false);
+				$this->sendOutputPacket(new HistoryCacheData($changeId, false));
 			}
 		}
 	}
 
 	/**
-	 * @param EditTaskHandler   $handler
-	 * @param SessionIdentifier $executor
+	 * @param EditTaskHandler $handler
 	 */
-	abstract public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void;
+	abstract public function executeEdit(EditTaskHandler $handler): void;
 
 	/**
-	 * @param SessionIdentifier     $player
+	 * @param int                   $taskId
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	abstract public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void;
+	abstract public static function notifyUser(int $taskId, string $time, string $changed, AdditionalDataManager $data): void;
 
 	/**
 	 * Filters actually edited chunks
@@ -207,10 +210,9 @@ abstract class EditTask extends ExecutableTask
 	}
 
 	/**
-	 * @param SessionIdentifier $executor
 	 * @return BlockListSelection
 	 */
-	abstract public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection;
+	abstract public function getUndoBlockList(): BlockListSelection;
 
 	/**
 	 * @return string

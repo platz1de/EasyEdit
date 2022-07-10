@@ -2,25 +2,25 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\pattern\PatternArgumentData;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\input\TaskInputData;
-use platz1de\EasyEdit\thread\output\ClipboardCacheData;
-use platz1de\EasyEdit\thread\output\HistoryCacheData;
-use platz1de\EasyEdit\thread\output\MessageSendData;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
+use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
+use RuntimeException;
 
 class CutTask extends ExecutableTask
 {
@@ -51,7 +51,7 @@ class CutTask extends ExecutableTask
 	 */
 	public static function queue(Selection $selection, Vector3 $place): void
 	{
-		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), $selection, $place));
+		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), $selection, $place));
 	}
 
 	/**
@@ -62,32 +62,39 @@ class CutTask extends ExecutableTask
 		return "cut";
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		$copyData = new AdditionalDataManager(false, true);
-		$copyData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId): void {
-			ClipboardCacheData::from($executor, $changeId);
+		$copyData->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
+			if ($changeId === null) {
+				throw new RuntimeException("Could not find copied selection");
+			}
+			$this->sendOutputPacket(new ClipboardCacheData($changeId));
 		});
 		$this->executor1 = CopyTask::from($this->world, $copyData, $this->selection, $this->position, $this->selection->getPos1()->multiply(-1));
-		$this->executor1->execute($executor);
+		$this->executor1->execute();
 		$setData = new AdditionalDataManager(true, true);
-		$setData->setResultHandler(static function (EditTask $task, SessionIdentifier $executor, ?StoredSelectionIdentifier $changeId): void {
-			HistoryCacheData::from($executor, $changeId, false);
-			CutTask::notifyUser($executor, (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
+		$setData->setResultHandler(function (EditTask $task, ?StoredSelectionIdentifier $changeId): void {
+			if ($changeId === null) {
+				EditThread::getInstance()->getLogger()->debug("Not saving history");
+				return;
+			}
+			$this->sendOutputPacket(new HistoryCacheData($changeId, false));
+			CutTask::notifyUser($task->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()), $task->getDataManager());
 		});
 		$this->executor2 = SetTask::from($this->world, $setData, $this->selection, $this->position, Vector3::zero(), new StaticBlock(0));
-		$this->executor2->execute($executor);
+		$this->executor2->execute();
 	}
 
 	/**
-	 * @param SessionIdentifier     $player
+	 * @param int                   $taskId
 	 * @param string                $time
 	 * @param string                $changed
 	 * @param AdditionalDataManager $data
 	 */
-	public static function notifyUser(SessionIdentifier $player, string $time, string $changed, AdditionalDataManager $data): void
+	public static function notifyUser(int $taskId, string $time, string $changed, AdditionalDataManager $data): void
 	{
-		MessageSendData::from($player, Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed]));
+		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed])));
 	}
 
 	public function getProgress(): float

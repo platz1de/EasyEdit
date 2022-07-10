@@ -2,10 +2,11 @@
 
 namespace platz1de\EasyEdit\task\editing\expanding;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\Block;
@@ -37,10 +38,10 @@ class DrainTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $start): void
 	{
-		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $start));
+		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $start));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$target = [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA];
 
@@ -52,7 +53,7 @@ class DrainTask extends ExpandingTask
 		$this->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$max = ConfigManager::getFillDistance();
 
-		if (!$this->checkRuntimeChunk($handler, $executor, World::chunkHash($startX, $startZ), 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
 		}
 
@@ -66,7 +67,7 @@ class DrainTask extends ExpandingTask
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!$this->checkRuntimeChunk($handler, $executor, $chunk, -$current["priority"], $max)) {
+			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $target, true)) {

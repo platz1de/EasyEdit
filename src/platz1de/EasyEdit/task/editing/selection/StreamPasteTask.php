@@ -2,15 +2,14 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use pocketmine\math\Vector3;
 
@@ -43,7 +42,7 @@ class StreamPasteTask extends SelectionEditTask
 	 */
 	public static function queue(BinaryBlockListStream $selection): void
 	{
-		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
+		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, Vector3::zero(), Vector3::zero()));
 	}
 
 	/**
@@ -54,7 +53,7 @@ class StreamPasteTask extends SelectionEditTask
 		return "stream_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		//WARNING: This isn't the default closure style
 		$this->current->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
@@ -68,11 +67,10 @@ class StreamPasteTask extends SelectionEditTask
 
 
 	/**
-	 * @param SessionIdentifier $executor
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(SessionIdentifier $executor): BlockListSelection
+	public function getUndoBlockList(): BlockListSelection
 	{
-		return new BinaryBlockListStream($executor->getName(), $this->getWorld());
+		return new BinaryBlockListStream("undo", $this->getWorld());
 	}
 }

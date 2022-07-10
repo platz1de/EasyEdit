@@ -2,8 +2,10 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -49,7 +51,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $owner, StoredSelectionIdentifier $id, Position $place, bool $keep, bool $insert = false): void
 	{
-		TaskInputData::fromTask($owner, self::from($id, $place->getWorld()->getFolderName(), $place->asVector3(), $keep, $insert));
+		EditHandler::runPlayerTask(SessionManager::get($owner), self::from($id, $place->getWorld()->getFolderName(), $place->asVector3(), $keep, $insert));
 	}
 
 	/**
@@ -60,14 +62,14 @@ class DynamicStoredPasteTask extends ExecutableTask
 		return "dynamic_storage_paste";
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
 		$this->executor = DynamicPasteTask::from($this->world, new AdditionalDataManager(true, true), $selection, $this->position, $this->position, $this->insert);
-		$this->executor->execute($executor);
+		$this->executor->execute();
 	}
 
 	public function getProgress(): float

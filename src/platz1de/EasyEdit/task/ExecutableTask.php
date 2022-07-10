@@ -2,8 +2,9 @@
 
 namespace platz1de\EasyEdit\task;
 
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\thread\EditAdapter;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class ExecutableTask
@@ -15,7 +16,7 @@ abstract class ExecutableTask
 		$this->taskId = EditAdapter::getId();
 	}
 
-	abstract public function execute(SessionIdentifier $executor): void;
+	abstract public function execute(): void;
 
 	/**
 	 * @param ExtendedBinaryStream $stream
@@ -26,6 +27,15 @@ abstract class ExecutableTask
 	 * @param ExtendedBinaryStream $stream
 	 */
 	abstract public function parseData(ExtendedBinaryStream $stream): void;
+
+	/**
+	 * @param OutputData $data
+	 */
+	public function sendOutputPacket(OutputData $data): void
+	{
+		$data->setTaskId($this->taskId);
+		EditThread::getInstance()->sendOutput($data);
+	}
 
 	/**
 	 * @return string

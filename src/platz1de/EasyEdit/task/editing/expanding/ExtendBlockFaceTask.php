@@ -2,10 +2,11 @@
 
 namespace platz1de\EasyEdit\task\editing\expanding;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -44,13 +45,13 @@ class ExtendBlockFaceTask extends ExpandingTask
 	 */
 	public static function queue(SessionIdentifier $player, string $world, Vector3 $block, int $face): void
 	{
-		TaskInputData::fromTask($player, self::from($world, new AdditionalDataManager(true, true), $block, $face));
+		EditHandler::runPlayerTask(SessionManager::get($player), self::from($world, new AdditionalDataManager(true, true), $block, $face));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$startChunk = World::chunkHash($this->getPosition()->getFloorX() >> 4, $this->getPosition()->getFloorZ() >> 4);
-		if (!$this->checkRuntimeChunk($handler, $executor, $startChunk, 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, $startChunk, 0, 1)) {
 			return;
 		}
 		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
@@ -80,8 +81,8 @@ class ExtendBlockFaceTask extends ExpandingTask
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$c = World::chunkHash(($x + $offsetX) >> 4, ($z + $offsetZ) >> 4);
-			$this->checkRuntimeChunk($handler, $executor, $chunk, -$current["priority"], $max);
-			$this->checkRuntimeChunk($handler, $executor, $c, -$current["priority"], $max);
+			$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max);
+			$this->checkRuntimeChunk($handler, $c, -$current["priority"], $max);
 			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 				$this->checkUnload($handler, $chunk);
 				$this->checkUnload($handler, $c);

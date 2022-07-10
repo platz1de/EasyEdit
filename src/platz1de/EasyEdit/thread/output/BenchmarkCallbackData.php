@@ -17,12 +17,10 @@ class BenchmarkCallbackData extends OutputData
 	 * @param string                           $world
 	 * @param array<array{string, float, int}> $result
 	 */
-	public static function from(string $world, array $result): void
+	public function __construct(string $world, array $result)
 	{
-		$data = new self();
-		$data->world = $world;
-		$data->result = $result;
-		$data->send();
+		$this->world = $world;
+		$this->result = $result;
 	}
 
 	public function handle(): void

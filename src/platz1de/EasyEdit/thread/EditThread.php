@@ -6,12 +6,12 @@
 
 namespace platz1de\EasyEdit\thread;
 
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
-use platz1de\EasyEdit\thread\output\CrashReportData;
 use platz1de\EasyEdit\thread\output\OutputData;
+use platz1de\EasyEdit\thread\output\session\CrashReportData;
+use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\thread\Thread;
@@ -62,30 +62,37 @@ class EditThread extends Thread
 				$this->logger->logException($throwable);
 			}
 			if ($this->getStatus() !== self::STATUS_CRASHED) {
-				$data = ThreadData::getNextTask();
-				if ($data === []) {
+				$task = ThreadData::getNextTask();
+				if ($task === null) {
 					$this->synchronized(function (): void {
 						if ($this->inputData === "" && !$this->isKilled) {
 							$this->wait();
 						}
 					});
 				} else {
-					$session = SessionIdentifier::fastDeserialize(key($data));
-					$task = current($data);
 					ThreadData::setTask($task);
 					try {
 						$this->setStatus(self::STATUS_RUNNING);
 						ThreadData::canExecute(); //clear pending cancel requests
 						EditTaskResultCache::clear();
 						$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
-						$task->execute($session);
+						$task->execute();
+						//TODO
+						$result = new TaskResultData();
+						$result->setTaskId($task->getTaskId());
+						$this->sendOutput($result);
 						$this->setStatus(self::STATUS_IDLE);
 					} catch (Throwable $throwable) {
 						$this->logger->logException($throwable);
 						$this->setStatus(self::STATUS_CRASHED);
 						$sleep = time() + 9;
-						CrashReportData::from($throwable, $session);
+						//TODO: move this to result
+						$this->sendOutput(new CrashReportData($throwable));
 						ChunkCollector::clear();
+						//TODO
+						$result = new TaskResultData();
+						$result->setTaskId($task->getTaskId());
+						$this->sendOutput($result);
 					}
 				}
 			} else {

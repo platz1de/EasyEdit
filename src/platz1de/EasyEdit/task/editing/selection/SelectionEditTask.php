@@ -34,7 +34,7 @@ abstract class SelectionEditTask extends EditTask
 		$instance->splitOffset = $splitOffset;
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		$pieces = $this->selection->split($this->splitOffset);
 		$this->totalPieces = count($pieces);
@@ -49,7 +49,7 @@ abstract class SelectionEditTask extends EditTask
 			}
 			$this->current = $piece;
 			$piece->init($this->getPosition());
-			if ($this->requestChunks($executor, $piece->getNeededChunks())) {
+			if ($this->requestChunks($piece->getNeededChunks())) {
 				$this->getDataManager()->donePiece();
 				$this->piecesLeft--;
 			} else {

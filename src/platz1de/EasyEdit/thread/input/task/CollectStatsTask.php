@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\thread\input\task;
 use Closure;
 use platz1de\EasyEdit\cache\TaskCache;
 use platz1de\EasyEdit\task\ExecutableTask;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\StatsCollectResult;
@@ -36,7 +37,7 @@ class CollectStatsTask extends InputData
 			//$player = $task->getOwner()->isPlayer() ? $task->getOwner()->getName() : "internal";
 			$progress = $task->getProgress();
 		}
-		StatsCollectResult::from($this->cacheId, $name, $id, $player, $progress, ThreadData::getQueueLength(), StorageModule::getSize(), memory_get_usage(), memory_get_usage(true));
+		EditThread::getInstance()->sendOutput(new StatsCollectResult($this->cacheId, $name, $id, $player, $progress, ThreadData::getQueueLength(), StorageModule::getSize(), memory_get_usage(), memory_get_usage(true)));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

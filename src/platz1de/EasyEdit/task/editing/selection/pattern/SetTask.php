@@ -2,16 +2,15 @@
 
 namespace platz1de\EasyEdit\task\editing\selection\pattern;
 
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\utils\AdditionalDataManager;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\math\Vector3;
@@ -45,7 +44,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public static function queue(Selection $selection, Pattern $pattern, Position $place): void
 	{
-		TaskInputData::fromTask(SessionManager::get($selection->getPlayer())->getIdentifier(), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
+		EditHandler::runPlayerTask(SessionManager::get($selection->getPlayer()), self::from($selection->getWorldName(), new AdditionalDataManager(true, true), $selection, $place->asVector3(), Vector3::zero(), $pattern));
 	}
 
 	/**
@@ -57,10 +56,9 @@ class SetTask extends PatternedEditTask
 	}
 
 	/**
-	 * @param EditTaskHandler   $handler
-	 * @param SessionIdentifier $executor
+	 * @param EditTaskHandler $handler
 	 */
-	public function executeEdit(EditTaskHandler $handler, SessionIdentifier $executor): void
+	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->getCurrentSelection();
 		$pattern = PatternWrapper::wrap([$this->getPattern()]);

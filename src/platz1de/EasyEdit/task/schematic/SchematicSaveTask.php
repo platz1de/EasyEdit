@@ -3,14 +3,15 @@
 namespace platz1de\EasyEdit\task\schematic;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\MessageSendData;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 
@@ -39,7 +40,7 @@ class SchematicSaveTask extends ExecutableTask
 	 */
 	public static function queue(SessionIdentifier $player, StoredSelectionIdentifier $saveId, string $schematicName): void
 	{
-		TaskInputData::fromTask($player, self::from($saveId, EasyEdit::getSchematicPath() . $schematicName));
+		EditHandler::runPlayerTask(SessionManager::get($player), self::from($saveId, EasyEdit::getSchematicPath() . $schematicName));
 	}
 
 	/**
@@ -50,12 +51,12 @@ class SchematicSaveTask extends ExecutableTask
 		return "schematic_save";
 	}
 
-	public function execute(SessionIdentifier $executor): void
+	public function execute(): void
 	{
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		SchematicFileAdapter::createFromSelection($this->schematicPath, $selection);
-		MessageSendData::from($executor, Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)]));
+		$this->sendOutputPacket(new MessageSendData($this->getTaskId(), Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)])));
 	}
 
 	public function getProgress(): float

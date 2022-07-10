@@ -43,7 +43,7 @@ class ChunkCollector
 			}
 		}
 
-		ChunkRequestData::from($chunks, self::$manager->getWorldName());
+		EditThread::getInstance()->sendOutput(new ChunkRequestData($chunks, self::$manager->getWorldName()));
 	}
 
 	/**
