@@ -29,6 +29,7 @@ class ExtendCommand extends EasyEditCommand
 		if (($args[0] ?? "") === "vert" || ($args[0] ?? "") === "vertical") {
 			$selection->setPos1(new Vector3($pos1->getX(), World::Y_MIN, $pos1->getZ()));
 			$selection->setPos2(new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ()));
+			$selection->updateOutline($session->getPlayer());
 			return;
 		}
 
@@ -40,5 +41,6 @@ class ExtendCommand extends EasyEditCommand
 			$selection->setPos2($pos2);
 			$selection->setPos1($pos1->addVector($offset));
 		}
+		$selection->updateOutline($session->getPlayer());
 	}
 }
