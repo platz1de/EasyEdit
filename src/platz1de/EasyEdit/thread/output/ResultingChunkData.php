@@ -75,12 +75,14 @@ class ResultingChunkData extends OutputData
 	{
 		$this->world = $stream->getString();
 
+		$this->chunkData = [];
 		$count = $stream->getInt();
 		$this->chunkData = [];
 		for ($i = 0; $i < $count; $i++) {
 			$this->chunkData[World::chunkHash($stream->getInt(), $stream->getInt())] = ChunkInformation::readFrom($stream);
 		}
 
+		$this->injections = [];
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
 			$this->injections[$stream->getLong()] = $stream->getString();

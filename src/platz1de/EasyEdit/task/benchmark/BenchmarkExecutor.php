@@ -46,6 +46,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->setSimpleBenchmark->executeAssociated($this, false);
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
+		StorageModule::clear();
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
@@ -54,6 +55,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->setComplexBenchmark->executeAssociated($this, false);
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
+		StorageModule::clear();
 
 		//Task #3 - copy
 		$this->copyBenchmark = CopyTask::from($this->world, $testCube, $pos);
@@ -68,6 +70,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->pasteBenchmark = DynamicPasteTask::from($this->world, $copied, $pos);
 		$this->pasteBenchmark->executeAssociated($this, false);
 		$results[] = ["paste", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
+		StorageModule::clear();
 
 		$this->sendOutputPacket(new BenchmarkCallbackData($this->world, $results));
 	}
