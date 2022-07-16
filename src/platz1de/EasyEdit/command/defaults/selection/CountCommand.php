@@ -27,6 +27,6 @@ class CountCommand extends EasyEditCommand
 			$selection = $session->getSelection();
 		}
 
-		$session->runTask(CountTask::from($selection->getWorldName(), $selection, $session->asPlayer()->getPosition()));
+		$session->runTask(new CountTask($selection));
 	}
 }

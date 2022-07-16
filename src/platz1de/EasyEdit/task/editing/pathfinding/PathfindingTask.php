@@ -28,15 +28,13 @@ class PathfindingTask extends ExpandingTask
 	 * @param Vector3     $end
 	 * @param bool        $allowDiagonal
 	 * @param StaticBlock $block
-	 * @return PathfindingTask
 	 */
-	public static function from(string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block): PathfindingTask
+	public function __construct(string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block)
 	{
-		$instance = new self($world, $start);
-		$instance->end = $end;
-		$instance->allowDiagonal = $allowDiagonal;
-		$instance->block = $block;
-		return $instance;
+		$this->end = $end;
+		$this->allowDiagonal = $allowDiagonal;
+		$this->block = $block;
+		parent::__construct($world, $start);
 	}
 
 	/**
@@ -52,15 +50,18 @@ class PathfindingTask extends ExpandingTask
 		//TODO: unload chunks after a set amount
 		$max = ConfigManager::getPathfindingMax();
 
+		$startX = $this->start->getFloorX();
+		$startY = $this->start->getFloorY();
+		$startZ = $this->start->getFloorZ();
 		$endX = $this->end->getFloorX();
 		$endY = $this->end->getFloorY();
 		$endZ = $this->end->getFloorZ();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($this->getPosition()->getFloorX(), $this->getPosition()->getFloorZ()), 0, 1)) {
+		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
 		}
 
-		$open->insert(new Node($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ(), null, $endX, $endY, $endZ));
+		$open->insert(new Node($startX, $startY, $startZ, null, $endX, $endY, $endZ));
 		while ($checked++ < $max) {
 			/** @var Node $current */
 			$current = $open->extract();

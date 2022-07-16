@@ -29,6 +29,6 @@ class LoadSchematicCommand extends EasyEditCommand
 			return;
 		}
 
-		$session->runTask(SchematicLoadTask::from($schematicName));
+		$session->runTask(new SchematicLoadTask(EasyEdit::getSchematicPath() . $schematicName));
 	}
 }

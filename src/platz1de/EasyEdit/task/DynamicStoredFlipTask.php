@@ -26,14 +26,12 @@ class DynamicStoredFlipTask extends ExecutableTask
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param int                       $axis
-	 * @return DynamicStoredFlipTask
 	 */
-	public static function from(StoredSelectionIdentifier $saveId, int $axis): DynamicStoredFlipTask
+	public function __construct(StoredSelectionIdentifier $saveId, int $axis)
 	{
-		$instance = new self();
-		$instance->saveId = $saveId;
-		$instance->axis = $axis;
-		return $instance;
+		$this->saveId = $saveId;
+		$this->axis = $axis;
+		parent::__construct();
 	}
 
 	/**

@@ -11,12 +11,14 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\math\VoxelRayTrace;
+use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class LineTask extends EditTask
 {
 	use SettingNotifier;
 
+	private Vector3 $start;
 	private Vector3 $end;
 	private StaticBlock $block;
 
@@ -27,18 +29,16 @@ class LineTask extends EditTask
 	private array $blocks = [];
 
 	/**
-	 * @param string      $world
-	 * @param Vector3     $start
+	 * @param Position    $start
 	 * @param Vector3     $end
 	 * @param StaticBlock $block
-	 * @return LineTask
 	 */
-	public static function from(string $world, Vector3 $start, Vector3 $end, StaticBlock $block): LineTask
+	public function __construct(Position $start, Vector3 $end, StaticBlock $block)
 	{
-		$instance = new self($world, $start);
-		$instance->end = $end;
-		$instance->block = $block;
-		return $instance;
+		$this->start = $start->asVector3();
+		$this->end = $end->asVector3();
+		$this->block = $block;
+		parent::__construct($start->getWorld()->getFolderName());
 	}
 
 	public function execute(): void
@@ -46,7 +46,7 @@ class LineTask extends EditTask
 		ChunkCollector::init($this->getWorld());
 		$current = null;
 		//offset points to not yield blocks beyond the endings
-		foreach (VoxelRayTrace::betweenPoints($this->getPosition()->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
+		foreach (VoxelRayTrace::betweenPoints($this->start->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
 			if ($current === null) {
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
@@ -87,13 +87,14 @@ class LineTask extends EditTask
 
 	public function getProgress(): float
 	{
-		$current = $this->blocks[0] ?? $this->getPosition();
-		return $current->distance($this->end) / $this->getPosition()->distance($this->end);
+		$current = $this->blocks[0] ?? $this->start;
+		return $current->distance($this->end) / $this->start->distance($this->end);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
+		$stream->putVector($this->start);
 		$stream->putVector($this->end);
 		$stream->putInt($this->block->get());
 	}
@@ -101,6 +102,7 @@ class LineTask extends EditTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
+		$this->start = $stream->getVector();
 		$this->end = $stream->getVector();
 		$this->block = new StaticBlock($stream->getInt());
 	}

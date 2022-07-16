@@ -19,14 +19,12 @@ class SchematicSaveTask extends ExecutableTask
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $schematicPath
-	 * @return SchematicSaveTask
 	 */
-	public static function from(StoredSelectionIdentifier $saveId, string $schematicPath): SchematicSaveTask
+	public function __construct(StoredSelectionIdentifier $saveId, string $schematicPath)
 	{
-		$instance = new self();
-		$instance->schematicPath = $schematicPath;
-		$instance->saveId = $saveId;
-		return $instance;
+		$this->schematicPath = $schematicPath;
+		$this->saveId = $saveId;
+		parent::__construct();
 	}
 
 	/**

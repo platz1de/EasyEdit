@@ -10,7 +10,6 @@ use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
-use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 use pocketmine\world\generator\noise\Noise;
 use pocketmine\world\generator\noise\Simplex;
@@ -27,24 +26,19 @@ class Noise3DTask extends SelectionEditTask
 	private Noise $noise;
 
 	/**
-	 * @param string    $world
 	 * @param Selection $selection
-	 * @param Vector3   $position
 	 * @param int       $octaves
 	 * @param float     $persistence
 	 * @param float     $expansion
 	 * @param float     $threshold
-	 * @return Noise3DTask
 	 */
-	public static function from(string $world, Selection $selection, Vector3 $position, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0): Noise3DTask
+	public function __construct(Selection $selection, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0)
 	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		$instance->octaves = $octaves;
-		$instance->persistence = $persistence;
-		$instance->expansion = $expansion;
-		$instance->threshold = $threshold;
-		return $instance;
+		$this->octaves = $octaves;
+		$this->persistence = $persistence;
+		$this->expansion = $expansion;
+		$this->threshold = $threshold;
+		parent::__construct($selection);
 	}
 
 	/**

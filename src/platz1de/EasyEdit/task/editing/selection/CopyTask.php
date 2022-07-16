@@ -13,23 +13,23 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 
 class CopyTask extends SelectionEditTask
 {
+	private Vector3 $position;
+
 	/**
-	 * @param string    $world
 	 * @param Selection $selection
 	 * @param Vector3   $position
-	 * @return CopyTask
 	 */
-	public static function from(string $world, Selection $selection, Vector3 $position): CopyTask
+	public function __construct(Selection $selection, Vector3 $position)
 	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		$instance->splitOffset = $selection->getPos1()->multiply(-1);
-		return $instance;
+		$this->position = $position;
+		$this->splitOffset = $selection->getPos1()->multiply(-1);
+		parent::__construct($selection);
 	}
 
 	public function execute(): void
@@ -57,8 +57,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		//TODO: Make this optional
-		return DynamicBlockListSelection::fromWorldPositions($this->getPosition(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return DynamicBlockListSelection::fromWorldPositions($this->position, $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
 	}
 
 	/**
@@ -80,5 +79,17 @@ class CopyTask extends SelectionEditTask
 		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($oz, $oy, $ox, $handler): void {
 			$handler->addToUndo($x, $y, $z, $ox, $oy, $oz);
 		}, SelectionContext::full(), $this->getTotalSelection());
+	}
+
+	public function putData(ExtendedBinaryStream $stream): void
+	{
+		$stream->putVector($this->position);
+		parent::putData($stream);
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		$this->position = $stream->getVector();
+		parent::parseData($stream);
 	}
 }

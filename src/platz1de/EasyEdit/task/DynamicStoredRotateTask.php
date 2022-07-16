@@ -22,13 +22,11 @@ class DynamicStoredRotateTask extends ExecutableTask
 
 	/**
 	 * @param StoredSelectionIdentifier $saveId
-	 * @return DynamicStoredRotateTask
 	 */
-	public static function from(StoredSelectionIdentifier $saveId): DynamicStoredRotateTask
+	public function __construct(StoredSelectionIdentifier $saveId)
 	{
-		$instance = new self();
-		$instance->saveId = $saveId;
-		return $instance;
+		$this->saveId = $saveId;
+		parent::__construct();
 	}
 
 	/**

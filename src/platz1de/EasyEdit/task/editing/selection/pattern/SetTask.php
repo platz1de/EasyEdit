@@ -18,21 +18,6 @@ class SetTask extends PatternedEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $position
-	 * @param Pattern   $pattern
-	 * @return SetTask
-	 */
-	public static function from(string $world, Selection $selection, Vector3 $position, Pattern $pattern): SetTask
-	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		$instance->pattern = $pattern;
-		return $instance;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

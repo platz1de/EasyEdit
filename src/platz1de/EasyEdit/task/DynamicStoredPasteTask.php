@@ -23,17 +23,15 @@ class DynamicStoredPasteTask extends ExecutableTask
 	 * @param Position                  $position
 	 * @param bool                      $keep
 	 * @param bool                      $insert
-	 * @return DynamicStoredPasteTask
 	 */
-	public static function from(StoredSelectionIdentifier $saveId, Position $position, bool $keep, bool $insert = false): DynamicStoredPasteTask
+	public function __construct(StoredSelectionIdentifier $saveId, Position $position, bool $keep, bool $insert = false)
 	{
-		$instance = new self();
-		$instance->saveId = $saveId;
-		$instance->world = $position->getWorld()->getFolderName();
-		$instance->position = $position->asVector3();
-		$instance->keep = $keep;
-		$instance->insert = $insert;
-		return $instance;
+		$this->saveId = $saveId;
+		$this->world = $position->getWorld()->getFolderName();
+		$this->position = $position->asVector3();
+		$this->keep = $keep;
+		$this->insert = $insert;
+		parent::__construct();
 	}
 
 	/**
@@ -50,7 +48,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$this->executor = DynamicPasteTask::from($this->world, $selection, $this->position, $this->insert);
+		$this->executor = new DynamicPasteTask($this->world, $selection, $this->position, $this->insert);
 		$this->executor->executeAssociated($this);
 	}
 

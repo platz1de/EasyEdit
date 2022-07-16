@@ -15,23 +15,19 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\HeightMapCache;
-use pocketmine\math\Vector3;
 
 abstract class EditTask extends ExecutableTask
 {
-	private string $world;
-	private Vector3 $position;
+	protected string $world;
 
 	/**
-	 * @param string  $world
-	 * @param Vector3 $position
+	 * @param string $world
 	 */
-	public function __construct(string $world, Vector3 $position)
+	public function __construct(string $world)
 	{
 		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
 		parent::__construct();
 		$this->world = $world;
-		$this->position = $position;
 	}
 
 	/**
@@ -188,23 +184,13 @@ abstract class EditTask extends ExecutableTask
 		return $this->world;
 	}
 
-	/**
-	 * @return Vector3
-	 */
-	public function getPosition(): Vector3
-	{
-		return $this->position;
-	}
-
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->world);
-		$stream->putVector($this->position);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
-		$this->position = $stream->getVector();
 	}
 }

@@ -24,6 +24,6 @@ class StackCommand extends EasyEditCommand
 	{
 		$selection = $session->getCube();
 
-		$session->runTask(StackTask::from($selection->getWorldName(), new StackedCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)), $session->asPlayer()->getPosition()));
+		$session->runTask(new StackTask(new StackedCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null))));
 	}
 }

@@ -23,23 +23,21 @@ class ExtendBlockFaceTask extends ExpandingTask
 	 * @param string  $world
 	 * @param Vector3 $block
 	 * @param int     $face
-	 * @return ExtendBlockFaceTask
 	 */
-	public static function from(string $world, Vector3 $block, int $face): ExtendBlockFaceTask
+	public function __construct(string $world, Vector3 $block, int $face)
 	{
-		$instance = new self($world, $block);
-		$instance->face = $face;
-		return $instance;
+		$this->face = $face;
+		parent::__construct($world, $block);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
-		$startChunk = World::chunkHash($this->getPosition()->getFloorX() >> 4, $this->getPosition()->getFloorZ() >> 4);
+		$startChunk = World::chunkHash($this->start->getFloorX() >> 4, $this->start->getFloorZ() >> 4);
 		if (!$this->checkRuntimeChunk($handler, $startChunk, 0, 1)) {
 			return;
 		}
-		$target = $handler->getBlock($this->getPosition()->getFloorX(), $this->getPosition()->getFloorY(), $this->getPosition()->getFloorZ());
-		$offset = $this->getPosition()->subtractVector($start = $this->getPosition()->getSide($this->face));
+		$target = $handler->getBlock($this->start->getFloorX(), $this->start->getFloorY(), $this->start->getFloorZ());
+		$offset = $this->start->subtractVector($start = $this->start->getSide($this->face));
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($target, $ignore, true)) !== false) {
 			unset($ignore[$k]);

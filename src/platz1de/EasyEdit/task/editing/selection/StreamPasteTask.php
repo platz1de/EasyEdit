@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use pocketmine\math\Vector3;
 
 class StreamPasteTask extends SelectionEditTask
 {
@@ -20,16 +19,11 @@ class StreamPasteTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string                $world
 	 * @param BinaryBlockListStream $selection
-	 * @param Vector3               $position
-	 * @return StreamPasteTask
 	 */
-	public static function from(string $world, BinaryBlockListStream $selection, Vector3 $position): StreamPasteTask
+	public function __construct(BinaryBlockListStream $selection)
 	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		return $instance;
+		parent::__construct($selection);
 	}
 
 	/**

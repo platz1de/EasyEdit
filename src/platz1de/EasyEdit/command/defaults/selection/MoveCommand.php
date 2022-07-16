@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\MovingCube;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\MoveTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\world\Position;
 
 class MoveCommand extends EasyEditCommand
 {
@@ -25,6 +24,6 @@ class MoveCommand extends EasyEditCommand
 	{
 		$selection = $session->getCube();
 
-		$session->runTask(MoveTask::from($selection->getWorldName(), new MovingCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)), Position::fromObject($selection->getPos1(), $session->asPlayer()->getWorld())));
+		$session->runTask(new MoveTask(new MovingCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null))));
 	}
 }

@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -18,19 +17,6 @@ class SmoothTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
 	use SettingNotifier;
-
-	/**
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $position
-	 * @return SmoothTask
-	 */
-	public static function from(string $world, Selection $selection, Vector3 $position): SmoothTask
-	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		return $instance;
-	}
 
 	/**
 	 * @return string

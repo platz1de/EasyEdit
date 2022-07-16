@@ -16,25 +16,15 @@ class DrainTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	/**
-	 * @param string  $world
-	 * @param Vector3 $start
-	 * @return DrainTask
-	 */
-	public static function from(string $world, Vector3 $start): DrainTask
-	{
-		return new self($world, $start);
-	}
-
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$target = [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA];
 
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
-		$startX = $this->getPosition()->getFloorX();
-		$startY = $this->getPosition()->getFloorY();
-		$startZ = $this->getPosition()->getFloorZ();
+		$startX = $this->start->getFloorX();
+		$startY = $this->start->getFloorY();
+		$startZ = $this->start->getFloorZ();
 		$this->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$max = ConfigManager::getFillDistance();
 

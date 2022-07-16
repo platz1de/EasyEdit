@@ -11,7 +11,6 @@ use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
-use pocketmine\math\Vector3;
 
 class StackTask extends SelectionEditTask
 {
@@ -26,18 +25,13 @@ class StackTask extends SelectionEditTask
 	private bool $insert;
 
 	/**
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $position
-	 * @param bool      $insert
-	 * @return StackTask
+	 * @param StackedCube $selection
+	 * @param bool        $insert
 	 */
-	public static function from(string $world, Selection $selection, Vector3 $position, bool $insert = false): StackTask
+	public function __construct(StackedCube $selection, bool $insert = false)
 	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		$instance->insert = $insert;
-		return $instance;
+		$this->insert = $insert;
+		parent::__construct($selection);
 	}
 
 	/**

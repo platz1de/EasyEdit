@@ -5,30 +5,19 @@ namespace platz1de\EasyEdit\task\editing\expanding;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class PasteBlockStatesTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	/**
-	 * @param string  $world
-	 * @param Vector3 $start
-	 * @return PasteBlockStatesTask
-	 */
-	public static function from(string $world, Vector3 $start): PasteBlockStatesTask
-	{
-		return new self($world, $start);
-	}
-
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
-		$x = $this->getPosition()->getFloorX();
-		$y = $this->getPosition()->getFloorY();
-		$z = $this->getPosition()->getFloorZ();
+		$x = $this->start->getFloorX();
+		$y = $this->start->getFloorY();
+		$z = $this->start->getFloorZ();
 
 		if (!$this->checkRuntimeChunk($handler, World::chunkHash($x, $z), 0, 1)) {
 			return;

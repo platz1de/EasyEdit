@@ -19,13 +19,11 @@ class SchematicLoadTask extends ExecutableTask
 
 	/**
 	 * @param string $schematicPath
-	 * @return SchematicLoadTask
 	 */
-	public static function from(string $schematicPath): SchematicLoadTask
+	public function __construct(string $schematicPath)
 	{
-		$instance = new self();
-		$instance->schematicPath = $schematicPath;
-		return $instance;
+		$this->schematicPath = $schematicPath;
+		parent::__construct();
 	}
 
 	/**

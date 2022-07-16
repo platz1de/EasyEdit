@@ -21,6 +21,6 @@ class CutCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		$session->runTask(CutTask::from($session->getSelection()->getWorldName(), $session->getSelection(), ArgumentParser::parseRelativePosition($session, $args[0] ?? null)));
+		$session->runTask(new CutTask($session->getSelection(), ArgumentParser::parseRelativePosition($session, $args[0] ?? null)));
 	}
 }

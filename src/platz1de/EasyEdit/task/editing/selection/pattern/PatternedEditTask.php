@@ -6,11 +6,20 @@ use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\math\Vector3;
 
 abstract class PatternedEditTask extends SelectionEditTask
 {
 	protected Pattern $pattern;
+
+	/**
+	 * @param Selection $selection
+	 * @param Pattern   $pattern
+	 */
+	public function __construct(Selection $selection, Pattern $pattern)
+	{
+		$this->pattern = $pattern;
+		parent::__construct($selection);
+	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{

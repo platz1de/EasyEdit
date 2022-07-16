@@ -27,19 +27,6 @@ class CountTask extends SelectionEditTask
 	private static array $stupidHack = [];
 
 	/**
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $position
-	 * @return CountTask
-	 */
-	public static function from(string $world, Selection $selection, Vector3 $position): CountTask
-	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		return $instance;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getTaskName(): string

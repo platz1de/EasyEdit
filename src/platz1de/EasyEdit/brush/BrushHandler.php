@@ -20,7 +20,6 @@ use pocketmine\player\Player;
 use pocketmine\world\Position;
 use Throwable;
 
-
 class BrushHandler
 {
 	public const BRUSH_SPHERE = 0;
@@ -47,16 +46,16 @@ class BrushHandler
 			try {
 				switch (self::nameToIdentifier($brush->getString("brushType", ""))) {
 					case self::BRUSH_SPHERE:
-						$session->runTask(SetTask::from($player->getWorld()->getFolderName(), Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), $player->getPosition(), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
+						$session->runTask(new SetTask(Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
 						break;
 					case self::BRUSH_SMOOTH:
-						$session->runTask(SmoothTask::from($player->getWorld()->getFolderName(), Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), $player->getPosition()));
+						$session->runTask(new SmoothTask(Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0))));
 						break;
 					case self::BRUSH_NATURALIZE:
-						$session->runTask(SetTask::from($player->getWorld()->getFolderName(), Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), $player->getPosition(), new NaturalizePattern(PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))));
+						$session->runTask(new SetTask(Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), new NaturalizePattern(PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))));
 						break;
 					case self::BRUSH_CYLINDER:
-						$session->runTask(SetTask::from($player->getWorld()->getFolderName(), Cylinder::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), $player->getPosition(), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
+						$session->runTask(new SetTask(Cylinder::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
 						break;
 					case self::BRUSH_PASTE:
 						$clipboard = SessionManager::get($player)->getClipboard();
@@ -64,7 +63,7 @@ class BrushHandler
 							Messages::send($player, "no-clipboard");
 							return;
 						}
-						$session->runTask(DynamicStoredPasteTask::from($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1));
+						$session->runTask(new DynamicStoredPasteTask($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1));
 				}
 			} catch (ParseError $e) {
 				Messages::send($player, $e->getMessage(), [], false);

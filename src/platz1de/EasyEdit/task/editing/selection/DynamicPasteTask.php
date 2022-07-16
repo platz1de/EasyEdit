@@ -28,6 +28,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	protected Selection $selection;
 
+	protected Vector3 $position;
 	protected bool $insert;
 
 	/**
@@ -35,15 +36,14 @@ class DynamicPasteTask extends SelectionEditTask
 	 * @param DynamicBlockListSelection $selection
 	 * @param Vector3                   $position
 	 * @param bool                      $insert
-	 * @return DynamicPasteTask
 	 */
-	public static function from(string $world, DynamicBlockListSelection $selection, Vector3 $position, bool $insert = false): DynamicPasteTask
+	public function __construct(string $world, DynamicBlockListSelection $selection, Vector3 $position, bool $insert = false)
 	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		$instance->insert = $insert;
-		$instance->splitOffset = $position->asVector3();
-		return $instance;
+		$this->insert = $insert;
+		$this->position = $position;
+		$this->splitOffset = $position;
+		parent::__construct($selection);
+		$this->world = $world;
 	}
 
 	/**
@@ -57,7 +57,7 @@ class DynamicPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
-		$place = $this->getPosition()->addVector($selection->getPoint());
+		$place = $this->position->addVector($selection->getPoint());
 		$ox = $place->getFloorX();
 		$oy = $place->getFloorY();
 		$oz = $place->getFloorZ();
@@ -88,7 +88,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->addVector($this->getPosition())->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->getPosition())->addVector($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->addVector($this->position)->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->position)->addVector($this->selection->getPoint()));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

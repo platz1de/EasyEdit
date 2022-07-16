@@ -22,6 +22,15 @@ abstract class SelectionEditTask extends EditTask
 	private int $totalPieces;
 	private int $piecesLeft;
 
+	/**
+	 * @param Selection $selection
+	 */
+	public function __construct(Selection $selection)
+	{
+		$this->selection = $selection;
+		parent::__construct($selection->getWorldName());
+	}
+
 	public function execute(): void
 	{
 		StorageModule::checkFinished();
@@ -30,9 +39,9 @@ abstract class SelectionEditTask extends EditTask
 		$this->piecesLeft = count($pieces);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
 		ChunkCollector::init($this->getWorld());
-		foreach ($pieces as $key => $piece) {
+		foreach ($pieces as $piece) {
 			$this->current = $piece;
-			$piece->init($this->getPosition());
+			$piece->init($this->splitOffset ?? Vector3::zero());
 			if ($this->requestChunks($piece->getNeededChunks(), $fastSet)) {
 				$this->piecesLeft--;
 			} else {

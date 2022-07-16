@@ -20,6 +20,6 @@ class InsertCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		$session->runTask(DynamicStoredPasteTask::from($session->getClipboard(), $session->asPlayer()->getPosition(), true, true));
+		$session->runTask(new DynamicStoredPasteTask($session->getClipboard(), $session->asPlayer()->getPosition(), true, true));
 	}
 }

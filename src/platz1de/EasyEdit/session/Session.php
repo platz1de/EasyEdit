@@ -122,7 +122,7 @@ class Session
 	public function undoStep(Session $executor): void
 	{
 		if ($this->canUndo()) {
-			$executor->runTask(StaticStoredPasteTask::from($this->past->shift(), false, true));
+			$executor->runTask(new StaticStoredPasteTask($this->past->shift(), false, true));
 		}
 	}
 
@@ -132,7 +132,7 @@ class Session
 	public function redoStep(Session $executor): void
 	{
 		if ($this->canRedo()) {
-			$executor->runTask(StaticStoredPasteTask::from($this->future->shift(), false));
+			$executor->runTask(new StaticStoredPasteTask($this->future->shift(), false));
 		}
 	}
 

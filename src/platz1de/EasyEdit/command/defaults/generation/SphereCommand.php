@@ -23,6 +23,6 @@ class SphereCommand extends EasyEditCommand
 	public function process(Session $session, array $args): void
 	{
 		ArgumentParser::requireArgumentCount($args, 2, $this);
-		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (int) $args[0]), $session->asPlayer()->getPosition(), ArgumentParser::parseCombinedPattern($session, $args, 1)));
+		$session->runTask(new SetTask(Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (int) $args[0]), ArgumentParser::parseCombinedPattern($session, $args, 1)));
 	}
 }

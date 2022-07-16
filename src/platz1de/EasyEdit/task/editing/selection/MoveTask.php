@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use pocketmine\math\Vector3;
 
 class MoveTask extends SelectionEditTask
 {
@@ -21,16 +20,11 @@ class MoveTask extends SelectionEditTask
 	protected Selection $current;
 
 	/**
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $position
-	 * @return MoveTask
+	 * @param MovingCube $selection
 	 */
-	public static function from(string $world, Selection $selection, Vector3 $position): MoveTask
+	public function __construct(MovingCube $selection)
 	{
-		$instance = new self($world, $position);
-		$instance->selection = $selection;
-		return $instance;
+		parent::__construct($selection);
 	}
 
 	/**

@@ -11,7 +11,6 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
-use pocketmine\math\Vector3;
 
 class StaticStoredPasteTask extends ExecutableTask
 {
@@ -24,15 +23,13 @@ class StaticStoredPasteTask extends ExecutableTask
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param bool                      $keep
 	 * @param bool                      $isUndo
-	 * @return StaticStoredPasteTask
 	 */
-	public static function from(StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false): StaticStoredPasteTask
+	public function __construct(StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false)
 	{
-		$instance = new self();
-		$instance->saveId = $saveId;
-		$instance->keep = $keep;
-		$instance->isUndo = $isUndo;
-		return $instance;
+		$this->saveId = $saveId;
+		$this->keep = $keep;
+		$this->isUndo = $isUndo;
+		parent::__construct();
 	}
 
 	/**
@@ -51,9 +48,9 @@ class StaticStoredPasteTask extends ExecutableTask
 		}
 
 		if ($selection instanceof StaticBlockListSelection) {
-			$this->executor = StaticPasteTask::from($selection->getWorldName(), $selection, Vector3::zero());
+			$this->executor = new StaticPasteTask($selection);
 		} else {
-			$this->executor = StreamPasteTask::from($selection->getWorldName(), $selection, Vector3::zero());
+			$this->executor = new StreamPasteTask($selection);
 		}
 		$this->executor->executeAssociated($this, false);
 

@@ -8,9 +8,11 @@ use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
+use pocketmine\math\Vector3;
 
 abstract class ExpandingTask extends EditTask
 {
+	protected Vector3 $start;
 	private float $progress = 0; //worst case scenario
 	/**
 	 * @var bool[]
@@ -20,6 +22,15 @@ abstract class ExpandingTask extends EditTask
 	 * @var int[]
 	 */
 	private array $requestedChunks = [];
+
+	/**
+	 * @param string  $world
+	 * @param Vector3 $start
+	 */
+	public function __construct(string $world, Vector3 $start) {
+		$this->start = $start;
+		parent::__construct($world);
+	}
 
 	public function execute(): void
 	{
@@ -34,7 +45,7 @@ abstract class ExpandingTask extends EditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection($this->getWorld(), $this->getPosition());
+		return new ExpandingStaticBlockListSelection($this->getWorld(), $this->start);
 	}
 
 	public function getProgress(): float

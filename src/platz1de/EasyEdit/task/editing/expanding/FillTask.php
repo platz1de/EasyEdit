@@ -27,14 +27,12 @@ class FillTask extends ExpandingTask
 	 * @param Vector3     $start
 	 * @param int         $direction
 	 * @param StaticBlock $block
-	 * @return FillTask
 	 */
-	public static function from(string $world, Vector3 $start, int $direction, StaticBlock $block): FillTask
+	public function __construct(string $world, Vector3 $start, int $direction, StaticBlock $block)
 	{
-		$instance = new self($world, $start);
-		$instance->direction = $direction;
-		$instance->block = $block;
-		return $instance;
+		$this->direction = $direction;
+		$this->block = $block;
+		parent::__construct($world, $start);
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
@@ -47,9 +45,9 @@ class FillTask extends ExpandingTask
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$id = $this->block->get();
-		$startX = $this->getPosition()->getFloorX();
-		$startY = $this->getPosition()->getFloorY();
-		$startZ = $this->getPosition()->getFloorZ();
+		$startX = $this->start->getFloorX();
+		$startY = $this->start->getFloorY();
+		$startZ = $this->start->getFloorZ();
 		$this->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$validate = match ($this->direction) {
 			Facing::DOWN => static function (Vector3 $pos) use ($startY) {

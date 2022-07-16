@@ -31,6 +31,6 @@ class ExtinguishCommand extends EasyEditCommand
 			$selection = $session->getSelection();
 		}
 
-		$session->runTask(SetTask::from($session->asPlayer()->getWorld()->getFolderName(), $selection, $session->asPlayer()->getPosition(), new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())])));
+		$session->runTask(new SetTask($selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())])));
 	}
 }

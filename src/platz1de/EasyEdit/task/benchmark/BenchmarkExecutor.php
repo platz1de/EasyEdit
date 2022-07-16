@@ -25,11 +25,13 @@ class BenchmarkExecutor extends ExecutableTask
 	private CopyTask $copyBenchmark;
 	private DynamicPasteTask $pasteBenchmark;
 
-	public static function from(string $world): BenchmarkExecutor
+	/**
+	 * @param string $world
+	 */
+	public function __construct(string $world)
 	{
-		$task = new self();
-		$task->world = $world;
-		return $task;
+		$this->world = $world;
+		parent::__construct();
 	}
 
 	public function execute(): void
@@ -42,7 +44,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
 
 		//Task #1 - set static
-		$this->setSimpleBenchmark = SetTask::from($this->world, $testCube, $pos, StaticBlock::from(VanillaBlocks::STONE()));
+		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->executeAssociated($this, false);
 		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
@@ -51,14 +53,14 @@ class BenchmarkExecutor extends ExecutableTask
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
-		$this->setComplexBenchmark = SetTask::from($this->world, $testCube, $pos, $pattern);
+		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
 		$this->setComplexBenchmark->executeAssociated($this, false);
 		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
 		StorageModule::clear();
 
 		//Task #3 - copy
-		$this->copyBenchmark = CopyTask::from($this->world, $testCube, $pos);
+		$this->copyBenchmark = new CopyTask($testCube, $pos);
 		$this->copyBenchmark->executeAssociated($this, false);
 		$results[] = ["copy", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		EditTaskResultCache::clear();
@@ -67,7 +69,7 @@ class BenchmarkExecutor extends ExecutableTask
 		StorageModule::cleanStored($id);
 
 		//Task #4 - paste
-		$this->pasteBenchmark = DynamicPasteTask::from($this->world, $copied, $pos);
+		$this->pasteBenchmark = new DynamicPasteTask($this->world, $copied, $pos);
 		$this->pasteBenchmark->executeAssociated($this, false);
 		$results[] = ["paste", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
 		StorageModule::clear();

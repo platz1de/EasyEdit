@@ -39,7 +39,7 @@ class BenchmarkManager
 
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		EditHandler::runTask(BenchmarkExecutor::from($name));
+		EditHandler::runTask(new BenchmarkExecutor($name));
 	}
 
 	/**
