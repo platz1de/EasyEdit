@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\listener;
 use platz1de\EasyEdit\brush\BrushHandler;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\editing\expanding\ExtendBlockFaceTask;
 use platz1de\EasyEdit\utils\BlockInfoTool;
@@ -45,7 +44,7 @@ class DefaultEventListener implements Listener
 		$axe = $event->getItem();
 		if ($axe instanceof Axe && $axe->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative() && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 			$event->cancel();
-			Cube::selectPos1($event->getPlayer(), $event->getBlock()->getPosition());
+			SessionManager::get($event->getPlayer())->selectPos1($event->getBlock()->getPosition());
 		} elseif ($axe instanceof Stick && $axe->getNamedTag()->getByte("isInfoStick", 0) === 1) {
 			$event->cancel();
 			BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
@@ -70,7 +69,7 @@ class DefaultEventListener implements Listener
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
-					Cube::selectPos2($event->getPlayer(), $event->getBlock()->getPosition());
+					SessionManager::get($event->getPlayer())->selectPos2($event->getBlock()->getPosition());
 				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_BRUSH) && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT)) {
 					$event->cancel();
 					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
@@ -112,7 +111,7 @@ class DefaultEventListener implements Listener
 						//This gets triggered when breaking a block which isn't focused
 						EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($target, $event): void {
 							if (self::$cooldown < microtime(true)) {
-								Cube::selectPos2($event->getPlayer(), $target->getPosition());
+								SessionManager::get($event->getPlayer())->selectPos2($target->getPosition());
 							}
 						}));
 					}

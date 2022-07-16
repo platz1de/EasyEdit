@@ -3,61 +3,16 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
-use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
-use platz1de\EasyEdit\world\clientblock\StructureBlockOutline;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
-use pocketmine\player\Player;
-use Thread;
-use Throwable;
 use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned
 {
 	use CubicChunkLoader;
-
-	private int $structure = -1;
-
-	public function updateOutline(string $player): void
-	{
-		if (!$this->piece && $this->isValid()) {
-			$this->close($player);
-			$this->structure = ClientSideBlockManager::registerBlock($player, new StructureBlockOutline($this->getWorld()->getFolderName(), $this->pos1, $this->pos2));
-		}
-	}
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 */
-	public function putData(ExtendedBinaryStream $stream): void
-	{
-		parent::putData($stream);
-
-		$stream->putInt($this->structure);
-	}
-
-	/**
-	 * @param ExtendedBinaryStream $stream
-	 */
-	public function parseData(ExtendedBinaryStream $stream): void
-	{
-		parent::parseData($stream);
-
-		$this->structure = $stream->getInt();
-	}
-
-	public function close(string $player): void
-	{
-		if ($this->structure !== -1) {
-			ClientSideBlockManager::unregisterBlock($player, $this->structure);
-		}
-	}
 
 	/**
 	 * splits into 3x3 Chunk pieces
@@ -112,52 +67,5 @@ class Cube extends Selection implements Patterned
 		if ($context->includesCenter()) {
 			CubicConstructor::betweenPoints(Vector3::maxComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->floor(), $this->getPos1()), Vector3::minComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->ceil(), $this->getPos2()), $closure);
 		}
-	}
-
-	/**
-	 * @param Player $player
-	 * @return Cube
-	 */
-	public static function createInWorld(Player $player): Cube
-	{
-		try {
-			$selection = SelectionManager::getFromPlayer($player->getName());
-			if ($selection instanceof self && $selection->getWorld() === $player->getWorld()) {
-				return $selection;
-			}
-			$selection->close($player->getName());
-		} catch (Throwable) { //no selection
-		}
-		$selection = new Cube($player->getWorld()->getFolderName(), null, null);
-		SelectionManager::setForPlayer($player->getName(), $selection);
-		return $selection;
-	}
-
-	/**
-	 * @param Player  $player
-	 * @param Vector3 $position
-	 */
-	public static function selectPos1(Player $player, Vector3 $position): void
-	{
-		$selection = self::createInWorld($player);
-
-		$selection->setPos1($position->floor());
-		$selection->updateOutline($player->getName());
-
-		Messages::send($player, "selected-pos1", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
-	}
-
-	/**
-	 * @param Player  $player
-	 * @param Vector3 $position
-	 */
-	public static function selectPos2(Player $player, Vector3 $position): void
-	{
-		$selection = self::createInWorld($player);
-
-		$selection->setPos2($position->floor());
-		$selection->updateOutline($player->getName());
-
-		Messages::send($player, "selected-pos2", ["{x}" => (string) $position->getX(), "{y}" => (string) $position->getY(), "{z}" => (string) $position->getZ()]);
 	}
 }

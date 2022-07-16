@@ -172,10 +172,6 @@ abstract class Selection
 		return $this->pos2;
 	}
 
-	public function close(string $player): void
-	{
-	}
-
 	/**
 	 * @param int $block
 	 * @return bool

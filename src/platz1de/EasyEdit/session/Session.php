@@ -7,17 +7,19 @@ use platz1de\EasyEdit\command\exception\NoClipboardException;
 use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
 use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionManager;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
+use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
+use platz1de\EasyEdit\world\clientblock\StructureBlockOutline;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use pocketmine\world\Position;
 use SplStack;
-use Throwable;
 
 class Session
 {
@@ -30,10 +32,9 @@ class Session
 	 * @var SplStack<StoredSelectionIdentifier>
 	 */
 	private SplStack $future;
-	/**
-	 * @var StoredSelectionIdentifier
-	 */
 	private StoredSelectionIdentifier $clipboard;
+	private Selection $selection;
+	private int $highlight = -1;
 
 	public function __construct(SessionIdentifier $id)
 	{
@@ -163,15 +164,10 @@ class Session
 	 */
 	public function getSelection(): Selection
 	{
-		try {
-			$selection = SelectionManager::getFromPlayer($this->getPlayer());
-		} catch (Throwable) {
+		if (!isset($this->selection) || !$this->selection->isValid()) {
 			throw new NoSelectionException();
 		}
-		if (!$selection->isValid()) {
-			throw new NoSelectionException();
-		}
-		return $selection;
+		return $this->selection;
 	}
 
 	/**
@@ -184,5 +180,53 @@ class Session
 			throw new WrongSelectionTypeException($selection::class, Cube::class);
 		}
 		return $selection;
+	}
+
+	/**
+	 * @param Position $position
+	 */
+	public function selectPos1(Position $position): void
+	{
+		$this->createSelectionInWorld($position->getWorld()->getFolderName());
+		$this->selection->setPos1($position->floor());
+		$this->updateSelectionHighlight();
+
+		Messages::send($this->getPlayer(), "selected-pos1", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
+	}
+
+	/**
+	 * @param Position $position
+	 */
+	public function selectPos2(Position $position): void
+	{
+		$this->createSelectionInWorld($position->getWorld()->getFolderName());
+		$this->selection->setPos2($position->floor());
+		$this->updateSelectionHighlight();
+
+		Messages::send($this->getPlayer(), "selected-pos2", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
+	}
+
+	/**
+	 * @param string $world
+	 */
+	private function createSelectionInWorld(string $world): void
+	{
+		if (isset($this->selection) && $this->selection instanceof Cube && $this->selection->getWorldName() === $world) {
+			return;
+		}
+
+		$this->selection = new Cube($world, null, null);
+	}
+
+	public function updateSelectionHighlight(): void
+	{
+		if ($this->highlight !== -1) {
+			ClientSideBlockManager::unregisterBlock($this->getPlayer(), $this->highlight);
+		}
+		$this->highlight = -1;
+
+		if ($this->selection->isValid()) {
+			$this->highlight = ClientSideBlockManager::registerBlock($this->getPlayer(), new StructureBlockOutline($this->selection->getWorldName(), $this->selection->getPos1(), $this->selection->getPos2()));
+		}
 	}
 }
