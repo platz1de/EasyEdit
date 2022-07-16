@@ -90,7 +90,9 @@ class EditThread extends Thread
 						$this->setStatus(self::STATUS_CRASHED);
 						$sleep = time() + 9;
 						//TODO: move this to result
-						$this->sendOutput(new CrashReportData($throwable));
+						$crash = new CrashReportData($throwable);
+						$crash->setTaskId($task->getTaskId());
+						$this->sendOutput($crash);
 						ChunkCollector::clear();
 						//TODO
 						$result = new TaskResultData();
