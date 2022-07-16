@@ -55,7 +55,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		$this->executor->executeAssociated($this, false);
 
 		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), $this->isUndo));
-		StaticPasteTask::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->executor->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
 	}
 
 	public function getProgress(): float

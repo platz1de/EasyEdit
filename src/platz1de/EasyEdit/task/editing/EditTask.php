@@ -127,9 +127,7 @@ abstract class EditTask extends ExecutableTask
 		}
 		$changeId = StorageModule::finishCollecting();
 		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-		/** @var class-string<EditTask> $task */
-		$task = static::class;
-		$task::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
 		ChunkCollector::clear();
 	}
 
@@ -139,11 +137,10 @@ abstract class EditTask extends ExecutableTask
 	abstract public function executeEdit(EditTaskHandler $handler): void;
 
 	/**
-	 * @param int    $taskId
 	 * @param string $time
 	 * @param string $changed
 	 */
-	abstract public static function notifyUser(int $taskId, string $time, string $changed): void;
+	abstract public function notifyUser(string $time, string $changed): void;
 
 	/**
 	 * Filters actually edited chunks

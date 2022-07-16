@@ -4,11 +4,9 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\block\BlockFactory;
@@ -21,10 +19,6 @@ class CountTask extends SelectionEditTask
 	 * @var int[]
 	 */
 	private array $counted = [];
-	/**
-	 * @var int[][]
-	 */
-	private static array $stupidHack = [];
 
 	/**
 	 * @return string
@@ -44,19 +38,17 @@ class CountTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param int    $taskId
 	 * @param string $time
 	 * @param string $changed
 	 */
-	public static function notifyUser(int $taskId, string $time, string $changed): void
+	public function notifyUser(string $time, string $changed): void
 	{
-		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum(self::$stupidHack[$taskId])])));
+		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted)])));
 		$msg = "";
-		foreach (self::$stupidHack[$taskId] as $block => $count) {
+		foreach ($this->counted as $block => $count) {
 			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
-		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, $msg, false));
-		unset(self::$stupidHack[$taskId]);
+		$this->sendOutputPacket(new MessageSendData($msg, false));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void
@@ -69,6 +61,5 @@ class CountTask extends SelectionEditTask
 				$this->counted[$id] = 1;
 			}
 		}, SelectionContext::full(), $this->getTotalSelection());
-		self::$stupidHack[$this->getTaskId()] = $this->counted;
 	}
 }

@@ -9,7 +9,6 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
-use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
@@ -41,7 +40,7 @@ class CopyTask extends SelectionEditTask
 		}
 		$this->executeAssociated($this, false); //this calls this method again, but without the default handler
 		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::finishCollecting()));
-		self::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
 	}
 
 	/**
@@ -61,13 +60,12 @@ class CopyTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param int    $taskId
 	 * @param string $time
 	 * @param string $changed
 	 */
-	public static function notifyUser(int $taskId, string $time, string $changed): void
+	public function notifyUser(string $time, string $changed): void
 	{
-		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-copied", ["{time}" => $time, "{changed}" => $changed])));
+		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-copied", ["{time}" => $time, "{changed}" => $changed])));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

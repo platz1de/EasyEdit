@@ -55,7 +55,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));
 		}
 		StorageModule::forceStore($this->saveId, $rotated);
-		$this->sendOutputPacket(new MessageSendData($this->getTaskId(), Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())])));
+		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())])));
 	}
 
 	public function getProgress(): float

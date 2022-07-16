@@ -53,17 +53,16 @@ class CutTask extends SelectionEditTask
 		$this->executor2 = new SetTask($this->selection, new StaticBlock(0));
 		$this->executor2->executeAssociated($this, false);
 		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), false));
-		self::notifyUser($this->getTaskId(), (string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
 	}
 
 	/**
-	 * @param int    $taskId
 	 * @param string $time
 	 * @param string $changed
 	 */
-	public static function notifyUser(int $taskId, string $time, string $changed): void
+	public function notifyUser(string $time, string $changed): void
 	{
-		EditThread::getInstance()->sendOutput(new MessageSendData($taskId, Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed])));
+		EditThread::getInstance()->sendOutput(new MessageSendData(Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed])));
 	}
 
 	public function getProgress(): float

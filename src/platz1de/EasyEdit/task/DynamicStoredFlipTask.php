@@ -91,7 +91,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				throw new UnexpectedValueException("Invalid axis " . $this->axis);
 		}
 		StorageModule::forceStore($this->saveId, $flipped);
-		$this->sendOutputPacket(new MessageSendData($this->getTaskId(), Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())])));
+		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())])));
 	}
 
 	public function getProgress(): float

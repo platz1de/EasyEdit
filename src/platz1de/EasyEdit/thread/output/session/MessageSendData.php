@@ -13,13 +13,11 @@ class MessageSendData extends SessionOutputData
 	private bool $prefix;
 
 	/**
-	 * @param int    $taskId
 	 * @param string $message
 	 * @param bool   $prefix
 	 */
-	public function __construct(int $taskId, string $message, bool $prefix = true)
+	public function __construct(string $message, bool $prefix = true)
 	{
-		$this->setTaskId($taskId); //TODO: hack
 		$this->message = $message;
 		$this->prefix = $prefix;
 	}
