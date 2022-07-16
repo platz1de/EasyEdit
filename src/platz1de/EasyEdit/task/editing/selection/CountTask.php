@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\SelectionContext;
@@ -9,7 +10,6 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\MixedUtils;
-use pocketmine\block\BlockFactory;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -45,8 +45,9 @@ class CountTask extends SelectionEditTask
 	{
 		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted)])));
 		$msg = "";
+		arsort($this->counted);
 		foreach ($this->counted as $block => $count) {
-			$msg .= BlockFactory::getInstance()->fromFullBlock($block)->getName() . ": " . MixedUtils::humanReadable($count) . "\n";
+			$msg .= BlockStateConvertor::getState($block) . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
 		$this->sendOutputPacket(new MessageSendData($msg, false));
 	}
