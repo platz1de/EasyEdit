@@ -14,4 +14,10 @@ abstract class SessionOutputData extends OutputData
 	}
 
 	abstract public function handleSession(Session $session): void;
+
+	public function fastSerialize(): string
+	{
+		$this->getTaskId(); //throw if not sent by task
+		return parent::fastSerialize();
+	}
 }
