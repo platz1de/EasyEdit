@@ -7,6 +7,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\thread\EditThread;
 use UnexpectedValueException;
 
 class StorageModule
@@ -30,6 +31,7 @@ class StorageModule
 		self::$storage[$id] = self::$collected;
 		$identifier = new StoredSelectionIdentifier($id, self::$collected::class);
 		self::$collected = null;
+		EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
 		return $identifier;
 	}
 
@@ -110,6 +112,7 @@ class StorageModule
 	public static function forceStore(StoredSelectionIdentifier $id, BlockListSelection $selection): void
 	{
 		self::$storage[$id->getMagicId()] = $selection;
+		EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
 	}
 
 	/**
@@ -118,14 +121,7 @@ class StorageModule
 	public static function cleanStored(StoredSelectionIdentifier $id): void
 	{
 		unset(self::$storage[$id->getMagicId()]);
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function getSize(): int
-	{
-		return count(self::$storage);
+		EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
 	}
 
 	/**

@@ -21,18 +21,15 @@ use Throwable;
 
 class EditThread extends Thread
 {
-	public const STATUS_IDLE = 0;
-	public const STATUS_PREPARING = 1;
-	public const STATUS_RUNNING = 2;
-	public const STATUS_CRASHED = 3;
-
 	/**
 	 * @var ThreadedLogger
 	 */
 	private $logger;
+	/**
+	 * @var ThreadStats
+	 */
+	private $stats;
 	private static EditThread $instance;
-	private int $status = self::STATUS_IDLE;
-	private float $lastResponse = 0.0;
 	private string $inputData = "";
 	private string $outputData = "";
 
@@ -44,6 +41,7 @@ class EditThread extends Thread
 	{
 		self::$instance = $this;
 		$this->logger = $logger;
+		$this->stats = ThreadStats::getInstance();
 	}
 
 
@@ -53,61 +51,50 @@ class EditThread extends Thread
 
 		$this->getLogger()->debug("Started EditThread");
 
-		$this->lastResponse = microtime(true);
-
-		$sleep = 0;
 		while (!$this->isKilled) {
+			$this->stats->updateMemory();
 			try {
 				$this->parseInput(); //This can easily throw an exception when cancelling in an unexpected moment
 			} catch (Throwable $throwable) {
 				$this->logger->logException($throwable);
 			}
-			if ($this->getStatus() !== self::STATUS_CRASHED) {
-				$task = ThreadData::getNextTask();
-				ThreadData::setTask($task);
-				if ($task === null) {
-					$this->synchronized(function (): void {
-						if ($this->inputData === "" && !$this->isKilled) {
-							$this->wait();
-						}
-					});
-				} else {
-					try {
-						$this->setStatus(self::STATUS_RUNNING);
-						ThreadData::canExecute(); //clear pending cancel requests
-						EditTaskResultCache::clear();
-						StorageModule::clear();
-						$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
-						$task->execute();
-						//TODO
-						$result = new TaskResultData();
-						$result->setTaskId($task->getTaskId());
-						$this->sendOutput($result);
-						StorageModule::checkFinished();
-						$this->setStatus(self::STATUS_IDLE);
-					} catch (Throwable $throwable) {
-						$this->logger->logException($throwable);
-						$this->setStatus(self::STATUS_CRASHED);
-						$sleep = time() + 9;
-						//TODO: move this to result
-						$crash = new CrashReportData($throwable);
-						$crash->setTaskId($task->getTaskId());
-						$this->sendOutput($crash);
-						ChunkCollector::clear();
-						//TODO
-						$result = new TaskResultData();
-						$result->setTaskId($task->getTaskId());
-						$this->sendOutput($result);
-					}
-				}
-			} else {
+			$task = ThreadData::getNextTask();
+			if ($task === null) {
 				$this->synchronized(function (): void {
 					if ($this->inputData === "" && !$this->isKilled) {
-						$this->wait(10 * 1000 * 1000);
+						$this->wait();
 					}
 				});
-				if ($sleep < time()) {
-					$this->setStatus(self::STATUS_IDLE);
+			} else {
+				try {
+					ThreadData::canExecute(); //clear pending cancel requests
+					EditTaskResultCache::clear();
+					StorageModule::clear();
+					$this->stats->startTask($task);
+					$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
+					$task->execute();
+					//TODO
+					$result = new TaskResultData();
+					$result->setTaskId($task->getTaskId());
+					$this->sendOutput($result);
+					StorageModule::checkFinished();
+				} catch (Throwable $throwable) {
+					$this->logger->logException($throwable);
+					//TODO: move this to result
+					$crash = new CrashReportData($throwable);
+					$crash->setTaskId($task->getTaskId());
+					$this->sendOutput($crash);
+					ChunkCollector::clear();
+					//TODO
+					$result = new TaskResultData();
+					$result->setTaskId($task->getTaskId());
+					$this->sendOutput($result);
+					//throttle a bit to avoid spamming
+					$this->synchronized(function (): void {
+						if ($this->inputData === "" && !$this->isKilled) {
+							$this->wait(10 * 1000 * 1000);
+						}
+					});
 				}
 			}
 		}
@@ -165,47 +152,9 @@ class EditThread extends Thread
 	/**
 	 * @return bool
 	 */
-	public function isRunning(): bool
-	{
-		return $this->getStatus() === self::STATUS_RUNNING;
-	}
-
-	/**
-	 * @return bool
-	 */
 	public function allowsExecution(): bool
 	{
 		return !$this->isKilled;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getStatus(): int
-	{
-		return $this->status;
-	}
-
-	/**
-	 * @param int $status
-	 * @internal
-	 */
-	public function setStatus(int $status): void
-	{
-		$this->synchronized(function () use ($status): void {
-			$this->status = $status;
-			$this->lastResponse = microtime(true);
-		});
-	}
-
-	//TODO: Implement proper callbacks
-
-	/**
-	 * @return float
-	 */
-	public function getLastResponse(): float
-	{
-		return $this->getStatus() === self::STATUS_IDLE ? microtime(true) : $this->lastResponse;
 	}
 
 	private function parseInput(): void
@@ -254,6 +203,7 @@ class EditThread extends Thread
 	 */
 	public function sendToThread(InputData $data): void
 	{
+		$this->stats->preProcessInput($data);
 		$add = $data->fastSerialize();
 		$this->synchronized(function () use ($add): void {
 			$stream = new ExtendedBinaryStream($this->inputData);
@@ -270,6 +220,7 @@ class EditThread extends Thread
 	 */
 	public function sendOutput(OutputData $data): void
 	{
+		$this->stats->preProcessOutput($data);
 		$add = $data->fastSerialize();
 		$this->synchronized(function () use ($add): void {
 			$stream = new ExtendedBinaryStream($this->outputData);
@@ -282,5 +233,13 @@ class EditThread extends Thread
 	{
 		ThreadData::requirePause();
 		parent::quit();
+	}
+
+	/**
+	 * @return ThreadStats
+	 */
+	public function getStats(): ThreadStats
+	{
+		return $this->stats;
 	}
 }

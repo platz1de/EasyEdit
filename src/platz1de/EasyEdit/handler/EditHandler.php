@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\handler;
 
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\session\Session;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\session\SessionOutputData;
@@ -69,5 +70,17 @@ class EditHandler
 			return;
 		}
 		$data->handleSession(self::$executors[$data->getTaskId()]);
+	}
+
+	/**
+	 * @param int $task
+	 * @return SessionIdentifier
+	 */
+	public static function getExecutor(int $task): SessionIdentifier
+	{
+		if (!isset(self::$executors[$task])) {
+			return SessionIdentifier::internal("EasyEdit");
+		}
+		return self::$executors[$task]->getIdentifier();
 	}
 }

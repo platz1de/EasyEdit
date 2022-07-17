@@ -25,7 +25,6 @@ abstract class EditTask extends ExecutableTask
 	 */
 	public function __construct(string $world)
 	{
-		EditThread::getInstance()->setStatus(EditThread::STATUS_PREPARING);
 		parent::__construct();
 		$this->world = $world;
 	}

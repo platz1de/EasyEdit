@@ -53,6 +53,7 @@ abstract class ExecutableTask
 		if ($data->checkSend()) {
 			EditThread::getInstance()->sendOutput($data);
 		}
+		EditThread::getInstance()->getStats()->updateProgress($this->getProgress());
 	}
 
 	/**
