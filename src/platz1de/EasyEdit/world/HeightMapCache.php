@@ -207,7 +207,7 @@ class HeightMapCache
 	public static function generateFullDepthMap(int $x, int $z): array
 	{
 		self::moveTo($x, $z);
-		$depth = array_fill(0, World::Y_MAX - World::Y_MIN, 0);
+		$depth = array_fill(World::Y_MIN, World::Y_MAX - World::Y_MIN, 0);
 		foreach (self::$current as $y => $value) {
 			for ($i = 0; $i < $value; $i++) {
 				$depth[$y - $i + 1] = min($i, $value - $i);

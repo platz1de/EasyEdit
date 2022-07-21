@@ -144,7 +144,8 @@ class SmoothTask extends SelectionEditTask
 			$anchor = $multiplier === 1 ? max($nMax, $oMax) : min($nMax, $oMax);
 
 			$position = ($anchor - $y + $multiplier * 1) / ($anchor - $nMin + $multiplier * 1);
-			$target = (int) round($anchor + $multiplier * $position * ($anchor - $oMin));
+			//absolutely no idea why this can exceed world limitations, but it does?
+			$target = (int) min(World::Y_MAX - 1, max(World::Y_MIN, round($anchor + $multiplier * $position * ($anchor - $oMin))));
 
 			if ($map[$target] < 1) {
 				return; //avoid populating with air due to merging anchor points
