@@ -3,9 +3,8 @@
 namespace platz1de\EasyEdit\command\exception;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\utils\Messages;
+use platz1de\EasyEdit\session\Session;
 use pocketmine\lang\Translatable;
-use pocketmine\player\Player;
 use UnexpectedValueException;
 
 class InvalidUsageException extends CommandException
@@ -18,8 +17,8 @@ class InvalidUsageException extends CommandException
 		parent::__construct($command->getUsage());
 	}
 
-	public function sendWarning(Player $player): void
+	public function sendWarning(Session $session): void
 	{
-		Messages::send($player, "wrong-usage", ["{usage}" => $this->getMessage()]);
+		$session->sendMessage("wrong-usage", ["{usage}" => $this->getMessage()]);
 	}
 }

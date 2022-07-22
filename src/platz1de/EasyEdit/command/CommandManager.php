@@ -44,7 +44,7 @@ class CommandManager
 		try {
 			$command->process(SessionManager::get($player), $args);
 		} catch (CommandException $e) {
-			$e->sendWarning($player);
+			$e->sendWarning(SessionManager::get($player));
 		}
 	}
 

@@ -1,6 +1,6 @@
 #Japanese language file
 #Author: yuko fuyutsuki
-#Last updated at: 2022-05-01
+#Last updated at: 2022-05-01 (OUTDATED)
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -30,15 +30,18 @@ command-list: "コマンド一覧 ( {total} つのうち {start} から {end} �
 
 #Args: {message}
 task-crash: "§cタスクがクラッシュしました。開発者に報告してください！\n{message}"
+pattern-invalid: "§cThe pattern you entered is invalid:\n{message}"
 
 #Args: {time} {changed}
 blocks-set: "{changed} ブロックを {time} 秒で設置しました"
 blocks-copied: "{changed} ブロックを {time} 秒でコピーしました"
 blocks-pasted: "{changed} ブロックを {time} 秒でペーストしました"
-blocks-counted: "{changed} ブロックを {time} 秒でカウントしました"
 blocks-rotated: "{changed} ブロックを {time} 秒で回転しました"
 blocks-flipped: "{changed} ブロックを {time} 秒で反転しました"
 blocks-cut: "{changed} ブロックを {time} 秒で除去しました"
+
+#Args: {time} {changed} {blocks}
+blocks-counted: "{changed} ブロックを {time} 秒でカウントしました:\n{blocks}"
 
 #Args: {time} {changed} {name}
 schematic-created: "{changed} ブロックを {time} 秒で \"{name}\" という名前で保存しました"

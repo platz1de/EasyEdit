@@ -21,6 +21,6 @@ class StatusCommand extends EasyEditCommand
 	public function process(Session $session, array $args): void
 	{
 		//TODO: restart, shutdown, start, kill (other command?)
-		ThreadStats::getInstance()->sendStatusMessage($session->getPlayer());
+		ThreadStats::getInstance()->sendStatusMessage($session);
 	}
 }

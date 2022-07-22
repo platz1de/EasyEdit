@@ -12,23 +12,20 @@ class MessageSendData extends SessionOutputData
 	 * @var string[]
 	 */
 	private array $args;
-	private bool $prefix;
 
 	/**
 	 * @param string   $key
 	 * @param string[] $args
-	 * @param bool     $prefix
 	 */
-	public function __construct(string $key, array $args = [], bool $prefix = true)
+	public function __construct(string $key, array $args = [])
 	{
 		$this->key = $key;
 		$this->args = $args;
-		$this->prefix = $prefix;
 	}
 
 	public function handleSession(Session $session): void
 	{
-		$session->sendMessage($this->key, $this->args, $this->prefix);
+		$session->sendMessage($this->key, $this->args);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -39,17 +36,16 @@ class MessageSendData extends SessionOutputData
 			$stream->putString($type);
 			$stream->putString($arg);
 		}
-		$stream->putBool($this->prefix);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->key = $stream->getString();
 		$count = $stream->getInt();
+		$this->args = [];
 		for ($i = 0; $i < $count; $i++) {
 			$type = $stream->getString();
 			$this->args[$type] = $stream->getString();
 		}
-		$this->prefix = $stream->getBool();
 	}
 }

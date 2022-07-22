@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\InputData;
@@ -11,7 +12,6 @@ use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
-use platz1de\EasyEdit\utils\Messages;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 use RuntimeException;
@@ -126,11 +126,11 @@ class ThreadStats extends Threaded
 		});
 	}
 
-	public function sendStatusMessage(string $player): void
+	public function sendStatusMessage(Session $session): void
 	{
 		$time = microtime(true) - $this->lastResponse;
 
-		Messages::send($player, "thread-stats", [
+		$session->sendMessage("thread-stats", [
 			"{task}" => match ($this->status) {
 				self::STATUS_IDLE => "none",
 				self::STATUS_RUNNING, self::STATUS_WAITING => $this->taskName . ":" . $this->taskId . ($this->taskId !== -1 ? " by " . EditHandler::getExecutor($this->taskId)->getName() : ""),

@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\thread\output\session;
 
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\Messages;
 use Throwable;
 
 class CrashReportData extends SessionOutputData
@@ -22,7 +21,7 @@ class CrashReportData extends SessionOutputData
 	public function handleSession(Session $session): void
 	{
 		//TODO: handle
-		Messages::send($session->getPlayer(), "task-crash", ["{message}" => $this->message]);
+		$session->sendMessage("task-crash", ["{message}" => $this->message]);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

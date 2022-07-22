@@ -42,13 +42,12 @@ class CountTask extends SelectionEditTask
 	 */
 	public function notifyUser(string $time, string $changed): void
 	{
-		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted)]));
-		$msg = "";
 		arsort($this->counted);
+		$blocks = [];
 		foreach ($this->counted as $block => $count) {
-			$msg .= BlockStateConvertor::getState($block) . ": " . MixedUtils::humanReadable($count) . "\n";
+			$blocks[] = BlockStateConvertor::getState($block) . ": " . MixedUtils::humanReadable($count);
 		}
-		$this->sendOutputPacket(new MessageSendData($msg, [], false));
+		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted), "{blocks}" => implode("\n", $blocks)]));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

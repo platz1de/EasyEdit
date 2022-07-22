@@ -47,7 +47,7 @@ class DefaultEventListener implements Listener
 			SessionManager::get($event->getPlayer())->selectPos1($event->getBlock()->getPosition());
 		} elseif ($axe instanceof Stick && $axe->getNamedTag()->getByte("isInfoStick", 0) === 1) {
 			$event->cancel();
-			BlockInfoTool::display($event->getPlayer()->getName(), $event->getBlock());
+			BlockInfoTool::display(SessionManager::get($event->getPlayer()), $event->getBlock());
 		}
 
 		self::$cooldown = microtime(true) + ConfigManager::getToolCooldown();
@@ -123,7 +123,7 @@ class DefaultEventListener implements Listener
 		} elseif ($item instanceof Stick && $item->getNamedTag()->getByte("isInfoStick", 0) === 1) {
 			$event->cancel();
 			//We use a raytrace here as some blocks can't be interacted with
-			BlockInfoTool::display($event->getPlayer()->getName(), $block);
+			BlockInfoTool::display(SessionManager::get($event->getPlayer()), $block);
 		}
 	}
 

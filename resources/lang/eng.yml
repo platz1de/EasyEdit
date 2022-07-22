@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2022-04-09
+#Last updated at: 2022-07-23
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -30,15 +30,18 @@ command-list: "Commands (showing {start} to {end} of {total}):\n{commands}"
 
 #Args: {message}
 task-crash: "§cYour task crashed, please report this!\n{message}"
+pattern-invalid: "§cThe pattern you entered is invalid:\n{message}"
 
 #Args: {time} {changed}
 blocks-set: "{changed} blocks were set in {time}s"
 blocks-copied: "{changed} blocks were copied in {time}s"
 blocks-pasted: "{changed} blocks were pasted in {time}s"
-blocks-counted: "{changed} blocks were counted in {time}s"
 blocks-rotated: "{changed} blocks were rotated in {time}s"
 blocks-flipped: "{changed} blocks were flipped in {time}s"
 blocks-cut: "{changed} blocks were cut in {time}s"
+
+#Args: {time} {changed} {blocks}
+blocks-counted: "{changed} blocks were counted in {time}s:\n{blocks}"
 
 #Args: {time} {changed} {name}
 schematic-created: "{changed} blocks were saved as \"{name}\" in {time}s"

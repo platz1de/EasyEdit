@@ -2,8 +2,7 @@
 
 namespace platz1de\EasyEdit\command\exception;
 
-use platz1de\EasyEdit\utils\Messages;
-use pocketmine\player\Player;
+use platz1de\EasyEdit\session\Session;
 
 class WrongSelectionTypeException extends CommandException
 {
@@ -17,8 +16,8 @@ class WrongSelectionTypeException extends CommandException
 		parent::__construct("Wrong selection type " . $given . " given, expected " . $expected);
 	}
 
-	public function sendWarning(Player $player): void
+	public function sendWarning(Session $session): void
 	{
-		Messages::send($player, "wrong-selection", ["{given}" => $this->given, "{expected}" => $this->expected]);
+		$session->sendMessage("wrong-selection", ["{given}" => $this->given, "{expected}" => $this->expected]);
 	}
 }

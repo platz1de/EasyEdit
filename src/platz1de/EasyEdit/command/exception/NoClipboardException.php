@@ -2,8 +2,7 @@
 
 namespace platz1de\EasyEdit\command\exception;
 
-use platz1de\EasyEdit\utils\Messages;
-use pocketmine\player\Player;
+use platz1de\EasyEdit\session\Session;
 
 class NoClipboardException extends CommandException
 {
@@ -12,8 +11,8 @@ class NoClipboardException extends CommandException
 		parent::__construct("No area copied");
 	}
 
-	public function sendWarning(Player $player): void
+	public function sendWarning(Session $session): void
 	{
-		Messages::send($player, "no-clipboard");
+		$session->sendMessage("no-clipboard");
 	}
 }

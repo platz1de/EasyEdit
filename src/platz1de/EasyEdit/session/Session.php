@@ -13,6 +13,8 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
+use platz1de\EasyEdit\utils\MessageComponent;
+use platz1de\EasyEdit\utils\MessageCompound;
 use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
 use platz1de\EasyEdit\world\clientblock\StructureBlockOutline;
@@ -231,13 +233,12 @@ class Session
 	}
 
 	/**
-	 * @param string   $key
-	 * @param string[] $arguments
-	 * @param bool     $prefix
+	 * @param string                                        $key
+	 * @param string[]|MessageComponent[]|MessageCompound[] $arguments
 	 * @return void
 	 */
-	public function sendMessage(string $key, array $arguments = [], bool $prefix = true): void
+	public function sendMessage(string $key, array $arguments = []): void
 	{
-		Messages::send($this->getPlayer(), $key, $arguments, true, $prefix);
+		Messages::send($this->getPlayer(), new MessageComponent($key, $arguments));
 	}
 }

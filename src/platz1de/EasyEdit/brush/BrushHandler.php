@@ -12,7 +12,6 @@ use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
-use platz1de\EasyEdit\utils\Messages;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
@@ -65,7 +64,7 @@ class BrushHandler
 						$session->runTask(new DynamicStoredPasteTask($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1));
 				}
 			} catch (ParseError $e) {
-				Messages::send($player, $e->getMessage(), [], false);
+				$session->sendMessage("pattern-invalid", ["{message}" => $e->getMessage()]);
 			}
 		}
 	}

@@ -12,7 +12,7 @@ use UnexpectedValueException;
 
 class Messages
 {
-	private const MESSAGE_VERSION = "2.1.0";
+	private const MESSAGE_VERSION = "2.1.1";
 
 	/**
 	 * @var string[]
@@ -70,37 +70,25 @@ class Messages
 	}
 
 	/**
-	 * @param string|string[]|Player|Player[] $players
-	 * @param string                          $id
-	 * @param string|string[]                 $replace
-	 * @param bool                            $isId
-	 * @param bool                            $usePrefix
+	 * @param Player|string    $player
+	 * @param MessageComponent $message
 	 */
-	public static function send(mixed $players, string $id, mixed $replace = [], bool $isId = true, bool $usePrefix = true): void
+	public static function send(mixed $player, MessageComponent $message): void
 	{
-		if (is_array($players)) {
-			foreach ($players as $player) {
-				if ($player instanceof Player || ($player = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
-					$player->sendMessage(($usePrefix ? self::translate("prefix") : "") . self::replace($id, $replace, $isId));
-				}
-			}
-		} else {
-			self::send([$players], $id, $replace, $isId, $usePrefix);
+		if ($player instanceof Player || ($player = Server::getInstance()->getPlayerExact($player)) instanceof Player) {
+			$player->sendMessage(self::translate("prefix") . $message->toString());
 		}
 	}
 
 	/**
-	 * @param string          $id
-	 * @param string|string[] $replace
-	 * @param bool            $isId
+	 * @param string   $id
+	 * @param string[] $replace
+	 * @param bool     $isId
 	 * @return string
 	 */
-	public static function replace(string $id, mixed $replace = [], bool $isId = true): string
+	public static function replace(string $id, array $replace = [], bool $isId = true): string
 	{
-		if (is_array($replace)) {
-			return str_replace(array_keys($replace), array_values($replace), $isId ? self::translate($id) : $id);
-		}
-		return str_replace("{player}", $replace, $isId ? self::translate($id) : $id);
+		return str_replace(array_keys($replace), array_values($replace), $isId ? self::translate($id) : $id);
 	}
 
 	/**

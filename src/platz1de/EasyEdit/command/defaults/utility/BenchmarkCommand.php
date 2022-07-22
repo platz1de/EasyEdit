@@ -7,7 +7,8 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
-use platz1de\EasyEdit\utils\Messages;
+use platz1de\EasyEdit\utils\MessageComponent;
+use platz1de\EasyEdit\utils\MessageCompound;
 use platz1de\EasyEdit\utils\MixedUtils;
 
 class BenchmarkCommand extends EasyEditCommand
@@ -32,15 +33,15 @@ class BenchmarkCommand extends EasyEditCommand
 
 		$executor = $session->getPlayer();
 		BenchmarkManager::start(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($executor): void {
-			$i = 0;
-			$resultMsg = array_map(static function (array $data) use (&$i): string {
-				return Messages::replace("benchmark-result", [
-					"{task}" => (string) ++$i,
-					"{name}" => (string) $data[0],
-					"{time}" => (string) round($data[1], 2),
-					"{blocks}" => MixedUtils::humanReadable($data[2])
-				]);
-			}, $results);
+			$resultMsg = new MessageCompound();
+			foreach ($results as $i => $result) {
+				$resultMsg->addComponent(new MessageComponent("benchmark-result", [
+					"{task}" => (string) ($i + 1),
+					"{name}" => (string) $result[0],
+					"{time}" => (string) round($result[1], 2),
+					"{blocks}" => MixedUtils::humanReadable($result[2])
+				]));
+			}
 			SessionManager::get($executor)->sendMessage("benchmark-finished", [
 				"{tps_avg}" => (string) round($tpsAvg, 2),
 				"{tps_min}" => (string) $tpsMin,
@@ -48,7 +49,7 @@ class BenchmarkCommand extends EasyEditCommand
 				"{load_max}" => (string) $loadMax,
 				"{tasks}" => (string) $tasks,
 				"{time}" => (string) round($time, 2),
-				"{results}" => implode("\n", $resultMsg)
+				"{results}" => $resultMsg
 			]);
 		});
 	}

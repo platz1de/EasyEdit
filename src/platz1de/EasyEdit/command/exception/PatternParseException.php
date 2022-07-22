@@ -3,8 +3,7 @@
 namespace platz1de\EasyEdit\command\exception;
 
 use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\utils\Messages;
-use pocketmine\player\Player;
+use platz1de\EasyEdit\session\Session;
 
 class PatternParseException extends CommandException
 {
@@ -13,8 +12,8 @@ class PatternParseException extends CommandException
 		parent::__construct($error->getMessage());
 	}
 
-	public function sendWarning(Player $player): void
+	public function sendWarning(Session $session): void
 	{
-		Messages::send($player, $this->getMessage(), [], false);
+		$session->sendMessage("pattern-invalid", ["{message}" => $this->getMessage()]);
 	}
 }

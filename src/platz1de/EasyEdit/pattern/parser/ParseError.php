@@ -6,7 +6,6 @@ use UnexpectedValueException;
 
 class ParseError extends UnexpectedValueException
 {
-
 	/**
 	 * ParseError constructor.
 	 * @param string $message
