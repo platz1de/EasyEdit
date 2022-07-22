@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
-use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -43,13 +42,13 @@ class CountTask extends SelectionEditTask
 	 */
 	public function notifyUser(string $time, string $changed): void
 	{
-		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted)])));
+		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted)]));
 		$msg = "";
 		arsort($this->counted);
 		foreach ($this->counted as $block => $count) {
 			$msg .= BlockStateConvertor::getState($block) . ": " . MixedUtils::humanReadable($count) . "\n";
 		}
-		$this->sendOutputPacket(new MessageSendData($msg, false));
+		$this->sendOutputPacket(new MessageSendData($msg, [], false));
 	}
 
 	public function executeEdit(EditTaskHandler $handler): void

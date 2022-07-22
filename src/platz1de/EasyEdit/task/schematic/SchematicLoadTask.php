@@ -9,7 +9,6 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 
@@ -42,7 +41,7 @@ class SchematicLoadTask extends ExecutableTask
 		StorageModule::collect($selection);
 		$changeId = StorageModule::finishCollecting();
 		$this->sendOutputPacket(new ClipboardCacheData($changeId));
-		$this->sendOutputPacket(new MessageSendData(Messages::replace("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())])));
+		$this->sendOutputPacket(new MessageSendData("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())]));
 	}
 
 	public function getProgress(): float

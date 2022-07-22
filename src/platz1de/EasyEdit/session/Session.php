@@ -233,10 +233,11 @@ class Session
 	/**
 	 * @param string   $key
 	 * @param string[] $arguments
+	 * @param bool     $prefix
 	 * @return void
 	 */
-	public function sendMessage(string $key, array $arguments = []): void
+	public function sendMessage(string $key, array $arguments = [], bool $prefix = true): void
 	{
-		Messages::send($this->getPlayer(), $key, $arguments);
+		Messages::send($this->getPlayer(), $key, $arguments, true, $prefix);
 	}
 }

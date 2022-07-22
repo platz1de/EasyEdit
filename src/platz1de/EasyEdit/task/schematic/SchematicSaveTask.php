@@ -8,7 +8,6 @@ use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
 
 class SchematicSaveTask extends ExecutableTask
@@ -40,7 +39,7 @@ class SchematicSaveTask extends ExecutableTask
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		SchematicFileAdapter::createFromSelection($this->schematicPath, $selection);
-		$this->sendOutputPacket(new MessageSendData(Messages::replace("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)])));
+		$this->sendOutputPacket(new MessageSendData("schematic-created", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getReadBlockCount()), "{name}" => basename($this->schematicPath)]));
 	}
 
 	public function getProgress(): float

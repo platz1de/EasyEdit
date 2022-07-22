@@ -9,13 +9,11 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
-use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 use RuntimeException;
@@ -62,7 +60,7 @@ class CutTask extends SelectionEditTask
 	 */
 	public function notifyUser(string $time, string $changed): void
 	{
-		EditThread::getInstance()->sendOutput(new MessageSendData(Messages::replace("blocks-cut", ["{time}" => $time, "{changed}" => $changed])));
+		$this->sendOutputPacket(new MessageSendData("blocks-cut", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
 	public function getProgress(): float

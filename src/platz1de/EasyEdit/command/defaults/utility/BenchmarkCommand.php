@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
+use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
@@ -40,7 +41,7 @@ class BenchmarkCommand extends EasyEditCommand
 					"{blocks}" => MixedUtils::humanReadable($data[2])
 				]);
 			}, $results);
-			Messages::send($executor, "benchmark-finished", [
+			SessionManager::get($executor)->sendMessage("benchmark-finished", [
 				"{tps_avg}" => (string) round($tpsAvg, 2),
 				"{tps_min}" => (string) $tpsMin,
 				"{load_avg}" => (string) round($loadAvg, 2),
