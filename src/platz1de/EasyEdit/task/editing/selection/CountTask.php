@@ -3,12 +3,12 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
+use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;

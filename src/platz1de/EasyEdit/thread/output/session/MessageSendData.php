@@ -2,10 +2,9 @@
 
 namespace platz1de\EasyEdit\thread\output\session;
 
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\Messages;
 
 class MessageSendData extends SessionOutputData
 {

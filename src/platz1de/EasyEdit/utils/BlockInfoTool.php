@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\convert\TileConvertor;
-use platz1de\EasyEdit\Messages;
 use pocketmine\block\Block;
 use pocketmine\block\tile\Tile;
 

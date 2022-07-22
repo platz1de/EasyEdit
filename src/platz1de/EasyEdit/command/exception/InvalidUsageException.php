@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\command\exception;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\Messages;
+use platz1de\EasyEdit\utils\Messages;
 use pocketmine\lang\Translatable;
 use pocketmine\player\Player;
 use UnexpectedValueException;

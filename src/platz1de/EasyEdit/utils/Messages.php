@@ -1,7 +1,8 @@
 <?php
 
-namespace platz1de\EasyEdit;
+namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\thread\input\MessageInputData;
 use pocketmine\player\Player;
 use pocketmine\Server;

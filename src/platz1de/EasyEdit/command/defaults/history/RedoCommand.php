@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\command\defaults\history;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -30,7 +29,7 @@ class RedoCommand extends EasyEditCommand
 		}
 
 		if (!$target->canRedo()) {
-			Messages::send($session->getPlayer(), "no-future");
+			$session->sendMessage("no-future");
 		}
 
 		$count = min(100, (int) ($args[0] ?? 1));

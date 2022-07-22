@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\command\exception;
 
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\parser\ParseError;
+use platz1de\EasyEdit\utils\Messages;
 use pocketmine\player\Player;
 
 class PatternParseException extends CommandException

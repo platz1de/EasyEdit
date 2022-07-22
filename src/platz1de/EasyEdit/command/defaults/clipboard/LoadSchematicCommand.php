@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\schematic\SchematicLoadTask;
@@ -25,7 +24,7 @@ class LoadSchematicCommand extends EasyEditCommand
 	{
 		$schematicName = pathinfo($args[0] ?? "", PATHINFO_FILENAME);
 		if (!isset($args[0]) || !SchematicFileAdapter::schematicExists(EasyEdit::getSchematicPath() . $schematicName)) {
-			Messages::send($session->getPlayer(), "unknown-schematic", ["{schematic}" => $schematicName, "{known}" => implode(", ", SchematicFileAdapter::getSchematicList())]);
+			$session->sendMessage("unknown-schematic", ["{schematic}" => $schematicName, "{known}" => implode(", ", SchematicFileAdapter::getSchematicList())]);
 			return;
 		}
 

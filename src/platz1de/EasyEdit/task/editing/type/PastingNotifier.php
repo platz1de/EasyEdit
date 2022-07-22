@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\type;
 
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
+use platz1de\EasyEdit\utils\Messages;
 
 trait PastingNotifier
 {

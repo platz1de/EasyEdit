@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\thread\output\session;
 
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\Messages;
 use Throwable;
 
 class CrashReportData extends SessionOutputData
@@ -12,7 +12,7 @@ class CrashReportData extends SessionOutputData
 	private string $message;
 
 	/**
-	 * @param Throwable         $throwable
+	 * @param Throwable $throwable
 	 */
 	public function __construct(Throwable $throwable)
 	{

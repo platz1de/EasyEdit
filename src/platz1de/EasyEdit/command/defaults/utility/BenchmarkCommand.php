@@ -4,9 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
+use platz1de\EasyEdit\utils\Messages;
 use platz1de\EasyEdit\utils\MixedUtils;
 
 class BenchmarkCommand extends EasyEditCommand
@@ -23,11 +23,11 @@ class BenchmarkCommand extends EasyEditCommand
 	public function process(Session $session, array $args): void
 	{
 		if (BenchmarkManager::isRunning()) {
-			Messages::send($session->getPlayer(), "benchmark-running");
+			$session->sendMessage("benchmark-running");
 			return;
 		}
 
-		Messages::send($session->getPlayer(), "benchmark-start");
+		$session->sendMessage("benchmark-start");
 
 		$executor = $session->getPlayer();
 		BenchmarkManager::start(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($executor): void {

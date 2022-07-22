@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\thread\input;
 
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\Messages;
 
 class MessageInputData extends InputData
 {

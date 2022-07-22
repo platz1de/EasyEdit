@@ -8,7 +8,6 @@ use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;

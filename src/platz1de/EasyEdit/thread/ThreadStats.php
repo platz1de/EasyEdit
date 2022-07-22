@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\handler\EditHandler;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\thread\input\InputData;
@@ -12,6 +11,7 @@ use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
+use platz1de\EasyEdit\utils\Messages;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 use RuntimeException;

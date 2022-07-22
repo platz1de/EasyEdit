@@ -3,17 +3,16 @@
 namespace platz1de\EasyEdit\brush;
 
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\Messages;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\selection\ClipBoardManager;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
+use platz1de\EasyEdit\utils\Messages;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
@@ -60,7 +59,7 @@ class BrushHandler
 					case self::BRUSH_PASTE:
 						$clipboard = SessionManager::get($player)->getClipboard();
 						if (!$clipboard->isValid()) {
-							Messages::send($player, "no-clipboard");
+							$session->sendMessage("no-clipboard");
 							return;
 						}
 						$session->runTask(new DynamicStoredPasteTask($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1));
