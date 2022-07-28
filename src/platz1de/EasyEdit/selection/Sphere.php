@@ -25,12 +25,11 @@ class Sphere extends Selection implements Patterned
 	 * @param float        $radius
 	 * @param Vector3|null $min
 	 * @param Vector3|null $max
-	 * @param bool         $piece
 	 * @return Sphere
 	 */
-	public static function aroundPoint(string $world, Vector3 $point, float $radius, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false): Sphere
+	public static function aroundPoint(string $world, Vector3 $point, float $radius, ?Vector3 $min = null, ?Vector3 $max = null): Sphere
 	{
-		$sphere = new Sphere($world, $min ?? $point->subtract($radius, $radius, $radius), $max ?? $point->add($radius, $radius, $radius), $piece);
+		$sphere = new Sphere($world, $min ?? $point->subtract($radius, $radius, $radius), $max ?? $point->add($radius, $radius, $radius));
 		$sphere->setPoint($point);
 		$sphere->setRadius($radius);
 		return $sphere;
@@ -127,16 +126,12 @@ class Sphere extends Selection implements Patterned
 	 */
 	public function split(Vector3 $offset): array
 	{
-		if ($this->piece) {
-			throw new UnexpectedValueException("Pieces are not split able");
-		}
-
 		//TODO: offset
 		$radius = $this->getRadius();
 		$pieces = [];
 		for ($x = ($this->point->getX() - $radius) >> 4; $x <= ($this->point->getX() + $radius) >> 4; $x += 3) {
 			for ($z = ($this->point->getZ() - $radius) >> 4; $z <= ($this->point->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = self::aroundPoint($this->getWorldName(), $this->getPoint(), $this->getRadius(), new Vector3(max($x << 4, $this->pos1->getFloorX()), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getFloorX()), min($this->pos2->getFloorY(), World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos2->getFloorZ())), true);
+				$pieces[] = self::aroundPoint($this->getWorldName(), $this->getPoint(), $this->getRadius(), new Vector3(max($x << 4, $this->pos1->getFloorX()), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getFloorX()), min($this->pos2->getFloorY(), World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos2->getFloorZ())));
 			}
 		}
 		return $pieces;

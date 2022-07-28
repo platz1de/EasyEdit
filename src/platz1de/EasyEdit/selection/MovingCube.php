@@ -20,11 +20,10 @@ class MovingCube extends Selection
 	 * @param Vector3 $pos1
 	 * @param Vector3 $pos2
 	 * @param Vector3 $direction
-	 * @param bool    $piece
 	 */
-	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2, Vector3 $direction, bool $piece = false)
+	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2, Vector3 $direction)
 	{
-		parent::__construct($world, $pos1, $pos2, $piece);
+		parent::__construct($world, $pos1, $pos2);
 		$this->direction = $direction;
 	}
 
@@ -144,10 +143,6 @@ class MovingCube extends Selection
 	 */
 	public function split(Vector3 $offset): array
 	{
-		if ($this->piece) {
-			throw new UnexpectedValueException("Pieces are not split able");
-		}
-
 		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset));
 		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset));
 
@@ -155,7 +150,7 @@ class MovingCube extends Selection
 		//only 2x2 as we need 2 areas
 		for ($this->direction->getX() > 0 ? $x = $max->getX() >> 4 : $x = $min->getX() >> 4; $this->direction->getX() > 0 ? $x >= $min->getX() >> 4 : $x <= $max->getX() >> 4; $this->direction->getX() > 0 ? $x -= 2 : $x += 2) {
 			for ($this->direction->getZ() > 0 ? $z = $max->getZ() >> 4 : $z = $min->getZ() >> 4; $this->direction->getZ() > 0 ? $z >= $min->getZ() >> 4 : $z <= $max->getZ() >> 4; $this->direction->getZ() > 0 ? $z -= 2 : $z += 2) {
-				$pieces[] = new MovingCube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), true);
+				$pieces[] = new MovingCube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection());
 			}
 		}
 		return $pieces;

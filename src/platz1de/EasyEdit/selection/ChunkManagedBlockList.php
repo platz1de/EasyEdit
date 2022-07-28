@@ -24,11 +24,10 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	 * @param string  $world
 	 * @param Vector3 $pos1
 	 * @param Vector3 $pos2
-	 * @param bool    $piece
 	 */
-	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2, bool $piece = false)
+	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2)
 	{
-		parent::__construct($world, $pos1, $pos2, $piece);
+		parent::__construct($world, $pos1, $pos2);
 		$this->manager = new ReferencedChunkManager($world);
 		$this->getManager()->loadBetween($this->pos1, $this->pos2);
 		$this->iterator = new ChunkController($this->manager);

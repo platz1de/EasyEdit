@@ -20,11 +20,10 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 * @param Vector3      $end
 	 * @param Vector3      $offset
 	 * @param Vector3|null $startingOffset
-	 * @param bool         $piece
 	 */
-	public function __construct(Vector3 $end, Vector3 $offset, ?Vector3 $startingOffset = null, bool $piece = false)
+	public function __construct(Vector3 $end, Vector3 $offset, ?Vector3 $startingOffset = null)
 	{
-		parent::__construct("", $startingOffset ?? new Vector3(0, World::Y_MIN, 0), $end, $piece);
+		parent::__construct("", $startingOffset ?? new Vector3(0, World::Y_MIN, 0), $end);
 		$this->point = $offset;
 	}
 
@@ -142,10 +141,6 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public function split(Vector3 $offset): array
 	{
-		if ($this->piece) {
-			throw new UnexpectedValueException("Pieces are not split able");
-		}
-
 		$pieces = [];
 		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset)->addVector($this->getPoint()));
 		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset)->addVector($this->getPoint()));
@@ -153,7 +148,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
 				$pos1 = new Vector3(max(($x << 4) - ($min->getX() & 0x0f), 0), World::Y_MIN, max(($z << 4) - ($min->getZ() & 0x0f), 0));
 				$pos2 = new Vector3(min(($x << 4) - ($min->getX() & 0x0f) + 47, $max->getX() - $min->getX()), World::Y_MIN + $max->getY() - $min->getY(), min(($z << 4) - ($min->getZ() & 0x0f) + 47, $max->getZ() - $min->getZ()));
-				$piece = new DynamicBlockListSelection($pos2, $this->getPoint(), $pos1, true);
+				$piece = new DynamicBlockListSelection($pos2, $this->getPoint(), $pos1);
 				for ($chunkX = $pos1->getX() >> 4; $chunkX <= $pos2->getX() >> 4; $chunkX++) {
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
 						$chunk = $this->getManager()->getChunk(World::chunkHash($chunkX, $chunkZ));

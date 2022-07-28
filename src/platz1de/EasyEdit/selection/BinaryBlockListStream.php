@@ -18,11 +18,10 @@ class BinaryBlockListStream extends BlockListSelection
 
 	/**
 	 * @param string $world
-	 * @param bool   $piece
 	 */
-	public function __construct(string $world, bool $piece = false)
+	public function __construct(string $world)
 	{
-		parent::__construct($world, Vector3::zero(), Vector3::zero(), $piece);
+		parent::__construct($world, Vector3::zero(), Vector3::zero());
 		$this->blocks = new ExtendedBinaryStream();
 	}
 
@@ -137,7 +136,7 @@ class BinaryBlockListStream extends BlockListSelection
 			if ($current === null || $currentChunkX !== $x >> 4 || $currentChunkZ !== $z >> 4) {
 				$currentChunkX = $x >> 4;
 				$currentChunkZ = $z >> 4;
-				$pieces[] = $current = new self($this->getWorldName(), true);
+				$pieces[] = $current = new self($this->getWorldName());
 			}
 
 			$current->addBlock($x, $y, $z, $id);

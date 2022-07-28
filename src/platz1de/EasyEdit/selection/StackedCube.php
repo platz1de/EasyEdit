@@ -25,12 +25,11 @@ class StackedCube extends Selection
 	 * @param Vector3      $direction
 	 * @param Vector3|null $min
 	 * @param Vector3|null $max
-	 * @param bool         $piece
 	 * @param bool         $copyMode
 	 */
-	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2, Vector3 $direction, ?Vector3 $min = null, ?Vector3 $max = null, bool $piece = false, bool $copyMode = false)
+	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2, Vector3 $direction, ?Vector3 $min = null, ?Vector3 $max = null, bool $copyMode = false)
 	{
-		parent::__construct($world, $pos1, $pos2, $piece);
+		parent::__construct($world, $pos1, $pos2);
 		$this->direction = $direction;
 		if ($min !== null) {
 			$this->min = $min;
@@ -157,10 +156,6 @@ class StackedCube extends Selection
 	 */
 	public function split(Vector3 $offset): array
 	{
-		if ($this->piece) {
-			throw new UnexpectedValueException("Pieces are not split able");
-		}
-
 		$pos1 = VectorUtils::enforceHeight($this->pos1->addVector($offset));
 		$pos2 = VectorUtils::enforceHeight($this->pos2->addVector($offset));
 
@@ -180,7 +175,7 @@ class StackedCube extends Selection
 							if ($ox === 0 && $oz === 0) {
 								continue;
 							}
-							$pieces[] = new StackedCube( $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()), $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()), $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()) + $ox * $xSize, $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ()) + $oz * $zSize), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()) + $ox * $xSize, $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ()) + $oz * $zSize), true, true);
+							$pieces[] = new StackedCube( $this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()), $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()), $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4) - $offset->getX(), $pos1->getX()) + $ox * $xSize, $pos1->getY(), max(($z << 4) - $offset->getZ(), $pos1->getZ()) + $oz * $zSize), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $pos2->getX()) + $ox * $xSize, $pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $pos2->getZ()) + $oz * $zSize), true);
 						}
 					}
 				} else {
@@ -190,7 +185,7 @@ class StackedCube extends Selection
 					$splitMaxZ = $this->direction->getZ() === 0 ? $z + 1 : $max->getZ() >> 4;
 					for ($ox = $splitMinX; $ox <= $splitMaxX; $ox += 2) {
 						for ($oz = $splitMinZ; $oz <= $splitMaxZ; $oz += 2) {
-							$pieces[] = new StackedCube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($ox << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($oz << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($ox + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($oz + 1) << 4) + 15 - $offset->getZ(), $max->getZ())), true);
+							$pieces[] = new StackedCube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($ox << 4) - $offset->getX(), $min->getX()), $min->getY(), max(($oz << 4) - $offset->getZ(), $min->getZ())), new Vector3(min((($ox + 1) << 4) + 15 - $offset->getX(), $max->getX()), $max->getY(), min((($oz + 1) << 4) + 15 - $offset->getZ(), $max->getZ())));
 						}
 					}
 				}

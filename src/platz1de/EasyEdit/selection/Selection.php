@@ -17,7 +17,6 @@ abstract class Selection
 	protected Vector3 $pos2;
 	protected Vector3 $selected1;
 	protected Vector3 $selected2;
-	protected bool $piece;
 	protected bool $initialized = false;
 
 	/**
@@ -25,9 +24,8 @@ abstract class Selection
 	 * @param string       $world
 	 * @param Vector3|null $pos1
 	 * @param Vector3|null $pos2
-	 * @param bool         $piece
 	 */
-	public function __construct(string $world, ?Vector3 $pos1, ?Vector3 $pos2, bool $piece = false)
+	public function __construct(string $world, ?Vector3 $pos1, ?Vector3 $pos2)
 	{
 		$this->world = $world;
 
@@ -37,8 +35,6 @@ abstract class Selection
 		if ($pos2 !== null) {
 			$this->pos2 = clone($this->selected2 = $pos2->floor());
 		}
-
-		$this->piece = $piece;
 
 		$this->update();
 	}
@@ -255,6 +251,5 @@ abstract class Selection
 	public function __unserialize(array $data): void
 	{
 		$this->world = $data[0];
-		$this->piece = false;
 	}
 }
