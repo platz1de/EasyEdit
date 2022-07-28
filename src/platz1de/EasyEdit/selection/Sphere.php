@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
-use UnexpectedValueException;
 
 class Sphere extends Selection implements Patterned
 {
@@ -121,12 +120,10 @@ class Sphere extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @param Vector3 $offset
 	 * @return Sphere[]
 	 */
-	public function split(Vector3 $offset): array
+	public function split(): array
 	{
-		//TODO: offset
 		$radius = $this->getRadius();
 		$pieces = [];
 		for ($x = ($this->point->getX() - $radius) >> 4; $x <= ($this->point->getX() + $radius) >> 4; $x += 3) {

@@ -8,7 +8,6 @@ use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use pocketmine\world\World;
-use UnexpectedValueException;
 
 class MovingCube extends Selection
 {
@@ -138,19 +137,18 @@ class MovingCube extends Selection
 	}
 
 	/**
-	 * @param Vector3 $offset
 	 * @return Selection[]
 	 */
-	public function split(Vector3 $offset): array
+	public function split(): array
 	{
-		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset));
-		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset));
+		$min = $this->pos1;
+		$max = $this->pos2;
 
 		$pieces = [];
 		//only 2x2 as we need 2 areas
 		for ($this->direction->getX() > 0 ? $x = $max->getX() >> 4 : $x = $min->getX() >> 4; $this->direction->getX() > 0 ? $x >= $min->getX() >> 4 : $x <= $max->getX() >> 4; $this->direction->getX() > 0 ? $x -= 2 : $x += 2) {
 			for ($this->direction->getZ() > 0 ? $z = $max->getZ() >> 4 : $z = $min->getZ() >> 4; $this->direction->getZ() > 0 ? $z >= $min->getZ() >> 4 : $z <= $max->getZ() >> 4; $this->direction->getZ() > 0 ? $z -= 2 : $z += 2) {
-				$pieces[] = new MovingCube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())), $this->getDirection());
+				$pieces[] = new MovingCube($this->getWorldName(), new Vector3(max(($x << 4), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15, $this->pos2->getZ())), $this->getDirection());
 			}
 		}
 		return $pieces;

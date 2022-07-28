@@ -5,10 +5,8 @@ namespace platz1de\EasyEdit\selection;
 use Closure;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
-use UnexpectedValueException;
 
 class Cube extends Selection implements Patterned
 {
@@ -16,18 +14,14 @@ class Cube extends Selection implements Patterned
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @param Vector3 $offset
 	 * @return Cube[]
 	 */
-	public function split(Vector3 $offset): array
+	public function split(): array
 	{
-		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset));
-		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset));
-
 		$pieces = [];
-		for ($x = $min->getX() >> 4; $x <= $max->getX() >> 4; $x += 3) {
-			for ($z = $min->getZ() >> 4; $z <= $max->getZ() >> 4; $z += 3) {
-				$pieces[] = new Cube($this->getWorldName(), new Vector3(max(($x << 4) - $offset->getX(), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4) - $offset->getZ(), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15 - $offset->getX(), $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15 - $offset->getZ(), $this->pos2->getZ())));
+		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
+			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {
+				$pieces[] = new Cube($this->getWorldName(), new Vector3(max(($x << 4), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4), $this->pos1->getZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 2) << 4) + 15, $this->pos2->getZ())));
 			}
 		}
 		return $pieces;

@@ -9,22 +9,24 @@ use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
-use UnexpectedValueException;
 
 class DynamicBlockListSelection extends ChunkManagedBlockList
 {
 	private Vector3 $point;
+	private Vector3 $offset;
 
 	/**
 	 * DynamicBlockListSelection constructor.
 	 * @param Vector3      $end
+	 * @param Vector3      $worldOffset
 	 * @param Vector3      $offset
 	 * @param Vector3|null $startingOffset
 	 */
-	public function __construct(Vector3 $end, Vector3 $offset, ?Vector3 $startingOffset = null)
+	public function __construct(Vector3 $end, Vector3 $worldOffset, Vector3 $offset, ?Vector3 $startingOffset = null)
 	{
 		parent::__construct("", $startingOffset ?? new Vector3(0, World::Y_MIN, 0), $end);
 		$this->point = $offset;
+		$this->offset = $worldOffset;
 	}
 
 	/**
@@ -35,7 +37,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public static function fromWorldPositions(Vector3 $place, Vector3 $pos1, Vector3 $pos2): DynamicBlockListSelection
 	{
-		return new self($pos2->subtractVector($pos1)->up(World::Y_MIN), $pos1->subtractVector($place));
+		return new self($pos2->subtractVector($pos1)->up(World::Y_MIN), $pos1, $pos1->subtractVector($place));
 	}
 
 	/**
@@ -115,6 +117,22 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	}
 
 	/**
+	 * @return Vector3
+	 */
+	public function getWorldOffset(): Vector3
+	{
+		return $this->offset;
+	}
+
+	/**
+	 * @param Vector3 $offset
+	 */
+	public function setWorldOffset(Vector3 $offset): void
+	{
+		$this->offset = $offset;
+	}
+
+	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
@@ -122,6 +140,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 		parent::putData($stream);
 
 		$stream->putVector($this->point);
+		$stream->putVector($this->offset);
 	}
 
 	/**
@@ -132,23 +151,23 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 		parent::parseData($stream);
 
 		$this->point = $stream->getVector();
+		$this->offset = $stream->getVector();
 	}
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @param Vector3 $offset
 	 * @return DynamicBlockListSelection[]
 	 */
-	public function split(Vector3 $offset): array
+	public function split(): array
 	{
 		$pieces = [];
-		$min = VectorUtils::enforceHeight($this->pos1->addVector($offset)->addVector($this->getPoint()));
-		$max = VectorUtils::enforceHeight($this->pos2->addVector($offset)->addVector($this->getPoint()));
+		$min = VectorUtils::enforceHeight($this->pos1->addVector($this->getPoint()));
+		$max = VectorUtils::enforceHeight($this->pos2->addVector($this->getPoint()));
 		for ($x = 0; $x <= ($max->getX() >> 4) - ($min->getX() >> 4); $x += 3) {
 			for ($z = 0; $z <= ($max->getZ() >> 4) - ($min->getZ() >> 4); $z += 3) {
 				$pos1 = new Vector3(max(($x << 4) - ($min->getX() & 0x0f), 0), World::Y_MIN, max(($z << 4) - ($min->getZ() & 0x0f), 0));
 				$pos2 = new Vector3(min(($x << 4) - ($min->getX() & 0x0f) + 47, $max->getX() - $min->getX()), World::Y_MIN + $max->getY() - $min->getY(), min(($z << 4) - ($min->getZ() & 0x0f) + 47, $max->getZ() - $min->getZ()));
-				$piece = new DynamicBlockListSelection($pos2, $this->getPoint(), $pos1);
+				$piece = new DynamicBlockListSelection($pos2, Vector3::zero(), $this->getPoint(), $pos1);
 				for ($chunkX = $pos1->getX() >> 4; $chunkX <= $pos2->getX() >> 4; $chunkX++) {
 					for ($chunkZ = $pos1->getZ() >> 4; $chunkZ <= $pos2->getZ() >> 4; $chunkZ++) {
 						$chunk = $this->getManager()->getChunk(World::chunkHash($chunkX, $chunkZ));
@@ -169,7 +188,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 
 	public function createSafeClone(): DynamicBlockListSelection
 	{
-		$clone = new self($this->getPos2(), $this->getPoint(), $this->getPos1());
+		$clone = new self($this->getPos2(), $this->getWorldOffset(), $this->getPoint());
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			$clone->getManager()->setChunk($hash, $chunk);
 		}

@@ -135,6 +135,17 @@ class EditTaskHandler
 	 * @param int $x
 	 * @param int $y
 	 * @param int $z
+	 * @return CompoundTag|null
+	 */
+	public function getTile(int $x, int $y, int $z): ?CompoundTag
+	{
+		return $this->origin->getTile($x, $y, $z);
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
 	 * @return int
 	 */
 	public function getResultingBlock(int $x, int $y, int $z): int
@@ -170,21 +181,6 @@ class EditTaskHandler
 	{
 		$this->changeBlock($x, $y, $z, $this->origin->getBlock($ox, $oy, $oz), $overwrite);
 		$this->addTile(TileUtils::offsetCompound($this->origin->getTile($ox, $oy, $oz), $x - $ox, $y - $oy, $z - $oz));
-	}
-
-	/**
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
-	 * @param int $ox
-	 * @param int $oy
-	 * @param int $oz
-	 * @deprecated
-	 */
-	public function addToUndo(int $x, int $y, int $z, int $ox, int $oy, int $oz): void
-	{
-		$this->changes->addBlock($x + $ox, $y + $oy, $z + $oz, $this->origin->getBlock($x, $y, $z));
-		$this->changes->addTile(TileUtils::offsetCompound($this->origin->getTile($x, $y, $z), $ox, $oy, $oz));
 	}
 
 	/**

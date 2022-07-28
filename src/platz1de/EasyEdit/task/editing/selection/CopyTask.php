@@ -6,6 +6,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -13,11 +14,14 @@ use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class CopyTask extends SelectionEditTask
 {
 	private Vector3 $position;
+	private DynamicBlockListSelection $result;
 
 	/**
 	 * @param Selection $selection
@@ -26,7 +30,6 @@ class CopyTask extends SelectionEditTask
 	public function __construct(Selection $selection, Vector3 $position)
 	{
 		$this->position = $position;
-		$this->splitOffset = $selection->getPos1()->multiply(-1);
 		parent::__construct($selection);
 	}
 
@@ -34,7 +37,9 @@ class CopyTask extends SelectionEditTask
 	{
 		$handle = $this->useDefaultHandler();
 		if (!$handle) {
+			$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
 			parent::execute();
+			StorageModule::collect($this->result);
 			return;
 		}
 		$this->executeAssociated($this, false); //this calls this method again, but without the default handler
@@ -55,7 +60,8 @@ class CopyTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return DynamicBlockListSelection::fromWorldPositions($this->position, $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		//TODO: make this optional
+		return new StaticBlockListSelection("", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
 	}
 
 	/**
@@ -69,12 +75,13 @@ class CopyTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler): void
 	{
-		$offset = $this->getTotalSelection()->getPos1()->multiply(-1);
-		$ox = $offset->getFloorX();
-		$oy = $offset->getFloorY();
-		$oz = $offset->getFloorZ();
-		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($oz, $oy, $ox, $handler): void {
-			$handler->addToUndo($x, $y, $z, $ox, $oy, $oz);
+		$result = $this->result;
+		$ox = $result->getWorldOffset()->getFloorX();
+		$oy = $result->getWorldOffset()->getFloorY();
+		$oz = $result->getWorldOffset()->getFloorZ();
+		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
+			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
+			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
 		}, SelectionContext::full(), $this->getTotalSelection());
 	}
 

@@ -32,12 +32,10 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 
 	/**
 	 * splits into 3x3 Chunk pieces
-	 * @param Vector3 $offset
 	 * @return StaticBlockListSelection[]
 	 */
-	public function split(Vector3 $offset): array
+	public function split(): array
 	{
-		//TODO: offset
 		$pieces = [];
 		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 3) {
 			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 3) {

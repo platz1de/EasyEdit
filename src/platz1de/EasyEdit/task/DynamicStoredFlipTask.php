@@ -48,7 +48,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		}
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
-		$flipped = new DynamicBlockListSelection(new Vector3($selection->getPos2()->getX(), $selection->getPos2()->getY(), $selection->getPos2()->getZ()), Vector3::zero());
+		$flipped = new DynamicBlockListSelection(new Vector3($selection->getPos2()->getX(), $selection->getPos2()->getY(), $selection->getPos2()->getZ()), $selection->getWorldOffset(), Vector3::zero());
 		switch ($this->axis) {
 			case Axis::X:
 				$flipped->setPoint(new Vector3(-$selection->getPos2()->getX() - $selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPoint()->getZ()));

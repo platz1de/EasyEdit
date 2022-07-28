@@ -34,7 +34,8 @@ abstract class SelectionEditTask extends EditTask
 	public function execute(): void
 	{
 		StorageModule::checkFinished();
-		$pieces = $this->selection->split($this->splitOffset ?? Vector3::zero());
+		$this->selection->init($this->splitOffset ?? Vector3::zero());
+		$pieces = $this->selection->split();
 		$this->totalPieces = count($pieces);
 		$this->piecesLeft = count($pieces);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();

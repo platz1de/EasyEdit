@@ -88,7 +88,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->addVector($this->position)->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->position)->addVector($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->selection->getPoint()));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

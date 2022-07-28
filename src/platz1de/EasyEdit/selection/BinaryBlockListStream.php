@@ -118,8 +118,7 @@ class BinaryBlockListStream extends BlockListSelection
 		$this->blocks = new ExtendedBinaryStream($blocks);
 	}
 
-	//TODO: offset
-	public function split(Vector3 $offset): array
+	public function split(): array
 	{
 		$this->blocks->rewind();
 
