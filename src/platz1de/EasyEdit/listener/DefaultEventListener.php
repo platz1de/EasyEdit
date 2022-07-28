@@ -127,14 +127,13 @@ class DefaultEventListener implements Listener
 		}
 	}
 
-	public function onWorldChange(EntityTeleportEvent $event): void
+	public function onTeleport(EntityTeleportEvent $event): void
 	{
 		$player = $event->getEntity();
 		if ($player instanceof Player) {
-			$playerName = $player->getName();
-			EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($playerName): void {
-				ClientSideBlockManager::resendAll($playerName);
-			}));
+			EasyEdit::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player): void {
+				ClientSideBlockManager::updateAll($player);
+			}), 2); //Network ticks after schedulers (we need updated player chunks though)
 		}
 	}
 

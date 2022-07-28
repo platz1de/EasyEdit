@@ -43,9 +43,7 @@ class StructureBlockOutline extends ClientSideBlock
 	public function checkResend(Player $player): void
 	{
 		if ($this->currentPosition->getWorldName() === $player->getWorld()->getFolderName()) {
-			$this->send($player); //TODO: wait for chunk to be loaded
-		} else {
-			$this->remove($player);
+			$this->send($player);
 		}
 	}
 
