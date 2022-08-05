@@ -102,12 +102,12 @@ class ChunkController
 	}
 
 	/**
-	 * @param int         $x
-	 * @param int         $y
-	 * @param int         $z
-	 * @param CompoundTag $tile
+	 * @param int              $x
+	 * @param int              $y
+	 * @param int              $z
+	 * @param CompoundTag|null $tile
 	 */
-	public function setTile(int $x, int $y, int $z, CompoundTag $tile): void
+	public function setTile(int $x, int $y, int $z, ?CompoundTag $tile): void
 	{
 		$this->moveTo($x, $y, $z);
 		$this->currentChunk->setTile($x & 0x0f, $y, $z & 0x0f, $tile);

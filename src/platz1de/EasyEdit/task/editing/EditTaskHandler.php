@@ -166,6 +166,7 @@ class EditTaskHandler
 		$this->changes->addTile($this->origin->getTile($x, $y, $z));
 
 		$this->result->setBlock($x, $y, $z, $block);
+		$this->result->setTile($x, $y, $z, null);
 	}
 
 	/**
