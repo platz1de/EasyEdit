@@ -4,13 +4,12 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\MixedUtils;
-use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 class CountTask extends SelectionEditTask
 {
@@ -32,8 +31,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		//TODO: make this optional
-		return new StaticBlockListSelection("", new Vector3(0, World::Y_MIN, 0), new Vector3(0, World::Y_MIN, 0));
+		return new NonSavingBlockListSelection();
 	}
 
 	/**
