@@ -53,23 +53,6 @@ abstract class SelectionEditTask extends EditTask
 	}
 
 	/**
-	 * @param ChunkInformation[] $chunks
-	 * @return ChunkInformation[]
-	 */
-	public function filterChunks(array $chunks): array
-	{
-		//TODO: Remove this once we properly support readonly and writeonly chunks
-		foreach ($chunks as $hash => $chunk) {
-			World::getXZ($hash, $x, $z);
-			//separate chunks which are only loaded for patterns
-			if (!$this->current->isChunkOfSelection($x, $z)) {
-				unset($chunks[$hash]);
-			}
-		}
-		return parent::filterChunks($chunks);
-	}
-
-	/**
 	 * @return Closure
 	 */
 	public function getCacheClosure(): Closure

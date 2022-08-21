@@ -121,4 +121,9 @@ class ChunkInformation
 			$this->tiles[$key] = clone $tile;
 		}
 	}
+
+	public function resetFlags(): void
+	{
+		$this->used = false;
+	}
 }

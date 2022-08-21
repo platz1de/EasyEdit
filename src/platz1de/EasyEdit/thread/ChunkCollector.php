@@ -86,6 +86,9 @@ class ChunkCollector
 	{
 		self::$ready = false;
 		self::$manager?->filterChunks($closure);
+		foreach (self::$manager?->getChunks() ?? [] as $chunk) {
+			$chunk->resetFlags();
+		}
 		EditThread::getInstance()->debug("Cached " . count(self::$manager?->getChunks() ?? []) . " chunks");
 	}
 
