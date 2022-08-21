@@ -40,6 +40,11 @@ class ChunkRequestData extends OutputData
 			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to unknown world");
 			return false;
 		}
+		if ($this->chunks === []) {
+			ChunkCollector::collectInput(ChunkInputData::empty());
+			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to empty chunk list");
+			return false;
+		}
 		return true;
 	}
 
@@ -98,6 +103,7 @@ class ChunkRequestData extends OutputData
 	{
 		$this->world = $stream->getString();
 
+		$this->chunks = [];
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
 			$this->chunks[] = $stream->getLong();
