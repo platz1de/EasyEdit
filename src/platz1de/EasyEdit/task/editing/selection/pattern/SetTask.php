@@ -3,14 +3,11 @@
 namespace platz1de\EasyEdit\task\editing\selection\pattern;
 
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\pattern\PatternWrapper;
-use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\world\HeightMapCache;
-use pocketmine\math\Vector3;
 
 class SetTask extends PatternedEditTask
 {
