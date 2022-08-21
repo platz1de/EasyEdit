@@ -36,11 +36,6 @@ class NonSavingBlockListSelection extends BlockListSelection
 		return [];
 	}
 
-	public function isChunkOfSelection(int $x, int $z): bool
-	{
-		return false;
-	}
-
 	public function shouldBeCached(int $x, int $z): bool
 	{
 		return false;

@@ -44,13 +44,6 @@ abstract class Selection
 	 */
 	abstract public function getNeededChunks(): array;
 
-	/**
-	 * @param int $x
-	 * @param int $z
-	 * @return bool whether the chunk is in part of selected area (this doesn't check if it is actually affected)
-	 */
-	abstract public function isChunkOfSelection(int $x, int $z): bool;
-
 	public function getPos1(): Vector3
 	{
 		return $this->pos1;

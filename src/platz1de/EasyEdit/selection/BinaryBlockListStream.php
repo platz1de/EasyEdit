@@ -55,11 +55,6 @@ class BinaryBlockListStream extends BlockListSelection
 		return [World::chunkHash($x, $z)];
 	}
 
-	public function isChunkOfSelection(int $x, int $z): bool
-	{
-		return true;
-	}
-
 	public function shouldBeCached(int $x, int $z): bool
 	{
 		return false;

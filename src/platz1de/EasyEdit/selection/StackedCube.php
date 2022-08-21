@@ -72,16 +72,6 @@ class StackedCube extends Selection
 	 * @param int $z
 	 * @return bool
 	 */
-	public function isChunkOfSelection(int $x, int $z): bool
-	{
-		return $this->min->getX() >> 4 <= $x && $x <= $this->max->getX() >> 4 && $this->min->getZ() >> 4 <= $z && $z <= $this->max->getZ() >> 4;
-	}
-
-	/**
-	 * @param int $x
-	 * @param int $z
-	 * @return bool
-	 */
 	public function shouldBeCached(int $x, int $z): bool
 	{
 		return $x >= $this->pos1->getX() >> 4 && $x <= $this->pos2->getX() >> 4 && $z >= $this->pos1->getZ() >> 4 && $z <= $this->pos2->getZ() >> 4;

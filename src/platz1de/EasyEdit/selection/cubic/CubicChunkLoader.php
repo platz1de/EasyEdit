@@ -34,19 +34,6 @@ trait CubicChunkLoader
 	 * @param int $z
 	 * @return bool
 	 */
-	public function isChunkOfSelection(int $x, int $z): bool
-	{
-		$start = $this->getCubicStart();
-		$end = $this->getCubicEnd();
-
-		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && $start->getZ() >> 4 <= $z && $z <= $end->getZ() >> 4;
-	}
-
-	/**
-	 * @param int $x
-	 * @param int $z
-	 * @return bool
-	 */
 	public function shouldBeCached(int $x, int $z): bool
 	{
 		if ($this instanceof Patterned) {
