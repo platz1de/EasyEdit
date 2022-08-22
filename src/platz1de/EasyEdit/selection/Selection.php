@@ -7,7 +7,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\math\Vector3;
-use UnexpectedValueException;
 
 abstract class Selection
 {
@@ -17,7 +16,6 @@ abstract class Selection
 	protected Vector3 $pos2;
 	protected Vector3 $selected1;
 	protected Vector3 $selected2;
-	protected bool $initialized = false;
 
 	/**
 	 * Selection constructor.
@@ -140,17 +138,6 @@ abstract class Selection
 		$this->pos2 = clone($this->selected2 = $pos2);
 
 		$this->update();
-	}
-
-	/**
-	 * @param Vector3 $place
-	 */
-	public function init(Vector3 $place): void
-	{
-		if ($this->initialized) {
-			throw new UnexpectedValueException("Selection was already init");
-		}
-		$this->initialized = true;
 	}
 
 	/**

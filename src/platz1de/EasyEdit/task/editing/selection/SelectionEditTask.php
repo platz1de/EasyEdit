@@ -10,15 +10,12 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use platz1de\EasyEdit\world\ChunkInformation;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 abstract class SelectionEditTask extends EditTask
 {
 	protected Selection $selection;
 	protected Selection $current;
-	protected ?Vector3 $splitOffset = null;
 	private int $totalPieces;
 	private int $piecesLeft;
 
@@ -34,7 +31,6 @@ abstract class SelectionEditTask extends EditTask
 	public function execute(): void
 	{
 		StorageModule::checkFinished();
-		$this->selection->init($this->splitOffset ?? Vector3::zero());
 		$pieces = $this->selection->split();
 		$this->totalPieces = count($pieces);
 		$this->piecesLeft = count($pieces);
@@ -42,7 +38,6 @@ abstract class SelectionEditTask extends EditTask
 		ChunkCollector::init($this->getWorld());
 		foreach ($pieces as $piece) {
 			$this->current = $piece;
-			$piece->init($this->splitOffset ?? Vector3::zero());
 			if ($this->requestChunks($piece->getNeededChunks(), $fastSet)) {
 				$this->piecesLeft--;
 			} else {
@@ -73,14 +68,12 @@ abstract class SelectionEditTask extends EditTask
 	{
 		parent::putData($stream);
 		$stream->putString($this->selection->fastSerialize());
-		$stream->putVector($this->splitOffset ?? Vector3::zero());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 		$this->selection = Selection::fastDeserialize($stream->getString());
-		$this->splitOffset = $stream->getVector();
 	}
 
 	/**

@@ -80,13 +80,6 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 		CubicConstructor::betweenPoints($this->getPos1()->addVector($this->getPoint()), $this->getPos2()->addVector($this->getPoint()), $closure);
 	}
 
-	public function init(Vector3 $place): void
-	{
-		parent::init($place);
-		$this->pos1 = $this->pos1->addVector($place);
-		$this->pos2 = $this->pos2->addVector($place);
-	}
-
 	/**
 	 * @return Vector3
 	 */

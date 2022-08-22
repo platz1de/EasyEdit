@@ -41,7 +41,7 @@ class DynamicPasteTask extends SelectionEditTask
 	{
 		$this->insert = $insert;
 		$this->position = $position;
-		$this->splitOffset = $position;
+		$selection->setPoint($selection->getPoint()->addVector($position));
 		parent::__construct($selection);
 		$this->world = $world;
 	}
@@ -57,7 +57,7 @@ class DynamicPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler): void
 	{
 		$selection = $this->current;
-		$place = $this->position->addVector($selection->getPoint());
+		$place = $selection->getPoint();
 		$ox = $place->getFloorX();
 		$oy = $place->getFloorY();
 		$oz = $place->getFloorZ();
