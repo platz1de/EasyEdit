@@ -16,10 +16,10 @@ trait CubicChunkLoader
 		$start = $this->getCubicStart();
 		$end = $this->getCubicEnd();
 
-		if ($this instanceof Patterned) {
-			$start = $start->subtract(1, 1, 1);
-			$end = $end->add(1, 1, 1);
-		}
+		//if ($this instanceof Patterned) {
+		//	$start = $start->subtract(1, 1, 1);
+		//	$end = $end->add(1, 1, 1);
+		//}
 
 		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
 			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {

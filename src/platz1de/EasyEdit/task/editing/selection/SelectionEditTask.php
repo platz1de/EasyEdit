@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use Closure;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
@@ -67,6 +66,23 @@ abstract class SelectionEditTask extends EditTask
 			return $chunks;
 		};
 	}
+
+	///**
+	// * @return Closure
+	// */
+	//public function getCacheClosure(): Closure
+	//{
+	//	$selection = $this->selection;
+	//	return static function (array $chunks) use ($selection): array {
+	//		foreach ($chunks as $hash => $chunk) {
+	//			World::getXZ($hash, $x, $z);
+	//			if (!$selection->shouldBeCached($x, $z)) {
+	//				unset($chunks[$hash]);
+	//			}
+	//		}
+	//		return $chunks;
+	//	};
+	//}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
