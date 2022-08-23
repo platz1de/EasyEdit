@@ -10,6 +10,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\MixedUtils;
+use pocketmine\math\Vector3;
 
 class CountTask extends SelectionEditTask
 {
@@ -48,7 +49,7 @@ class CountTask extends SelectionEditTask
 		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted), "{blocks}" => implode("\n", $blocks)]));
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
@@ -57,6 +58,6 @@ class CountTask extends SelectionEditTask
 			} else {
 				$this->counted[$id] = 1;
 			}
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 	}
 }

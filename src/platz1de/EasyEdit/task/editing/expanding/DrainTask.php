@@ -16,7 +16,13 @@ class DrainTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	public function executeEdit(EditTaskHandler $handler): void
+	/**
+	 * @param EditTaskHandler $handler
+	 * @param Vector3         $min
+	 * @param Vector3         $max
+	 * @return void
+	 */
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$target = [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA];
 
@@ -26,7 +32,7 @@ class DrainTask extends ExpandingTask
 		$startY = $this->start->getFloorY();
 		$startZ = $this->start->getFloorZ();
 		$this->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
-		$max = ConfigManager::getFillDistance();
+		$limit = ConfigManager::getFillDistance();
 
 		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
@@ -37,12 +43,12 @@ class DrainTask extends ExpandingTask
 		while (!$queue->isEmpty()) {
 			/** @var array{data: int, priority: int} $current */
 			$current = $queue->extract();
-			if (-$current["priority"] > $max) {
+			if (-$current["priority"] > $limit) {
 				break;
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max)) {
+			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $limit)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $target, true)) {

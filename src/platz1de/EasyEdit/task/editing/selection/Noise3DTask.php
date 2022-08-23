@@ -10,6 +10,7 @@ use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
+use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 use pocketmine\world\generator\noise\Noise;
 use pocketmine\world\generator\noise\Simplex;
@@ -49,7 +50,7 @@ class Noise3DTask extends SelectionEditTask
 		return "noise_3d";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		if (!isset($this->noise)) {
 			$this->noise = new Simplex(new Random(time()), $this->octaves, $this->persistence, $this->expansion);
@@ -63,7 +64,7 @@ class Noise3DTask extends SelectionEditTask
 			} else {
 				$handler->changeBlock($x, $y, $z, 0);
 			}
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

@@ -60,11 +60,20 @@ class BinaryBlockListStream extends BlockListSelection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
 	{
 		$this->blocks->rewind();
 		while (!$this->blocks->feof()) {
-			$closure($this->blocks->getInt(), $this->blocks->getInt(), $this->blocks->getInt(), $this->blocks->getInt());
+			$o = $this->blocks->getOffset();
+			$x = $this->blocks->getInt();
+			$y = $this->blocks->getInt();
+			$z = $this->blocks->getInt();
+			if ($x < $min->getX() || $x > $max->getX() || $z < $min->getZ() || $z > $max->getZ()) {
+				$this->blocks->setOffset($o);
+				$this->setData($this->blocks->getRemaining());
+				break;
+			}
+			$closure($x, $y, $z, $this->blocks->getInt());
 		}
 	}
 
@@ -111,31 +120,6 @@ class BinaryBlockListStream extends BlockListSelection
 	public function setData(string $blocks): void
 	{
 		$this->blocks = new ExtendedBinaryStream($blocks);
-	}
-
-	public function split(): array
-	{
-		$this->blocks->rewind();
-
-		$pieces = [];
-		$current = null;
-		$currentChunkX = 0;
-		$currentChunkZ = 0;
-		while (!$this->blocks->feof()) {
-			$x = $this->blocks->getInt();
-			$y = $this->blocks->getInt();
-			$z = $this->blocks->getInt();
-			$id = $this->blocks->getInt();
-
-			if ($current === null || $currentChunkX !== $x >> 4 || $currentChunkZ !== $z >> 4) {
-				$currentChunkX = $x >> 4;
-				$currentChunkZ = $z >> 4;
-				$pieces[] = $current = new self($this->getWorldName());
-			}
-
-			$current->addBlock($x, $y, $z, $id);
-		}
-		return $pieces;
 	}
 
 	public function createSafeClone(): BinaryBlockListStream

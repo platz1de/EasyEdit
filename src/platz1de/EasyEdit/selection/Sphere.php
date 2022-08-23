@@ -9,7 +9,6 @@ use platz1de\EasyEdit\selection\constructor\SphericalConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 class Sphere extends Selection implements Patterned
 {
@@ -38,28 +37,30 @@ class Sphere extends Selection implements Patterned
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
+	 * @param Vector3          $min
+	 * @param Vector3          $max
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
 	{
 		if ($context->isEmpty()) {
 			return;
 		}
 
 		if ($context->isFull()) {
-			SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), $closure, $this->getPos1(), $this->getPos2());
+			SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
 		} else {
 			if ($context->includesFilling()) {
-				SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius() - 1, $closure, $this->getPos1(), $this->getPos2());
+				SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius() - 1, $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
 			}
 
 			if ($context->includesAllSides()) {
-				SphericalConstructor::aroundPointHollow($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $closure, $this->getPos1(), $this->getPos2());
+				SphericalConstructor::aroundPointHollow($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
 			} elseif ($context->includesWalls()) {
-				CylindricalConstructor::tubeAround($this->getPoint()->down((int) $this->getRadius()), $this->getRadius(), $context->getSideThickness(), (int) $this->getRadius() * 2 + 1, $closure, $this->getPos1(), $this->getPos2());
+				CylindricalConstructor::tubeAround($this->getPoint()->down((int) $this->getRadius()), $this->getRadius(), $context->getSideThickness(), (int) $this->getRadius() * 2 + 1, $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
 			}
 
 			if ($context->includesCenter()) {
-				CubicConstructor::single($this->getPos1(), $closure, $this->getPos1(), $this->getPos2());
+				CubicConstructor::single($this->getPos1(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
 			}
 		}
 	}
@@ -116,21 +117,5 @@ class Sphere extends Selection implements Patterned
 
 		$this->point = $stream->getVector();
 		$this->radius = $stream->getFloat();
-	}
-
-	/**
-	 * splits into 3x3 Chunk pieces
-	 * @return Sphere[]
-	 */
-	public function split(): array
-	{
-		$radius = $this->getRadius();
-		$pieces = [];
-		for ($x = ($this->point->getX() - $radius) >> 4; $x <= ($this->point->getX() + $radius) >> 4; $x += 3) {
-			for ($z = ($this->point->getZ() - $radius) >> 4; $z <= ($this->point->getZ() + $radius) >> 4; $z += 3) {
-				$pieces[] = self::aroundPoint($this->getWorldName(), $this->getPoint(), $this->getRadius(), new Vector3(max($x << 4, $this->pos1->getFloorX()), max($this->pos1->getFloorY(), 0), max($z << 4, $this->pos1->getFloorZ())), new Vector3(min((($x + 2) << 4) + 15, $this->pos2->getFloorX()), min($this->pos2->getFloorY(), World::Y_MAX - 1), min((($z + 2) << 4) + 15, $this->pos2->getFloorZ())));
-			}
-		}
-		return $pieces;
 	}
 }

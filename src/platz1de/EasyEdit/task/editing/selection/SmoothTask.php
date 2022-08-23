@@ -29,8 +29,10 @@ class SmoothTask extends SelectionEditTask
 	/**
 	 * This is pretty much magic code, so better don't touch it
 	 * @param EditTaskHandler $handler
+	 * @param Vector3         $min
+	 * @param Vector3         $max
 	 */
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		HeightMapCache::load($handler->getOrigin(), $this->getCurrentSelection());
 		$currentX = null;
@@ -152,7 +154,7 @@ class SmoothTask extends SelectionEditTask
 			}
 
 			$handler->copyBlock($x, $y, $z, $x, $target, $z);
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 	}
 
 	/**

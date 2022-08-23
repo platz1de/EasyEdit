@@ -5,13 +5,14 @@ namespace platz1de\EasyEdit\task\editing\expanding;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
+use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class PasteBlockStatesTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);

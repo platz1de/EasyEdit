@@ -39,8 +39,10 @@ class PathfindingTask extends ExpandingTask
 
 	/**
 	 * @param EditTaskHandler $handler
+	 * @param Vector3         $min
+	 * @param Vector3         $max
 	 */
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$open = new NodeHeap();
 		/** @var Node[] $collection */
@@ -48,7 +50,7 @@ class PathfindingTask extends ExpandingTask
 		$closed = [];
 		$checked = 0;
 		//TODO: unload chunks after a set amount
-		$max = ConfigManager::getPathfindingMax();
+		$limit = ConfigManager::getPathfindingMax();
 
 		$startX = $this->start->getFloorX();
 		$startY = $this->start->getFloorY();
@@ -62,13 +64,13 @@ class PathfindingTask extends ExpandingTask
 		}
 
 		$open->insert(new Node($startX, $startY, $startZ, null, $endX, $endY, $endZ));
-		while ($checked++ < $max) {
+		while ($checked++ < $limit) {
 			/** @var Node $current */
 			$current = $open->extract();
 			unset($collection[$current->hash]);
 			$closed[$current->hash] = $current->parentHash;
 			$chunk = World::chunkHash($current->x >> 4, $current->z >> 4);
-			$this->checkRuntimeChunk($handler, $chunk, $checked, $max);
+			$this->checkRuntimeChunk($handler, $chunk, $checked, $limit);
 			if ($current->equals($endX, $endY, $endZ)) {
 				$hash = $current->hash;
 				while (isset($closed[$hash])) {

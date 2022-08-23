@@ -27,7 +27,8 @@ abstract class ExpandingTask extends EditTask
 	 * @param string  $world
 	 * @param Vector3 $start
 	 */
-	public function __construct(string $world, Vector3 $start) {
+	public function __construct(string $world, Vector3 $start)
+	{
 		$this->start = $start;
 		parent::__construct($world);
 	}
@@ -36,7 +37,7 @@ abstract class ExpandingTask extends EditTask
 	{
 		ChunkCollector::init($this->getWorld());
 		ChunkCollector::collectInput(ChunkInputData::empty());
-		$this->run(true);
+		$this->run(true, Vector3::zero(), Vector3::zero()); //TODO: not depend on edit task
 		$this->finalize();
 	}
 

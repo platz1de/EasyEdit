@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
@@ -59,12 +58,18 @@ class StackedCube extends Selection
 				$chunks[] = World::chunkHash($x, $z);
 			}
 		}
-		for ($x = $this->min->getX() >> 4; $x <= $this->max->getX() >> 4; $x++) {
-			for ($z = $this->min->getZ() >> 4; $z <= $this->max->getZ() >> 4; $z++) {
-				$chunks[] = World::chunkHash($x, $z);
-			}
-		}
 		return $chunks;
+	}
+
+	/**
+	 * @param Vector3 $min
+	 * @param Vector3 $max
+	 * @return int[]
+	 */
+	public function getReferencedChunks(Vector3 $min, Vector3 $max): array
+	{
+		//TODO
+		return [];
 	}
 
 	/**
@@ -81,10 +86,13 @@ class StackedCube extends Selection
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
+	 * @param Vector3          $min
+	 * @param Vector3          $max
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
 	{
-		CubicConstructor::betweenPoints($this->min, $this->max, $closure);
+		//TODO (this should be moved to a task)
+		//CubicConstructor::betweenPoints(Vector3::maxComponents($this->min, $min), Vector3::minComponents($this->max, $max), $closure);
 	}
 
 	/**
@@ -137,45 +145,5 @@ class StackedCube extends Selection
 	public function getCopyOffset(): Vector3
 	{
 		return $this->pos1->subtractVector($this->min);
-	}
-
-	/**
-	 * @return Selection[]
-	 */
-	public function split(): array
-	{
-		$min = Vector3::minComponents($this->getPos1()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos1()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
-		$max = Vector3::maxComponents($this->getPos2()->addVector(VectorUtils::multiply($this->getDirection()->normalize(), $this->getSize())), $this->getPos2()->addVector(VectorUtils::multiply($this->getDirection(), $this->getSize())));
-
-		$hasEmpty = ($this->pos2->subtractVector($this->pos1)->getX() > 32 && $this->direction->getX() !== 0) || ($this->pos2->subtractVector($this->pos1)->getZ() > 32 && $this->direction->getZ() !== 0);
-		$pieces = [];
-		//only 2x2 as we need 2 areas
-		for ($x = $this->pos1->getX() >> 4; $x <= $this->pos2->getX() >> 4; $x += 2) {
-			for ($z = $this->pos1->getZ() >> 4; $z <= $this->pos2->getZ() >> 4; $z += 2) {
-				if ($hasEmpty) {
-					$xSize = $this->pos2->getX() - $this->pos1->getX() + 1;
-					$zSize = $this->pos2->getZ() - $this->pos1->getZ() + 1;
-					for ($ox = 0; abs($ox) <= abs($this->direction->getX()); $this->direction->getX() > 0 ? $ox++ : $ox--) {
-						for ($oz = 0; abs($oz) <= abs($this->direction->getZ()); $this->direction->getX() > 0 ? $oz++ : $oz--) {
-							if ($ox === 0 && $oz === 0) {
-								continue;
-							}
-							$pieces[] = new StackedCube( $this->getWorldName(), new Vector3(max(($x << 4), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15, $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($x << 4), $this->pos1->getX()) + $ox * $xSize, $this->pos1->getY(), max(($z << 4), $this->pos1->getZ()) + $oz * $zSize), new Vector3(min((($x + 1) << 4) + 15, $this->pos2->getX()) + $ox * $xSize, $this->pos2->getY(), min((($z + 1) << 4) + 15, $this->pos2->getZ()) + $oz * $zSize), true);
-						}
-					}
-				} else {
-					$splitMinX = $this->direction->getX() === 0 ? $x : $min->getX() >> 4;
-					$splitMaxX = $this->direction->getX() === 0 ? $x + 1 : $max->getX() >> 4;
-					$splitMinZ = $this->direction->getZ() === 0 ? $z : $min->getZ() >> 4;
-					$splitMaxZ = $this->direction->getZ() === 0 ? $z + 1 : $max->getZ() >> 4;
-					for ($ox = $splitMinX; $ox <= $splitMaxX; $ox += 2) {
-						for ($oz = $splitMinZ; $oz <= $splitMaxZ; $oz += 2) {
-							$pieces[] = new StackedCube($this->getWorldName(), new Vector3(max(($x << 4), $this->pos1->getX()), $this->pos1->getY(), max(($z << 4), $this->pos1->getZ())), new Vector3(min((($x + 1) << 4) + 15, $this->pos2->getX()), $this->pos2->getY(), min((($z + 1) << 4) + 15, $this->pos2->getZ())), $this->getDirection(), new Vector3(max(($ox << 4), $min->getX()), $min->getY(), max(($oz << 4), $min->getZ())), new Vector3(min((($ox + 1) << 4) + 15, $max->getX()), $max->getY(), min((($oz + 1) << 4) + 15, $max->getZ())));
-						}
-					}
-				}
-			}
-		}
-		return $pieces;
 	}
 }

@@ -54,7 +54,7 @@ class DynamicPasteTask extends SelectionEditTask
 		return "dynamic_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$selection = $this->current;
 		$place = $selection->getPoint();
@@ -68,14 +68,14 @@ class DynamicPasteTask extends SelectionEditTask
 				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, SelectionContext::full(), $this->getTotalSelection());
+			}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 		} else {
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
 				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 				if (Selection::processBlock($block)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, SelectionContext::full(), $this->getTotalSelection());
+			}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 		}
 
 		foreach ($selection->getTiles() as $tile) {

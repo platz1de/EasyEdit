@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
+use pocketmine\math\Vector3;
 
 class StreamPasteTask extends SelectionEditTask
 {
@@ -34,12 +35,12 @@ class StreamPasteTask extends SelectionEditTask
 		return "stream_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		//WARNING: This isn't the default closure style
 		$this->current->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 
 		foreach ($this->current->getTiles() as $tile) {
 			$handler->addTile($tile);

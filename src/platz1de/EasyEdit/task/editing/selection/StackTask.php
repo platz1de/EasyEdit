@@ -11,6 +11,7 @@ use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
+use pocketmine\math\Vector3;
 
 class StackTask extends SelectionEditTask
 {
@@ -42,8 +43,10 @@ class StackTask extends SelectionEditTask
 		return "stack";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
+		//TODO
+		return;
 		$selection = $this->current;
 		if ($selection->isCopyMode()) {
 			$offset = $selection->getCopyOffset();
@@ -54,11 +57,11 @@ class StackTask extends SelectionEditTask
 					if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, SelectionContext::full(), $this->getTotalSelection());
+				}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 			} else {
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($offset, $handler): void {
 					$handler->copyBlock($x, $y, $z, $offset->getFloorX() + $x, $offset->getFloorY() + $y, $offset->getFloorZ() + $z);
-				}, SelectionContext::full(), $this->getTotalSelection());
+				}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 			}
 			return;
 		}
@@ -71,11 +74,11 @@ class StackTask extends SelectionEditTask
 				if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, SelectionContext::full(), $this->getTotalSelection());
+			}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 		} else {
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $originalSize, $start): void {
 				$handler->copyBlock($x, $y, $z, $start->getFloorX() + (($x - $start->getX()) % $originalSize->getX() + $originalSize->getX()) % $originalSize->getX(), $start->getFloorY() + (($y - $start->getY()) % $originalSize->getY() + $originalSize->getY()) % $originalSize->getY(), $start->getFloorZ() + (($z - $start->getZ()) % $originalSize->getZ() + $originalSize->getZ()) % $originalSize->getZ());
-			}, SelectionContext::full(), $this->getTotalSelection());
+			}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 		}
 	}
 

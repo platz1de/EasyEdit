@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
+use pocketmine\math\Vector3;
 
 class MoveTask extends SelectionEditTask
 {
@@ -35,7 +36,7 @@ class MoveTask extends SelectionEditTask
 		return "move";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$selection = $this->current;
 		$direction = $selection->getDirection();
@@ -43,6 +44,6 @@ class MoveTask extends SelectionEditTask
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->changeBlock($x, $y, $z, 0);
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 	}
 }

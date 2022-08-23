@@ -35,7 +35,7 @@ class FillTask extends ExpandingTask
 		parent::__construct($world, $start);
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($this->block->getId(), $ignore, true)) !== false) {
@@ -70,7 +70,7 @@ class FillTask extends ExpandingTask
 			},
 			default => throw new BadMethodCallException("Invalid direction")
 		};
-		$max = ConfigManager::getFillDistance();
+		$limit = ConfigManager::getFillDistance();
 
 		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
 			return;
@@ -81,12 +81,12 @@ class FillTask extends ExpandingTask
 		while (!$queue->isEmpty()) {
 			/** @var array{data: int, priority: int} $current */
 			$current = $queue->extract();
-			if (-$current["priority"] > $max) {
+			if (-$current["priority"] > $limit) {
 				break;
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max)) {
+			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $limit)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {

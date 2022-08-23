@@ -71,7 +71,7 @@ class CopyTask extends SelectionEditTask
 		$this->sendOutputPacket(new MessageSendData("blocks-copied", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$result = $this->result;
 		$ox = $result->getWorldOffset()->getFloorX();
@@ -80,7 +80,7 @@ class CopyTask extends SelectionEditTask
 		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

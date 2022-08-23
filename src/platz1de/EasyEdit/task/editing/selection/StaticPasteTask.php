@@ -8,6 +8,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
+use pocketmine\math\Vector3;
 
 class StaticPasteTask extends SelectionEditTask
 {
@@ -35,7 +36,7 @@ class StaticPasteTask extends SelectionEditTask
 		return "static_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$selection = $this->current;
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $selection): void {
@@ -43,7 +44,7 @@ class StaticPasteTask extends SelectionEditTask
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
-		}, SelectionContext::full(), $this->getTotalSelection());
+		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 
 		foreach ($selection->getTiles() as $tile) {
 			$handler->addTile($tile);

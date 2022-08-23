@@ -30,7 +30,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 		parent::__construct($world, $block);
 	}
 
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$startChunk = World::chunkHash($this->start->getFloorX() >> 4, $this->start->getFloorZ() >> 4);
 		if (!$this->checkRuntimeChunk($handler, $startChunk, 0, 1)) {
@@ -48,7 +48,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 		$offsetX = $offset->getFloorX();
 		$offsetY = $offset->getFloorY();
 		$offsetZ = $offset->getFloorZ();
-		$max = ConfigManager::getFillDistance();
+		$limit = ConfigManager::getFillDistance();
 		$this->registerRequestedChunks(World::chunkHash($start->getFloorX() >> 4, $start->getFloorZ() >> 4));
 		$this->registerRequestedChunks(World::chunkHash(($start->getFloorX() + $offsetX) >> 4, ($start->getFloorZ() + $offsetZ) >> 4));
 
@@ -57,14 +57,14 @@ class ExtendBlockFaceTask extends ExpandingTask
 		while (!$queue->isEmpty()) {
 			/** @var array{data: int, priority: int} $current */
 			$current = $queue->extract();
-			if (-$current["priority"] > $max) {
+			if (-$current["priority"] > $limit) {
 				break;
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$c = World::chunkHash(($x + $offsetX) >> 4, ($z + $offsetZ) >> 4);
-			$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $max);
-			$this->checkRuntimeChunk($handler, $c, -$current["priority"], $max);
+			$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $limit);
+			$this->checkRuntimeChunk($handler, $c, -$current["priority"], $limit);
 			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 				$this->checkUnload($handler, $chunk);
 				$this->checkUnload($handler, $c);

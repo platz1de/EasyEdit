@@ -10,6 +10,7 @@ use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 abstract class SelectionEditTask extends EditTask
@@ -31,14 +32,19 @@ abstract class SelectionEditTask extends EditTask
 	public function execute(): void
 	{
 		StorageModule::checkFinished();
-		$pieces = $this->selection->split();
-		$this->totalPieces = count($pieces);
-		$this->piecesLeft = count($pieces);
+		$chunks = $this->selection->getNeededChunks();
+		$this->totalPieces = count($chunks);
+		$this->piecesLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
 		ChunkCollector::init($this->getWorld());
-		foreach ($pieces as $piece) {
-			$this->current = $piece;
-			if ($this->requestChunks($piece->getNeededChunks(), $fastSet)) {
+		$this->current = $this->selection; //TODO: remove this
+		foreach ($chunks as $chunk) {
+			World::getXZ($chunk, $x, $z);
+			$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
+			$max = new Vector3(($x << 4) + 15, World::Y_MAX, ($z << 4) + 15);
+			$c = $this->selection->getReferencedChunks($min, $max);
+			$c[] = $chunk;
+			if ($this->requestChunks($c, $fastSet, $min, $max)) {
 				$this->piecesLeft--;
 			} else {
 				return; //task was cancelled

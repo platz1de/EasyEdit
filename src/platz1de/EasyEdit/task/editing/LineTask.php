@@ -50,22 +50,28 @@ class LineTask extends EditTask
 			if ($current === null) {
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
-				$this->requestChunks([$current], true);
+				$min = new Vector3($pos->x % 16, World::Y_MIN, $pos->z % 16);
+				$max = new Vector3(($pos->x % 16) + 15, World::Y_MAX, ($pos->z % 16) + 15);
+				$this->requestChunks([$current], true, $min, $max);
 				$this->blocks = [];
 				$current = $c;
 			}
 			$this->blocks[] = $pos;
 		}
 		if ($current !== null) {
-			$this->requestChunks([$current], true);
+			$min = new Vector3($pos->x % 16, World::Y_MIN, $pos->z % 16);
+			$max = new Vector3(($pos->x % 16) + 15, World::Y_MAX, ($pos->z % 16) + 15);
+			$this->requestChunks([$current], true, $min, $max);
 		}
 		$this->finalize();
 	}
 
 	/**
 	 * @param EditTaskHandler $handler
+	 * @param Vector3         $min
+	 * @param Vector3         $max
 	 */
-	public function executeEdit(EditTaskHandler $handler): void
+	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		foreach ($this->blocks as $pos) {
 			$handler->changeBlock((int) $pos->x, (int) $pos->y, (int) $pos->z, $this->block->get());

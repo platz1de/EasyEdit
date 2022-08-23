@@ -42,6 +42,14 @@ abstract class Selection
 	 */
 	abstract public function getNeededChunks(): array;
 
+	/**
+	 * @return int[]
+	 */
+	public function getReferencedChunks(Vector3 $min, Vector3 $max): array
+	{
+		return [];
+	}
+
 	public function getPos1(): Vector3
 	{
 		return $this->pos1;
@@ -90,8 +98,10 @@ abstract class Selection
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
 	 * @param Selection        $full
+	 * @param Vector3          $min
+	 * @param Vector3          $max
 	 */
-	abstract public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full): void;
+	abstract public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void;
 
 	/**
 	 * @return bool
@@ -161,16 +171,6 @@ abstract class Selection
 		}
 
 		return $return;
-	}
-
-	/**
-	 * Splits the selection into smaller parts
-	 * lowers the impact of Chunk loading
-	 * @return Selection[]
-	 */
-	public function split(): array
-	{
-		return [$this];
 	}
 
 	/**

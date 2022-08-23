@@ -15,6 +15,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\HeightMapCache;
+use pocketmine\math\Vector3;
 
 abstract class EditTask extends ExecutableTask
 {
@@ -32,11 +33,11 @@ abstract class EditTask extends ExecutableTask
 	/**
 	 * @param int[] $chunks
 	 */
-	public function requestChunks(array $chunks, bool $fastSet): bool
+	public function requestChunks(array $chunks, bool $fastSet, Vector3 $min, Vector3 $max): bool
 	{
 		ChunkCollector::request($chunks);
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
-			if ($this->checkData($fastSet)) {
+			if ($this->checkData($fastSet, $min, $max)) {
 				return true;
 			}
 			EditThread::getInstance()->waitForData();
@@ -45,10 +46,10 @@ abstract class EditTask extends ExecutableTask
 		return false;
 	}
 
-	public function checkData(bool $fastSet): bool
+	public function checkData(bool $fastSet, Vector3 $min, Vector3 $max): bool
 	{
 		if (ChunkCollector::hasReceivedInput()) {
-			$this->run($fastSet);
+			$this->run($fastSet, $min, $max);
 			ChunkCollector::clean($this->getCacheClosure());
 			return true;
 		}
@@ -99,7 +100,7 @@ abstract class EditTask extends ExecutableTask
 		});
 	}
 
-	public function run(bool $fastSet): void
+	public function run(bool $fastSet, Vector3 $max, Vector3 $min): void
 	{
 		$start = microtime(true);
 
@@ -109,7 +110,7 @@ abstract class EditTask extends ExecutableTask
 
 		HeightMapCache::prepare();
 
-		$this->executeEdit($handler);
+		$this->executeEdit($handler, $max, $min);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
 
 		StorageModule::collect($handler->getChanges());
@@ -132,8 +133,10 @@ abstract class EditTask extends ExecutableTask
 
 	/**
 	 * @param EditTaskHandler $handler
+	 * @param Vector3         $min
+	 * @param Vector3         $max
 	 */
-	abstract public function executeEdit(EditTaskHandler $handler): void;
+	abstract public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void;
 
 	/**
 	 * @param string $time
