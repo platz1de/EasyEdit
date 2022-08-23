@@ -44,7 +44,7 @@ class StaticPasteTask extends SelectionEditTask
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
-		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
+		}, SelectionContext::full(), $min, $max);
 
 		foreach ($selection->getTiles() as $tile) {
 			$handler->addTile($tile);

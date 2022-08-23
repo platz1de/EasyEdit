@@ -17,11 +17,10 @@ class AroundPattern extends Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
 		foreach ((new Vector3($x, $y, $z))->sides() as $side) {
 			if ($this->block->equals($iterator->getBlock($side->getFloorX(), $side->getFloorY(), $side->getFloorZ()))) {

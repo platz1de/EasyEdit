@@ -80,7 +80,7 @@ class CopyTask extends SelectionEditTask
 		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
-		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
+		}, SelectionContext::full(), $min, $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

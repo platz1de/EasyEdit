@@ -31,25 +31,24 @@ class SidesPattern extends Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
-		if ($current instanceof Cube) {
-			$min = $total->getPos1();
-			$max = $total->getPos2();
+		if ($selection instanceof Cube) {
+			$min = $selection->getPos1();
+			$max = $selection->getPos2();
 
 			return ($x - $min->getX() + 1) <= $this->thickness || ($max->getX() - $x + 1) <= $this->thickness || ($y - $min->getY() + 1) <= $this->thickness || ($max->getY() - $y + 1) <= $this->thickness || ($z - $min->getZ() + 1) <= $this->thickness || ($max->getZ() - $z + 1) <= $this->thickness;
 		}
-		if ($current instanceof Cylinder) {
-			return (($x - $current->getPoint()->getFloorX()) ** 2) + (($z - $current->getPoint()->getFloorZ()) ** 2) > (($current->getRadius() - $this->thickness) ** 2) || ($y - $current->getPos1()->getY() + 1) <= $this->thickness || ($current->getPos2()->getY() - $y + 1) <= $this->thickness;
+		if ($selection instanceof Cylinder) {
+			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $this->thickness) ** 2) || ($y - $selection->getPos1()->getY() + 1) <= $this->thickness || ($selection->getPos2()->getY() - $y + 1) <= $this->thickness;
 		}
-		if ($current instanceof Sphere) {
-			return (($x - $current->getPoint()->getFloorX()) ** 2) + (($y - $current->getPoint()->getFloorY()) ** 2) + (($z - $current->getPoint()->getFloorZ()) ** 2) > (($current->getRadius() - $this->thickness) ** 2) || ($y - $current->getPos1()->getY() + 1) <= $this->thickness || ($current->getPos2()->getY() - $y + 1) <= $this->thickness;
+		if ($selection instanceof Sphere) {
+			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($y - $selection->getPoint()->getFloorY()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $this->thickness) ** 2) || ($y - $selection->getPos1()->getY() + 1) <= $this->thickness || ($selection->getPos2()->getY() - $y + 1) <= $this->thickness;
 		}
-		throw new ParseError("Sides pattern does not support selection of type " . $current::class);
+		throw new ParseError("Sides pattern does not support selection of type " . $selection::class);
 	}
 
 	/**

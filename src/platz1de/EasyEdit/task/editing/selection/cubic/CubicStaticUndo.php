@@ -10,13 +10,13 @@ trait CubicStaticUndo
 {
 	abstract public function getWorld(): string;
 
-	abstract public function getTotalSelection(): Selection;
+	abstract public function getSelection(): Selection;
 
 	/**
 	 * @return StaticBlockListSelection
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), $this->getTotalSelection()->getCubicStart(), $this->getTotalSelection()->getCubicEnd());
+		return new StaticBlockListSelection($this->getWorld(), $this->getSelection()->getCubicStart(), $this->getSelection()->getCubicEnd());
 	}
 }

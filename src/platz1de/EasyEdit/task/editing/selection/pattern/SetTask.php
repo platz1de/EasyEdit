@@ -36,7 +36,7 @@ class SetTask extends PatternedEditTask
 		$maxY = $selection->getPos2()->getFloorY();
 		$updateHeightMap = $pattern->contains(GravityPattern::class);
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($updateHeightMap, &$maxY, &$minY, $handler, $pattern, $selection): void {
-			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection, $this->getTotalSelection());
+			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection);
 			if ($block !== -1) {
 				$handler->changeBlock($x, $y, $z, $block);
 				if ($updateHeightMap) {
@@ -45,7 +45,7 @@ class SetTask extends PatternedEditTask
 				$minY = min($minY, $y);
 				$maxY = max($maxY, $y);
 			}
-		}, $pattern->getSelectionContext(), $this->getTotalSelection(), $min, $max);
+		}, $pattern->getSelectionContext(), $min, $max);
 		$undo = $handler->getChanges();
 		$undo->setPos1($undo->getPos1()->withComponents(null, $minY, null));
 		$undo->setPos2($undo->getPos2()->withComponents(null, $maxY, null));

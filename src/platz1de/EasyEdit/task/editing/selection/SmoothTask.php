@@ -154,7 +154,7 @@ class SmoothTask extends SelectionEditTask
 			}
 
 			$handler->copyBlock($x, $y, $z, $x, $target, $z);
-		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
+		}, SelectionContext::full(), $min, $max);
 	}
 
 	/**

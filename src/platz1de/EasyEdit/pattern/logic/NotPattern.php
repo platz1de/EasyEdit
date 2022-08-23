@@ -29,12 +29,11 @@ class NotPattern extends Pattern
 	 * @param int             $z
 	 * @param ChunkController $iterator
 	 * @param Selection       $current
-	 * @param Selection       $total
 	 * @return int
 	 */
-	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
-		return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);
+		return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current);
 	}
 
 	/**
@@ -42,12 +41,11 @@ class NotPattern extends Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
-		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total);
+		return !$this->pieces[0]->isValidAt($x, $y, $z, $iterator, $selection);
 	}
 }

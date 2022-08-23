@@ -35,15 +35,14 @@ abstract class Pattern
 	 * @param int             $z
 	 * @param ChunkController $iterator
 	 * @param Selection       $current
-	 * @param Selection       $total
 	 * @return int
 	 */
-	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
 		try {
 			if (count($this->pieces) === 1) {
-				if ($this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current, $total) && ($this->pieces[0]->getWeight() === 100 || random_int(1, 100) <= $this->pieces[0]->getWeight())) {
-					return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current, $total);
+				if ($this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current) && ($this->pieces[0]->getWeight() === 100 || random_int(1, 100) <= $this->pieces[0]->getWeight())) {
+					return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current);
 				}
 				return -1;
 			}
@@ -58,8 +57,8 @@ abstract class Pattern
 		foreach ($this->pieces as $piece) {
 			$rand -= $piece->getWeight();
 			if ($rand <= 0) {
-				if ($piece->isValidAt($x, $y, $z, $iterator, $current, $total)) {
-					return $piece->getFor($x, $y, $z, $iterator, $current, $total);
+				if ($piece->isValidAt($x, $y, $z, $iterator, $current)) {
+					return $piece->getFor($x, $y, $z, $iterator, $current);
 				}
 				break; //only select one
 			}
@@ -72,11 +71,10 @@ abstract class Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
 		return true;
 	}

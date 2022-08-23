@@ -21,15 +21,14 @@ class CenterPattern extends Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
-		if ($current instanceof Cube) {
-			$min = $total->getPos1();
-			$max = $total->getPos2();
+		if ($selection instanceof Cube) {
+			$min = $selection->getPos1();
+			$max = $selection->getPos2();
 
 			$xPos = ($min->getX() + $max->getX()) / 2;
 			$yPos = ($min->getY() + $max->getY()) / 2;
@@ -37,10 +36,10 @@ class CenterPattern extends Pattern
 
 			return floor($xPos) <= $x && $x <= ceil($xPos) && floor($yPos) <= $y && $y <= ceil($yPos) && floor($zPos) <= $z && $z <= ceil($zPos);
 		}
-		if ($current instanceof Cylinder || $current instanceof Sphere) {
-			return $x === $current->getPoint()->getFloorX() && $y === $current->getPoint()->getFloorY() && $z === $current->getPoint()->getFloorZ();
+		if ($selection instanceof Cylinder || $selection instanceof Sphere) {
+			return $x === $selection->getPoint()->getFloorX() && $y === $selection->getPoint()->getFloorY() && $z === $selection->getPoint()->getFloorZ();
 		}
-		throw new ParseError("Center pattern does not support selection of type " . $current::class);
+		throw new ParseError("Center pattern does not support selection of type " . $selection::class);
 	}
 
 	/**

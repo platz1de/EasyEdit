@@ -11,11 +11,10 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Selection        $full
 	 * @param Vector3          $min
 	 * @param Vector3          $max
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
 	{
 		CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max), $closure);
 	}

@@ -15,11 +15,10 @@ class Cube extends Selection implements Patterned
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Selection        $full
 	 * @param Vector3          $min
 	 * @param Vector3          $max
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
 	{
 		if ($context->isEmpty()) {
 			return;
@@ -32,7 +31,7 @@ class Cube extends Selection implements Patterned
 
 		if ($context->includesFilling()) {
 			//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
-			CubicConstructor::betweenPoints(Vector3::maxComponents($full->getCubicStart()->add(1, 1, 1), $this->getCubicStart(), $min), Vector3::minComponents($full->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd(), $max), $closure);
+			CubicConstructor::betweenPoints(Vector3::maxComponents($this->getCubicStart()->add(1, 1, 1), $this->getCubicStart(), $min), Vector3::minComponents($this->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd(), $max), $closure);
 		}
 
 		if ($context->includesAllSides()) {
@@ -42,7 +41,7 @@ class Cube extends Selection implements Patterned
 		}
 
 		if ($context->includesCenter()) {
-			CubicConstructor::betweenPoints(Vector3::maxComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->floor(), $this->getPos1(), $min), Vector3::minComponents($full->getPos1()->addVector($full->getPos2())->divide(2)->ceil(), $this->getPos2(), $max), $closure);
+			CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1()->addVector($this->getPos2())->divide(2)->floor(), $this->getPos1(), $min), Vector3::minComponents($this->getPos1()->addVector($this->getPos2())->divide(2)->ceil(), $this->getPos2(), $max), $closure);
 		}
 	}
 }

@@ -36,11 +36,10 @@ class NaturalizePattern extends Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
 		return !in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore(), true);
 	}
@@ -51,16 +50,15 @@ class NaturalizePattern extends Pattern
 	 * @param int             $z
 	 * @param ChunkController $iterator
 	 * @param Selection       $current
-	 * @param Selection       $total
 	 * @return int
 	 */
-	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
 		HeightMapCache::load($iterator, $current);
 		return match (HeightMapCache::searchAirUpwards($x, $y, $z)) {
-			1 => $this->surface->getFor($x, $y, $z, $iterator, $current, $total),
-			2, 3 => $this->ground->getFor($x, $y, $z, $iterator, $current, $total),
-			default => $this->deep->getFor($x, $y, $z, $iterator, $current, $total),
+			1 => $this->surface->getFor($x, $y, $z, $iterator, $current),
+			2, 3 => $this->ground->getFor($x, $y, $z, $iterator, $current),
+			default => $this->deep->getFor($x, $y, $z, $iterator, $current),
 		};
 	}
 

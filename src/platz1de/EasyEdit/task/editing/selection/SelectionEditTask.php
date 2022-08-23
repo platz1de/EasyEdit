@@ -83,7 +83,7 @@ abstract class SelectionEditTask extends EditTask
 	/**
 	 * @return Selection
 	 */
-	public function getTotalSelection(): Selection
+	public function getSelection(): Selection
 	{
 		return $this->selection;
 	}

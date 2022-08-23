@@ -41,7 +41,7 @@ class NonSavingBlockListSelection extends BlockListSelection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
 	{
 		throw new BadMethodCallException("Cannot clone a non-saving selection for setting");
 	}

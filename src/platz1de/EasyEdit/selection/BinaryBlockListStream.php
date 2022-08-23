@@ -60,7 +60,7 @@ class BinaryBlockListStream extends BlockListSelection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
 	{
 		$this->blocks->rewind();
 		while (!$this->blocks->feof()) {

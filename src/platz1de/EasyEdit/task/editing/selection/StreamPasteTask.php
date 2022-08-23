@@ -40,7 +40,7 @@ class StreamPasteTask extends SelectionEditTask
 		//WARNING: This isn't the default closure style
 		$this->selection->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
-		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
+		}, SelectionContext::full(), $min, $max);
 
 		foreach ($this->selection->getTiles() as $tile) {
 			$handler->addTile($tile);

@@ -58,6 +58,6 @@ class CountTask extends SelectionEditTask
 			} else {
 				$this->counted[$id] = 1;
 			}
-		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
+		}, SelectionContext::full(), $min, $max);
 	}
 }

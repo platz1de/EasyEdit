@@ -64,7 +64,7 @@ class Noise3DTask extends SelectionEditTask
 			} else {
 				$handler->changeBlock($x, $y, $z, 0);
 			}
-		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
+		}, SelectionContext::full(), $min, $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

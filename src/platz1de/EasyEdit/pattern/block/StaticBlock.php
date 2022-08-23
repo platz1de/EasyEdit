@@ -36,10 +36,9 @@ class StaticBlock extends BlockType
 	 * @param int             $z
 	 * @param ChunkController $iterator
 	 * @param Selection       $current
-	 * @param Selection       $total
 	 * @return int
 	 */
-	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current, Selection $total): int
+	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
 		return $this->id;
 	}

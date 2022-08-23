@@ -36,11 +36,10 @@ class Sphere extends Selection implements Patterned
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Selection        $full
 	 * @param Vector3          $min
 	 * @param Vector3          $max
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
 	{
 		if ($context->isEmpty()) {
 			return;

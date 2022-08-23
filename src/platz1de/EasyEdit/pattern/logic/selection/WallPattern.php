@@ -31,22 +31,21 @@ class WallPattern extends Pattern
 	 * @param int             $y
 	 * @param int             $z
 	 * @param ChunkController $iterator
-	 * @param Selection       $current
-	 * @param Selection       $total
+	 * @param Selection       $selection
 	 * @return bool
 	 */
-	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $current, Selection $total): bool
+	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
-		if ($current instanceof Cube) {
-			$min = $total->getPos1();
-			$max = $total->getPos2();
+		if ($selection instanceof Cube) {
+			$min = $selection->getPos1();
+			$max = $selection->getPos2();
 
 			return ($x - $min->getX() + 1) <= $this->thickness || ($max->getX() - $x + 1) <= $this->thickness || ($z - $min->getZ() + 1) <= $this->thickness || ($max->getZ() - $z - 1) <= $this->thickness;
 		}
-		if ($current instanceof Cylinder || $current instanceof Sphere) {
-			return (($x - $current->getPoint()->getFloorX()) ** 2) + (($z - $current->getPoint()->getFloorZ()) ** 2) > (($current->getRadius() - $this->thickness) ** 2);
+		if ($selection instanceof Cylinder || $selection instanceof Sphere) {
+			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $this->thickness) ** 2);
 		}
-		throw new ParseError("Walls pattern does not support selection of type " . $current::class);
+		throw new ParseError("Walls pattern does not support selection of type " . $selection::class);
 	}
 
 	/**

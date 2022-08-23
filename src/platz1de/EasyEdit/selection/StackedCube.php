@@ -85,11 +85,10 @@ class StackedCube extends Selection
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Selection        $full
 	 * @param Vector3          $min
 	 * @param Vector3          $max
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Selection $full, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
 	{
 		//TODO (this should be moved to a task)
 		//CubicConstructor::betweenPoints(Vector3::maxComponents($this->min, $min), Vector3::minComponents($this->max, $max), $closure);
