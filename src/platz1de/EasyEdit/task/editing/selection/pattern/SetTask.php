@@ -30,7 +30,7 @@ class SetTask extends PatternedEditTask
 	 */
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
-		$selection = $this->getCurrentSelection();
+		$selection = $this->selection;
 		$pattern = PatternWrapper::wrap([$this->getPattern()]);
 		$minY = $selection->getPos1()->getFloorY();
 		$maxY = $selection->getPos2()->getFloorY();

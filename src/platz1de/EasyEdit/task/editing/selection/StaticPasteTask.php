@@ -18,7 +18,7 @@ class StaticPasteTask extends SelectionEditTask
 	/**
 	 * @var StaticBlockListSelection
 	 */
-	protected Selection $current;
+	protected Selection $selection;
 
 	/**
 	 * @param StaticBlockListSelection $selection
@@ -38,7 +38,7 @@ class StaticPasteTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
-		$selection = $this->current;
+		$selection = $this->selection;
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $selection): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
 			if (Selection::processBlock($block)) {

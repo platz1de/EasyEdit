@@ -18,7 +18,7 @@ class MoveTask extends SelectionEditTask
 	/**
 	 * @var MovingCube
 	 */
-	protected Selection $current;
+	protected Selection $selection;
 
 	/**
 	 * @param MovingCube $selection
@@ -38,7 +38,7 @@ class MoveTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
-		$selection = $this->current;
+		$selection = $this->selection;
 		$direction = $selection->getDirection();
 		$handler->getChanges()->checkCachedData();
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {

@@ -16,7 +16,6 @@ use pocketmine\world\World;
 abstract class SelectionEditTask extends EditTask
 {
 	protected Selection $selection;
-	protected Selection $current;
 	private int $totalPieces;
 	private int $piecesLeft;
 
@@ -37,7 +36,6 @@ abstract class SelectionEditTask extends EditTask
 		$this->piecesLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
 		ChunkCollector::init($this->getWorld());
-		$this->current = $this->selection; //TODO: remove this
 		foreach ($chunks as $chunk) {
 			World::getXZ($chunk, $x, $z);
 			$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
@@ -58,7 +56,7 @@ abstract class SelectionEditTask extends EditTask
 	 */
 	public function getCacheClosure(): Closure
 	{
-		$selection = $this->current;
+		$selection = $this->selection;
 		return static function (array $chunks) use ($selection): array {
 			foreach ($chunks as $hash => $chunk) {
 				World::getXZ($hash, $x, $z);
@@ -80,14 +78,6 @@ abstract class SelectionEditTask extends EditTask
 	{
 		parent::parseData($stream);
 		$this->selection = Selection::fastDeserialize($stream->getString());
-	}
-
-	/**
-	 * @return Selection
-	 */
-	public function getCurrentSelection(): Selection
-	{
-		return $this->current;
 	}
 
 	/**

@@ -17,7 +17,7 @@ class StreamPasteTask extends SelectionEditTask
 	/**
 	 * @var BinaryBlockListStream
 	 */
-	protected Selection $current;
+	protected Selection $selection;
 
 	/**
 	 * @param BinaryBlockListStream $selection
@@ -38,11 +38,11 @@ class StreamPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		//WARNING: This isn't the default closure style
-		$this->current->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
+		$this->selection->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
 		}, SelectionContext::full(), $this->getTotalSelection(), $min, $max);
 
-		foreach ($this->current->getTiles() as $tile) {
+		foreach ($this->selection->getTiles() as $tile) {
 			$handler->addTile($tile);
 		}
 	}

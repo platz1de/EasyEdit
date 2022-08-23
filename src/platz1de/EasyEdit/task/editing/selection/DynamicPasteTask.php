@@ -22,10 +22,6 @@ class DynamicPasteTask extends SelectionEditTask
 	/**
 	 * @var DynamicBlockListSelection
 	 */
-	protected Selection $current;
-	/**
-	 * @var DynamicBlockListSelection
-	 */
 	protected Selection $selection;
 
 	protected Vector3 $position;
@@ -56,7 +52,7 @@ class DynamicPasteTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
-		$selection = $this->current;
+		$selection = $this->selection;
 		$place = $selection->getPoint();
 		$ox = $place->getFloorX();
 		$oy = $place->getFloorY();

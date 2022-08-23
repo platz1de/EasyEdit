@@ -34,12 +34,12 @@ class SmoothTask extends SelectionEditTask
 	 */
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
-		HeightMapCache::load($handler->getOrigin(), $this->getCurrentSelection());
+		HeightMapCache::load($handler->getOrigin(), $this->selection);
 		$currentX = null;
 		$currentZ = null;
 		$map = [];
 		$reference = [];
-		$this->getCurrentSelection()->useOnBlocks(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
+		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;

@@ -21,7 +21,7 @@ class StackTask extends SelectionEditTask
 	/**
 	 * @var StackedCube
 	 */
-	protected Selection $current;
+	protected Selection $selection;
 
 	private bool $insert;
 
@@ -47,7 +47,7 @@ class StackTask extends SelectionEditTask
 	{
 		//TODO
 		return;
-		$selection = $this->current;
+		$selection = $this->selection;
 		if ($selection->isCopyMode()) {
 			$offset = $selection->getCopyOffset();
 			if ($this->insert) {
