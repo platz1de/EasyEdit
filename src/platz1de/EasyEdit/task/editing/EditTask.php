@@ -67,6 +67,17 @@ abstract class EditTask extends ExecutableTask
 	 */
 	public function requestRuntimeChunks(EditTaskHandler $handler, array $chunks): bool
 	{
+		foreach ($chunks as $i => $chunk) {
+			try {
+				$handler->getOrigin()->getManager()->getChunk($chunk);
+				unset($chunks[$i]);
+			} catch (UnexpectedValueException) {
+			}
+		}
+		if ($chunks === []) {
+			EditThread::getInstance()->debug("Requested chunks are already loaded");
+			return true;
+		}
 		ChunkCollector::clean(static function (array $chunks): array {
 			return $chunks; //cache all
 		});
