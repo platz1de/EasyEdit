@@ -42,14 +42,6 @@ abstract class Selection
 	 */
 	abstract public function getNeededChunks(): array;
 
-	/**
-	 * @return int[]
-	 */
-	public function getReferencedChunks(Vector3 $min, Vector3 $max): array
-	{
-		return [];
-	}
-
 	public function getPos1(): Vector3
 	{
 		return $this->pos1;

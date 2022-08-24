@@ -39,9 +39,7 @@ abstract class SelectionEditTask extends EditTask
 			World::getXZ($chunk, $x, $z);
 			$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
 			$max = new Vector3(($x << 4) + 15, World::Y_MAX, ($z << 4) + 15);
-			$c = $this->selection->getReferencedChunks($min, $max);
-			$c[] = $chunk;
-			if ($this->requestChunks($c, $fastSet, $min, $max)) {
+			if ($this->requestChunks([$chunk], $fastSet, $min, $max)) {
 				$this->piecesLeft--;
 			} else {
 				return; //task was cancelled

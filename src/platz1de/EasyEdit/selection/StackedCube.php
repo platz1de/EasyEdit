@@ -62,17 +62,6 @@ class StackedCube extends Selection
 	}
 
 	/**
-	 * @param Vector3 $min
-	 * @param Vector3 $max
-	 * @return int[]
-	 */
-	public function getReferencedChunks(Vector3 $min, Vector3 $max): array
-	{
-		//TODO
-		return [];
-	}
-
-	/**
 	 * @param int $x
 	 * @param int $z
 	 * @return bool
