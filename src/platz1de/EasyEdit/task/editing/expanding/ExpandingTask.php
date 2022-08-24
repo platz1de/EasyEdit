@@ -66,7 +66,7 @@ abstract class ExpandingTask extends EditTask
 		if (!isset($this->loadedChunks[$chunk])) {
 			$this->loadedChunks[$chunk] = true;
 			$this->progress = $current / $max;
-			if (!$this->requestRuntimeChunk($handler, $chunk)) {
+			if (!$this->requestRuntimeChunks($handler, [$chunk])) {
 				return false;
 			}
 		}

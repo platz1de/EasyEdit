@@ -16,6 +16,7 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\math\Vector3;
+use UnexpectedValueException;
 
 abstract class EditTask extends ExecutableTask
 {
@@ -58,22 +59,24 @@ abstract class EditTask extends ExecutableTask
 
 	/**
 	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
+	 * @param int[]           $chunks
 	 * @return bool
 	 * Requests chunks while staying in the same execution
 	 * Warning: Tasks calling this need to terminate when returning false immediately
 	 * This method doesn't do memory management itself, instead this is the responsibility of the caller
 	 */
-	public function requestRuntimeChunk(EditTaskHandler $handler, int $chunk): bool
+	public function requestRuntimeChunks(EditTaskHandler $handler, array $chunks): bool
 	{
 		ChunkCollector::clean(static function (array $chunks): array {
 			return $chunks; //cache all
 		});
-		ChunkCollector::request([$chunk]);
+		ChunkCollector::request($chunks);
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			if (ChunkCollector::hasReceivedInput()) {
-				$c = $handler->getOrigin()->getManager()->getChunk($chunk);
-				$handler->getResult()->setChunk($chunk, clone $c);
+				foreach ($chunks as $chunk) {
+					$c = $handler->getOrigin()->getManager()->getChunk($chunk);
+					$handler->getResult()->setChunk($chunk, clone $c);
+				}
 				return true;
 			}
 			EditThread::getInstance()->waitForData();

@@ -30,7 +30,7 @@ abstract class SelectionEditTask extends EditTask
 	public function execute(): void
 	{
 		StorageModule::checkFinished();
-		$chunks = $this->selection->getNeededChunks();
+		$chunks = $this->orderChunks($this->selection->getNeededChunks());
 		$this->totalPieces = count($chunks);
 		$this->piecesLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
@@ -51,20 +51,12 @@ abstract class SelectionEditTask extends EditTask
 	}
 
 	/**
-	 * @return Closure
+	 * @param int[] $chunks
+	 * @return int[]
 	 */
-	public function getCacheClosure(): Closure
+	protected function orderChunks(array $chunks): array
 	{
-		$selection = $this->selection;
-		return static function (array $chunks) use ($selection): array {
-			foreach ($chunks as $hash => $chunk) {
-				World::getXZ($hash, $x, $z);
-				if (!$selection->shouldBeCached($x, $z)) {
-					unset($chunks[$hash]);
-				}
-			}
-			return $chunks;
-		};
+		return $chunks;
 	}
 
 	///**

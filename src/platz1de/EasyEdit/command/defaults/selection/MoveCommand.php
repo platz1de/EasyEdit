@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\selection\MovingCube;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\MoveTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -22,8 +21,6 @@ class MoveCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, array $args): void
 	{
-		$selection = $session->getCube();
-
-		$session->runTask(new MoveTask(new MovingCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null))));
+		$session->runTask(new MoveTask($session->getSelection(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)));
 	}
 }
