@@ -40,7 +40,7 @@ class WallPattern extends Pattern
 			$min = $selection->getPos1();
 			$max = $selection->getPos2();
 
-			return ($x - $min->getX() + 1) <= $this->thickness || ($max->getX() - $x + 1) <= $this->thickness || ($z - $min->getZ() + 1) <= $this->thickness || ($max->getZ() - $z - 1) <= $this->thickness;
+			return ($x - $min->getX() + 1) <= $this->thickness || ($max->getX() - $x + 1) <= $this->thickness || ($z - $min->getZ() + 1) <= $this->thickness || ($max->getZ() - $z + 1) <= $this->thickness;
 		}
 		if ($selection instanceof Cylinder || $selection instanceof Sphere) {
 			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $this->thickness) ** 2);
