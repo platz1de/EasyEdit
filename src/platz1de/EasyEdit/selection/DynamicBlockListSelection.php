@@ -15,14 +15,13 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 
 	/**
 	 * DynamicBlockListSelection constructor.
-	 * @param Vector3      $end
-	 * @param Vector3      $worldOffset
-	 * @param Vector3      $offset
-	 * @param Vector3|null $startingOffset
+	 * @param Vector3 $end
+	 * @param Vector3 $worldOffset
+	 * @param Vector3 $offset
 	 */
-	public function __construct(Vector3 $end, Vector3 $worldOffset, Vector3 $offset, ?Vector3 $startingOffset = null)
+	public function __construct(Vector3 $end, Vector3 $worldOffset, Vector3 $offset)
 	{
-		parent::__construct("", $startingOffset ?? new Vector3(0, World::Y_MIN, 0), $end);
+		parent::__construct("", new Vector3(0, World::Y_MIN, 0), $end);
 		$this->point = $offset;
 		$this->offset = $worldOffset;
 	}
