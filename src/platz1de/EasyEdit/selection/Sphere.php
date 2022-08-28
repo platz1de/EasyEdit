@@ -18,16 +18,14 @@ class Sphere extends Selection implements Patterned
 	private float $radius;
 
 	/**
-	 * @param string       $world
-	 * @param Vector3      $point
-	 * @param float        $radius
-	 * @param Vector3|null $min
-	 * @param Vector3|null $max
+	 * @param string  $world
+	 * @param Vector3 $point
+	 * @param float   $radius
 	 * @return Sphere
 	 */
-	public static function aroundPoint(string $world, Vector3 $point, float $radius, ?Vector3 $min = null, ?Vector3 $max = null): Sphere
+	public static function aroundPoint(string $world, Vector3 $point, float $radius): Sphere
 	{
-		$sphere = new Sphere($world, $min ?? $point->subtract($radius, $radius, $radius), $max ?? $point->add($radius, $radius, $radius));
+		$sphere = new Sphere($world, $point->subtract($radius, $radius, $radius), $point->add($radius, $radius, $radius));
 		$sphere->setPoint($point);
 		$sphere->setRadius($radius);
 		return $sphere;

@@ -18,17 +18,15 @@ class Cylinder extends Selection implements Patterned
 	private int $height;
 
 	/**
-	 * @param string       $world
-	 * @param Vector3      $point
-	 * @param float        $radius
-	 * @param int          $height
-	 * @param Vector3|null $min
-	 * @param Vector3|null $max
+	 * @param string  $world
+	 * @param Vector3 $point
+	 * @param float   $radius
+	 * @param int     $height
 	 * @return Cylinder
 	 */
-	public static function aroundPoint(string $world, Vector3 $point, float $radius, int $height, ?Vector3 $min = null, ?Vector3 $max = null): Cylinder
+	public static function aroundPoint(string $world, Vector3 $point, float $radius, int $height): Cylinder
 	{
-		$cylinder = new Cylinder($world, $min ?? $point->subtract($radius, 0, $radius), $max ?? $point->add($radius, $height - 1, $radius));
+		$cylinder = new Cylinder($world, $point->subtract($radius, 0, $radius), $point->add($radius, $height - 1, $radius));
 		$cylinder->setPoint($point);
 		$cylinder->setRadius($radius);
 		$cylinder->setHeight($height);
