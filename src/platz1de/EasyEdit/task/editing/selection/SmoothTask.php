@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -154,7 +153,7 @@ class SmoothTask extends SelectionEditTask
 			}
 
 			$handler->copyBlock($x, $y, $z, $x, $target, $z);
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 	}
 
 	/**

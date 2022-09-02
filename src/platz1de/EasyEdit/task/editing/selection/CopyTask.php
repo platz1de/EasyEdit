@@ -23,13 +23,14 @@ class CopyTask extends SelectionEditTask
 	private DynamicBlockListSelection $result;
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $position
+	 * @param Selection             $selection
+	 * @param Vector3               $position
+	 * @param SelectionContext|null $context
 	 */
-	public function __construct(Selection $selection, Vector3 $position)
+	public function __construct(Selection $selection, Vector3 $position, ?SelectionContext $context = null)
 	{
 		$this->position = $position;
-		parent::__construct($selection);
+		parent::__construct($selection, $context);
 	}
 
 	public function execute(): void
@@ -80,7 +81,7 @@ class CopyTask extends SelectionEditTask
 		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

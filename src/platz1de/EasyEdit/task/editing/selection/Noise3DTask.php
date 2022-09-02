@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -64,7 +63,7 @@ class Noise3DTask extends SelectionEditTask
 			} else {
 				$handler->changeBlock($x, $y, $z, 0);
 			}
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

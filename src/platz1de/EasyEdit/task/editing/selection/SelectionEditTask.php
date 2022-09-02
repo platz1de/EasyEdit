@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\ChunkCollector;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -15,15 +16,18 @@ use pocketmine\world\World;
 abstract class SelectionEditTask extends EditTask
 {
 	protected Selection $selection;
+	protected SelectionContext $context;
 	private int $totalPieces;
 	private int $piecesLeft;
 
 	/**
-	 * @param Selection $selection
+	 * @param Selection             $selection
+	 * @param SelectionContext|null $context
 	 */
-	public function __construct(Selection $selection)
+	public function __construct(Selection $selection, ?SelectionContext $context = null)
 	{
 		$this->selection = $selection;
+		$this->context = $context ?? SelectionContext::full();
 		parent::__construct($selection->getWorldName());
 	}
 
@@ -78,12 +82,14 @@ abstract class SelectionEditTask extends EditTask
 	{
 		parent::putData($stream);
 		$stream->putString($this->selection->fastSerialize());
+		$stream->putString($this->context->fastSerialize());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 		$this->selection = Selection::fastDeserialize($stream->getString());
+		$this->context = SelectionContext::fastDeserialize($stream->getString());
 	}
 
 	/**

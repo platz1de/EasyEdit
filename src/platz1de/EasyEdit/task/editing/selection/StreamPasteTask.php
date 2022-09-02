@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use pocketmine\math\Vector3;
@@ -40,7 +39,7 @@ class StreamPasteTask extends SelectionEditTask
 		//WARNING: This isn't the default closure style
 		$this->selection->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 
 		foreach ($this->selection->getTiles() as $tile) {
 			$handler->addTile($tile);

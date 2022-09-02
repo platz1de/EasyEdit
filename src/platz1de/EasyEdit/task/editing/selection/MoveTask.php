@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -53,10 +52,10 @@ class MoveTask extends SelectionEditTask
 		//TODO: change order of iteration to optimize performance
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, 0); //Make sure we don't overwrite anything
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 	}
 
 	protected function orderChunks(array $chunks): array

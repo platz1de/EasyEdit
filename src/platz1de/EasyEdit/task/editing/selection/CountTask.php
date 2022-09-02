@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
@@ -58,6 +57,6 @@ class CountTask extends SelectionEditTask
 			} else {
 				$this->counted[$id] = 1;
 			}
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 	}
 }

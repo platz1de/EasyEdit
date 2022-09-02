@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+
 class SelectionContext
 {
 	private bool $includeCenter = false;
@@ -156,5 +158,28 @@ class SelectionContext
 	public function getSideThickness(): float
 	{
 		return $this->includesFilling() ? 1 : $this->sideThickness;
+	}
+
+	public function fastSerialize(): string
+	{
+		$stream = new ExtendedBinaryStream();
+		$stream->putBool($this->includeCenter);
+		$stream->putBool($this->includeWalls);
+		$stream->putBool($this->includeVerticals);
+		$stream->putBool($this->includeFilling);
+		$stream->putFloat($this->sideThickness);
+		return $stream->getBuffer();
+	}
+
+	public static function fastDeserialize(string $data): SelectionContext
+	{
+		$stream = new ExtendedBinaryStream($data);
+		$instance = new self();
+		$instance->includeCenter = $stream->getBool();
+		$instance->includeWalls = $stream->getBool();
+		$instance->includeVerticals = $stream->getBool();
+		$instance->includeFilling = $stream->getBool();
+		$instance->sideThickness = $stream->getFloat();
+		return $instance;
 	}
 }

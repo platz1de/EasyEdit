@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
@@ -64,14 +63,14 @@ class DynamicPasteTask extends SelectionEditTask
 				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, SelectionContext::full(), $min, $max);
+			}, $this->context, $min, $max);
 		} else {
 			$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
 				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 				if (Selection::processBlock($block)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, SelectionContext::full(), $min, $max);
+			}, $this->context, $min, $max);
 		}
 
 		foreach ($selection->getTiles() as $tile) {

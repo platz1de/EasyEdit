@@ -45,10 +45,10 @@ class CutTask extends SelectionEditTask
 
 	public function execute(): void
 	{
-		$this->executor1 = new CopyTask($this->selection, $this->position);
+		$this->executor1 = new CopyTask($this->selection, $this->position, $this->context);
 		$this->executor1->executeAssociated($this, false);
 		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::finishCollecting()));
-		$this->executor2 = new SetTask($this->selection, new StaticBlock(0));
+		$this->executor2 = new SetTask($this->selection, new StaticBlock(0), $this->context);
 		$this->executor2->executeAssociated($this, false);
 		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), false));
 		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));

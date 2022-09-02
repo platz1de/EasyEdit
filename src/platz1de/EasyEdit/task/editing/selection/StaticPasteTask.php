@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -44,7 +43,7 @@ class StaticPasteTask extends SelectionEditTask
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
-		}, SelectionContext::full(), $min, $max);
+		}, $this->context, $min, $max);
 
 		foreach ($selection->getTiles() as $tile) {
 			$handler->addTile($tile);

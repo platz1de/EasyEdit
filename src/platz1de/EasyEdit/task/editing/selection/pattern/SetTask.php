@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\editing\selection\pattern;
 
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
-use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -31,7 +30,7 @@ class SetTask extends PatternedEditTask
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
 		$selection = $this->selection;
-		$pattern = PatternWrapper::wrap([$this->getPattern()]);
+		$pattern = $this->getPattern();
 		$minY = $selection->getPos1()->getFloorY();
 		$maxY = $selection->getPos2()->getFloorY();
 		$updateHeightMap = $pattern->contains(GravityPattern::class);
@@ -45,7 +44,7 @@ class SetTask extends PatternedEditTask
 				$minY = min($minY, $y);
 				$maxY = max($maxY, $y);
 			}
-		}, $pattern->getSelectionContext(), $min, $max);
+		}, $this->context, $min, $max);
 		$undo = $handler->getChanges();
 		$undo->setPos1($undo->getPos1()->withComponents(null, $minY, null));
 		$undo->setPos2($undo->getPos2()->withComponents(null, $maxY, null));
