@@ -1,0 +1,201 @@
+#Vietnamese language file
+#Author: NhanAZ
+#Last updated at: 2022-09-15
+
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
+
+prefix: "§l§aEasy§bEdit §r> "
+
+#Args: {x} {y} {z}
+selected-pos1: "Đã chọn tọa độ đầu tiên là {x} {y} {z}"
+selected-pos2: "Đã chọn tọa độ thứ hai là {x} {y} {z}"
+
+no-selection: "Bạn không có lựa chọn đang hoạt động"
+no-clipboard: "Bạn không có khay nhớ tạm thời đang hoạt động"
+
+#Args: {given} {expected}
+wrong-selection: "Lựa chọn của bạn thuộc loại {given}, nhưng {expected} là bắt buộc"
+
+no-history: "Không có gì để hoàn tác"
+no-future: "Không có gì để làm lại"
+
+no-task: "Hiện không có tác vụ nào đang chạy"
+task-cancelled: "Tác vụ hiện tại đã bị hủy"
+
+#Args: {usage}
+wrong-usage: "Sử dụng lệnh không đúng:\n{usage}"
+
+#Args: {commands} {start} {end} {total}
+command-list: "Danh sách các lệnh (đang hiển thị từ {start} đến {end} trong tổng số {total}):\n{commands}"
+
+#Args: {message}
+task-crash: "§cTác vụ của bạn gặp sự cố, vui lòng báo cáo điều này!\n{message}"
+pattern-invalid: "§cMẫu bạn đã nhập không hợp lệ:\n{message}"
+
+#Args: {time} {changed}
+blocks-set: "{changed} các khối đã được thiết lập trong {time}s"
+blocks-copied: "{changed} các khối đã được sao chép trong {time}s"
+blocks-pasted: "{changed} các khối đã được dán trong {time}s"
+blocks-rotated: "{changed} các khối đã được xoay trong {time}s"
+blocks-flipped: "{changed} các khối đã được lật trong{time}s"
+blocks-cut: "{changed} các khối đã được cắt trong {time}s"
+
+#Args: {time} {changed} {blocks}
+blocks-counted: "{changed} các khối đã được đếm trong {time}s:\n{blocks}"
+
+#Args: {time} {changed} {name}
+schematic-created: "{changed} các khối đã được lưu dưới dạng \"{name}\" trong {time}s"
+
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Trạng thái của Luồng Chỉnh Sửa:\nTrạng thái: {status}\nTác vụ hiện tại: {task}\nTiến độ: {progress}\nCác tác vụ đã được xếp hàng đợi: {queue}\nCác lựa chọn đã lưu trữ: {storage}\nLuồng Bộ nhớ: {mem_current}MB ({mem_max}MB)"
+
+benchmark-start: "Điểm chuẩn đã bắt đầu, quá trình này có thể mất đến một phút"
+benchmark-running: "Đã có một điểm chuẩn đang hoạt động"
+benchmark-cancel: "Không thể hủy các điểm chuẩn"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "Các kết quả điểm chuẩn của bạn:\nTPS trung bình: {tps_avg} ({load_avg}%)\nTPS nhỏ nhất: {tps_min} ({load_max}%)\nĐã thực hiện {tasks} tác vụ trong {time}s:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} trong {time}s"
+
+#Args: {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) tại {x} {y} {z}\nTrạng thái khối: {java_state}"
+
+#Args: {schematic} {known}
+unknown-schematic: "Sơ đồ không xác định \"{schematic}\"\nCác sơ đồ đã biết: {known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "Thiết lập tọa độ đầu tiên"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "Thiết lập tọa độ thứ hai"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "Mở rộng khu vực đã chọn"
+command-extend-usage:
+  - "//extend [phương hướng] [số lượng]"
+  - "//extend [số lượng] - Mở rộng khu vực đã chọn theo hướng nhìn của bạn"
+  - "//extend vertical - Mở rộng hoàn toàn Khu vực đã chọn theo chiều dọc"
+command-set-description: "Thiết lập các khối trong khu vực đã chọn"
+command-set-usage: "//set <mẫu>"
+command-replace-description: "Thay thế các khối trong khu vực đã chọn"
+command-replace-usage:
+  - "//replace <khối> <mẫu>"
+  - "//replace <mẫu> - Thay thế tất cả các khối rắn trong khu vực đã chọn"
+command-overlay-description: "Lớp phủ các khối trong khu vực đã chọn"
+command-overlay-usage: "//overlay <mẫu>"
+command-naturalize-description: "Tự nhiên hóa khu vực đã chọn"
+command-naturalize-usage: "//naturalize [mẫu] [mẫu] [mẫu]"
+command-smooth-description: "Làm mịn khu vực được chọn"
+command-smooth-usage: "//smooth"
+command-center-description: "Thiết lập các khối trung tâm của khu vực đã chọn"
+command-center-usage: "//center [mẫu]"
+command-walls-description: "Thiết lập tường của khu vực đã chọn"
+command-walls-usage: "//walls [mẫu]"
+command-sides-description: "Thiết lập các cạnh của khu vực đã chọn"
+command-sides-usage: "//sides [mẫu]"
+command-move-description: "Di chuyển khu vực đã chọn"
+command-move-usage:
+  - "//move [direction] [số lượng]"
+  - "//move [số lượng] - Di chuyển khu vực đã chọn sang hướng nhìn của bạn"
+command-stack-description: "Xếp chồng khu vực đã chọn"
+command-stack-usage:
+  - "//stack [direction] [số lượng]"
+  - "//stack [số lượng] - Xếp chồng khu vực đã chọn vào hướng nhìn của bạn"
+command-istack-description: "Xếp chồng khu vực đã chọn mà không ghi đè lên địa hình hiện có"
+command-istack-usage:
+  - "//istack [direction] [số lượng]"
+  - "//istack [số lượng] - Xếp chồng khu vực đã chọn vào hướng nhìn của bạn"
+command-count-description: "Đếm khối trong khu vực đã chọn"
+command-count-usage:
+  - "//count"
+  - "//count [bán kính] - Đếm khối trong khu vực xung quanh bạn"
+command-extinguish-description: "Dập lửa trong khu vực đã chọn"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [bán kính] - Dập lửa ở khu vực xung quanh bạn"
+command-view-description: "Xem khu vực đã chọn"
+command-view-usage: "//view"
+
+
+command-undo-description: "Hoàn nguyên thay đổi mới nhất của bạn"
+command-undo-usage:
+  - "//undo [số lượng]"
+  - "//undo <đối tượng> [số lượng] - Hoàn nguyên thay đổi mới nhất của đối tượng"
+command-redo-description: "Làm lại thay đổi mới nhất của bạn"
+command-redo-usage:
+  - "//redo [số lượng]"
+  - "//redo <đối tượng> [số lượng] - Làm lại thay đổi mới nhất của đối tượng"
+
+
+command-copy-description: "Sao chép khu vực đã chọn"
+command-copy-usage:
+  - "//copy - Sao chép liên quan đến người chơi"
+  - "//copy center - Sao chép liên quan đến tâm của vùng lựa chọn"
+command-cut-description: "Cắt vùng đã chọn và sao chép nó vào khay nhớ tạm của bạn"
+command-cut-usage:
+  - "//cut - Cắt tương đối với người chơi"
+  - "//cut center - Cắt so với tâm của vùng chọn"
+command-paste-description: "Dán khay nhớ tạm"
+command-paste-usage: "//paste"
+command-insert-description: "Chèn khay nhớ tạm"
+command-insert-usage: "//insert"
+command-rotate-description: "Xoay khay nhớ tạm"
+command-rotate-usage: "//rotate"
+command-flip-description: "Lật khay nhớ tạm, phản chiếu ở vị trí đã sao chép"
+command-flip-usage:
+  - "//flip [phương hướng]"
+  - "//flip - Lật khay nhớ tạm sang hướng nhìn của bạn"
+command-loadschematic-description: "Tải sơ đồ đã lưu từ đĩa"
+command-loadschematic-usage: "//loadschematic <tên Sơ đồ>"
+command-saveschematic-description: "Lưu khay nhớ tạm của bạn dưới dạng một sơ đồ vào đĩa"
+command-saveschematic-usage: "//saveschematic <tên Sơ đồ>"
+
+
+command-sphere-description: "Tạo một hình cầu"
+command-sphere-usage: "//sphere <bán kính> <mẫu>"
+command-hsphere-description: "Tạo một hình cầu rỗng"
+command-hsphere-usage: "//hsphere <bán kính> <mẫu> [độ dày]"
+command-cylinder-description: "Tạo một hình trụ"
+command-cylinder-usage: "//cylinder <bán kính> <chiều cao> <mẫu>"
+command-hcylinder-description: "Tạo một hình trụ rỗng"
+command-hcylinder-usage: "//hcylinder <bán kính> <chiều cao> <mẫu> [độ dày]"
+command-noise-description: "Tạo ra bằng cách sử dụng một hàm nhiễu đơn giản"
+command-noise-usage: "//noise"
+
+
+command-commands-description: "Liệt kê tất cả các lệnh của EasyEdit"
+command-commands-usage: "//commands [trang]"
+command-brush-description: "Tạo một cọ vẽ mới"
+command-brush-usage:
+  - "//brush sphere [bán kính] [mẫu] [trọng lực] - Tạo một cọ vẽ hình cầu"
+  - "//brush smooth [bán kính] - Tạo một cọ vẽ làm mịn"
+  - "//brush naturalize [bán kính] [khối Trên cùng] [khối Giữa] [khối Dưới cùng] - Tạo cọ vẽ tự nhiên"
+  - "//brush cylinder [bán kính] [chiều cao] [mẫu] [trọng lực] - Tạo cọ hình trụ"
+  - "//brush paste [chèn] - Tạo một cọ dán"
+command-fill-description: "Lấp đầy một Khu vực"
+command-fill-usage:
+  - "//fill <khối> [phương hướng]"
+  - "//fill <khối> - Lấp đầy hướng nhìn của bạn"
+command-drain-description: "Thoát nước trong một khu vực"
+command-drain-usage: "//drain"
+command-line-description: "Tạo một đường thẳng"
+command-line-usage:
+  - "//line <x> <y> <z> [mẫu] - Vẽ một đường thẳng đến vị trí đã cho"
+  - "//line find <x> <y> <z> [mẫu] - Tìm một con đường hợp lệ đến đích (chậm)"
+  - "//line solid <x> <y> <z> [mẫu] - Tìm một con đường chắc chắn để đến đích (chậm)"
+command-blockinfo-description: "Nhận một que lấy thông tin khối"
+command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "Tạo một Que Xây Dựng"
+command-builderrod-usage: "//builderrod"
+command-status-description: "Nhận trạng thái của luồng chỉnh sửa"
+command-status-usage: "//status"
+command-cancel-description: "Hủy tác vụ hiện tại"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "Bắt đầu một điểm chuẩn"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "Dán tất cả các trạng thái khối đã biết"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "Nhận một cái rìu gỗ"
+command-wand-usage: "//wand"
