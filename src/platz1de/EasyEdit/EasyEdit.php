@@ -18,7 +18,7 @@ use platz1de\EasyEdit\command\defaults\generation\NoiseCommand;
 use platz1de\EasyEdit\command\defaults\generation\SphereCommand;
 use platz1de\EasyEdit\command\defaults\history\RedoCommand;
 use platz1de\EasyEdit\command\defaults\history\UndoCommand;
-use platz1de\EasyEdit\command\defaults\selection\CenterCommand;
+use platz1de\EasyEdit\command\defaults\selection\AliasedContextCommand;
 use platz1de\EasyEdit\command\defaults\selection\CountCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtinguishCommand;
@@ -29,12 +29,10 @@ use platz1de\EasyEdit\command\defaults\selection\OverlayCommand;
 use platz1de\EasyEdit\command\defaults\selection\ReplaceCommand;
 use platz1de\EasyEdit\command\defaults\selection\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\selection\SetCommand;
-use platz1de\EasyEdit\command\defaults\selection\SidesCommand;
 use platz1de\EasyEdit\command\defaults\selection\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\selection\StackCommand;
 use platz1de\EasyEdit\command\defaults\selection\StackInsertCommand;
 use platz1de\EasyEdit\command\defaults\selection\ViewCommand;
-use platz1de\EasyEdit\command\defaults\selection\WallCommand;
 use platz1de\EasyEdit\command\defaults\utility\BenchmarkCommand;
 use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
 use platz1de\EasyEdit\command\defaults\utility\BrushCommand;
@@ -48,6 +46,7 @@ use platz1de\EasyEdit\command\defaults\utility\PasteStatesCommand;
 use platz1de\EasyEdit\command\defaults\utility\StatusCommand;
 use platz1de\EasyEdit\command\defaults\utility\WandCommand;
 use platz1de\EasyEdit\listener\DefaultEventListener;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\CompoundTile;
@@ -88,9 +87,9 @@ class EasyEdit extends PluginBase
 			new OverlayCommand(),
 			new NaturalizeCommand(),
 			new SmoothCommand(),
-			new CenterCommand(),
-			new WallCommand(),
-			new SidesCommand(),
+			new AliasedContextCommand(SelectionContext::center(), "/center", ["/middle"]),
+			new AliasedContextCommand(SelectionContext::walls(), "/walls", ["/wall"]),
+			new AliasedContextCommand(SelectionContext::hollow(), "/sides", ["/side"]),
 			new MoveCommand(),
 			new StackCommand(),
 			new StackInsertCommand(),

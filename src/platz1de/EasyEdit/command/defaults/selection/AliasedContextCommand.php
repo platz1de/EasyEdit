@@ -4,13 +4,12 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 
-abstract class AliasedContextCommand extends EasyEditCommand
+class AliasedContextCommand extends EasyEditCommand
 {
 	private SelectionContext $context;
 
