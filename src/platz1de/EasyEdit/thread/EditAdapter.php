@@ -8,8 +8,6 @@ use Thread;
 
 class EditAdapter extends Task
 {
-	private static int $id = 0;
-
 	/**
 	 * @var OutputData[]
 	 */
@@ -24,17 +22,6 @@ class EditAdapter extends Task
 		}
 		self::$waiting = [];
 		EditThread::getInstance()->parseOutput();
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function getId(): int
-	{
-		if (Thread::getCurrentThread() instanceof EditThread) {
-			return -1;
-		}
-		return ++self::$id;
 	}
 
 	/**

@@ -10,12 +10,13 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 abstract class ExecutableTask
 {
+	private static int $id = 0;
 	private int $taskId;
 	private bool $defaultHandler = true;
 
 	public function __construct()
 	{
-		$this->taskId = EditAdapter::getId();
+		$this->taskId = Thread::getCurrentThread() instanceof EditThread ? -1 : ++self::$id;
 	}
 
 	/**
