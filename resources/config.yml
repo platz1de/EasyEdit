@@ -6,6 +6,7 @@ config-version: "2.1.0" #Please don't change this manually
 # eng - English
 # deu - German
 # jpn - Japanese
+# vie - Vietnamese
 # custom - Allows to modify the language file directly
 language: auto
 
