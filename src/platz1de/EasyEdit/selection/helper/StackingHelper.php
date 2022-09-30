@@ -38,7 +38,7 @@ class StackingHelper extends Selection
 		if ($this->amount > 0) {
 			parent::__construct($selection->getWorldName(), $selection->getPos1()->getSide($this->axis << 1 | 1, $offset), $selection->getPos2()->getSide($this->axis << 1 | 1, $offset * $this->amount));
 		} else {
-			parent::__construct($selection->getWorldName(), $selection->getPos1()->getSide($this->axis << 1, $offset * $this->amount), $selection->getPos2()->getSide($this->axis << 1, $offset));
+			parent::__construct($selection->getWorldName(), $selection->getPos1()->getSide($this->axis << 1, $offset * -$this->amount), $selection->getPos2()->getSide($this->axis << 1, $offset));
 		}
 	}
 
@@ -66,11 +66,13 @@ class StackingHelper extends Selection
 	{
 		$size = (int) VectorUtils::getVectorAxis($this->parent->getSize(), $this->axis);
 		$source = (int) VectorUtils::getVectorAxis($this->parent->getPos1(), $this->axis);
-		$offsetMin = (int) (VectorUtils::getVectorAxis($min, $this->axis) - $source) / $size;
-		$offsetMax = (int) (VectorUtils::getVectorAxis($max, $this->axis) - $source) / $size;
-		$offsetMin = (int) max($offsetMin, 1);
-		$offsetMax = (int) min($offsetMax, abs($this->amount));
-		var_dump($min, $offsetMin);
+		$offsetMin = (int) floor((VectorUtils::getVectorAxis($min, $this->axis) - $source) / $size);
+		$offsetMax = (int) floor((VectorUtils::getVectorAxis($max, $this->axis) - $source) / $size);
+		if ($this->amount < 0) {
+			[$offsetMin, $offsetMax] = [-$offsetMax, -$offsetMin];
+		}
+		$offsetMin = max($offsetMin, 1);
+		$offsetMax = min($offsetMax, abs($this->amount));
 		for ($i = $offsetMin; $i <= $offsetMax; $i++) {
 			$this->parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->useOnBlocks($closure, $context, $min, $max);
 		}
