@@ -115,4 +115,13 @@ class Sphere extends Selection implements Patterned
 		$this->point = $stream->getVector();
 		$this->radius = $stream->getFloat();
 	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @return Sphere
+	 */
+	public function offset(Vector3 $vector): self
+	{
+		return self::aroundPoint($this->getWorldName(), $this->getPoint()->addVector($vector), $this->getRadius());
+	}
 }

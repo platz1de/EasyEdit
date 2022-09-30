@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use InvalidArgumentException;
 use pocketmine\entity\Location;
+use pocketmine\math\Axis;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -92,5 +94,20 @@ class VectorUtils
 		} elseif ($z > $max->getZ()) {
 			$max->z = $z;
 		}
+	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @param int     $axis
+	 * @return float|int
+	 */
+	public static function getVectorAxis(Vector3 $vector, int $axis): float|int
+	{
+		return match ($axis) {
+			Axis::X => $vector->getX(),
+			Axis::Y => $vector->getY(),
+			Axis::Z => $vector->getZ(),
+			default => throw new InvalidArgumentException("Invalid axis $axis"),
+		};
 	}
 }

@@ -135,4 +135,13 @@ class Cylinder extends Selection implements Patterned
 		$this->radius = $stream->getFloat();
 		$this->height = $stream->getInt();
 	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @return Cylinder
+	 */
+	public function offset(Vector3 $vector): self
+	{
+		return self::aroundPoint($this->getWorldName(), $this->getPoint()->addVector($vector), $this->getRadius(), $this->getHeight());
+	}
 }

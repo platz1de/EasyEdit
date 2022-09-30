@@ -2,8 +2,10 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use BadMethodCallException;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
 
@@ -84,9 +86,19 @@ abstract class BlockListSelection extends Selection
 
 	abstract public function createSafeClone(): BlockListSelection;
 
-	public function containsData(): bool{
+	public function containsData(): bool
+	{
 		return count($this->tiles) > 0;
 	}
 
 	public function checkCachedData(): void { }
+
+	/**
+	 * @param Vector3 $vector
+	 * @return BlockListSelection
+	 */
+	public function offset(Vector3 $vector): self
+	{
+		throw new BadMethodCallException("BlockListSelection can't be offset");
+	}
 }

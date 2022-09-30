@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use platz1de\EasyEdit\selection\helper\StackingHelper;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -11,23 +11,35 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class StackTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
 	use SettingNotifier;
 
+	private Selection $helper;
+
 	private Vector3 $direction;
 	private bool $insert;
 
 	/**
 	 * @param Selection $selection
-	 * @param bool        $insert
+	 * @param Vector3   $direction
+	 * @param bool      $insert
 	 */
 	public function __construct(Selection $selection, Vector3 $direction, bool $insert = false)
 	{
 		$this->insert = $insert;
+		$this->direction = $direction;
 		parent::__construct($selection);
+	}
+
+	public function execute(): void
+	{
+		$this->helper = $this->selection;
+		$this->selection = new StackingHelper($this->selection, $this->direction);
+		parent::execute();
 	}
 
 	/**
@@ -40,14 +52,23 @@ class StackTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
-		$originalSize = $this->selection->getPos2()->subtractVector($selection->getPos1())->add(1, 1, 1);
+		$originalSize = $this->helper->getPos2()->subtractVector($this->helper->getPos1())->add(1, 1, 1);
 		$sizeX = $originalSize->getFloorX();
 		$sizeY = $originalSize->getFloorY();
 		$sizeZ = $originalSize->getFloorZ();
-		$start = $selection->getPos1();
+		$start = $this->helper->getPos1();
 		$startX = $start->getFloorX();
 		$startY = $start->getFloorY();
 		$startZ = $start->getFloorZ();
+		$dMin = Vector3::maxComponents($min, $this->selection->getPos1())->subtractVector($start);
+		$dMax = Vector3::minComponents($max, $this->selection->getPos2())->subtractVector($start);
+		$chunks = [];
+		for ($x = $startX + ($dMin->getX() % $sizeX + $sizeX) % $sizeX >> 4; $x <= $startX + ($dMax->getX() % $sizeX + $sizeX) % $sizeX >> 4; $x++) {
+			for ($z = $startZ + ($dMin->getZ() % $sizeZ + $sizeZ) % $sizeZ >> 4; $z <= $startZ + ($dMax->getZ() % $sizeZ + $sizeZ) % $sizeZ >> 4; $z++) {
+				$chunks[] = World::chunkHash($x, $z);
+			}
+		}
+		$this->requestRuntimeChunks($handler, $chunks);
 		if ($this->insert) {
 			$ignore = HeightMapCache::getIgnore();
 			$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($ignore, $handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
@@ -65,14 +86,13 @@ class StackTask extends SelectionEditTask
 
 	protected function orderChunks(array $chunks): array
 	{
-		$size = $this->selection->getPos2()->subtractVector($selection->getPos1())->add(1, 1, 1);
 		if ($this->direction->getFloorX() !== 0) {
 			usort($chunks, static function (int $a, int $b): int {
 				World::getXZ($a, $aX, $aZ);
 				World::getXZ($b, $bX, $bZ);
 				return $aX - $bX;
 			});
-		} else if ($this->direction->getFloorZ() !== 0){
+		} else if ($this->direction->getFloorZ() !== 0) {
 			usort($chunks, static function (int $a, int $b): int {
 				World::getXZ($a, $aX, $aZ);
 				World::getXZ($b, $bX, $bZ);

@@ -222,4 +222,10 @@ abstract class Selection
 	{
 		$this->world = $data[0];
 	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @return Selection
+	 */
+	abstract public function offset(Vector3 $vector): self;
 }

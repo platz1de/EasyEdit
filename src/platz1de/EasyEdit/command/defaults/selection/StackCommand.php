@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\selection\StackedCube;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\StackTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -24,6 +23,6 @@ class StackCommand extends EasyEditCommand
 	{
 		$selection = $session->getCube();
 
-		$session->runTask(new StackTask(new StackedCube($selection->getWorldName(), $selection->getPos1(), $selection->getPos2(), ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null))));
+		$session->runTask(new StackTask($selection, ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null)));
 	}
 }

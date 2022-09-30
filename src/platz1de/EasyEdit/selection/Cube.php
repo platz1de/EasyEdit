@@ -44,4 +44,13 @@ class Cube extends Selection implements Patterned
 			CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1()->addVector($this->getPos2())->divide(2)->floor(), $this->getPos1(), $min), Vector3::minComponents($this->getPos1()->addVector($this->getPos2())->divide(2)->ceil(), $this->getPos2(), $max), $closure);
 		}
 	}
+
+	/**
+	 * @param Vector3 $vector
+	 * @return Cube
+	 */
+	public function offset(Vector3 $vector): self
+	{
+		return new self($this->getWorldName(), $this->pos1->addVector($vector), $this->pos2->addVector($vector));
+	}
 }

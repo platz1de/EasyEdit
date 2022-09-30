@@ -3,10 +3,10 @@
 namespace platz1de\EasyEdit\task;
 
 use InvalidArgumentException;
-use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use Thread;
 
 abstract class ExecutableTask
 {
