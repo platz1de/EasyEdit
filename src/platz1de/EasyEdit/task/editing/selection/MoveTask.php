@@ -55,7 +55,7 @@ class MoveTask extends SelectionEditTask
 		}, $this->context, $min, $max);
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
-		}, $this->context, $min, $max);
+		}, $this->context, Vector3::maxComponents($min, $min->withComponents(null, World::Y_MIN - $direction->getFloorY(), null)), Vector3::minComponents($max, $max->withComponents(null, World::Y_MAX - $direction->getFloorY() - 1, null)));
 	}
 
 	protected function orderChunks(array $chunks): array
