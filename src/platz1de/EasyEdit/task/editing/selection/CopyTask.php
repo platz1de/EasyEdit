@@ -40,6 +40,7 @@ class CopyTask extends SelectionEditTask
 			$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
 			parent::execute();
 			StorageModule::collect($this->result);
+			EditTaskResultCache::from(0, $this->result->getBlockCount());
 			return;
 		}
 		$this->executeAssociated($this, false); //this calls this method again, but without the default handler
