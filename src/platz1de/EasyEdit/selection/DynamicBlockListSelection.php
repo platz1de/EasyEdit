@@ -3,9 +3,11 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use Generator;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
 
 class DynamicBlockListSelection extends ChunkManagedBlockList
@@ -79,6 +81,16 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	}
 
 	/**
+	 * @param Vector3 $min
+	 * @param Vector3 $max
+	 * @return Generator<CompoundTag>
+	 */
+	public function getOffsetTiles(Vector3 $min, Vector3 $max): Generator
+	{
+		return $this->getTiles(Vector3::maxComponents($this->getPos1(), $min->subtractVector($this->getPoint())), Vector3::minComponents($this->getPos2(), $max->subtractVector($this->getPoint())));
+	}
+
+	/**
 	 * @return Vector3
 	 */
 	public function getPoint(): Vector3
@@ -138,7 +150,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			$clone->getManager()->setChunk($hash, $chunk);
 		}
-		foreach ($this->getTiles() as $tile) {
+		foreach ($this->getTiles($this->getPos1(), $this->getPos2()) as $tile) {
 			$clone->addTile($tile);
 		}
 		return $clone;
