@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
+use Generator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
@@ -36,11 +37,18 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @return CompoundTag[]
+	 * @param Vector3 $min
+	 * @param Vector3 $max
+	 * @return Generator<CompoundTag>
 	 */
-	public function getTiles(): array
+	public function getTiles(Vector3 $min, Vector3 $max): Generator
 	{
-		return $this->tiles;
+		foreach ($this->tiles as $hash => $tile) {
+			World::getBlockXYZ($hash, $x, $y, $z);
+			if ($x >= $min->x && $y >= $min->y && $z >= $min->z && $x <= $max->x && $y <= $max->y && $z <= $max->z) {
+				yield $tile;
+			}
+		}
 	}
 
 	abstract public function getBlockCount(): int;
@@ -79,7 +87,7 @@ abstract class BlockListSelection extends Selection
 		if ($selection->getPos2()->getY() > $this->getPos2()->getY()) {
 			$this->setPos2($this->getPos2()->withComponents(null, $selection->getPos2()->getY(), null));
 		}
-		foreach ($selection->getTiles() as $tile) {
+		foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 			$this->addTile($tile);
 		}
 	}

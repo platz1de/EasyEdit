@@ -150,7 +150,7 @@ class SpongeSchematic extends SchematicType
 
 		$tileData = [];
 		try {
-			foreach ($target->getTiles() as $tile) {
+			foreach ($target->getTiles($target->getPos1(), $target->getPos2()) as $tile) {
 				$tileData[World::blockHash($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z))] = clone $tile;
 			}
 		} catch (Throwable $e) {

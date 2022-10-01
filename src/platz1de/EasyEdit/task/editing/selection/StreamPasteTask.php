@@ -41,7 +41,7 @@ class StreamPasteTask extends SelectionEditTask
 			$handler->changeBlock($x, $y, $z, $block);
 		}, $this->context, $min, $max);
 
-		foreach ($this->selection->getTiles() as $tile) {
+		foreach ($this->selection->getTiles($min, $max) as $tile) {
 			$handler->addTile($tile);
 		}
 	}

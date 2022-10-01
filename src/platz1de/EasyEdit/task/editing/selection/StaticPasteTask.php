@@ -45,7 +45,7 @@ class StaticPasteTask extends SelectionEditTask
 			}
 		}, $this->context, $min, $max);
 
-		foreach ($selection->getTiles() as $tile) {
+		foreach ($selection->getTiles($min, $max) as $tile) {
 			$handler->addTile($tile);
 		}
 	}

@@ -33,7 +33,7 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			$clone->getManager()->setChunk($hash, $chunk);
 		}
-		foreach ($this->getTiles() as $tile) {
+		foreach ($this->getTiles($this->getPos1(), $this->getPos2()) as $tile) {
 			$clone->addTile($tile);
 		}
 		return $clone;

@@ -73,7 +73,7 @@ class DynamicPasteTask extends SelectionEditTask
 			}, $this->context, $min, $max);
 		}
 
-		foreach ($selection->getTiles() as $tile) {
+		foreach ($selection->getOffsetTiles($min, $max) as $tile) {
 			$handler->addTile(TileUtils::offsetCompound($tile, $place->getFloorX(), $place->getFloorY(), $place->getFloorZ()));
 		}
 	}

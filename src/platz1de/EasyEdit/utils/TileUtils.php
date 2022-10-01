@@ -64,9 +64,9 @@ class TileUtils
 	 * @param int         $axis
 	 * @param CompoundTag $compoundTag
 	 * @param int         $maxX
-	 * @return CompoundTag
+	 * @return CompoundTag|null
 	 */
-	public static function flipCompound(int $axis, CompoundTag $compoundTag, int $maxX): CompoundTag
+	public static function flipCompound(int $axis, CompoundTag $compoundTag, int $maxX): ?CompoundTag
 	{
 		$compoundTag = clone $compoundTag;
 		switch ($axis) {

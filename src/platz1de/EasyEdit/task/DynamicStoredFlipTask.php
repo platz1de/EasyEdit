@@ -58,7 +58,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 					Selection::processBlock($block);
 					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flip(Axis::X, $block));
 				}, SelectionContext::full(), Vector3::zero(), $selection->getPos2());
-				foreach ($selection->getTiles() as $tile) {
+				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::X, $tile, $selection->getPos2()->getFloorX()));
 				}
 				break;
@@ -70,7 +70,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 					Selection::processBlock($block);
 					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flip(Axis::Y, $block));
 				}, SelectionContext::full(), Vector3::zero(), $selection->getPos2());
-				foreach ($selection->getTiles() as $tile) {
+				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Y, $tile, $selection->getPos2()->getFloorY()));
 				}
 				break;
@@ -82,7 +82,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 					Selection::processBlock($block);
 					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flip(Axis::Z, $block));
 				}, SelectionContext::full(), Vector3::zero(), $selection->getPos2());
-				foreach ($selection->getTiles() as $tile) {
+				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Z, $tile, $selection->getPos2()->getFloorZ()));
 				}
 				break;
