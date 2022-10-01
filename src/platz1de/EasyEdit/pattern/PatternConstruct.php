@@ -19,11 +19,7 @@ final class PatternConstruct extends Pattern
 	public static function wrap(array $pieces): Pattern
 	{
 		if (count($pieces) === 1) {
-			if ($pieces[0]->getWeight() === 100) {
-				return $pieces[0]; //no need to wrap single patterns
-			}
-
-			return new PatternWrapper($pieces);
+			return $pieces[0]; //no need to wrap single patterns
 		}
 
 		return new self($pieces);
