@@ -9,7 +9,7 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\LineTask;
-use platz1de\EasyEdit\task\editing\pathfinding\PathfindingTask;
+use platz1de\EasyEdit\task\pathfinding\PathfindingTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\utils\DyeColor;

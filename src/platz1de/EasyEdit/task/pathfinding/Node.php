@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\pathfinding;
+namespace platz1de\EasyEdit\task\pathfinding;
 
 use Generator;
 use pocketmine\math\Vector3;

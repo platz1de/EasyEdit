@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\expanding;
+namespace platz1de\EasyEdit\task\expanding;
 
 use BadMethodCallException;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
@@ -35,7 +35,12 @@ class FillTask extends ExpandingTask
 		parent::__construct($world, $start);
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	/**
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
+	 * @return void
+	 */
+	protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void
 	{
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($this->block->getId(), $ignore, true)) !== false) {
@@ -48,7 +53,6 @@ class FillTask extends ExpandingTask
 		$startX = $this->start->getFloorX();
 		$startY = $this->start->getFloorY();
 		$startZ = $this->start->getFloorZ();
-		$this->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$validate = match ($this->direction) {
 			Facing::DOWN => static function (Vector3 $pos) use ($startY) {
 				return $pos->getFloorY() <= $startY;
@@ -72,10 +76,6 @@ class FillTask extends ExpandingTask
 		};
 		$limit = ConfigManager::getFillDistance();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
-			return;
-		}
-
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
 		$queue->insert(World::blockHash($startX, $startY, $startZ), 0);
 		while (!$queue->isEmpty()) {
@@ -86,11 +86,12 @@ class FillTask extends ExpandingTask
 			}
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
-			if (!$this->checkRuntimeChunk($handler, $chunk, -$current["priority"], $limit)) {
+			$this->updateProgress(-$current["priority"], $limit);
+			if (!$loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
-				$this->checkUnload($handler, $chunk);
+				$loader->checkUnload($handler, $chunk);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $id);
@@ -98,11 +99,11 @@ class FillTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if ($validate($side) && !isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					$this->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			$this->checkUnload($handler, $chunk);
+			$loader->checkUnload($handler, $chunk);
 		}
 	}
 

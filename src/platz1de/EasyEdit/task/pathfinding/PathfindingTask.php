@@ -1,13 +1,14 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\pathfinding;
+namespace platz1de\EasyEdit\task\pathfinding;
 
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\expanding\ExpandingTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
+use platz1de\EasyEdit\task\expanding\ExpandingTask;
+use platz1de\EasyEdit\task\expanding\ManagedChunkHandler;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -38,11 +39,11 @@ class PathfindingTask extends ExpandingTask
 	}
 
 	/**
-	 * @param EditTaskHandler $handler
-	 * @param Vector3         $min
-	 * @param Vector3         $max
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
+	 * @return void
 	 */
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void
 	{
 		$open = new NodeHeap();
 		/** @var Node[] $collection */
@@ -59,10 +60,6 @@ class PathfindingTask extends ExpandingTask
 		$endY = $this->end->getFloorY();
 		$endZ = $this->end->getFloorZ();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($startX, $startZ), 0, 1)) {
-			return;
-		}
-
 		$open->insert(new Node($startX, $startY, $startZ, null, $endX, $endY, $endZ));
 		while ($checked++ < $limit) {
 			/** @var Node $current */
@@ -70,7 +67,10 @@ class PathfindingTask extends ExpandingTask
 			unset($collection[$current->hash]);
 			$closed[$current->hash] = $current->parentHash;
 			$chunk = World::chunkHash($current->x >> 4, $current->z >> 4);
-			$this->checkRuntimeChunk($handler, $chunk, $checked, $limit);
+			$this->updateProgress($checked, $limit);
+			if (!$loader->checkRuntimeChunk($chunk)) {
+				return;
+			}
 			if ($current->equals($endX, $endY, $endZ)) {
 				$hash = $current->hash;
 				while (isset($closed[$hash])) {

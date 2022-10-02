@@ -37,6 +37,8 @@ class MoveTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
+		//TODO: chunkloading
+		return;
 		$selection = $this->selection;
 		$direction = $this->direction;
 		$dMin = $min->addVector($direction);

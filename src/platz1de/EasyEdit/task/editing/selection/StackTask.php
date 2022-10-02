@@ -52,6 +52,8 @@ class StackTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
 	{
+		//TODO: chunkloading
+		return;
 		$originalSize = $this->helper->getPos2()->subtractVector($this->helper->getPos1())->add(1, 1, 1);
 		$sizeX = $originalSize->getFloorX();
 		$sizeY = $originalSize->getFloorY();

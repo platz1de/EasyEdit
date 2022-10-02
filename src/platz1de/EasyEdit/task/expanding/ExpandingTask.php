@@ -1,8 +1,11 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing;
+namespace platz1de\EasyEdit\task\expanding;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
@@ -11,63 +14,60 @@ use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\world\ChunkInformation;
-use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
-abstract class EditTask extends ExecutableTask
+abstract class ExpandingTask extends ExecutableTask
 {
 	protected string $world;
+	protected Vector3 $start;
+	private float $progress = 0; //worst case scenario
 
 	/**
-	 * @param string $world
+	 * @param string  $world
+	 * @param Vector3 $start
 	 */
-	public function __construct(string $world)
+	public function __construct(string $world, Vector3 $start)
 	{
-		parent::__construct();
+		$this->start = $start;
 		$this->world = $world;
+		parent::__construct();
 	}
 
-	public function run(bool $fastSet, Vector3 $max, Vector3 $min, int $chunk, ChunkInformation $chunkInformation): void
+	public function execute(): void
 	{
 		$start = microtime(true);
 
-		$manager = new ReferencedChunkManager($this->world);
-		$manager->setChunk($chunk, $chunkInformation);
-		$handler = new EditTaskHandler($manager, $this->getUndoBlockList(), $fastSet);
+		$handler = new EditTaskHandler(new ReferencedChunkManager($this->world), $this->getUndoBlockList(), true);
+		$loader = new ManagedChunkHandler($handler);
+		ChunkRequestManager::setHandler($loader);
+		if (!$loader->request(World::chunkHash($this->start->getFloorX() >> 4, $this->start->getFloorZ() >> 4))) {
+			$this->finalize($handler);
+			return;
+		}
 
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($fastSet ? "true" : "false"));
+		$this->run($handler, $loader);
 
-		HeightMapCache::prepare();
-
-		$this->executeEdit($handler, $max, $min);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
-
 		StorageModule::collect($handler->getChanges());
-
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
-
-		$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
+		$this->finalize($handler);
 	}
 
-	public function finalize(): void
+	abstract protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void;
+
+	public function finalize(EditTaskHandler $handler): void
 	{
 		if (!$this->useDefaultHandler()) {
 			return;
 		}
+		$this->sendOutputPacket(new ResultingChunkData($this->world, $handler->getResult()->getChunks(), $handler->prepareAllInjectionData()));
 		$changeId = StorageModule::finishCollecting();
 		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
 		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
 		ChunkRequestManager::clear();
 	}
-
-	/**
-	 * @param EditTaskHandler $handler
-	 * @param Vector3         $min
-	 * @param Vector3         $max
-	 */
-	abstract public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void;
 
 	/**
 	 * @param string $time
@@ -76,31 +76,21 @@ abstract class EditTask extends ExecutableTask
 	abstract public function notifyUser(string $time, string $changed): void;
 
 	/**
-	 * Filters actually edited chunks
-	 * @param ChunkInformation[] $chunks
-	 * @return ChunkInformation[]
-	 */
-	public function filterChunks(array $chunks): array
-	{
-		foreach ($chunks as $hash => $chunk) {
-			if (!$chunk->wasUsed()) {
-				unset($chunks[$hash]);
-			}
-		}
-		return $chunks;
-	}
-
-	/**
 	 * @return BlockListSelection
 	 */
-	abstract public function getUndoBlockList(): BlockListSelection;
-
-	/**
-	 * @return string
-	 */
-	public function getWorld(): string
+	public function getUndoBlockList(): BlockListSelection
 	{
-		return $this->world;
+		return new ExpandingStaticBlockListSelection($this->getWorld(), $this->start);
+	}
+
+	public function updateProgress(int $current, int $max): void
+	{
+		$this->progress = $current / $max;
+	}
+
+	public function getProgress(): float
+	{
+		return $this->progress; //Unknown
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -111,5 +101,13 @@ abstract class EditTask extends ExecutableTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getWorld(): string
+	{
+		return $this->world;
 	}
 }

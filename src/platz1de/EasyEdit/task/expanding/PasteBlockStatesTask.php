@@ -1,18 +1,22 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\expanding;
+namespace platz1de\EasyEdit\task\expanding;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class PasteBlockStatesTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	/**
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
+	 * @return void
+	 */
+	protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void
 	{
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
@@ -20,14 +24,11 @@ class PasteBlockStatesTask extends ExpandingTask
 		$y = $this->start->getFloorY();
 		$z = $this->start->getFloorZ();
 
-		if (!$this->checkRuntimeChunk($handler, World::chunkHash($x, $z), 0, 1)) {
-			return;
-		}
-
 		$i = 0;
 		foreach ($states as $id => $state) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);
-			if (!$this->checkRuntimeChunk($handler, $chunk, $i, $count)) {
+			$this->updateProgress($i, $count);
+			if (!$loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
 			$handler->changeBlock((int) ($x + floor($i / 100) * 2), $y, $z + ($i % 100) * 2, $id);

@@ -7,9 +7,9 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\task\editing\EditTaskResultCache;
+use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\session\CrashReportData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
@@ -84,7 +84,7 @@ class EditThread extends Thread
 					$crash = new CrashReportData($throwable);
 					$crash->setTaskId($task->getTaskId());
 					$this->sendOutput($crash);
-					ChunkCollector::clear();
+					ChunkRequestManager::clear();
 					//TODO
 					$result = new TaskResultData();
 					$result->setTaskId($task->getTaskId());
@@ -157,7 +157,7 @@ class EditThread extends Thread
 		return !$this->isKilled;
 	}
 
-	private function parseInput(): void
+	public function parseInput(): void
 	{
 		if ($this->inputData !== "") {
 			$input = "";
@@ -187,13 +187,9 @@ class EditThread extends Thread
 
 			while (!$stream->feof()) {
 				$data = OutputData::fastDeserialize($stream->getString());
-				if ($data instanceof ChunkRequestData) {
-					EditAdapter::waitForTick($data);
-				} else {
-					$start = microtime(true);
-					$data->handle();
-					$this->debug("Handled OUT: " . $data::class . " in " . (microtime(true) - $start) . "s");
-				}
+				$start = microtime(true);
+				$data->handle();
+				$this->debug("Handled OUT: " . $data::class . " in " . (microtime(true) - $start) . "s");
 			}
 		}
 	}

@@ -8,7 +8,7 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\expanding\FillTask;
+use platz1de\EasyEdit\task\expanding\FillTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use platz1de\EasyEdit\utils\BlockParser;
 

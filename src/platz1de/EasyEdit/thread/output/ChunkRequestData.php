@@ -2,111 +2,34 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
-use platz1de\EasyEdit\thread\ChunkCollector;
-use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\input\ChunkInputData;
+use platz1de\EasyEdit\thread\chunk\ChunkRequest;
+use platz1de\EasyEdit\thread\chunk\ChunkRequestExecutor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\LoaderManager;
-use platz1de\EasyEdit\world\ChunkInformation;
-use platz1de\EasyEdit\world\ReferencedWorldHolder;
-use pocketmine\block\tile\Tile;
-use pocketmine\world\format\io\ChunkData;
-use pocketmine\world\World;
-use UnexpectedValueException;
 
 class ChunkRequestData extends OutputData
 {
-	use ReferencedWorldHolder;
+	private ChunkRequest $request;
 
 	/**
-	 * @var int[]
+	 * @param ChunkRequest $request
 	 */
-	private array $chunks;
-
-	/**
-	 * @param int[]  $chunks
-	 * @param string $world
-	 */
-	public function __construct(array $chunks, string $world)
+	public function __construct(ChunkRequest $request)
 	{
-		$this->chunks = $chunks;
-		$this->world = $world;
-	}
-
-	public function checkSend(): bool
-	{
-		if ($this->world === "") {
-			ChunkCollector::collectInput(ChunkInputData::empty());
-			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to unknown world");
-			return false;
-		}
-		if ($this->chunks === []) {
-			ChunkCollector::collectInput(ChunkInputData::empty());
-			EditThread::getInstance()->getLogger()->debug("Not sending chunk request due to empty chunk list");
-			return false;
-		}
-		return true;
+		$this->request = $request;
 	}
 
 	public function handle(): void
 	{
-		$this->prepareNextChunk($this->chunks, $this->getWorld(), new ExtendedBinaryStream());
-	}
-
-	/**
-	 * @param int[]                $chunks
-	 * @param World                $world
-	 * @param ExtendedBinaryStream $data
-	 */
-	private function prepareNextChunk(array $chunks, World $world, ExtendedBinaryStream $data): void
-	{
-		World::getXZ((int) array_pop($chunks), $x, $z);
-
-		$world->orderChunkPopulation($x, $z, null)->onCompletion(
-			function () use ($data, $z, $x, $world, $chunks): void {
-				$data->putInt($x);
-				$data->putInt($z);
-				$chunk = LoaderManager::getChunk($world, $x, $z);
-				if ($chunk instanceof ChunkData) {
-					$tiles = $chunk->getTileNBT();
-					$chunk = $chunk->getChunk();
-				} else {
-					$tiles = array_map(static function (Tile $tile) {
-						return $tile->saveNBT();
-					}, $chunk->getTiles());
-				}
-				(new ChunkInformation($chunk, $tiles))->putData($data);
-
-				if ($chunks === []) {
-					ChunkInputData::from($data->getBuffer());
-				} else {
-					$this->prepareNextChunk($chunks, $world, $data);
-				}
-			},
-			function () use ($x, $z): void {
-				throw new UnexpectedValueException("Failed to prepare Chunk " . $x . " " . $z);
-			}
-		);
+		ChunkRequestExecutor::getInstance()->addRequest($this->request);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString($this->world);
-
-		$stream->putInt(count($this->chunks));
-		foreach ($this->chunks as $chunk) {
-			$stream->putLong($chunk);
-		}
+		$this->request->putData($stream);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->world = $stream->getString();
-
-		$this->chunks = [];
-		$count = $stream->getInt();
-		for ($i = 0; $i < $count; $i++) {
-			$this->chunks[] = $stream->getLong();
-		}
+		$this->request = ChunkRequest::readFrom($stream);
 	}
 }

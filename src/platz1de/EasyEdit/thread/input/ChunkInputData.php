@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\thread\input;
 
-use platz1de\EasyEdit\thread\ChunkCollector;
+use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ChunkInputData extends InputData
@@ -31,7 +31,7 @@ class ChunkInputData extends InputData
 
 	public function handle(): void
 	{
-		ChunkCollector::collectInput($this);
+		ChunkRequestManager::handleInput($this->chunkData);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -42,13 +42,5 @@ class ChunkInputData extends InputData
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->chunkData = $stream->getString();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getChunkData(): string
-	{
-		return $this->chunkData;
 	}
 }

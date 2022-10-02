@@ -6,7 +6,9 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\ChunkCollector;
+use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
@@ -43,7 +45,8 @@ class LineTask extends EditTask
 
 	public function execute(): void
 	{
-		ChunkCollector::init($this->getWorld());
+		$chunkHandler = new SingleChunkHandler($this->world);
+		ChunkRequestManager::setHandler($chunkHandler);
 		$current = null;
 		//offset points to not yield blocks beyond the endings
 		foreach (VoxelRayTrace::betweenPoints($this->start->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
@@ -52,7 +55,15 @@ class LineTask extends EditTask
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
 				$min = new Vector3($pos->x % 16, World::Y_MIN, $pos->z % 16);
 				$max = new Vector3(($pos->x % 16) + 15, World::Y_MAX, ($pos->z % 16) + 15);
-				$this->requestChunks([$current], true, $min, $max);
+				$chunkHandler->request($current);
+				$chunk = null;
+				while (($chunk = $chunkHandler->getNext()) === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+					EditThread::getInstance()->waitForData();
+				}
+				if ($chunk === null) {
+					return;
+				}
+				$this->run(true, $min, $max, $current, $chunk);
 				$this->blocks = [];
 				$current = $c;
 			}
@@ -61,7 +72,15 @@ class LineTask extends EditTask
 		if ($current !== null) {
 			$min = new Vector3($pos->x % 16, World::Y_MIN, $pos->z % 16);
 			$max = new Vector3(($pos->x % 16) + 15, World::Y_MAX, ($pos->z % 16) + 15);
-			$this->requestChunks([$current], true, $min, $max);
+			$chunkHandler->request($current);
+			$chunk = null;
+			while (($chunk = $chunkHandler->getNext()) === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+				EditThread::getInstance()->waitForData();
+			}
+			if ($chunk === null) {
+				return;
+			}
+			$this->run(true, $min, $max, $current, $chunk);
 		}
 		$this->finalize();
 	}

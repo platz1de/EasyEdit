@@ -5,8 +5,11 @@ namespace platz1de\EasyEdit\task\editing\selection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTask;
-use platz1de\EasyEdit\thread\ChunkCollector;
+use platz1de\EasyEdit\task\editing\SingleChunkHandler;
+use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
+use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
@@ -33,20 +36,33 @@ abstract class SelectionEditTask extends EditTask
 
 	public function execute(): void
 	{
+		$handler = $this->getChunkHandler();
+		ChunkRequestManager::setHandler($handler);
 		StorageModule::checkFinished();
 		$chunks = $this->orderChunks($this->selection->getNeededChunks());
 		$this->totalPieces = count($chunks);
 		$this->piecesLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
-		ChunkCollector::init($this->getWorld());
 		foreach ($chunks as $chunk) {
-			World::getXZ($chunk, $x, $z);
-			$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
-			$max = new Vector3(($x << 4) + 15, World::Y_MAX, ($z << 4) + 15);
-			if ($this->requestChunks([$chunk], $fastSet, $min, $max)) {
+			$handler->request($chunk);
+		}
+		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+			EditThread::getInstance()->debug("a");
+			if (($key = $handler->getKey()) !== null) {
+				World::getXZ($key, $x, $z);
+				$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
+				$max = new Vector3(($x << 4) + 15, World::Y_MAX, ($z << 4) + 15);
 				$this->piecesLeft--;
+				EditThread::getInstance()->debug("b");
+				$this->run($fastSet, $min, $max, $key, $handler->getNext());
+			}
+			if ($this->piecesLeft <= 0) {
+				break;
+			}
+			if ($handler->getKey() === null) {
+				EditThread::getInstance()->waitForData();
 			} else {
-				return; //task was cancelled
+				EditThread::getInstance()->parseInput();
 			}
 		}
 		$this->finalize();
@@ -60,23 +76,6 @@ abstract class SelectionEditTask extends EditTask
 	{
 		return $chunks;
 	}
-
-	///**
-	// * @return Closure
-	// */
-	//public function getCacheClosure(): Closure
-	//{
-	//	$selection = $this->selection;
-	//	return static function (array $chunks) use ($selection): array {
-	//		foreach ($chunks as $hash => $chunk) {
-	//			World::getXZ($hash, $x, $z);
-	//			if (!$selection->shouldBeCached($x, $z)) {
-	//				unset($chunks[$hash]);
-	//			}
-	//		}
-	//		return $chunks;
-	//	};
-	//}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
@@ -98,6 +97,14 @@ abstract class SelectionEditTask extends EditTask
 	public function getSelection(): Selection
 	{
 		return $this->selection;
+	}
+
+	/**
+	 * @return SingleChunkHandler
+	 */
+	public function getChunkHandler(): SingleChunkHandler
+	{
+		return new SingleChunkHandler($this->getWorld());
 	}
 
 	/**

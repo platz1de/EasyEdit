@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\expanding\DrainTask;
+use platz1de\EasyEdit\task\expanding\DrainTask;
 
 class DrainCommand extends EasyEditCommand
 {

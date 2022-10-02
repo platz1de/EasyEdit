@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\blockupdate\InjectingData;
 use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
