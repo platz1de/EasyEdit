@@ -6,6 +6,7 @@ use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
 use UnexpectedValueException;
@@ -38,15 +39,15 @@ class StorageModule
 	/**
 	 * @param BlockListSelection $piece
 	 */
-	public static function collect(BlockListSelection $piece): void
+	public static function startCollecting(BlockListSelection $piece): void
 	{
-		if (!$piece->containsData()) {
+		if ($piece instanceof NonSavingBlockListSelection) {
 			return;
 		}
 		if (self::$collected === null) {
 			self::$collected = $piece;
 		} else {
-			self::$collected->merge($piece);
+			throw new UnexpectedValueException("Already collecting something");
 		}
 	}
 

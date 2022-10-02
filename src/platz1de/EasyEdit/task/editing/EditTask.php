@@ -19,6 +19,7 @@ use pocketmine\math\Vector3;
 abstract class EditTask extends ExecutableTask
 {
 	protected string $world;
+	private BlockListSelection $undo;
 
 	/**
 	 * @param string $world
@@ -35,7 +36,11 @@ abstract class EditTask extends ExecutableTask
 
 		$manager = new ReferencedChunkManager($this->world);
 		$manager->setChunk($chunk, $chunkInformation);
-		$handler = new EditTaskHandler($manager, $this->getUndoBlockList(), $fastSet);
+		if (!isset($this->undo)) {
+			$this->undo = $this->getUndoBlockList();
+			StorageModule::startCollecting($this->undo);
+		}
+		$handler = new EditTaskHandler($manager, $this->undo, $fastSet);
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($fastSet ? "true" : "false"));
 
@@ -43,8 +48,6 @@ abstract class EditTask extends ExecutableTask
 
 		$this->executeEdit($handler, $max, $min);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
-
-		StorageModule::collect($handler->getChanges());
 
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 

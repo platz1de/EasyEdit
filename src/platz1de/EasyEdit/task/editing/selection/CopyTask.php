@@ -39,7 +39,7 @@ class CopyTask extends SelectionEditTask
 		if (!$handle) {
 			$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
 			parent::execute();
-			StorageModule::collect($this->result);
+			StorageModule::startCollecting($this->result);
 			EditTaskResultCache::from(0, $this->result->getBlockCount());
 			return;
 		}

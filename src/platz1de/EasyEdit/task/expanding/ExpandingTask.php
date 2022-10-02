@@ -23,6 +23,7 @@ abstract class ExpandingTask extends ExecutableTask
 	protected string $world;
 	protected Vector3 $start;
 	private float $progress = 0; //worst case scenario
+	private BlockListSelection $undo;
 
 	/**
 	 * @param string  $world
@@ -39,7 +40,11 @@ abstract class ExpandingTask extends ExecutableTask
 	{
 		$start = microtime(true);
 
-		$handler = new EditTaskHandler(new ReferencedChunkManager($this->world), $this->getUndoBlockList(), true);
+		if (!isset($this->undo)) {
+			$this->undo = $this->getUndoBlockList();
+			StorageModule::startCollecting($this->undo);
+		}
+		$handler = new EditTaskHandler(new ReferencedChunkManager($this->world), $this->undo, true);
 		$loader = new ManagedChunkHandler($handler);
 		ChunkRequestManager::setHandler($loader);
 		if (!$loader->request(World::chunkHash($this->start->getFloorX() >> 4, $this->start->getFloorZ() >> 4))) {
@@ -50,7 +55,6 @@ abstract class ExpandingTask extends ExecutableTask
 		$this->run($handler, $loader);
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
-		StorageModule::collect($handler->getChanges());
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
 		$this->finalize($handler);
 	}
