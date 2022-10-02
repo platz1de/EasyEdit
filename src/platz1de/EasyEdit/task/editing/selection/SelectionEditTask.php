@@ -47,13 +47,11 @@ abstract class SelectionEditTask extends EditTask
 			$handler->request($chunk);
 		}
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
-			EditThread::getInstance()->debug("a");
 			if (($key = $handler->getKey()) !== null) {
 				World::getXZ($key, $x, $z);
 				$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
 				$max = new Vector3(($x << 4) + 15, World::Y_MAX, ($z << 4) + 15);
 				$this->piecesLeft--;
-				EditThread::getInstance()->debug("b");
 				$this->run($fastSet, $min, $max, $key, $handler->getNext());
 			}
 			if ($this->piecesLeft <= 0) {

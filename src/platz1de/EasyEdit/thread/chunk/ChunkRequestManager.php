@@ -31,7 +31,6 @@ class ChunkRequestManager
 		}
 		EditThread::getInstance()->sendOutput(new ChunkRequestData($request));
 		self::$currentRequests++;
-		var_dump(self::$currentRequests);
 	}
 
 	public static function handleInput(string $data): void
@@ -51,7 +50,6 @@ class ChunkRequestManager
 	public static function markAsDone(): void
 	{
 		self::$currentRequests--;
-		var_dump(self::$currentRequests);
 		if (self::$currentRequests < self::MAX_REQUEST && self::$queue !== []) {
 			self::addRequest(array_shift(self::$queue));
 		}
