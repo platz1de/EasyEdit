@@ -18,10 +18,19 @@ class FlipCommand extends EasyEditCommand
 
 	/**
 	 * @param Session  $session
-	 * @param string[] $args
+	 * @param CommandFlagCollection $flags
 	 */
-	public function process(Session $session, array $args): void
+	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new DynamicStoredFlipTask($session->getClipboard(), Facing::axis(ArgumentParser::parseFacing($session, $args[0] ?? null))));
+		$session->runTask(new DynamicStoredFlipTask($session->getClipboard(), Facing::axis($flags->getIntFlag("direction")->getArgument())));
+	}
+
+	/**
+	 * @return CommandFlag[]
+	 */
+	public function getKnownFlags() : array{
+		return [
+			"direction" => new FacingCommandFlag("direction", ["dir"], "d")
+		];
 	}
 }

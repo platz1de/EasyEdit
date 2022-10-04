@@ -52,9 +52,14 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 
 	/**
 	 * @param Session  $session
-	 * @param string[] $args
+	 * @param CommandFlagCollection $flags
 	 */
-	abstract public function process(Session $session, array $args): void;
+	abstract public function process(Session $session, CommandFlagCollection $flags): void;
+
+	/**
+	 * @return CommandFlag[]
+	 */
+	abstract public function getKnownFlags() : array;
 
 	/**
 	 * @return EasyEdit

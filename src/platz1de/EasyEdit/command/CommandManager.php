@@ -40,9 +40,9 @@ class CommandManager
 	 */
 	public static function processCommand(EasyEditCommand $command, array $args, Player $player): void
 	{
-		//TODO: Flags?
 		try {
-			$command->process(SessionManager::get($player), $args);
+			$session = SessionManager::get($player);
+			$command->process($session, CommandFlagManager::parseFlags($command, $args, $session));
 		} catch (CommandException $e) {
 			$e->sendWarning(SessionManager::get($player));
 		}
