@@ -1,6 +1,6 @@
 #Vietnamese language file
 #Author: NhanAZ
-#Last updated at: 2022-09-15
+#Last updated at: 2022-09-15 (OUTDATED)
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -24,6 +24,9 @@ task-cancelled: "Tác vụ hiện tại đã bị hủy"
 
 #Args: {usage}
 wrong-usage: "Sử dụng lệnh không đúng:\n{usage}"
+
+#Args: {usage} {flag}
+unknown-flag: "Unknown flag {flag}\n{usage}"
 
 #Args: {commands} {start} {end} {total}
 command-list: "Danh sách các lệnh (đang hiển thị từ {start} đến {end} trong tổng số {total}):\n{commands}"
@@ -132,7 +135,7 @@ command-redo-usage:
 command-copy-description: "Sao chép khu vực đã chọn"
 command-copy-usage:
   - "//copy - Sao chép liên quan đến người chơi"
-  - "//copy center - Sao chép liên quan đến tâm của vùng lựa chọn"
+  - "//copy -c - Sao chép liên quan đến tâm của vùng lựa chọn"
 command-cut-description: "Cắt vùng đã chọn và sao chép nó vào khay nhớ tạm của bạn"
 command-cut-usage:
   - "//cut - Cắt tương đối với người chơi"

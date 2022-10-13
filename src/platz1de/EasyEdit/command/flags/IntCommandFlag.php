@@ -2,42 +2,46 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
-class StringCommandFlag extends CommandFlag {
-    private int $argument;
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\exception\InvalidUsageException;
+use platz1de\EasyEdit\session\Session;
 
-    public function __construct (string $name, int $argument = null){
-        parent::__construct($name);
-        if($argument !== null){
-            $this->argument = $argument;
-        }
-    }
+class IntCommandFlag extends CommandFlag
+{
+	private int $argument;
 
+	public function needsArgument(): bool
+	{
+		return true;
+	}
 
-    public function needsArgument () : bool {
-        return true;
-    }
+	/**
+	 * @param int $argument
+	 */
+	public function setArgument(int $argument): void
+	{
+		$this->argument = $argument;
+	}
 
-    /**
-     * @param int $argument
-     */
-    public function setArgument(int $argument) : void{
-        $this->argument = $argument;
-    }
+	/**
+	 * @return int
+	 */
+	public function getArgument(): int
+	{
+		return $this->argument;
+	}
 
-    /**
-     * @return int
-     */
-    public function getArgument() : int{
-        return $this->argument;
-    }
-
-    /**
-     * @param string $argument
-     */
-    public function parseArgument(Session $session, string $argument) : void{
-        if(!is_numeric($argument)){
-            throw new InvalidFlagUsageException($this);
-        }
-        $this->setArgument((int) $argument);
-    }
+	/**
+	 * @param EasyEditCommand $command
+	 * @param Session         $session
+	 * @param string          $argument
+	 * @return IntCommandFlag
+	 */
+	public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self
+	{
+		if (!is_numeric($argument)) {
+			throw new InvalidUsageException($command);
+		}
+		$this->setArgument((int) $argument);
+	}
 }

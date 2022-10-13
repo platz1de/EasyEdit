@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2022-07-23
+#Last updated at: 2022-10-05
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -24,6 +24,9 @@ task-cancelled: "Der momentane Auftrag wurde abgebrochen"
 
 #Args: {usage}
 wrong-usage: "Fehlerhafte Befehlsnutzung:\n{usage}"
+
+#Args: {usage} {flag}
+unknown-flag: "Unbekannte Option {flag}\n{usage}"
 
 #Args: {commands} {start} {end} {total}
 command-list: "Befehle ({start} bis {end} von {total}):\n{commands}"
@@ -132,7 +135,7 @@ command-redo-usage:
 command-copy-description: "Kopiere den ausgewählten Bereich in die Zwischenablage"
 command-copy-usage:
   - "//copy - Kopiere relativ zum Spieler"
-  - "//copy center - Kopiere relativ zum Zentrum der Auswahl"
+  - "//copy -c - Kopiere relativ zum Zentrum der Auswahl"
 command-cut-description: "Schneide die ausgewählten Blöcke aus und kopiere sie in die Zwischenablage"
 command-cut-usage:
   - "//cut - Schneide relativ zum Spieler aus"

@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2022-07-23
+#Last updated at: 2022-10-05
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -24,6 +24,9 @@ task-cancelled: "Current task was cancelled"
 
 #Args: {usage}
 wrong-usage: "Wrong command usage:\n{usage}"
+
+#Args: {usage} {flag}
+unknown-flag: "Unknown flag {flag}\n{usage}"
 
 #Args: {commands} {start} {end} {total}
 command-list: "Commands (showing {start} to {end} of {total}):\n{commands}"
@@ -132,7 +135,7 @@ command-redo-usage:
 command-copy-description: "Copy the selected area"
 command-copy-usage:
   - "//copy - Copy relative to the player"
-  - "//copy center - Copy relative to center of the selection"
+  - "//copy -c - Copy relative to center of the selection"
 command-cut-description: "Cut the selected area and copy it to your clipboard"
 command-cut-usage:
   - "//cut - Cut relative to the player"

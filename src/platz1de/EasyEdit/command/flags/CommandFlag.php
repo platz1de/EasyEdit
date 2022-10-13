@@ -2,45 +2,49 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
-abstract class CommandFlag {
-    private string $name;
-    /**
-     * @var string[]
-     */
-    private array $aliases;
-    private string $id;
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\session\Session;
 
-    /**
-     * @param string $name
-     * @param string $aliases
-     * @param string $id
-     */
-    public function __construct(string $name, array $aliases, string $id) {
-        $this->name = $name;
-        $this->aliases = $aliases;
-        $this->id = $id;
-    }
+abstract class CommandFlag
+{
+	private string $name;
+	/**
+	 * @var string[]
+	 */
+	private array $aliases;
+	private string $id;
 
-    abstract public function setArgument(mixed $argument): void;
+	/**
+	 * @param string      $name
+	 * @param string[]    $aliases
+	 * @param string|null $id
+	 */
+	public function __construct(string $name, array $aliases = null, string $id = null)
+	{
+		$this->name = $name;
+		$this->aliases = $aliases ?? [];
+		$this->id = $id ?? $name[0];
+	}
 
-    abstract public function getArgument() : mixed;
+	public function getName(): string
+	{
+		return $this->name;
+	}
 
-    public function getName() : string{
-        return $this->name;
-    }
+	/**
+	 * @return string[]
+	 */
+	public function getAliases(): array
+	{
+		return $this->aliases;
+	}
 
-    /**
-     * @return string[]
-     */
-    public function getAliases() : array{
-        return $this->aliases;
-    }
+	public function getId(): string
+	{
+		return $this->id;
+	}
 
-    public function getId() : string{
-        return $this->id;
-    }
+	abstract public function needsArgument(): bool;
 
-    abstract public function needsArgument() : bool;
-
-    abstract public function parseArgument(Session $session, string $argument) : void;
+	abstract public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self;
 }

@@ -2,36 +2,43 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
-class CommandFlagCollection {
-    /**
-     * @var CommandFlag[]
-     */
-    private array $flags;
+use UnexpectedValueException;
 
-    public function addFlag(CommandFlag $flag) : void{
-        if(isset($flag->getName())){
-            throw new DuplicateFlagExcaption($flag);
-        }
-        $this->flags[$flag->getName()] = $flag;
-    }
+class CommandFlagCollection
+{
+	/**
+	 * @var CommandFlag[]
+	 */
+	private array $flags;
 
-    public function getStringFlag(string $name): StringCommandFlag{
-        $flag = $this->flags[$name];
-        if(!$flag instanceof StringCommandFlag){
-            throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expacted String");
-        }
-        return $flag;
-    }
+	public function addFlag(CommandFlag $flag): void
+	{
+		if (isset($this->flags[$flag->getName()])) {
+			throw new UnexpectedValueException("Flag " . $flag->getName() . " already exists");
+		}
+		$this->flags[$flag->getName()] = $flag;
+	}
 
-    public function getFlag(string $name): IntCommandFlag{
-        $flag = $this->flags[$name];
-        if(!$flag instanceof IntCommandFlag){
-            throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expacted Integer");
-        }
-        return $flag;
-    }
+	public function getStringFlag(string $name): string
+	{
+		$flag = $this->flags[$name];
+		if (!$flag instanceof StringCommandFlag) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected String");
+		}
+		return $flag->getArgument();
+	}
 
-    public function hasFlag(string $name) : bool{
-        return isset($this->flags[$name]);
-    }
+	public function getIntFlag(string $name): int
+	{
+		$flag = $this->flags[$name];
+		if (!$flag instanceof IntCommandFlag) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Integer");
+		}
+		return $flag->getArgument();
+	}
+
+	public function hasFlag(string $name): bool
+	{
+		return isset($this->flags[$name]);
+	}
 }

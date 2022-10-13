@@ -25,6 +25,9 @@ task-cancelled: "現在実行中のタスクはキャンセルされました"
 #Args: {usage}
 wrong-usage: "コマンドの使用方法が間違っています:\n{usage}"
 
+#Args: {usage} {flag}
+unknown-flag: "Unknown flag {flag}\n{usage}"
+
 #Args: {commands} {start} {end} {total}
 command-list: "コマンド一覧 ( {total} つのうち {start} から {end} を表示):\n{commands}"
 
@@ -132,7 +135,7 @@ command-redo-usage:
 command-copy-description: "選択した領域をコピーする"
 command-copy-usage:
   - "//copy - プレイヤーとの相対座標でコピーする"
-  - "//copy center - 選択した領域の中心からの相対座標でコピーする"
+  - "//copy -c - 選択した領域の中心からの相対座標でコピーする"
 command-cut-description: "選択した領域を切り取ってクリップボードにコピーする"
 command-cut-usage:
   - "//cut - プレイヤーとの相対座標で切り取る"
