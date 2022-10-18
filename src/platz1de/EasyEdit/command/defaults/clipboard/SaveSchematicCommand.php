@@ -15,19 +15,38 @@ class SaveSchematicCommand extends EasyEditCommand
 	{
 		parent::__construct("/saveschematic", [KnownPermissions::PERMISSION_WRITEDISK, KnownPermissions::PERMISSION_CLIPBOARD], ["/save"]);
 	}
-
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 */
-	public function process(Session $session, array $args): void
+	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		ArgumentParser::requireArgumentCount($args, 1, $this);
-		$schematicName = pathinfo($args[0] ?? "", PATHINFO_FILENAME);
+		$schematicName = pathinfo($flags->getStringFlag("schematic"), PATHINFO_FILENAME);
 		if ($schematicName === "") {
 			throw new InvalidUsageException($this);
 		}
 
 		$session->runTask(new SchematicSaveTask($session->getClipboard(), $schematicName));
+	}
+
+	/**
+	 * @param Session $session
+	 * @return CommandFlag[]
+	 */
+	public function getKnownFlags(Session $session): array
+	{
+		return [];
+	}
+
+	/**
+	 * @param CommandFlagCollection $flags
+	 * @param Session               $session
+	 * @param string[]              $args
+	 * @return Generator<CommandFlag>
+	 */
+	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
+	{
+		ArgumentParser::requireArgumentCount($args, 1, $this);
+		yield new CommandArgumentFlag("schematic", $args[0] ? "");
 	}
 }

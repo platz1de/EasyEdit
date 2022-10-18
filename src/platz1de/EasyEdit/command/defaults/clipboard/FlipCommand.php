@@ -29,9 +29,10 @@ class FlipCommand extends EasyEditCommand
 	}
 
 	/**
+	 * @param Session $session
 	 * @return CommandFlag[]
 	 */
-	public function getKnownFlags(): array
+	public function getKnownFlags(Session $session): array
 	{
 		return [
 			"direction" => new FacingCommandFlag("direction", ["dir"], "d")

@@ -25,21 +25,30 @@ class CopyCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new CopyTask($session->getSelection(), ArgumentParser::parseRelativePosition($session, $args[0] ?? null)));
+		$session->runTask(new CopyTask($session->getSelection(), $flags->getVectorFlag("relative")));
 	}
 
 	/**
+	 * @param Session $session
 	 * @return CommandFlag[]
 	 */
-	public function getKnownFlags(): array
+	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"center" => new SingularCommandFlag("relative", [], "c"),
+			"center" => new VectorValueCommandFlag("relative", $session->getSelection()->getBottomCenter(), [], "c"),
 		];
 	}
 
+	/**
+	 * @param CommandFlagCollection $flags
+	 * @param Session               $session
+	 * @param string[]              $args
+	 * @return Generator<CommandFlag>
+	 */
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
-		// TODO: Implement parseArguments() method.
+		if(!$flags->hasFlag("relative")){
+			yield new VectorValueCommandFlag("relative", $session->asPlayer()->getPosition())
+		}
 	}
 }

@@ -15,11 +15,31 @@ class InsertCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 */
-	public function process(Session $session, array $args): void
+	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		$session->runTask(new DynamicStoredPasteTask($session->getClipboard(), $session->asPlayer()->getPosition(), true, true));
+	}
+
+	/**
+	 * @param Session $session
+	 * @return CommandFlag[]
+	 */
+	public function getKnownFlags(Session $session): array
+	{
+		return [];
+	}
+
+	/**
+	 * @param CommandFlagCollection $flags
+	 * @param Session               $session
+	 * @param string[]              $args
+	 * @return Generator<CommandFlag>
+	 */
+	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
+	{
+		yield from [];
 	}
 }

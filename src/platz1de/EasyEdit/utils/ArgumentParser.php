@@ -53,19 +53,6 @@ class ArgumentParser
 
 	/**
 	 * @param Session     $session
-	 * @param string|null $args
-	 * @return Vector3
-	 */
-	public static function parseRelativePosition(Session $session, string $args = null): Vector3
-	{
-		return match (strtolower($args ?? "")) {
-			"center", "c", "middle" => $session->getSelection()->getBottomCenter(),
-			default => $session->asPlayer()->getPosition()
-		};
-	}
-
-	/**
-	 * @param Session     $session
 	 * @param string[]    $args
 	 * @param int         $start
 	 * @param string|null $default

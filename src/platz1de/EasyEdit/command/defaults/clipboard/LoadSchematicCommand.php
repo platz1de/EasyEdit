@@ -17,17 +17,39 @@ class LoadSchematicCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 */
-	public function process(Session $session, array $args): void
+	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$schematicName = pathinfo($args[0] ?? "", PATHINFO_FILENAME);
+		$schematicName = $flags->hasFlag("schematic") ? pathinfo($flags->getStringFlag("schematic"), PATHINFO_FILENAME) : "";
 		if (!isset($args[0]) || !SchematicFileAdapter::schematicExists(EasyEdit::getSchematicPath() . $schematicName)) {
 			$session->sendMessage("unknown-schematic", ["{schematic}" => $schematicName, "{known}" => implode(", ", SchematicFileAdapter::getSchematicList())]);
 			return;
 		}
 
 		$session->runTask(new SchematicLoadTask(EasyEdit::getSchematicPath() . $schematicName));
+	}
+
+	/**
+	 * @param Session $session
+	 * @return CommandFlag[]
+	 */
+	public function getKnownFlags(Session $session): array
+	{
+		return [];
+	}
+
+	/**
+	 * @param CommandFlagCollection $flags
+	 * @param Session               $session
+	 * @param string[]              $args
+	 * @return Generator<CommandFlag>
+	 */
+	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
+	{
+		if(isset($args[0])){
+			yield new CommandArgumentFlag("schematic", $args[0])
+		}
 	}
 }

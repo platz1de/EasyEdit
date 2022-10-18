@@ -17,7 +17,7 @@ class CommandFlagParser
 	 */
 	public static function parseFlags(EasyEditCommand $command, array $args, Session $session): CommandFlagCollection
 	{
-		$known = $command->getKnownFlags();
+		$known = $command->getKnownFlags($session);
 		$ids = [];
 		foreach ($known as $flag) {
 			foreach ($flag->getAliases() as $alias) {

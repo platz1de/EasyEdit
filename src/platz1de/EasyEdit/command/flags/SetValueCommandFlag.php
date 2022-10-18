@@ -4,8 +4,16 @@ namespace platz1de\EasyEdit\command\flags;
 
 class SetValueCommandFlag extends SingularCommandFlag
 {
-	public function __construct(string $name, array $aliases = null, string $id = null)
+	private int $value;
+
+	public function __construct(string $name, int $value, array $aliases = null, string $id = null)
 	{
+		$this->value = $value;
 		parent::__construct($name, $aliases, $id);
+	}
+
+	public function getArgument() : int 
+	{
+		return $this->value;
 	}
 }
