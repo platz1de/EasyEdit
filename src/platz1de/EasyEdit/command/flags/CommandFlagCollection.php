@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
+use pocketmine\math\Vector3;
 use UnexpectedValueException;
 
 class CommandFlagCollection
@@ -43,7 +44,7 @@ class CommandFlagCollection
 		if (!$flag instanceof VectorValueCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Vector");
 		}
-		return $flag->getValue();
+		return $flag->getArgument();
 	}
 
 	public function hasFlag(string $name): bool

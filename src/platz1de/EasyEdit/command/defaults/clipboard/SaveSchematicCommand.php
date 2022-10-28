@@ -2,8 +2,12 @@
 
 namespace platz1de\EasyEdit\command\defaults\clipboard;
 
+use Generator;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
+use platz1de\EasyEdit\command\flags\CommandArgumentFlag;
+use platz1de\EasyEdit\command\flags\CommandFlag;
+use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\schematic\SchematicSaveTask;
@@ -47,6 +51,6 @@ class SaveSchematicCommand extends EasyEditCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		ArgumentParser::requireArgumentCount($args, 1, $this);
-		yield new CommandArgumentFlag("schematic", $args[0] ? "");
+		yield new CommandArgumentFlag("schematic", $args[0] ?? "");
 	}
 }

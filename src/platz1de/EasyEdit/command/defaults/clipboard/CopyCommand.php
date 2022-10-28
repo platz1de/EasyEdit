@@ -6,11 +6,10 @@ use Generator;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\SingularCommandFlag;
+use platz1de\EasyEdit\command\flags\VectorValueCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
-use platz1de\EasyEdit\utils\ArgumentParser;
 
 class CopyCommand extends EasyEditCommand
 {
@@ -47,8 +46,8 @@ class CopyCommand extends EasyEditCommand
 	 */
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
-		if(!$flags->hasFlag("relative")){
-			yield new VectorValueCommandFlag("relative", $session->asPlayer()->getPosition())
+		if (!$flags->hasFlag("relative")) {
+			yield new VectorValueCommandFlag("relative", $session->asPlayer()->getPosition());
 		}
 	}
 }
