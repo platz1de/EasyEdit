@@ -43,5 +43,6 @@ class IntCommandFlag extends CommandFlag
 			throw new InvalidUsageException($command);
 		}
 		$this->setArgument((int) $argument);
+		return $this;
 	}
 }

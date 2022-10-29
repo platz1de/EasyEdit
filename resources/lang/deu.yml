@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2022-10-05
+#Last updated at: 2022-10-29
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -80,6 +80,7 @@ command-extend-usage:
   - "//extend [richtung] [anzahl]"
   - "//extend [anzahl] - Vergrößere die Auswahl in Sichtrichtung"
   - "//extend vertical - Vergrößere die Auswahl vertikal komplett"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Verändert die Auswahl um die angegebenen Werte"
 command-set-description: "Setze Blöcke in dem ausgewählten Bereich"
 command-set-usage: "//set <muster>"
 command-replace-description: "Ersetze Blöcke in dem ausgewählten Bereich"
@@ -139,7 +140,7 @@ command-copy-usage:
 command-cut-description: "Schneide die ausgewählten Blöcke aus und kopiere sie in die Zwischenablage"
 command-cut-usage:
   - "//cut - Schneide relativ zum Spieler aus"
-  - "//cut center - Schneide relativ zum Zentrum der Auswahl aus"
+  - "//cut -c - Schneide relativ zum Zentrum der Auswahl aus"
 command-paste-description: "Füge die Zwischenablage ein"
 command-paste-usage: "//paste"
 command-insert-description: "Füge die Zwischenablage ein und beachte existierende Blöcke"

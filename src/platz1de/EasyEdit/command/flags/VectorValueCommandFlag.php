@@ -14,7 +14,7 @@ class VectorValueCommandFlag extends SingularCommandFlag
 		parent::__construct($name, $aliases, $id);
 	}
 
-	public function getArgument() : Vector3 
+	public function getArgument(): Vector3
 	{
 		return $this->value;
 	}

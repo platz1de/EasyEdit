@@ -2,26 +2,38 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\flags\CommandFlag;
+use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
-use platz1de\EasyEdit\utils\ArgumentParser;
 
-class SetCommand extends EasyEditCommand
+class SetCommand extends SimpleFlagArgumentCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/set", [KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/set", ["pattern" => true], [KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 */
-	public function process(Session $session, array $args): void
+	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		ArgumentParser::requireArgumentCount($args, 1, $this);
-		$session->runTask(new SetTask($session->getSelection(), ArgumentParser::parseCombinedPattern($session, $args, 0)));
+		$session->runTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern")));
+	}
+
+	/**
+	 * @param Session $session
+	 * @return CommandFlag[]
+	 */
+	public function getKnownFlags(Session $session): array
+	{
+		return [
+			"pattern" => new PatternCommandFlag("pattern", [], "p")
+		];
 	}
 }

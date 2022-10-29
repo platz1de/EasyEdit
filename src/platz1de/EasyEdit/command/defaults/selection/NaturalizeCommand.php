@@ -2,10 +2,9 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use platz1de\EasyEdit\command\exception\PatternParseException;
+use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
-use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
 
@@ -13,24 +12,34 @@ class NaturalizeCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/naturalize");
+		parent::__construct("/naturalize", ["top" => false, "middle" => false, "bottom" => false], ["/nat"]);
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 * @return Pattern
 	 */
-	public function parsePattern(Session $session, array $args): Pattern
+	public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern
 	{
-		try {
-			$top = PatternParser::parseInput($args[0] ?? "grass", $session->asPlayer());
-			$middle = PatternParser::parseInput($args[1] ?? "dirt", $session->asPlayer());
-			$bottom = PatternParser::parseInput($args[2] ?? "stone", $session->asPlayer());
-		} catch (ParseError $exception) {
-			throw new PatternParseException($exception);
+		if (!$flags->hasFlag("top")) {
+			$flags->addFlag((new PatternCommandFlag("top"))->parseArgument($this, $session, "grass"));
 		}
+		if (!$flags->hasFlag("middle")) {
+			$flags->addFlag((new PatternCommandFlag("middle"))->parseArgument($this, $session, "dirt"));
+		}
+		if (!$flags->hasFlag("bottom")) {
+			$flags->addFlag((new PatternCommandFlag("bottom"))->parseArgument($this, $session, "stone"));
+		}
+		return new NaturalizePattern($flags->getPatternFlag("top"), $flags->getPatternFlag("middle"), $flags->getPatternFlag("bottom"));
+	}
 
-		return new NaturalizePattern($top, $middle, $bottom);
+	public function getKnownFlags(Session $session): array
+	{
+		return array_merge(parent::getKnownFlags($session), [
+			"top" => new PatternCommandFlag("top", [], "t"),
+			"middle" => new PatternCommandFlag("middle", [], "m"),
+			"bottom" => new PatternCommandFlag("bottom", [], "b"),
+		]);
 	}
 }

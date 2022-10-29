@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command;
 
 use platz1de\EasyEdit\command\exception\CommandException;
+use platz1de\EasyEdit\command\flags\CommandFlagParser;
 use platz1de\EasyEdit\session\SessionManager;
 use pocketmine\player\Player;
 use pocketmine\Server;
@@ -42,7 +43,7 @@ class CommandManager
 	{
 		try {
 			$session = SessionManager::get($player);
-			$command->process($session, CommandFlagManager::parseFlags($command, $args, $session));
+			$command->process($session, CommandFlagParser::parseFlags($command, $args, $session));
 		} catch (CommandException $e) {
 			$e->sendWarning(SessionManager::get($player));
 		}

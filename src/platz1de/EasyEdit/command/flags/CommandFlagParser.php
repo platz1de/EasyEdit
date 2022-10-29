@@ -30,13 +30,17 @@ class CommandFlagParser
 		$legacy = [];
 		foreach ($args as $i => $arg) {
 			if (str_starts_with($arg, "-")) {
+				if (is_numeric(substr($arg, 1)) || preg_match("/-\d+,-?\d+,-?\d+/", $arg)) {
+					$skip = false;
+					continue; //Negative numbers are not flags
+				}
 				if ($skip) {
 					throw new InvalidUsageException($command);
 				}
 				if (str_starts_with($arg, "--")) {
 					$name = strtolower(substr($arg, 2));
 					if (!isset($known[$name])) {
-						throw new UnknownFlagException(substr($arg, 2));
+						throw new UnknownFlagException(substr($arg, 2), $command);
 					}
 					$flag = $known[$name];
 					if (self::checkFlagArgument($flag, $args, $i, $command)) {
@@ -44,16 +48,14 @@ class CommandFlagParser
 						$skip = true;
 					}
 					$flags->addFlag($flag);
-				} elseif (is_numeric(substr($arg, 1))) {
-					continue; //Negative numbers are not flags
 				} else {
 					if ($arg === "-") {
-						throw new UnknownFlagException("");
+						throw new UnknownFlagException("", $command);
 					}
 					$list = str_split(strtolower(substr($arg, 1)));
 					foreach ($list as $key => $f) {
 						if (!isset($ids[$f])) {
-							throw new UnknownFlagException(substr($arg, 2));
+							throw new UnknownFlagException(substr($arg, 2), $command);
 						}
 						$flag = $ids[$arg];
 						if (self::checkFlagArgument($flag, $args, $i, $command)) {

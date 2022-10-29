@@ -2,14 +2,17 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
+use Generator;
 use platz1de\EasyEdit\command\exception\PatternParseException;
+use platz1de\EasyEdit\command\flags\CommandArgumentFlag;
+use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\utils\ArgumentParser;
 
 class ReplaceCommand extends AliasedPatternCommand
 {
@@ -19,21 +22,37 @@ class ReplaceCommand extends AliasedPatternCommand
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 * @return Pattern
 	 */
-	public function parsePattern(Session $session, array $args): Pattern
+	public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern
 	{
-		ArgumentParser::requireArgumentCount($args, 1, $this);
-		if (count($args) >= 2) {
+		if ($flags->hasFlag("block")) {
 			try {
-				$block = PatternParser::getBlockType($args[0]);
+				$block = PatternParser::getBlockType($flags->getStringFlag("block"));
 			} catch (ParseError $exception) {
 				throw new PatternParseException($exception);
 			}
-			return new BlockPattern($block, [ArgumentParser::parseCombinedPattern($session, $args, 1)]);
+		} else {
+			$block = new SolidBlock();
 		}
-		return new BlockPattern(new SolidBlock(), [ArgumentParser::parseCombinedPattern($session, $args, 0)]);
+		return new BlockPattern($block, [$flags->getPatternFlag("pattern")]);
+	}
+
+	public function getKnownFlags(Session $session): array
+	{
+		return array_merge(parent::getKnownFlags($session), [
+			"block" => new StringCommandFlag("block", [], "b"),
+		]);
+	}
+
+	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
+	{
+		if (count($args) >= 2) {
+			yield new CommandArgumentFlag("block", $args[0]);
+			array_shift($args);
+		}
+		yield from parent::parseArguments($flags, $session, $args);
 	}
 }

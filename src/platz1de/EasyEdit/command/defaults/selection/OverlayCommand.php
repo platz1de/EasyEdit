@@ -2,13 +2,13 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
+use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\logic\NotPattern;
 use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\utils\ArgumentParser;
 
 class OverlayCommand extends AliasedPatternCommand
 {
@@ -18,13 +18,12 @@ class OverlayCommand extends AliasedPatternCommand
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session               $session
+	 * @param CommandFlagCollection $flags
 	 * @return Pattern
 	 */
-	public function parsePattern(Session $session, array $args): Pattern
+	public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern
 	{
-		ArgumentParser::requireArgumentCount($args, 1, $this);
-		return new NotPattern(new BlockPattern(new SolidBlock(), [new AbovePattern(new SolidBlock(), [ArgumentParser::parseCombinedPattern($session, $args, 0)])]));
+		return new NotPattern(new BlockPattern(new SolidBlock(), [new AbovePattern(new SolidBlock(), [$flags->getPatternFlag("pattern")])]));
 	}
 }

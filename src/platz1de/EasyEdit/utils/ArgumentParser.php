@@ -53,22 +53,6 @@ class ArgumentParser
 
 	/**
 	 * @param Session     $session
-	 * @param string[]    $args
-	 * @param int         $start
-	 * @param string|null $default
-	 * @return Pattern
-	 */
-	public static function parseCombinedPattern(Session $session, array $args, int $start, string $default = null): Pattern
-	{
-		try {
-			return PatternParser::parseInputCombined($args, $start, $session->asPlayer(), $default);
-		} catch (ParseError $exception) {
-			throw new PatternParseException($exception);
-		}
-	}
-
-	/**
-	 * @param Session     $session
 	 * @param string|null $args1
 	 * @param string|null $args2
 	 * @param int|null    $amount

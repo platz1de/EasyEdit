@@ -31,7 +31,7 @@ use pocketmine\player\Player;
 class PatternParser
 {
 	/**
-	 * Parses player input (mostly commands)
+	 * Checks player input (mostly commands)
 	 * @param string $pattern
 	 * @param Player $player
 	 * @return string
@@ -50,27 +50,10 @@ class PatternParser
 	 */
 	public static function parseInput(string $pattern, Player $player): Pattern
 	{
-		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getId() . ":" . $player->getInventory()->getItemInHand()->getBlock()->getMeta(), $pattern));
-	}
-
-	/**
-	 * Parses player input (mostly commands), allows spaces
-	 * @param string[]    $args
-	 * @param int         $start
-	 * @param Player      $player
-	 * @param string|null $default
-	 * @return Pattern
-	 */
-	public static function parseInputCombined(array $args, int $start, Player $player, string $default = null): Pattern
-	{
-		$pattern = implode("", array_slice($args, $start));
 		if ($pattern === "") {
-			if ($default === null) {
-				throw new ParseError("No pattern given");
-			}
-			$pattern = $default;
+			throw new ParseError("No pattern given");
 		}
-		return self::parseInput($pattern, $player);
+		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getId() . ":" . $player->getInventory()->getItemInHand()->getBlock()->getMeta(), $pattern));
 	}
 
 	/**

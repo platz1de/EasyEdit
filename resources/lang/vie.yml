@@ -80,6 +80,7 @@ command-extend-usage:
   - "//extend [phương hướng] [số lượng]"
   - "//extend [số lượng] - Mở rộng khu vực đã chọn theo hướng nhìn của bạn"
   - "//extend vertical - Mở rộng hoàn toàn Khu vực đã chọn theo chiều dọc"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Modify the selected area by the given vectors"
 command-set-description: "Thiết lập các khối trong khu vực đã chọn"
 command-set-usage: "//set <mẫu>"
 command-replace-description: "Thay thế các khối trong khu vực đã chọn"
@@ -102,6 +103,7 @@ command-move-description: "Di chuyển khu vực đã chọn"
 command-move-usage:
   - "//move [direction] [số lượng]"
   - "//move [số lượng] - Di chuyển khu vực đã chọn sang hướng nhìn của bạn"
+  - "//move -v <x>,<y>,<z> - Move the selected area by the given vector"
 command-stack-description: "Xếp chồng khu vực đã chọn"
 command-stack-usage:
   - "//stack [direction] [số lượng]"
@@ -139,7 +141,7 @@ command-copy-usage:
 command-cut-description: "Cắt vùng đã chọn và sao chép nó vào khay nhớ tạm của bạn"
 command-cut-usage:
   - "//cut - Cắt tương đối với người chơi"
-  - "//cut center - Cắt so với tâm của vùng chọn"
+  - "//cut -c - Cắt so với tâm của vùng chọn"
 command-paste-description: "Dán khay nhớ tạm"
 command-paste-usage: "//paste"
 command-insert-description: "Chèn khay nhớ tạm"

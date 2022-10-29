@@ -2,17 +2,16 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
-use platz1de\EasyEdit\selection\Sphere;
+use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use pocketmine\block\VanillaBlocks;
 
-class ExtinguishCommand extends EasyEditCommand
+class ExtinguishCommand extends SphericalSelectionCommand
 {
 	public function __construct()
 	{
@@ -20,17 +19,12 @@ class ExtinguishCommand extends EasyEditCommand
 	}
 
 	/**
-	 * @param Session  $session
-	 * @param string[] $args
+	 * @param Session   $session
+	 * @param Selection $selection
+	 * @return void
 	 */
-	public function process(Session $session, array $args): void
+	public function processSelection(Session $session, Selection $selection): void
 	{
-		if (isset($args[0])) {
-			$selection = Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), (float) $args[0]);
-		} else {
-			$selection = $session->getSelection();
-		}
-
 		$session->runTask(new SetTask($selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())])));
 	}
 }

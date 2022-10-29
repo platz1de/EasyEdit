@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.1.2" #Please don't change this manually
+message-version: "2.1.3" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -81,6 +81,7 @@ command-extend-usage:
   - "//extend [direction] [count]"
   - "//extend [count] - Extend the selected area into your looking direction"
   - "//extend vertical - Fully extend the selected Area vertically"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Modify the selected area by the given vectors"
 command-set-description: "Set blocks in the selected area"
 command-set-usage: "//set <pattern>"
 command-replace-description: "Replace blocks in the selected area"
@@ -103,6 +104,7 @@ command-move-description: "Move the selected area"
 command-move-usage:
   - "//move [direction] [count]"
   - "//move [count] - Move the selected area into your looking direction"
+  - "//move -v <x>,<y>,<z> - Move the selected area by the given vector"
 command-stack-description: "Stack the selected area"
 command-stack-usage:
   - "//stack [direction] [count]"
@@ -140,7 +142,7 @@ command-copy-usage:
 command-cut-description: "Cut the selected area and copy it to your clipboard"
 command-cut-usage:
   - "//cut - Cut relative to the player"
-  - "//cut center - Cut relative to center of the selection"
+  - "//cut -c - Cut relative to center of the selection"
 command-paste-description: "Paste the clipboard"
 command-paste-usage: "//paste"
 command-insert-description: "Insert the clipboard"

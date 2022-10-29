@@ -48,7 +48,7 @@ class FlipCommand extends EasyEditCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (!$flags->hasFlag("direction")) {
-			yield $this->getKnownFlags($session)["direction"]->parseArgument($this, $session, $args[0] ?? null);
+			yield $this->getKnownFlags($session)["direction"]->parseArgument($this, $session, $args[0] ?? "");
 		}
 	}
 }

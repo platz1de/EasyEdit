@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
+use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\session\Session;
 use pocketmine\math\Vector3;
 use UnexpectedValueException;
 
@@ -18,6 +20,14 @@ class CommandFlagCollection
 			throw new UnexpectedValueException("Flag " . $flag->getName() . " already exists");
 		}
 		$this->flags[$flag->getName()] = $flag;
+	}
+
+	public function removeFlag(string $flag): void
+	{
+		if (!isset($this->flags[$flag])) {
+			throw new UnexpectedValueException("Flag " . $flag . " does not exists");
+		}
+		unset($this->flags[$flag]);
 	}
 
 	public function getStringFlag(string $name): string
@@ -38,11 +48,38 @@ class CommandFlagCollection
 		return $flag->getArgument();
 	}
 
+	public function getFloatFlag(string $name): float
+	{
+		$flag = $this->flags[$name];
+		if (!$flag instanceof FloatCommandFlag && !$flag instanceof FloatValueCommandFlag) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Float");
+		}
+		return $flag->getArgument();
+	}
+
 	public function getVectorFlag(string $name): Vector3
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof VectorValueCommandFlag) {
+		if (!$flag instanceof VectorCommandFlag && !$flag instanceof VectorValueCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Vector");
+		}
+		return $flag->getArgument();
+	}
+
+	public function getPatternFlag(string $name): Pattern
+	{
+		$flag = $this->flags[$name];
+		if (!$flag instanceof PatternCommandFlag) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Pattern");
+		}
+		return $flag->getArgument();
+	}
+
+	public function getSessionFlag(string $name): Session
+	{
+		$flag = $this->flags[$name];
+		if (!$flag instanceof SessionArgumentFlag) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Session");
 		}
 		return $flag->getArgument();
 	}

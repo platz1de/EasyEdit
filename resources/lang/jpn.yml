@@ -80,6 +80,7 @@ command-extend-usage:
   - "//extend [拡張する方角] [拡張ブロック数]"
   - "//extend [拡張ブロック数] - 今向いている方角に指定したブロック数領域を拡張する"
   - "//extend vertical - 垂直方向に領域を最大限拡張する"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Modify the selected area by the given vectors"
 command-set-description: "選択した領域にブロックを設置する"
 command-set-usage: "//set <パターン>"
 command-replace-description: "選択した領域のブロックを置換する"
@@ -102,6 +103,7 @@ command-move-description: "選択した領域を移動する"
 command-move-usage:
   - "//move [移動する方角] [移動ブロック数]"
   - "//move [移動ブロック数] - 今向いている方角に指定したブロック数領域を移動する"
+  - "//move -v <x>,<y>,<z> - Move the selected area by the given vector"
 command-stack-description: "選択した領域にブロックを積み重ねる"
 command-stack-usage:
   - "//stack [積み重ねる方角] [積み重ねるブロック数]"
@@ -139,7 +141,7 @@ command-copy-usage:
 command-cut-description: "選択した領域を切り取ってクリップボードにコピーする"
 command-cut-usage:
   - "//cut - プレイヤーとの相対座標で切り取る"
-  - "//cut center - 選択した領域の中心からの相対座標でコピーする"
+  - "//cut -c - 選択した領域の中心からの相対座標でコピーする"
 command-paste-description: "クリップボードから貼り付ける"
 command-paste-usage: "//paste"
 command-insert-description: "クリップボードに挿入する"
