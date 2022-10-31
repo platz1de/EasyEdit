@@ -5,8 +5,7 @@ namespace platz1de\EasyEdit\command\defaults\generation;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FloatCommandFlag;
-use platz1de\EasyEdit\command\flags\FloatValueCommandFlag;
-use platz1de\EasyEdit\command\flags\IntCommandFlag;
+use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
@@ -29,7 +28,7 @@ class HollowCylinderCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		if (!$flags->hasFlag("thickness")) {
-			$flags->addFlag(new FloatValueCommandFlag("thickness", 1.0));
+			$flags->addFlag(FloatCommandFlag::with(1.0, "thickness"));
 		}
 		$session->runTask(new SetTask(Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius"), $flags->getIntFlag("height")), new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")])));
 	}
@@ -42,7 +41,7 @@ class HollowCylinderCommand extends SimpleFlagArgumentCommand
 	{
 		return [
 			"radius" => new FloatCommandFlag("radius", ["rad"], "r"),
-			"height" => new IntCommandFlag("height", [], "h"),
+			"height" => new IntegerCommandFlag("height", [], "h"),
 			"pattern" => new PatternCommandFlag("pattern", [], "p"),
 			"thickness" => new FloatCommandFlag("thickness", ["thick"], "t")
 		];

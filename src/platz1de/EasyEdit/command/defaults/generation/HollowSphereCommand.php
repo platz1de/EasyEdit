@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\command\defaults\generation;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FloatCommandFlag;
-use platz1de\EasyEdit\command\flags\FloatValueCommandFlag;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
@@ -28,7 +27,7 @@ class HollowSphereCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		if (!$flags->hasFlag("thickness")) {
-			$flags->addFlag(new FloatValueCommandFlag("thickness", 1.0));
+			$flags->addFlag(FloatCommandFlag::with(1.0, "thickness"));
 		}
 
 		$session->runTask(new SetTask(Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius")), new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")])));

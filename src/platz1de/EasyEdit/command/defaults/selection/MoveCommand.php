@@ -7,7 +7,6 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
-use platz1de\EasyEdit\command\flags\VectorValueCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\MoveTask;
@@ -49,7 +48,7 @@ class MoveCommand extends EasyEditCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (!$flags->hasFlag("vector")) {
-			yield new VectorValueCommandFlag("vector", ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null));
+			yield VectorCommandFlag::with(ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null), "vector");
 		}
 	}
 }

@@ -6,18 +6,18 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\session\Session;
 
-class FloatCommandFlag extends CommandFlag
+class IntegerCommandFlag extends CommandFlag
 {
-	private float $argument;
+	private int $argument;
 
 	/**
-	 * @param float       $argument
+	 * @param int         $argument
 	 * @param string      $name
 	 * @param string[]    $aliases
 	 * @param string|null $id
-	 * @return FloatCommandFlag
+	 * @return IntegerCommandFlag
 	 */
-	public static function with(float $argument, string $name, array $aliases = null, string $id = null): self
+	public static function with(int $argument, string $name, array $aliases = null, string $id = null): self
 	{
 		$flag = new self($name, $aliases, $id);
 		$flag->hasArgument = true;
@@ -26,17 +26,17 @@ class FloatCommandFlag extends CommandFlag
 	}
 
 	/**
-	 * @param float $argument
+	 * @param int $argument
 	 */
-	public function setArgument(float $argument): void
+	public function setArgument(int $argument): void
 	{
 		$this->argument = $argument;
 	}
 
 	/**
-	 * @return float
+	 * @return int
 	 */
-	public function getArgument(): float
+	public function getArgument(): int
 	{
 		return $this->argument;
 	}
@@ -45,14 +45,14 @@ class FloatCommandFlag extends CommandFlag
 	 * @param EasyEditCommand $command
 	 * @param Session         $session
 	 * @param string          $argument
-	 * @return FloatCommandFlag
+	 * @return IntegerCommandFlag
 	 */
 	public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self
 	{
 		if (!is_numeric($argument)) {
 			throw new InvalidUsageException($command);
 		}
-		$this->setArgument((float) $argument);
+		$this->setArgument((int) $argument);
 		return $this;
 	}
 }

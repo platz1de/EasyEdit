@@ -6,8 +6,8 @@ use Generator;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\IntCommandFlag;
-use platz1de\EasyEdit\command\flags\SessionArgumentFlag;
+use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
+use platz1de\EasyEdit\command\flags\SessionCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -26,8 +26,8 @@ abstract class HistoryAccessCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"count" => new IntCommandFlag("count", [], "c"),
-			"target" => new SessionArgumentFlag("target", [], "t")
+			"count" => new IntegerCommandFlag("count", [], "c"),
+			"target" => new SessionCommandFlag("target", [], "t")
 		];
 	}
 
@@ -48,7 +48,7 @@ abstract class HistoryAccessCommand extends EasyEditCommand
 			if ($flags->hasFlag("target")) {
 				$flags->removeFlag("target");
 			}
-			yield $this->getKnownFlags($session)["target"]->parseArgument($this, $session, $session->getPlayer());
+			yield SessionCommandFlag::with($session, "target");
 		}
 		if (!$flags->hasFlag("count")) {
 			yield $this->getKnownFlags($session)["count"]->parseArgument($this, $session, $args[0] ?? "1");

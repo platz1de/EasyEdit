@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 
 use Generator;
 use platz1de\EasyEdit\command\exception\PatternParseException;
-use platz1de\EasyEdit\command\flags\CommandArgumentFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
@@ -50,7 +49,7 @@ class ReplaceCommand extends AliasedPatternCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (count($args) >= 2) {
-			yield new CommandArgumentFlag("block", $args[0]);
+			yield StringCommandFLag::with($args[0], "block");
 			array_shift($args);
 		}
 		yield from parent::parseArguments($flags, $session, $args);

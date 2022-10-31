@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\command\defaults\generation;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FloatCommandFlag;
-use platz1de\EasyEdit\command\flags\IntCommandFlag;
+use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
@@ -37,7 +37,7 @@ class CylinderCommand extends SimpleFlagArgumentCommand
 	{
 		return [
 			"radius" => new FloatCommandFlag("radius", ["rad"], "r"),
-			"height" => new IntCommandFlag("height", [], "h"),
+			"height" => new IntegerCommandFlag("height", [], "h"),
 			"pattern" => new PatternCommandFlag("pattern", [], "p")
 		];
 	}

@@ -13,9 +13,19 @@ class PatternCommandFlag extends CommandFlag
 {
 	private Pattern $argument;
 
-	public function needsArgument(): bool
+	/**
+	 * @param Pattern     $argument
+	 * @param string      $name
+	 * @param string[]    $aliases
+	 * @param string|null $id
+	 * @return PatternCommandFlag
+	 */
+	public static function with(Pattern $argument, string $name, array $aliases = null, string $id = null): self
 	{
-		return true;
+		$flag = new self($name, $aliases, $id);
+		$flag->hasArgument = true;
+		$flag->argument = $argument;
+		return $flag;
 	}
 
 	/**

@@ -2,10 +2,10 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use platz1de\EasyEdit\command\flags\CommandArgumentFlag;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
+use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\selection\SelectionContext;
@@ -34,7 +34,7 @@ class AliasedContextCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		if (!$flags->hasFlag("pattern")) {
-			$flags->addFlag(new CommandArgumentFlag("pattern", "stone"));
+			$flags->addFlag((new PatternCommandFlag("pattern"))->parseArgument($this, $session, "stone"));
 		}
 		$session->runTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern"), $this->context));
 	}

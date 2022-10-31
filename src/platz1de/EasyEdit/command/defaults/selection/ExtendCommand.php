@@ -8,11 +8,9 @@ use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
-use platz1de\EasyEdit\command\flags\VectorValueCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -61,7 +59,7 @@ class ExtendCommand extends EasyEditCommand
 	/**
 	 * @param CommandFlagCollection $flags
 	 * @param Session               $session
-	 * @param string[]                 $args
+	 * @param string[]              $args
 	 * @return Generator<CommandFlag>
 	 */
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
@@ -73,16 +71,16 @@ class ExtendCommand extends EasyEditCommand
 		if (!$flags->hasFlag("min") && !$flags->hasFlag("max")) {
 			$offset = ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null, $count);
 			if ($count < 0 xor $offset->abs()->equals($offset)) {
-				yield new VectorValueCommandFlag("max", $offset);
+				yield VectorCommandFlag::with($offset, "max");
 			} else {
-				yield new VectorValueCommandFlag("min", $offset);
+				yield VectorCommandFlag::with($offset, "min");
 			}
 		}
 		if (!$flags->hasFlag("min")) {
-			yield new VectorValueCommandFlag("min", Vector3::zero());
+			yield VectorCommandFlag::with(Vector3::zero(), "min");
 		}
 		if (!$flags->hasFlag("max")) {
-			yield new VectorValueCommandFlag("max", Vector3::zero());
+			yield VectorCommandFlag::with(Vector3::zero(), "max");
 		}
 	}
 }

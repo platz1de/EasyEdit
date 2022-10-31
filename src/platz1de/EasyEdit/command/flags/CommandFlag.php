@@ -13,6 +13,7 @@ abstract class CommandFlag
 	 */
 	private array $aliases;
 	private string $id;
+	protected bool $hasArgument = false;
 
 	/**
 	 * @param string      $name
@@ -44,7 +45,10 @@ abstract class CommandFlag
 		return $this->id;
 	}
 
-	abstract public function needsArgument(): bool;
+	public function needsArgument(): bool
+	{
+		return $this->hasArgument;
+	}
 
 	abstract public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self;
 }

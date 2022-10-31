@@ -33,7 +33,7 @@ class CommandFlagCollection
 	public function getStringFlag(string $name): string
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof StringCommandFlag && !$flag instanceof CommandArgumentFlag) {
+		if (!$flag instanceof StringCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected String");
 		}
 		return $flag->getArgument();
@@ -42,7 +42,7 @@ class CommandFlagCollection
 	public function getIntFlag(string $name): int
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof IntCommandFlag && !$flag instanceof SetValueCommandFlag) {
+		if (!$flag instanceof IntegerCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Integer");
 		}
 		return $flag->getArgument();
@@ -51,7 +51,7 @@ class CommandFlagCollection
 	public function getFloatFlag(string $name): float
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof FloatCommandFlag && !$flag instanceof FloatValueCommandFlag) {
+		if (!$flag instanceof FloatCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Float");
 		}
 		return $flag->getArgument();
@@ -60,7 +60,7 @@ class CommandFlagCollection
 	public function getVectorFlag(string $name): Vector3
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof VectorCommandFlag && !$flag instanceof VectorValueCommandFlag) {
+		if (!$flag instanceof VectorCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Vector");
 		}
 		return $flag->getArgument();
@@ -78,7 +78,7 @@ class CommandFlagCollection
 	public function getSessionFlag(string $name): Session
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof SessionArgumentFlag) {
+		if (!$flag instanceof SessionCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Session");
 		}
 		return $flag->getArgument();

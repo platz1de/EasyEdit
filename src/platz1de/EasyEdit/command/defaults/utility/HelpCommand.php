@@ -7,8 +7,7 @@ use platz1de\EasyEdit\command\CommandManager;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\IntCommandFlag;
-use platz1de\EasyEdit\command\flags\SetValueCommandFlag;
+use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\lang\Translatable;
 use UnexpectedValueException;
@@ -53,7 +52,7 @@ class HelpCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"page" => new IntCommandFlag("page", [], "p")
+			"page" => new IntegerCommandFlag("page", [], "p")
 		];
 	}
 
@@ -66,7 +65,7 @@ class HelpCommand extends EasyEditCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (!$flags->hasFlag("page")) {
-			yield new SetValueCommandFlag("page", (int) ($args[0] ?? 1));
+			yield IntegerCommandFlag::with((int) ($args[0] ?? 1), "page");
 		}
 	}
 }

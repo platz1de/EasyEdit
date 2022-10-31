@@ -6,7 +6,7 @@ use Generator;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\VectorValueCommandFlag;
+use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
@@ -34,7 +34,7 @@ class CopyCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"center" => new VectorValueCommandFlag("relative", $session->getSelection()->getBottomCenter(), [], "c"),
+			"center" => VectorCommandFlag::with($session->getSelection()->getBottomCenter(), "relative", [], "c"),
 		];
 	}
 
@@ -47,7 +47,7 @@ class CopyCommand extends EasyEditCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (!$flags->hasFlag("relative")) {
-			yield new VectorValueCommandFlag("relative", $session->asPlayer()->getPosition());
+			yield VectorCommandFLag::with($session->asPlayer()->getPosition(), "relative");
 		}
 	}
 }

@@ -6,7 +6,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
 
-class FacingCommandFlag extends IntCommandFlag
+class FacingCommandFlag extends IntegerCommandFlag
 {
 	/**
 	 * @param EasyEditCommand $command

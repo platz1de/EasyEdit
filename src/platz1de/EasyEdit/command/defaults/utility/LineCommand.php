@@ -5,10 +5,9 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 use Generator;
 use InvalidArgumentException;
 use platz1de\EasyEdit\command\exception\PatternParseException;
-use platz1de\EasyEdit\command\flags\CommandArgumentFlag;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\SetValueCommandFlag;
+use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
@@ -72,8 +71,8 @@ class LineCommand extends SimpleFlagArgumentCommand
 			"y" => new StringCommandFlag("y"),
 			"z" => new StringCommandFlag("z"),
 			"block" => new StringCommandFlag("block"),
-			"pathfind" => new SetValueCommandFlag("mode", self::MODE_PATH, ["find", "search"], "f"),
-			"find-line" => new SetValueCommandFlag("mode", self::MODE_SOLID_PATH, ["solid", "no-diagonal", "find-direct"], "s"),
+			"pathfind" => IntegerCommandFlag::with(self::MODE_PATH, "mode", ["find", "search"], "f"),
+			"find-line" => IntegerCommandFlag::with(self::MODE_SOLID_PATH, "mode", ["solid", "no-diagonal", "find-direct"], "s"),
 		];
 	}
 
@@ -87,16 +86,16 @@ class LineCommand extends SimpleFlagArgumentCommand
 	{
 		if (isset($args[0]) && !is_numeric($args[0])) {
 			if (!$flags->hasFlag("mode")) {
-				yield new SetValueCommandFlag("mode", match ($args[0]) {
+				yield IntegerCommandFlag::with(match ($args[0]) {
 					"find", "search" => self::MODE_PATH,
 					"solid", "no-diagonal", "find-direct", "find-line" => self::MODE_SOLID_PATH,
 					default => self::MODE_LINE
-				});
+				}, "mode");
 			}
 			array_shift($args);
 		}
 		if (!$flags->hasFlag("block")) {
-			yield new CommandArgumentFlag("block", $args[3] ?? "red_concrete");
+			yield StringCommandFlag::with($args[3] ?? "red_concrete", "block");
 		}
 		parent::parseArguments($flags, $session, $args);
 	}

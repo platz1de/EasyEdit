@@ -4,9 +4,9 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use Generator;
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\command\flags\CommandArgumentFlag;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
@@ -52,8 +52,8 @@ class LoadSchematicCommand extends EasyEditCommand
 	 */
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
-		if(isset($args[0])){
-			yield new CommandArgumentFlag("schematic", $args[0]);
+		if (isset($args[0])) {
+			yield StringCommandFlag::with($args[0], "schematic");
 		}
 	}
 }

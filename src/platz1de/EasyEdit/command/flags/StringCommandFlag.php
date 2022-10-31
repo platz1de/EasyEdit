@@ -9,9 +9,19 @@ class StringCommandFlag extends CommandFlag
 {
 	private string $argument;
 
-	public function needsArgument(): bool
+	/**
+	 * @param string      $argument
+	 * @param string      $name
+	 * @param string[]    $aliases
+	 * @param string|null $id
+	 * @return StringCommandFlag
+	 */
+	public static function with(string $argument, string $name, array $aliases = null, string $id = null): self
 	{
-		return true;
+		$flag = new self($name, $aliases, $id);
+		$flag->hasArgument = true;
+		$flag->argument = $argument;
+		return $flag;
 	}
 
 	/**
