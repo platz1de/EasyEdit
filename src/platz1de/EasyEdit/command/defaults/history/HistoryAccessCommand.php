@@ -43,6 +43,8 @@ abstract class HistoryAccessCommand extends EasyEditCommand
 			if (isset($args[0]) && !is_numeric($args[0])) {
 				yield $this->getKnownFlags($session)["target"]->parseArgument($this, $session, $args[0]);
 				array_shift($args);
+			} else {
+				yield SessionCommandFlag::with($session, "target");
 			}
 		} else {
 			if ($flags->hasFlag("target")) {
