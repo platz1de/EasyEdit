@@ -6,6 +6,7 @@ use Generator;
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorValueCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
@@ -26,7 +27,7 @@ class StackCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new StackTask($session->getCube(), $flags->getVectorFlag("vector")));
+		$session->runTask(new StackTask($session->getCube(), $flags->getVectorFlag("vector"), $flags->hasFlag("insert")));
 	}
 
 	/**
@@ -36,7 +37,8 @@ class StackCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"vector" => new VectorCommandFlag("vector", [], "v") //This vector doesn't really translate well into stacking (only one direction supported)
+			"vector" => new VectorCommandFlag("vector", [], "v"), //This vector doesn't really translate well into stacking (only one direction supported)
+			"insert" => new SingularCommandFlag("insert", [], "i")
 		];
 	}
 

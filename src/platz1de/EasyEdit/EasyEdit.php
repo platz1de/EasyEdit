@@ -45,6 +45,8 @@ use platz1de\EasyEdit\command\defaults\utility\LineCommand;
 use platz1de\EasyEdit\command\defaults\utility\PasteStatesCommand;
 use platz1de\EasyEdit\command\defaults\utility\StatusCommand;
 use platz1de\EasyEdit\command\defaults\utility\WandCommand;
+use platz1de\EasyEdit\command\FlagRemapAlias;
+use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\EditAdapter;
@@ -91,8 +93,8 @@ class EasyEdit extends PluginBase
 			new AliasedContextCommand(SelectionContext::walls(), "/walls", ["/wall"]),
 			new AliasedContextCommand(SelectionContext::hollow(), "/sides", ["/side"]),
 			new MoveCommand(),
-			new StackCommand(),
-			new StackInsertCommand(),
+			$stack = new StackCommand(),
+			new FlagRemapAlias($stack, new SingularCommandFlag("insert"), "/istack"),
 			new CountCommand(),
 			new ExtinguishCommand(),
 			new ViewCommand(),

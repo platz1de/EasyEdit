@@ -93,4 +93,12 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 		}
 		return implode(PHP_EOL, $usages);
 	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getPermissionTypes(): array
+	{
+		return $this->permissions;
+	}
 }
