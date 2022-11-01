@@ -3,13 +3,11 @@
 namespace platz1de\EasyEdit\command\defaults\selection;
 
 use Generator;
-use platz1de\EasyEdit\command\exception\PatternParseException;
+use platz1de\EasyEdit\command\flags\BlockCommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\StringCommandFlag;
+use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
-use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
 
@@ -27,31 +25,25 @@ class ReplaceCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern
 	{
-		if ($flags->hasFlag("block")) {
-			try {
-				$block = PatternParser::getBlockType($flags->getStringFlag("block"));
-			} catch (ParseError $exception) {
-				throw new PatternParseException($exception);
-			}
-		} else {
-			$block = new SolidBlock();
-		}
-		return new BlockPattern($block, [$flags->getPatternFlag("pattern")]);
+		return new BlockPattern($flags->getBlockFlag("block"), [$flags->getPatternFlag("pattern")]);
 	}
 
 	public function getKnownFlags(Session $session): array
 	{
-		return array_merge(parent::getKnownFlags($session), [
-			"block" => new StringCommandFlag("block", [], "b"),
-		]);
+		return [
+			"block" => new BlockCommandFlag("block", [], "b"),
+			"pattern" => new PatternCommandFlag("pattern", [], "p"),
+		];
 	}
 
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (count($args) >= 2) {
-			yield StringCommandFLag::with($args[0], "block");
+			yield (new BlockCommandFlag("block"))->parseArgument($this, $session, $args[0]);
 			array_shift($args);
+		} else {
+			yield BlockCommandFlag::with(new SolidBlock(), "block");
 		}
-		yield from parent::parseArguments($flags, $session, $args);
+		yield (new PatternCommandFlag("pattern"))->parseArgument($this, $session, $args[0]);
 	}
 }

@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FacingCommandFlag;
+use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
@@ -35,7 +36,7 @@ class PasteCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"insert" => new FacingCommandFlag("mode", [], "i")
+			"insert" => new SingularCommandFlag("mode", [], "i")
 		];
 	}
 

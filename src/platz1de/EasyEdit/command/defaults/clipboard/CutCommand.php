@@ -8,14 +8,15 @@ use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CutTask;
 
-class CutCommand extends EasyEditCommand
+class CutCommand extends SimpleFlagArgumentCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/cut", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/cut", [], [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**
@@ -35,19 +36,7 @@ class CutCommand extends EasyEditCommand
 	{
 		return [
 			"center" => VectorCommandFlag::with($session->getSelection()->getBottomCenter(), "relative", [], "c"),
+			"position" => VectorCommandFlag::default($session->asPlayer()->getPosition(), "relative", [], "p")
 		];
-	}
-
-	/**
-	 * @param CommandFlagCollection $flags
-	 * @param Session               $session
-	 * @param string[]              $args
-	 * @return Generator<CommandFlag>
-	 */
-	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
-	{
-		if (!$flags->hasFlag("relative")) {
-			yield VectorCommandFlag::with($session->asPlayer()->getPosition(), "relative");
-		}
 	}
 }

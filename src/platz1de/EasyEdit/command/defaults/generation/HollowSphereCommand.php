@@ -26,10 +26,6 @@ class HollowSphereCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		if (!$flags->hasFlag("thickness")) {
-			$flags->addFlag(FloatCommandFlag::with(1.0, "thickness"));
-		}
-
 		$session->runTask(new SetTask(Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius")), new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")])));
 	}
 
@@ -42,7 +38,7 @@ class HollowSphereCommand extends SimpleFlagArgumentCommand
 		return [
 			"radius" => new FloatCommandFlag("radius", ["rad"], "r"),
 			"pattern" => new PatternCommandFlag("pattern", [], "p"),
-			"thickness" => new FloatCommandFlag("thickness", ["thick"], "t")
+			"thickness" => FloatCommandFlag::default(1.0, "thickness", ["thick"], "t")
 		];
 	}
 }

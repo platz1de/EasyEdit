@@ -2,9 +2,7 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\pattern\Pattern;
@@ -20,7 +18,6 @@ abstract class AliasedPatternCommand extends SimpleFlagArgumentCommand
 	 */
 	public function __construct(string $name, array $flagOrder = [], array $aliases = [])
 	{
-		$flagOrder["pattern"] = true;
 		parent::__construct($name, $flagOrder, [KnownPermissions::PERMISSION_EDIT], $aliases);
 	}
 
@@ -30,7 +27,7 @@ abstract class AliasedPatternCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern")));
+		$session->runTask(new SetTask($session->getSelection(), $this->parsePattern($session, $flags)));
 	}
 
 	/**
@@ -39,15 +36,4 @@ abstract class AliasedPatternCommand extends SimpleFlagArgumentCommand
 	 * @return Pattern
 	 */
 	abstract public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern;
-
-	/**
-	 * @param Session $session
-	 * @return CommandFlag[]
-	 */
-	public function getKnownFlags(Session $session): array
-	{
-		return [
-			"pattern" => new PatternCommandFlag("pattern", [], "p")
-		];
-	}
 }

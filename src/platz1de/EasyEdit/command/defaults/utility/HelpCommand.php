@@ -8,17 +8,18 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
+use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\lang\Translatable;
 use UnexpectedValueException;
 
-class HelpCommand extends EasyEditCommand
+class HelpCommand extends SimpleFlagArgumentCommand
 {
 	private const COMMANDS_PER_PAGE = 8;
 
 	public function __construct()
 	{
-		parent::__construct("/commands", [], ["/h", "/cmd"]);
+		parent::__construct("/commands", ["page" => false], [], ["/h", "/cmd"]);
 	}
 
 	/**
@@ -52,20 +53,7 @@ class HelpCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"page" => new IntegerCommandFlag("page", [], "p")
+			"page" => IntegerCommandFlag::default(1, "page", [], "p")
 		];
-	}
-
-	/**
-	 * @param CommandFlagCollection $flags
-	 * @param Session               $session
-	 * @param string[]              $args
-	 * @return Generator<CommandFlag>
-	 */
-	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
-	{
-		if (!$flags->hasFlag("page")) {
-			yield IntegerCommandFlag::with((int) ($args[0] ?? 1), "page");
-		}
 	}
 }

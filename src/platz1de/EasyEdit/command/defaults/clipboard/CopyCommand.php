@@ -2,20 +2,19 @@
 
 namespace platz1de\EasyEdit\command\defaults\clipboard;
 
-use Generator;
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
 
-class CopyCommand extends EasyEditCommand
+class CopyCommand extends SimpleFlagArgumentCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/copy", [KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/copy", [], [KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**
@@ -35,19 +34,7 @@ class CopyCommand extends EasyEditCommand
 	{
 		return [
 			"center" => VectorCommandFlag::with($session->getSelection()->getBottomCenter(), "relative", [], "c"),
+			"position" => VectorCommandFlag::default($session->asPlayer()->getPosition(), "relative", [], "p")
 		];
-	}
-
-	/**
-	 * @param CommandFlagCollection $flags
-	 * @param Session               $session
-	 * @param string[]              $args
-	 * @return Generator<CommandFlag>
-	 */
-	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
-	{
-		if (!$flags->hasFlag("relative")) {
-			yield VectorCommandFLag::with($session->asPlayer()->getPosition(), "relative");
-		}
 	}
 }

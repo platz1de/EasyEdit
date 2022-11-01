@@ -2,7 +2,10 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
+use platz1de\EasyEdit\command\flags\BlockCommandFlag;
+use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\logic\NotPattern;
 use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
@@ -24,6 +27,18 @@ class OverlayCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern
 	{
-		return new NotPattern(new BlockPattern(new SolidBlock(), [new AbovePattern(new SolidBlock(), [$flags->getPatternFlag("pattern")])]));
+		return new NotPattern(new BlockPattern(new SolidBlock(), [new AbovePattern($flags->getBlockFlag("block"), [$flags->getPatternFlag("pattern")])]));
+	}
+
+	/**
+	 * @param Session $session
+	 * @return CommandFlag[]
+	 */
+	public function getKnownFlags(Session $session): array
+	{
+		return [
+			"pattern" => new PatternCommandFlag("pattern", [], "p"),
+			"block" => BlockCommandFlag::default(new SolidBlock(), "block", [], "b"),
+		];
 	}
 }

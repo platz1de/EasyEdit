@@ -6,6 +6,7 @@ use Generator;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\ValuedCommandFlag;
 use platz1de\EasyEdit\session\Session;
 
 abstract class SimpleFlagArgumentCommand extends EasyEditCommand
@@ -46,6 +47,11 @@ abstract class SimpleFlagArgumentCommand extends EasyEditCommand
 				}
 			}
 			$i++;
+		}
+		foreach ($this->getKnownFlags($session) as $flag) {
+			if ($flag instanceof ValuedCommandFlag && $flag->hasDefault() && !$flags->hasFlag($flag->getName())) {
+				yield $flag->asDefault();
+			}
 		}
 	}
 }

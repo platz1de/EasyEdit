@@ -2,21 +2,21 @@
 
 namespace platz1de\EasyEdit\command\defaults\clipboard;
 
-use Generator;
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FacingCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredFlipTask;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 
-class FlipCommand extends EasyEditCommand
+class FlipCommand extends SimpleFlagArgumentCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/flip", [KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/flip", ["direction" => false], [KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**
@@ -35,20 +35,7 @@ class FlipCommand extends EasyEditCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"direction" => new FacingCommandFlag("direction", ["dir"], "d")
+			"direction" => FacingCommandFlag::default(VectorUtils::getFacing($session->asPlayer()->getLocation()), "direction", ["dir"], "d")
 		];
-	}
-
-	/**
-	 * @param CommandFlagCollection $flags
-	 * @param Session               $session
-	 * @param string[]              $args
-	 * @return Generator<CommandFlag>
-	 */
-	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
-	{
-		if (!$flags->hasFlag("direction")) {
-			yield $this->getKnownFlags($session)["direction"]->parseArgument($this, $session, $args[0] ?? "");
-		}
 	}
 }

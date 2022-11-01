@@ -27,9 +27,6 @@ class HollowCylinderCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		if (!$flags->hasFlag("thickness")) {
-			$flags->addFlag(FloatCommandFlag::with(1.0, "thickness"));
-		}
 		$session->runTask(new SetTask(Cylinder::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius"), $flags->getIntFlag("height")), new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")])));
 	}
 
@@ -43,7 +40,7 @@ class HollowCylinderCommand extends SimpleFlagArgumentCommand
 			"radius" => new FloatCommandFlag("radius", ["rad"], "r"),
 			"height" => new IntegerCommandFlag("height", [], "h"),
 			"pattern" => new PatternCommandFlag("pattern", [], "p"),
-			"thickness" => new FloatCommandFlag("thickness", ["thick"], "t")
+			"thickness" => FloatCommandFlag::default(1.0, "thickness", ["thick"], "t")
 		];
 	}
 }

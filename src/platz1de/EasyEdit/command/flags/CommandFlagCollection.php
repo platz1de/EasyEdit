@@ -2,6 +2,9 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
+use platz1de\EasyEdit\pattern\block\BlockType;
+use platz1de\EasyEdit\pattern\block\SolidBlock;
+use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\math\Vector3;
@@ -73,6 +76,24 @@ class CommandFlagCollection
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Pattern");
 		}
 		return $flag->getArgument();
+	}
+
+	public function getBlockFlag(string $name): BlockType
+	{
+		$flag = $this->flags[$name];
+		if (!$flag instanceof BlockCommandFlag) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected Block");
+		}
+		return $flag->getArgument();
+	}
+
+	public function getStaticBlockFlag(string $name): StaticBlock
+	{
+		$flag = $this->getBlockFlag($name);
+		if (!$flag instanceof StaticBlock) {
+			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected ordinary Block");
+		}
+		return $flag;
 	}
 
 	public function getSessionFlag(string $name): Session
