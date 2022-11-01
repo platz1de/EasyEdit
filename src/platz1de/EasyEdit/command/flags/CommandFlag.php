@@ -13,14 +13,13 @@ abstract class CommandFlag
 	 */
 	private array $aliases;
 	private string $id;
-	protected bool $hasArgument = false;
 
 	/**
 	 * @param string      $name
 	 * @param string[]    $aliases
 	 * @param string|null $id
 	 */
-	public function __construct(string $name, array $aliases = null, string $id = null)
+	final public function __construct(string $name, array $aliases = null, string $id = null)
 	{
 		$this->name = $name;
 		$this->aliases = $aliases ?? [];
@@ -45,10 +44,7 @@ abstract class CommandFlag
 		return $this->id;
 	}
 
-	public function needsArgument(): bool
-	{
-		return $this->hasArgument;
-	}
+	abstract public function needsArgument(): bool;
 
 	abstract public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self;
 }

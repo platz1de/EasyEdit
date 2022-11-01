@@ -9,46 +9,16 @@ use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
 
-class PatternCommandFlag extends CommandFlag
+/**
+ * @extends ValuedCommandFlag<Pattern>
+ */
+class PatternCommandFlag extends ValuedCommandFlag
 {
-	private Pattern $argument;
-
-	/**
-	 * @param Pattern     $argument
-	 * @param string      $name
-	 * @param string[]    $aliases
-	 * @param string|null $id
-	 * @return PatternCommandFlag
-	 */
-	public static function with(Pattern $argument, string $name, array $aliases = null, string $id = null): self
-	{
-		$flag = new self($name, $aliases, $id);
-		$flag->hasArgument = true;
-		$flag->argument = $argument;
-		return $flag;
-	}
-
-	/**
-	 * @param Pattern $argument
-	 */
-	public function setArgument(Pattern $argument): void
-	{
-		$this->argument = $argument;
-	}
-
-	/**
-	 * @return Pattern
-	 */
-	public function getArgument(): Pattern
-	{
-		return $this->argument;
-	}
-
 	/**
 	 * @param EasyEditCommand $command
 	 * @param Session         $session
 	 * @param string          $argument
-	 * @return CommandFlag
+	 * @return PatternCommandFlag
 	 */
 	public function parseArgument(EasyEditCommand $command, Session $session, string $argument): CommandFlag
 	{
