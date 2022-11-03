@@ -39,7 +39,7 @@ abstract class SelectionEditTask extends EditTask
 		$handler = $this->getChunkHandler();
 		ChunkRequestManager::setHandler($handler);
 		StorageModule::checkFinished();
-		$chunks = $this->orderChunks($this->selection->getNeededChunks());
+		$chunks = $this->sortChunks($this->selection->getNeededChunks());
 		$this->totalPieces = count($chunks);
 		$this->piecesLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
@@ -70,7 +70,7 @@ abstract class SelectionEditTask extends EditTask
 	 * @param int[] $chunks
 	 * @return int[]
 	 */
-	protected function orderChunks(array $chunks): array
+	protected function sortChunks(array $chunks): array
 	{
 		return $chunks;
 	}

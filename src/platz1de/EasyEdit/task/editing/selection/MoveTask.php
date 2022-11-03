@@ -60,7 +60,7 @@ class MoveTask extends SelectionEditTask
 		}, $this->context, Vector3::maxComponents($min, $min->withComponents(null, World::Y_MIN - $direction->getFloorY(), null)), Vector3::minComponents($max, $max->withComponents(null, World::Y_MAX - $direction->getFloorY() - 1, null)));
 	}
 
-	protected function orderChunks(array $chunks): array
+	protected function sortChunks(array $chunks): array
 	{
 		if ($this->direction->getFloorX() === 0 && $this->direction->getFloorZ() !== 0) {
 			$z = array_map(static function (int $c): int {

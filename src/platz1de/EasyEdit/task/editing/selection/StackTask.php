@@ -86,7 +86,7 @@ class StackTask extends SelectionEditTask
 		}
 	}
 
-	protected function orderChunks(array $chunks): array
+	protected function sortChunks(array $chunks): array
 	{
 		if ($this->direction->getFloorX() !== 0) {
 			usort($chunks, static function (int $a, int $b): int {
