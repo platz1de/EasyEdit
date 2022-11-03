@@ -57,7 +57,7 @@ class CommandFlagParser
 						if (!isset($ids[$f])) {
 							throw new UnknownFlagException(substr($arg, 2), $command);
 						}
-						$flag = $ids[$arg];
+						$flag = $ids[$f];
 						if (self::checkFlagArgument($flag, $args, $i, $command)) {
 							if ($key !== array_key_last($list)) {
 								throw new InvalidUsageException($command);
