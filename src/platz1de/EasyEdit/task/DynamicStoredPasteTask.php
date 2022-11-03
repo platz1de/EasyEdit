@@ -15,22 +15,22 @@ class DynamicStoredPasteTask extends ExecutableTask
 	private string $world;
 	private Vector3 $position;
 	private bool $keep;
-	private bool $insert;
+	private int $mode;
 	private DynamicPasteTask $executor;
 
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param Position                  $position
 	 * @param bool                      $keep
-	 * @param bool                      $insert
+	 * @param int                       $mode
 	 */
-	public function __construct(StoredSelectionIdentifier $saveId, Position $position, bool $keep, bool $insert = false)
+	public function __construct(StoredSelectionIdentifier $saveId, Position $position, bool $keep, int $mode = DynamicPasteTask::MODE_REPLACE_ALL)
 	{
 		$this->saveId = $saveId;
 		$this->world = $position->getWorld()->getFolderName();
 		$this->position = $position->asVector3();
 		$this->keep = $keep;
-		$this->insert = $insert;
+		$this->mode = $mode;
 		parent::__construct();
 	}
 
@@ -48,7 +48,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
-		$this->executor = new DynamicPasteTask($this->world, $selection, $this->position, $this->insert);
+		$this->executor = new DynamicPasteTask($this->world, $selection, $this->position, $this->mode);
 		$this->executor->executeAssociated($this);
 	}
 
@@ -63,7 +63,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 		$stream->putString($this->world);
 		$stream->putVector($this->position);
 		$stream->putBool($this->keep);
-		$stream->putBool($this->insert);
+		$stream->putInt($this->mode);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -72,6 +72,6 @@ class DynamicStoredPasteTask extends ExecutableTask
 		$this->world = $stream->getString();
 		$this->position = $stream->getVector();
 		$this->keep = $stream->getBool();
-		$this->insert = $stream->getBool();
+		$this->mode = $stream->getInt();
 	}
 }
