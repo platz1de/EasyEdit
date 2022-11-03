@@ -50,7 +50,7 @@ class StackTask extends SelectionEditTask
 		return "stack";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		//TODO: chunkloading
 		return;
@@ -63,7 +63,7 @@ class StackTask extends SelectionEditTask
 		$startY = $start->getFloorY();
 		$startZ = $start->getFloorZ();
 		$dMin = Vector3::maxComponents($min, $this->selection->getPos1())->subtractVector($start);
-		$dMax = Vector3::minComponents($max, $this->selection->getPos2())->subtractVector($start);
+		$dMax = Vector3::minComponents($chunk, $this->selection->getPos2())->subtractVector($start);
 		$chunks = [];
 		for ($x = $startX + ($dMin->getX() % $sizeX + $sizeX) % $sizeX >> 4; $x <= $startX + ($dMax->getX() % $sizeX + $sizeX) % $sizeX >> 4; $x++) {
 			for ($z = $startZ + ($dMin->getZ() % $sizeZ + $sizeZ) % $sizeZ >> 4; $z <= $startZ + ($dMax->getZ() % $sizeZ + $sizeZ) % $sizeZ >> 4; $z++) {
@@ -78,11 +78,11 @@ class StackTask extends SelectionEditTask
 				if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, $this->context, $min, $max);
+			}, $this->context, $chunk);
 		} else {
 			$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
 				$handler->copyBlock($x, $y, $z, $startX + (($x - $startX) % $sizeX + $sizeX) % $sizeX, $startY + (($y - $startY) % $sizeY + $sizeY) % $sizeY, $startZ + (($z - $startZ) % $sizeZ + $sizeZ) % $sizeZ);
-			}, $this->context, $min, $max);
+			}, $this->context, $chunk);
 		}
 	}
 

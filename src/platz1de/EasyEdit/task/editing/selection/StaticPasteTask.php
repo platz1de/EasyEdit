@@ -7,7 +7,9 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class StaticPasteTask extends SelectionEditTask
 {
@@ -35,7 +37,7 @@ class StaticPasteTask extends SelectionEditTask
 		return "static_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$selection = $this->selection;
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $selection): void {
@@ -43,8 +45,10 @@ class StaticPasteTask extends SelectionEditTask
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
-		}, $this->context, $min, $max);
+		}, $this->context, $chunk);
 
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
 		foreach ($selection->getTiles($min, $max) as $tile) {
 			$handler->addTile($tile);
 		}

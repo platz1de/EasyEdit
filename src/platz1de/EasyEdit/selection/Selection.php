@@ -89,10 +89,9 @@ abstract class Selection
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Vector3          $min
-	 * @param Vector3          $max
+	 * @param int              $chunk
 	 */
-	abstract public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void;
+	abstract public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void;
 
 	/**
 	 * @return bool

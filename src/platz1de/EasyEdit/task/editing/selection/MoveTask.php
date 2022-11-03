@@ -35,14 +35,14 @@ class MoveTask extends SelectionEditTask
 		return "move";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		//TODO: chunkloading
 		return;
 		$selection = $this->selection;
 		$direction = $this->direction;
 		$dMin = $min->addVector($direction);
-		$dMax = $max->addVector($direction);
+		$dMax = $chunk->addVector($direction);
 		$chunks = [];
 		for ($x = $dMin->getX() >> 4; $x <= $dMax->getX() >> 4; $x++) {
 			for ($z = $dMin->getZ() >> 4; $z <= $dMax->getZ() >> 4; $z++) {
@@ -54,10 +54,10 @@ class MoveTask extends SelectionEditTask
 		//TODO: change order of iteration to optimize performance
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, 0); //Make sure we don't overwrite anything
-		}, $this->context, $min, $max);
+		}, $this->context, $chunk);
 		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
-		}, $this->context, Vector3::maxComponents($min, $min->withComponents(null, World::Y_MIN - $direction->getFloorY(), null)), Vector3::minComponents($max, $max->withComponents(null, World::Y_MAX - $direction->getFloorY() - 1, null)));
+		}, $this->context, Vector3::minComponents($chunk, $chunk->withComponents(null, World::Y_MAX - $direction->getFloorY() - 1, null)));
 	}
 
 	protected function sortChunks(array $chunks): array

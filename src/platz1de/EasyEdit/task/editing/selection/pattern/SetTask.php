@@ -24,10 +24,9 @@ class SetTask extends PatternedEditTask
 
 	/**
 	 * @param EditTaskHandler $handler
-	 * @param Vector3         $min
-	 * @param Vector3         $max
+	 * @param int             $chunk
 	 */
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$selection = $this->selection;
 		$pattern = $this->getPattern();
@@ -44,7 +43,7 @@ class SetTask extends PatternedEditTask
 				$minY = min($minY, $y);
 				$maxY = max($maxY, $y);
 			}
-		}, $this->context, $min, $max);
+		}, $this->context, $chunk);
 		$undo = $handler->getChanges();
 		$undo->setPos1($undo->getPos1()->withComponents(null, $minY, null));
 		$undo->setPos2($undo->getPos2()->withComponents(null, $maxY, null));

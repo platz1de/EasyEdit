@@ -6,6 +6,7 @@ use Closure;
 use Generator;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
@@ -72,21 +73,23 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Vector3          $min
-	 * @param Vector3          $max
+	 * @param int              $chunk
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
 	{
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
 		CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1()->addVector($this->getPoint()), $min), Vector3::minComponents($this->getPos2()->addVector($this->getPoint()), $max), $closure);
 	}
 
 	/**
-	 * @param Vector3 $min
-	 * @param Vector3 $max
+	 * @param int $chunk
 	 * @return Generator<CompoundTag>
 	 */
-	public function getOffsetTiles(Vector3 $min, Vector3 $max): Generator
+	public function getOffsetTiles(int $chunk): Generator
 	{
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
 		return $this->getTiles(Vector3::maxComponents($this->getPos1(), $min->subtractVector($this->getPoint())), Vector3::minComponents($this->getPos2(), $max->subtractVector($this->getPoint())));
 	}
 

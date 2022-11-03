@@ -81,7 +81,7 @@ class CutTask extends SelectionEditTask
 	}
 
 	//TODO: execute task with custom splitting (chunk-by-chunk instead of copying all and then deleting)
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		throw new BadMethodCallException("Not implemented");
 	}

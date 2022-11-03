@@ -49,7 +49,7 @@ class Noise3DTask extends SelectionEditTask
 		return "noise_3d";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		if (!isset($this->noise)) {
 			$this->noise = new Simplex(new Random(time()), $this->octaves, $this->persistence, $this->expansion);
@@ -63,7 +63,7 @@ class Noise3DTask extends SelectionEditTask
 			} else {
 				$handler->changeBlock($x, $y, $z, 0);
 			}
-		}, $this->context, $min, $max);
+		}, $this->context, $chunk);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

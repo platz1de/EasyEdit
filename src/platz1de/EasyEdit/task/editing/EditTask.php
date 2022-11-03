@@ -14,7 +14,6 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
-use pocketmine\math\Vector3;
 
 abstract class EditTask extends ExecutableTask
 {
@@ -30,7 +29,7 @@ abstract class EditTask extends ExecutableTask
 		$this->world = $world;
 	}
 
-	public function run(bool $fastSet, Vector3 $max, Vector3 $min, int $chunk, ChunkInformation $chunkInformation): void
+	public function run(bool $fastSet, int $chunk, ChunkInformation $chunkInformation): void
 	{
 		$start = microtime(true);
 
@@ -46,7 +45,7 @@ abstract class EditTask extends ExecutableTask
 
 		HeightMapCache::prepare();
 
-		$this->executeEdit($handler, $max, $min);
+		$this->executeEdit($handler, $chunk);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
 
 		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
@@ -67,10 +66,9 @@ abstract class EditTask extends ExecutableTask
 
 	/**
 	 * @param EditTaskHandler $handler
-	 * @param Vector3         $min
-	 * @param Vector3         $max
+	 * @param int             $chunk
 	 */
-	abstract public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void;
+	abstract public function executeEdit(EditTaskHandler $handler, int $chunk): void;
 
 	/**
 	 * @param string $time

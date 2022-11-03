@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class StackingHelper extends Selection
 {
@@ -62,8 +63,10 @@ class StackingHelper extends Selection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
 	{
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
 		$size = (int) VectorUtils::getVectorAxis($this->parent->getSize(), $this->axis);
 		$source = (int) VectorUtils::getVectorAxis($this->parent->getPos1(), $this->axis);
 		$offsetMin = (int) floor((VectorUtils::getVectorAxis($min, $this->axis) - $source) / $size);
@@ -74,7 +77,7 @@ class StackingHelper extends Selection
 		$offsetMin = max($offsetMin, 1);
 		$offsetMax = min($offsetMax, abs($this->amount));
 		for ($i = $offsetMin; $i <= $offsetMax; $i++) {
-			$this->parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->useOnBlocks($closure, $context, $min, $max);
+			$this->parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->useOnBlocks($closure, $context, $chunk);
 		}
 	}
 

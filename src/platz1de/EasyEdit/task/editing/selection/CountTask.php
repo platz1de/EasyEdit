@@ -48,7 +48,7 @@ class CountTask extends SelectionEditTask
 		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted), "{blocks}" => implode("\n", $blocks)]));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
@@ -57,6 +57,6 @@ class CountTask extends SelectionEditTask
 			} else {
 				$this->counted[$id] = 1;
 			}
-		}, $this->context, $min, $max);
+		}, $this->context, $chunk);
 	}
 }

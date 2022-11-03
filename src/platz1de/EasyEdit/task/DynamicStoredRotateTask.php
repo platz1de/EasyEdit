@@ -49,7 +49,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
 			Selection::processBlock($block);
 			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockRotationManipulator::rotate($block));
-		}, SelectionContext::full(), Vector3::zero(), $selection->getPos2());
+		}, SelectionContext::full(), $selection->getPos2());
 		foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));
 		}

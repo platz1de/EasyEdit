@@ -54,7 +54,7 @@ class DynamicPasteTask extends SelectionEditTask
 		return "dynamic_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, Vector3 $min, Vector3 $max): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$selection = $this->selection;
 		$place = $selection->getPoint();
@@ -68,7 +68,7 @@ class DynamicPasteTask extends SelectionEditTask
 					if (Selection::processBlock($block)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context, $min, $max);
+				}, $this->context, $chunk);
 				break;
 			case self::MODE_REPLACE_AIR:
 				$ignore = HeightMapCache::getIgnore();
@@ -77,7 +77,7 @@ class DynamicPasteTask extends SelectionEditTask
 					if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context, $min, $max);
+				}, $this->context, $chunk);
 				break;
 			case self::MODE_ONLY_SOLID:
 				$ignore = HeightMapCache::getIgnore();
@@ -86,7 +86,7 @@ class DynamicPasteTask extends SelectionEditTask
 					if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context, $min, $max);
+				}, $this->context, $chunk);
 				break;
 			case self::MODE_REPLACE_SOLID:
 				$ignore = HeightMapCache::getIgnore();
@@ -95,10 +95,10 @@ class DynamicPasteTask extends SelectionEditTask
 					if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true) && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context, $min, $max);
+				}, $this->context, $chunk);
 		}
 
-		foreach ($selection->getOffsetTiles($min, $max) as $tile) {
+		foreach ($selection->getOffsetTiles($chunk) as $tile) {
 			$handler->addTile(TileUtils::offsetCompound($tile, $place->getFloorX(), $place->getFloorY(), $place->getFloorZ()));
 		}
 	}

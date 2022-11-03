@@ -20,8 +20,8 @@ abstract class SelectionEditTask extends EditTask
 {
 	protected Selection $selection;
 	protected SelectionContext $context;
-	private int $totalPieces;
-	private int $piecesLeft;
+	private int $totalChunks;
+	private int $chunksLeft;
 
 	/**
 	 * @param Selection             $selection
@@ -40,21 +40,18 @@ abstract class SelectionEditTask extends EditTask
 		ChunkRequestManager::setHandler($handler);
 		StorageModule::checkFinished();
 		$chunks = $this->sortChunks($this->selection->getNeededChunks());
-		$this->totalPieces = count($chunks);
-		$this->piecesLeft = count($chunks);
+		$this->totalChunks = count($chunks);
+		$this->chunksLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
 		foreach ($chunks as $chunk) {
 			$handler->request($chunk);
 		}
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			if (($key = $handler->getKey()) !== null) {
-				World::getXZ($key, $x, $z);
-				$min = new Vector3($x << 4, World::Y_MIN, $z << 4);
-				$max = new Vector3(($x << 4) + 15, World::Y_MAX, ($z << 4) + 15);
-				$this->piecesLeft--;
-				$this->run($fastSet, $min, $max, $key, $handler->getNext());
+				$this->chunksLeft--;
+				$this->run($fastSet, $key, $handler->getNext());
 			}
-			if ($this->piecesLeft <= 0) {
+			if ($this->chunksLeft <= 0) {
 				break;
 			}
 			if ($handler->getKey() === null) {
@@ -108,21 +105,21 @@ abstract class SelectionEditTask extends EditTask
 	/**
 	 * @return int
 	 */
-	public function getTotalPieces(): int
+	public function getTotalChunks(): int
 	{
-		return $this->totalPieces;
+		return $this->totalChunks;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPiecesLeft(): int
+	public function getChunksLeft(): int
 	{
-		return $this->piecesLeft;
+		return $this->chunksLeft;
 	}
 
 	public function getProgress(): float
 	{
-		return ($this->totalPieces - $this->piecesLeft) / $this->totalPieces;
+		return ($this->totalChunks - $this->chunksLeft) / $this->totalChunks;
 	}
 }

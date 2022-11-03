@@ -110,4 +110,14 @@ class VectorUtils
 			default => throw new InvalidArgumentException("Invalid axis $axis"),
 		};
 	}
+
+	/**
+	 * @param int $chunk
+	 * @return Vector3
+	 */
+	public static function getChunkPosition(int $chunk): Vector3
+	{
+		World::getXZ($chunk, $x, $z);
+		return new Vector3($x << 4, World::Y_MIN, $z << 4);
+	}
 }

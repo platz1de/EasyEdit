@@ -60,15 +60,25 @@ class BinaryBlockListStream extends BlockListSelection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
+	/**
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
+	 * @param int              $chunk
+	 */
+	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
 	{
 		$this->blocks->rewind();
+		World::getXZ($chunk, $x, $z);
+		$minX = $x << 4;
+		$minZ = $z << 4;
+		$maxX = $minX + 15;
+		$maxZ = $minZ + 15;
 		while (!$this->blocks->feof()) {
 			$o = $this->blocks->getOffset();
 			$x = $this->blocks->getInt();
 			$y = $this->blocks->getInt();
 			$z = $this->blocks->getInt();
-			if ($x < $min->getX() || $x > $max->getX() || $z < $min->getZ() || $z > $max->getZ()) {
+			if ($x < $minX || $x > $maxX || $z < $minZ || $z > $maxZ) {
 				$this->blocks->setOffset($o);
 				$this->setData($this->blocks->getRemaining());
 				break;

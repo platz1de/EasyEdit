@@ -8,7 +8,9 @@ use platz1de\EasyEdit\selection\constructor\CylindricalConstructor;
 use platz1de\EasyEdit\selection\constructor\SphericalConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 
 class Sphere extends Selection implements Patterned
 {
@@ -34,14 +36,16 @@ class Sphere extends Selection implements Patterned
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param Vector3          $min
-	 * @param Vector3          $max
+	 * @param int              $chunk
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, Vector3 $min, Vector3 $max): void
+	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
 	{
 		if ($context->isEmpty()) {
 			return;
 		}
+
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
 
 		if ($context->isFull()) {
 			SphericalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
