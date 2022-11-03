@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2022-10-29
+#Last updated at: 2022-11-03
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -146,6 +146,10 @@ command-paste-description: "Paste the clipboard"
 command-paste-usage: "//paste"
 command-insert-description: "Insert the clipboard"
 command-insert-usage: "//insert"
+command-merge-description: "Merge current terrain with the clipboard"
+command-merge-usage: "//merge"
+command-rpaste-description: "Replace current terrain with the clipboard"
+command-rpaste-usage: "//rpaste"
 command-rotate-description: "Rotate the clipboard"
 command-rotate-usage: "//rotate"
 command-flip-description: "Flip the clipboard, mirroring at copied position"

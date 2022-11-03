@@ -67,6 +67,8 @@ Clipboard:
 | //cut [--center]                 | Cut the selected area and copy it to your clipboard | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
 | //paste                          | Paste the clipboard                                 | easyedit.clipboard easyedit.edit      |                                                                   |
 | //insert                         | Insert the clipboard                                | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
+| //merge                          | Merge current terrain with the clipboard            | easyedit.clipboard easyedit.edit      | Paste only non-air blocks                                         |
+| //rpaste                         | Replace current terrain with the clipboard          | easyedit.clipboard easyedit.edit      | Replace non-air blocks with non-air blocks from the selection     |
 | //rotate                         | Rotate the clipboard                                | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
 | //flip [direction]               | Flip the clipboard, mirroring at copied position    | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
 | //loadschematic \<schematicName> | Load a saved schematic from disk                    | easyedit.readdisk easyedit.clipboard  | //load                                                            |

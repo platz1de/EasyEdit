@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2022-10-29
+#Last updated at: 2022-11-03
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -145,6 +145,10 @@ command-paste-description: "Füge die Zwischenablage ein"
 command-paste-usage: "//paste"
 command-insert-description: "Füge die Zwischenablage ein und beachte existierende Blöcke"
 command-insert-usage: "//insert"
+command-merge-description: "Kombiniere die Zwischenablage mit den existierenden Blöcken"
+command-merge-usage: "//merge"
+command-rpaste-description: "Ersetze existierende Blöcke mit der Zwischenablage"
+command-rpaste-usage: "//rpaste"
 command-rotate-description: "Drehe die Zwischenablage"
 command-rotate-usage: "//rotate"
 command-flip-description: "Spiegle die Zwischenablage an der kopierten Position"

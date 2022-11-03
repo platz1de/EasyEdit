@@ -47,9 +47,11 @@ use platz1de\EasyEdit\command\defaults\utility\PasteStatesCommand;
 use platz1de\EasyEdit\command\defaults\utility\StatusCommand;
 use platz1de\EasyEdit\command\defaults\utility\WandCommand;
 use platz1de\EasyEdit\command\FlagRemapAlias;
+use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\CompoundTile;
@@ -108,7 +110,9 @@ class EasyEdit extends PluginBase
 			$copy = new CopyCommand(),
 			new FlagRemapAlias($copy, new SingularCommandFlag("remove"), "/cut"),
 			$paste = new PasteCommand(),
-			new FlagRemapAlias($paste, new SingularCommandFlag("mode"), "/insert"),
+			new FlagRemapAlias($paste, IntegerCommandFlag::with(DynamicPasteTask::MODE_REPLACE_AIR, "mode"), "/insert"),
+			new FlagRemapAlias($paste, IntegerCommandFlag::with(DynamicPasteTask::MODE_ONLY_SOLID, "mode"), "/merge"),
+			new FlagRemapAlias($paste, IntegerCommandFlag::with(DynamicPasteTask::MODE_REPLACE_SOLID, "mode"), "/rpaste"),
 			new RotateCommand(),
 			new FlipCommand(),
 			new LoadSchematicCommand(),
