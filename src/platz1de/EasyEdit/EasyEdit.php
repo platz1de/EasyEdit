@@ -16,6 +16,7 @@ use platz1de\EasyEdit\command\defaults\generation\HollowCylinderCommand;
 use platz1de\EasyEdit\command\defaults\generation\HollowSphereCommand;
 use platz1de\EasyEdit\command\defaults\generation\NoiseCommand;
 use platz1de\EasyEdit\command\defaults\generation\SphereCommand;
+use platz1de\EasyEdit\command\defaults\history\HistoryAccessCommand;
 use platz1de\EasyEdit\command\defaults\history\RedoCommand;
 use platz1de\EasyEdit\command\defaults\history\UndoCommand;
 use platz1de\EasyEdit\command\defaults\selection\AliasedContextCommand;
@@ -100,24 +101,24 @@ class EasyEdit extends PluginBase
 			new ViewCommand(),
 
 			//History
-			new UndoCommand(),
-			new RedoCommand(),
+			new HistoryAccessCommand(true), //undo
+			new HistoryAccessCommand(false), //redo
 
 			//Clipboard
-			new CopyCommand(),
-			new CutCommand(),
-			new PasteCommand(),
-			new InsertCommand(),
+			$copy = new CopyCommand(),
+			new FlagRemapAlias($copy, new SingularCommandFlag("remove"), "/cut"),
+			$paste = new PasteCommand(),
+			new FlagRemapAlias($paste, new SingularCommandFlag("mode"), "/insert"),
 			new RotateCommand(),
 			new FlipCommand(),
 			new LoadSchematicCommand(),
 			new SaveSchematicCommand(),
 
 			//Generation
-			new SphereCommand(),
-			new HollowSphereCommand(),
-			new CylinderCommand(),
-			new HollowCylinderCommand(),
+			$sphere = new SphereCommand(),
+			new FlagRemapAlias($sphere, new SingularCommandFlag("hollow"), "/hsphere", ["/hsph", "/hollowsphere"]),
+			$cylinder = new CylinderCommand(),
+			new FlagRemapAlias($cylinder, new SingularCommandFlag("hollow"), "/hcylinder", ["/hcy", "/hcyl", "/hollowcylinder"]),
 			new NoiseCommand(),
 
 			//Utility

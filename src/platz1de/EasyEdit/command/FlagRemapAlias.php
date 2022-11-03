@@ -21,6 +21,9 @@ class FlagRemapAlias extends EasyEditCommand
 
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
+		if ($flags->hasFlag($this->flag->getName())) {
+			$flags->removeFlag($this->flag->getName());
+		}
 		$flags->addFlag($this->flag);
 		$this->parent->process($session, $flags);
 	}

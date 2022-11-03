@@ -4,11 +4,13 @@ namespace platz1de\EasyEdit\command\defaults\clipboard;
 
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
+use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
+use platz1de\EasyEdit\task\editing\selection\CutTask;
 
 class CopyCommand extends SimpleFlagArgumentCommand
 {
@@ -23,7 +25,14 @@ class CopyCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new CopyTask($session->getSelection(), $flags->getVectorFlag("relative")));
+		if ($flags->hasFlag("remove")) {
+			if (!$this->testPermission($session->asPlayer(), KnownPermissions::PERMISSION_EDIT)) {
+				return;
+			}
+			$session->runTask(new CutTask($session->getSelection(), $flags->getVectorFlag("relative")));
+		} else {
+			$session->runTask(new CopyTask($session->getSelection(), $flags->getVectorFlag("relative")));
+		}
 	}
 
 	/**
@@ -34,7 +43,8 @@ class CopyCommand extends SimpleFlagArgumentCommand
 	{
 		return [
 			"center" => VectorCommandFlag::with($session->getSelection()->getBottomCenter(), "relative", [], "c"),
-			"position" => VectorCommandFlag::default($session->asPlayer()->getPosition(), "relative", [], "p")
+			"position" => VectorCommandFlag::default($session->asPlayer()->getPosition(), "relative", [], "p"),
+			"remove" => new SingularCommandFlag("remove", [], "r")
 		];
 	}
 }

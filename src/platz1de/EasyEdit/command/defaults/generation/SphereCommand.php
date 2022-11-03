@@ -6,8 +6,10 @@ use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FloatCommandFlag;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
+use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -25,7 +27,8 @@ class SphereCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new SetTask(Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius")), $flags->getPatternFlag("pattern")));
+		$pattern = $flags->hasFlag("hollow") ? new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")]) : $flags->getPatternFlag("pattern");
+		$session->runTask(new SetTask(Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius")), $pattern));
 	}
 
 	/**
@@ -36,7 +39,9 @@ class SphereCommand extends SimpleFlagArgumentCommand
 	{
 		return [
 			"radius" => new FloatCommandFlag("radius", ["rad"], "r"),
-			"pattern" => new PatternCommandFlag("pattern", [], "p")
+			"pattern" => new PatternCommandFlag("pattern", [], "p"),
+			"hollow" => new SingularCommandFlag("hollow", [], "h"),
+			"thickness" => FloatCommandFlag::default(1.0, "thickness", ["thick"], "t")
 		];
 	}
 }

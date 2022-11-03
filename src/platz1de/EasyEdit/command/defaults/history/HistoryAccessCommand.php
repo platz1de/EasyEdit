@@ -12,11 +12,14 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ConfigManager;
 
-abstract class HistoryAccessCommand extends EasyEditCommand
+class HistoryAccessCommand extends EasyEditCommand
 {
-	public function __construct(string $name)
+	private bool $type;
+
+	public function __construct(bool $type)
 	{
-		parent::__construct($name, [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT]);
+		$this->type = $type;
+		parent::__construct($type ? "/undo" : "/redo", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**
@@ -54,6 +57,20 @@ abstract class HistoryAccessCommand extends EasyEditCommand
 		}
 		if (!$flags->hasFlag("count")) {
 			yield $this->getKnownFlags($session)["count"]->parseArgument($this, $session, $args[0] ?? "1");
+		}
+	}
+
+	public function process(Session $session, CommandFlagCollection $flags): void
+	{
+		$target = $flags->getSessionFlag("target");
+		if ($this->type ? !$target->canUndo() : !$target->canRedo()) {
+			$session->sendMessage($this->type ? "no-history" : "no-future");
+		}
+
+		$count = min(100, $flags->getIntFlag("count"));
+
+		for ($i = 0; $i < $count; $i++) {
+			$this->type ? $target->undoStep($session) : $target->redoStep($session);
 		}
 	}
 }
