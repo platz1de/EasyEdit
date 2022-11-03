@@ -172,6 +172,10 @@ command-hcylinder-description: "中空の円柱を生成します"
 command-hcylinder-usage: "//hcylinder <半径> <高さ> <パターン> <厚さ>"
 command-noise-description: "シンプルノイズを生成します"
 command-noise-usage: "//noise"
+command-cube-description: "Generate a cube"
+command-cube-usage: "//cube <size> <pattern>"
+command-hcube-description: "Generate a hollow cube"
+command-hcube-usage: "//hcube <size> <pattern> [thickness]"
 
 
 command-commands-description: "全てのEasyEditのコマンド"

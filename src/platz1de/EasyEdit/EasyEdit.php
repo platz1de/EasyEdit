@@ -11,6 +11,7 @@ use platz1de\EasyEdit\command\defaults\clipboard\LoadSchematicCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\PasteCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\RotateCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\SaveSchematicCommand;
+use platz1de\EasyEdit\command\defaults\generation\CubeCommand;
 use platz1de\EasyEdit\command\defaults\generation\CylinderCommand;
 use platz1de\EasyEdit\command\defaults\generation\HollowCylinderCommand;
 use platz1de\EasyEdit\command\defaults\generation\HollowSphereCommand;
@@ -94,7 +95,7 @@ class EasyEdit extends PluginBase
 			new SmoothCommand(),
 			new AliasedContextCommand(SelectionContext::center(), "/center", ["/middle"]),
 			new AliasedContextCommand(SelectionContext::walls(), "/walls", ["/wall"]),
-			new AliasedContextCommand(SelectionContext::hollow(), "/sides", ["/side"]),
+			new AliasedContextCommand(SelectionContext::hollow(), "/sides", ["/side", "/hset", "/hollow"]),
 			new MoveCommand(),
 			$stack = new StackCommand(),
 			new FlagRemapAlias($stack, new SingularCommandFlag("insert"), "/istack"),
@@ -124,6 +125,8 @@ class EasyEdit extends PluginBase
 			$cylinder = new CylinderCommand(),
 			new FlagRemapAlias($cylinder, new SingularCommandFlag("hollow"), "/hcylinder", ["/hcy", "/hcyl", "/hollowcylinder"]),
 			new NoiseCommand(),
+			$cube = new CubeCommand(),
+			new FlagRemapAlias($cube, new SingularCommandFlag("hollow"), "/hcube", ["/hollowcube", "/hcb"]),
 
 			//Utility
 			new HelpCommand(),

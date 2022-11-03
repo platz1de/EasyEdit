@@ -171,6 +171,10 @@ command-hcylinder-description: "Erzeuge einen hohlen Zylinder"
 command-hcylinder-usage: "//hcylinder <radius> <höhe> <muster> [dicke]"
 command-noise-description: "Erzeuge mit einer simplen Rauschfunktion"
 command-noise-usage: "//noise"
+command-cube-description: "Erzeuge einen Würfel"
+command-cube-usage: "//cube <größe> <muster>"
+command-hcube-description: "Erzeuge einen hohlen Würfel"
+command-hcube-usage: "//hcube <größe> <muster> [dicke]"
 
 
 command-commands-description: "Liste alle EasyEdit Befehle auf"

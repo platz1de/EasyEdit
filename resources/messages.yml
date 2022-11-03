@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.1.4" #Please don't change this manually
+message-version: "2.1.5" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -173,6 +173,10 @@ command-hcylinder-description: "Generate a hollow cylinder"
 command-hcylinder-usage: "//hcylinder <radius> <height> <pattern> [thickness]"
 command-noise-description: "Generate using a simple noise function"
 command-noise-usage: "//noise"
+command-cube-description: "Generate a cube"
+command-cube-usage: "//cube <size> <pattern>"
+command-hcube-description: "Generate a hollow cube"
+command-hcube-usage: "//hcube <size> <pattern> [thickness]"
 
 
 command-commands-description: "List all EasyEdit commands"

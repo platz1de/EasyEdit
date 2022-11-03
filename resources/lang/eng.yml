@@ -172,6 +172,10 @@ command-hcylinder-description: "Generate a hollow cylinder"
 command-hcylinder-usage: "//hcylinder <radius> <height> <pattern> [thickness]"
 command-noise-description: "Generate using a simple noise function"
 command-noise-usage: "//noise"
+command-cube-description: "Generate a cube"
+command-cube-usage: "//cube <size> <pattern>"
+command-hcube-description: "Generate a hollow cube"
+command-hcube-usage: "//hcube <size> <pattern> [thickness]"
 
 
 command-commands-description: "List all EasyEdit commands"

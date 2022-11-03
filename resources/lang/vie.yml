@@ -172,6 +172,10 @@ command-hcylinder-description: "Tạo một hình trụ rỗng"
 command-hcylinder-usage: "//hcylinder <bán kính> <chiều cao> <mẫu> [độ dày]"
 command-noise-description: "Tạo ra bằng cách sử dụng một hàm nhiễu đơn giản"
 command-noise-usage: "//noise"
+command-cube-description: "Generate a cube"
+command-cube-usage: "//cube <size> <pattern>"
+command-hcube-description: "Generate a hollow cube"
+command-hcube-usage: "//hcube <size> <pattern> [thickness]"
 
 
 command-commands-description: "Liệt kê tất cả các lệnh của EasyEdit"
