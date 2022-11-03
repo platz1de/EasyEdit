@@ -52,12 +52,12 @@ class MoveTask extends SelectionEditTask
 		$this->requestRuntimeChunks($handler, $chunks);
 		$handler->getChanges()->checkCachedData();
 		//TODO: change order of iteration to optimize performance
-		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
+		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, 0); //Make sure we don't overwrite anything
-		}, $this->context, $chunk);
-		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $direction): void {
+		}, $this->context);
+		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $direction): void {
 			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
-		}, $this->context, Vector3::minComponents($chunk, $chunk->withComponents(null, World::Y_MAX - $direction->getFloorY() - 1, null)));
+		}, $this->context);
 	}
 
 	protected function sortChunks(array $chunks): array

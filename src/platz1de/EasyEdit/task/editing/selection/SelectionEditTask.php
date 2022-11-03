@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTask;
@@ -13,8 +15,6 @@ use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 abstract class SelectionEditTask extends EditTask
 {
@@ -62,6 +62,11 @@ abstract class SelectionEditTask extends EditTask
 		}
 		$this->finalize();
 	}
+
+	/**
+	 * @return Generator<ShapeConstructor>
+	 */
+	abstract public function prepareConstructors(): Generator;
 
 	/**
 	 * @param int[] $chunks

@@ -57,13 +57,13 @@ class Noise3DTask extends SelectionEditTask
 		$selection = $this->selection;
 		$size = $selection->getSize()->subtract(1, 1, 1);
 		$noise = $this->noise->getFastNoise3D($size->getFloorX(), $size->getFloorY(), $size->getFloorZ(), 1, 1, 1, $selection->getPos1()->getFloorX(), $selection->getPos1()->getFloorY(), $selection->getPos1()->getFloorZ());
-		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
+		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->getFloorX()][$z - $selection->getPos1()->getFloorZ()][$y - $selection->getPos1()->getFloorY()] > $this->threshold) {
 				$handler->changeBlock($x, $y, $z, BlockLegacyIds::STONE << Block::INTERNAL_METADATA_BITS);
 			} else {
 				$handler->changeBlock($x, $y, $z, 0);
 			}
-		}, $this->context, $chunk);
+		}, $this->context);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

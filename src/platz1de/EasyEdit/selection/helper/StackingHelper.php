@@ -4,6 +4,9 @@ namespace platz1de\EasyEdit\selection\helper;
 
 use BadMethodCallException;
 use Closure;
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\constructor\StackedConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\VectorUtils;
@@ -45,17 +48,18 @@ class StackingHelper extends Selection
 
 	public function getNeededChunks(): array
 	{
-		if ($this->axis === Axis::Y) {
-			return $this->parent->getNeededChunks();
-		}
-		$chunks = [];
-		$size = (int) VectorUtils::getVectorAxis($this->parent->getSize(), $this->axis);
-		for ($i = 0; $i < abs($this->amount); $i++) {
-			foreach ($this->parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->getNeededChunks() as $chunk) {
-				$chunks[$chunk] = $chunk;
-			}
-		}
-		return array_values($chunks);
+		return []; //TODO
+		//if ($this->axis === Axis::Y) {
+		//	return $this->parent->getNeededChunks();
+		//}
+		//$chunks = [];
+		//$size = (int) VectorUtils::getVectorAxis($this->parent->getSize(), $this->axis);
+		//for ($i = 0; $i < abs($this->amount); $i++) {
+		//	foreach ($this->parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->getNeededChunks() as $chunk) {
+		//		$chunks[$chunk] = $chunk;
+		//	}
+		//}
+		//return array_values($chunks);
 	}
 
 	public function shouldBeCached(int $x, int $z): bool
@@ -63,30 +67,13 @@ class StackingHelper extends Selection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
-	{
-		$min = VectorUtils::getChunkPosition($chunk);
-		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		$size = (int) VectorUtils::getVectorAxis($this->parent->getSize(), $this->axis);
-		$source = (int) VectorUtils::getVectorAxis($this->parent->getPos1(), $this->axis);
-		$offsetMin = (int) floor((VectorUtils::getVectorAxis($min, $this->axis) - $source) / $size);
-		$offsetMax = (int) floor((VectorUtils::getVectorAxis($max, $this->axis) - $source) / $size);
-		if ($this->amount < 0) {
-			[$offsetMin, $offsetMax] = [-$offsetMax, -$offsetMin];
-		}
-		$offsetMin = max($offsetMin, 1);
-		$offsetMax = min($offsetMax, abs($this->amount));
-		for ($i = $offsetMin; $i <= $offsetMax; $i++) {
-			$this->parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->useOnBlocks($closure, $context, $chunk);
-		}
-	}
-
 	/**
-	 * @param Vector3 $vector
-	 * @return StackingHelper
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
+	 * @return Generator<ShapeConstructor>
 	 */
-	public function offset(Vector3 $vector): self
+	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
-		throw new BadMethodCallException("StackingHelper can't be offset");
+		yield new StackedConstructor($closure, $this->parent, $context, $this->axis, $this->amount);
 	}
 }

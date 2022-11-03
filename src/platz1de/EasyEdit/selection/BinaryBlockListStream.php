@@ -4,6 +4,9 @@ namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
 use Closure;
+use Generator;
+use platz1de\EasyEdit\selection\constructor\BinaryStreamConstructor;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -63,28 +66,11 @@ class BinaryBlockListStream extends BlockListSelection
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param int              $chunk
+	 * @return Generator<ShapeConstructor>
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
+	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
-		$this->blocks->rewind();
-		World::getXZ($chunk, $x, $z);
-		$minX = $x << 4;
-		$minZ = $z << 4;
-		$maxX = $minX + 15;
-		$maxZ = $minZ + 15;
-		while (!$this->blocks->feof()) {
-			$o = $this->blocks->getOffset();
-			$x = $this->blocks->getInt();
-			$y = $this->blocks->getInt();
-			$z = $this->blocks->getInt();
-			if ($x < $minX || $x > $maxX || $z < $minZ || $z > $maxZ) {
-				$this->blocks->setOffset($o);
-				$this->setData($this->blocks->getRemaining());
-				break;
-			}
-			$closure($x, $y, $z, $this->blocks->getInt());
-		}
+		yield new BinaryStreamConstructor($closure, $this->blocks);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

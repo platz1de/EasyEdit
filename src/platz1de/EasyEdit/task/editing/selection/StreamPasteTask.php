@@ -39,9 +39,9 @@ class StreamPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		//WARNING: This isn't the default closure style
-		$this->selection->useOnBlocks(function (int $x, int $y, int $z, int $block) use ($handler): void {
+		$this->selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
-		}, $this->context, $chunk);
+		}, $this->context);
 
 		$min = VectorUtils::getChunkPosition($chunk);
 		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);

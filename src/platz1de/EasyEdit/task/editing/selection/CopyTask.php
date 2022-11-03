@@ -79,10 +79,10 @@ class CopyTask extends SelectionEditTask
 		$ox = $result->getWorldOffset()->getFloorX();
 		$oy = $result->getWorldOffset()->getFloorY();
 		$oz = $result->getWorldOffset()->getFloorZ();
-		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
+		$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
-		}, $this->context, $chunk);
+		}, $this->context);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

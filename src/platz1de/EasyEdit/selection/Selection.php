@@ -3,6 +3,8 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
@@ -89,9 +91,9 @@ abstract class Selection
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param int              $chunk
+	 * @return Generator<ShapeConstructor>
 	 */
-	abstract public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void;
+	abstract public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator;
 
 	/**
 	 * @return bool
@@ -221,10 +223,4 @@ abstract class Selection
 	{
 		$this->world = $data[0];
 	}
-
-	/**
-	 * @param Vector3 $vector
-	 * @return Selection
-	 */
-	abstract public function offset(Vector3 $vector): self;
 }

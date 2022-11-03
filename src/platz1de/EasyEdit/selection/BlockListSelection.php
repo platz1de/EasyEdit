@@ -100,13 +100,4 @@ abstract class BlockListSelection extends Selection
 	}
 
 	public function checkCachedData(): void { }
-
-	/**
-	 * @param Vector3 $vector
-	 * @return BlockListSelection
-	 */
-	public function offset(Vector3 $vector): self
-	{
-		throw new BadMethodCallException("BlockListSelection can't be offset");
-	}
 }

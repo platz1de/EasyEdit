@@ -3,13 +3,14 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
-use platz1de\EasyEdit\selection\constructor\CubicConstructor;
+use Generator;
 use platz1de\EasyEdit\selection\constructor\CylindricalConstructor;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\constructor\SingleBlockConstructor;
+use platz1de\EasyEdit\selection\constructor\TubeConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 class Cylinder extends Selection implements Patterned
 {
@@ -38,32 +39,29 @@ class Cylinder extends Selection implements Patterned
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param int              $chunk
+	 * @return Generator<ShapeConstructor>
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
+	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
 		if ($context->isEmpty()) {
 			return;
 		}
 
-		$min = VectorUtils::getChunkPosition($chunk);
-		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-
 		if ($context->isFull()) {
-			CylindricalConstructor::aroundPoint($this->getPoint(), $this->getRadius(), $this->getHeight(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
+			yield new CylindricalConstructor($closure, $this->getPoint(), $this->getRadius(), $this->getHeight());
 		} else {
 			if ($context->includesFilling()) {
-				CylindricalConstructor::aroundPoint($this->getPoint(), $this->getRadius() - 1, $this->getHeight(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
+				yield new CylindricalConstructor($closure, $this->getPoint(), $this->getRadius() - 1, $this->getHeight());
 			}
 
 			if ($context->includesAllSides()) {
-				CylindricalConstructor::hollowAround($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $this->getHeight(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
+				yield from CylindricalConstructor::hollowAround($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $this->getHeight(), $closure);
 			} elseif ($context->includesWalls()) {
-				CylindricalConstructor::tubeAround($this->getPoint(), $this->getRadius(), $context->getSideThickness(), $this->getHeight(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
+				yield new TubeConstructor($closure, $this->getPoint(), $this->getRadius(), $this->getHeight(), $context->getSideThickness());
 			}
 
 			if ($context->includesCenter()) {
-				CubicConstructor::single($this->getPoint(), $closure, Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max));
+				yield new SingleBlockConstructor($closure, $this->getPoint());
 			}
 		}
 	}
@@ -140,12 +138,4 @@ class Cylinder extends Selection implements Patterned
 		$this->height = $stream->getInt();
 	}
 
-	/**
-	 * @param Vector3 $vector
-	 * @return Cylinder
-	 */
-	public function offset(Vector3 $vector): self
-	{
-		return self::aroundPoint($this->getWorldName(), $this->getPoint()->addVector($vector), $this->getRadius(), $this->getHeight());
-	}
 }

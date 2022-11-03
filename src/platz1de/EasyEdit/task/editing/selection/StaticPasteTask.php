@@ -40,12 +40,12 @@ class StaticPasteTask extends SelectionEditTask
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$selection = $this->selection;
-		$selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler, $selection): void {
+		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $selection): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
-		}, $this->context, $chunk);
+		}, $this->context);
 
 		$min = VectorUtils::getChunkPosition($chunk);
 		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);

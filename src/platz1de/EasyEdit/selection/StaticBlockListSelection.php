@@ -3,23 +3,20 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use Generator;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
-use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
-use pocketmine\world\World;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 
 class StaticBlockListSelection extends ChunkManagedBlockList
 {
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param int              $chunk
+	 * @return Generator<ShapeConstructor>
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
+	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
-		$min = VectorUtils::getChunkPosition($chunk);
-		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max), $closure);
+		yield new CubicConstructor($closure, $this->getPos1(), $this->getPos2());
 	}
 
 	/**

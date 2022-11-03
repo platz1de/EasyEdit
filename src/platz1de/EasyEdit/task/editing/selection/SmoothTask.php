@@ -37,7 +37,7 @@ class SmoothTask extends SelectionEditTask
 		$currentZ = null;
 		$map = [];
 		$reference = [];
-		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
+		$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;
@@ -152,7 +152,7 @@ class SmoothTask extends SelectionEditTask
 			}
 
 			$handler->copyBlock($x, $y, $z, $x, $target, $z);
-		}, $this->context, $chunk);
+		}, $this->context);
 	}
 
 	/**

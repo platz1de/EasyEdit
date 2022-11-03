@@ -3,12 +3,12 @@
 namespace platz1de\EasyEdit\selection;
 
 use Closure;
+use Generator;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 class Cube extends Selection implements Patterned
 {
@@ -17,44 +17,32 @@ class Cube extends Selection implements Patterned
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
-	 * @param int              $chunk
+	 * @return Generator<ShapeConstructor>
 	 */
-	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
+	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
 		if ($context->isEmpty()) {
 			return;
 		}
 
-		$min = VectorUtils::getChunkPosition($chunk);
-		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-
 		if ($context->isFull()) {
-			CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max), $closure);
+			yield new CubicConstructor($closure, $this->getPos1(), $this->getPos2());
 			return;
 		}
 
 		if ($context->includesFilling()) {
 			//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
-			CubicConstructor::betweenPoints(Vector3::maxComponents($this->getCubicStart()->add(1, 1, 1), $this->getCubicStart(), $min), Vector3::minComponents($this->getCubicEnd()->subtract(1, 1, 1), $this->getCubicEnd(), $max), $closure);
+			yield new CubicConstructor($closure, $this->getCubicStart()->add(1, 1, 1), $this->getCubicEnd()->subtract(1, 1, 1));
 		}
 
 		if ($context->includesAllSides()) {
-			CubicConstructor::onSides(Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max), Facing::ALL, $context->getSideThickness(), $closure);
+			yield from CubicConstructor::forSides($this->getPos1(), $this->getPos2(), Facing::ALL, $context->getSideThickness(), $closure);
 		} elseif ($context->includesWalls()) {
-			CubicConstructor::onSides(Vector3::maxComponents($this->getPos1(), $min), Vector3::minComponents($this->getPos2(), $max), Facing::HORIZONTAL, $context->getSideThickness(), $closure);
+			yield from CubicConstructor::forSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $context->getSideThickness(), $closure);
 		}
 
 		if ($context->includesCenter()) {
-			CubicConstructor::betweenPoints(Vector3::maxComponents($this->getPos1()->addVector($this->getPos2())->divide(2)->floor(), $this->getPos1(), $min), Vector3::minComponents($this->getPos1()->addVector($this->getPos2())->divide(2)->ceil(), $this->getPos2(), $max), $closure);
+			yield new CubicConstructor($closure, $this->getPos1()->addVector($this->getPos2())->divide(2)->floor(), $this->getPos1()->addVector($this->getPos2())->divide(2)->ceil());
 		}
-	}
-
-	/**
-	 * @param Vector3 $vector
-	 * @return Cube
-	 */
-	public function offset(Vector3 $vector): self
-	{
-		return new self($this->getWorldName(), $this->pos1->addVector($vector), $this->pos2->addVector($vector));
 	}
 }

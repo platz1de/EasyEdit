@@ -50,13 +50,13 @@ class CountTask extends SelectionEditTask
 
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
-		$this->selection->useOnBlocks(function (int $x, int $y, int $z) use ($handler): void {
+		$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($this->counted[$id])) {
 				$this->counted[$id]++;
 			} else {
 				$this->counted[$id] = 1;
 			}
-		}, $this->context, $chunk);
+		}, $this->context);
 	}
 }

@@ -4,6 +4,8 @@ namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
 use Closure;
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use pocketmine\math\Vector3;
 
 /**
@@ -41,7 +43,12 @@ class NonSavingBlockListSelection extends BlockListSelection
 		return false;
 	}
 
-	public function useOnBlocks(Closure $closure, SelectionContext $context, int $chunk): void
+	/**
+	 * @param Closure          $closure
+	 * @param SelectionContext $context
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
 		throw new BadMethodCallException("Cannot clone a non-saving selection for setting");
 	}
