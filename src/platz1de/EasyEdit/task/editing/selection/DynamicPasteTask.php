@@ -80,9 +80,10 @@ class DynamicPasteTask extends SelectionEditTask
 				}, $this->context, $min, $max);
 				break;
 			case self::MODE_ONLY_SOLID:
-				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
+				$ignore = HeightMapCache::getIgnore();
+				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 					$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
-					if (Selection::processBlock($block) && $block !== 0) {
+					if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
 				}, $this->context, $min, $max);
@@ -91,7 +92,7 @@ class DynamicPasteTask extends SelectionEditTask
 				$ignore = HeightMapCache::getIgnore();
 				$selection->useOnBlocks(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 					$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
-					if (Selection::processBlock($block) && $block !== 0 && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+					if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true) && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
 				}, $this->context, $min, $max);
