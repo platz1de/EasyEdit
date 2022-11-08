@@ -19,6 +19,7 @@ abstract class EditTask extends ExecutableTask
 {
 	protected string $world;
 	private BlockListSelection $undo;
+	protected EditTaskHandler $handler;
 
 	/**
 	 * @param string $world
@@ -29,28 +30,32 @@ abstract class EditTask extends ExecutableTask
 		$this->world = $world;
 	}
 
-	public function run(bool $fastSet, int $chunk, ChunkInformation $chunkInformation): void
+   	public function prepare(bool $fastSet): void
+	{
+		$this->undo = $this->getUndoBlockList();
+		StorageModule::startCollecting($this->undo);
+		$this->handler = new EditTaskHandler($this->undo, $fastSet);
+		EditThread::getInstance()->debug("Preparing Task " . $this->getTaskName() . ":" . $this->getTaskId() . "; Using fast-set: " . ($fastSet ? "true" : "false"));
+	}
+
+	public function run(int $chunk, ChunkInformation $chunkInformation): void
 	{
 		$start = microtime(true);
 
 		$manager = new ReferencedChunkManager($this->world);
 		$manager->setChunk($chunk, $chunkInformation);
-		if (!isset($this->undo)) {
-			$this->undo = $this->getUndoBlockList();
-			StorageModule::startCollecting($this->undo);
-		}
-		$handler = new EditTaskHandler($manager, $this->undo, $fastSet);
+		$this->handler->setManager($manager);
 
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $handler->getChunkCount() . " Chunks; Using fast-set: " . ($fastSet ? "true" : "false"));
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $this->handler->getChunkCount() . " Chunks");
 
 		HeightMapCache::prepare();
 
-		$this->executeEdit($handler, $chunk);
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
+		$this->executeEdit($this->handler, $chunk);
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
 
-		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
+		EditTaskResultCache::from(microtime(true) - $start, $this->handler->getChangedBlockCount());
 
-		$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($handler->getResult()->getChunks()), $handler->prepareAllInjectionData()));
+		$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($this->handler->getResult()->getChunks()), $this->handler->prepareAllInjectionData()));
 	}
 
 	public function finalize(): void

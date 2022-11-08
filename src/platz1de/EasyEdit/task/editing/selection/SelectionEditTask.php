@@ -22,6 +22,10 @@ abstract class SelectionEditTask extends EditTask
 	protected SelectionContext $context;
 	private int $totalChunks;
 	private int $chunksLeft;
+	/**
+	 * @var ShapeConstructor[]
+	 */
+	private array $constructors;
 
 	/**
 	 * @param Selection             $selection
@@ -43,6 +47,8 @@ abstract class SelectionEditTask extends EditTask
 		$this->totalChunks = count($chunks);
 		$this->chunksLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
+		$this->prepare($fastSet);
+		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler));
 		foreach ($chunks as $chunk) {
 			$handler->request($chunk);
 		}
@@ -64,9 +70,24 @@ abstract class SelectionEditTask extends EditTask
 	}
 
 	/**
+	 * @param EditTaskhandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
-	abstract public function prepareConstructors(): Generator;
+	abstract public function prepareConstructors(EditTaskHandler $handler): Generator;
+
+	/**
+	* @param EditTaskHandler $handler
+	* @param int             $chunk
+	*/
+   public function executeEdit(EditTaskHandler $handler, int $chunk): void
+   {
+		foreach ($this->constructors as $constructor) {
+			$constructor->moveTo($chunk);
+		}
+   }
+
+   /**
+
 
 	/**
 	 * @param int[] $chunks

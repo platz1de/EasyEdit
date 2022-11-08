@@ -18,20 +18,25 @@ class EditTaskHandler
 	private BlockListSelection $changes;
 
 	/**
-	 * @param ReferencedChunkManager $origin  Edited Chunks
-	 * @param BlockListSelection     $changes Saves made changes, used for undoing
-	 * @param bool                   $isFastSet
+	 * @param BlockListSelection $changes Saves made changes, used for undoing
+	 * @param bool               $isFastSet
 	 */
-	public function __construct(ReferencedChunkManager $origin, BlockListSelection $changes, bool $isFastSet)
+	public function __construct(BlockListSelection $changes, bool $isFastSet)
 	{
 		//TODO: Never use changes as result (eg. copy)
-		$this->origin = new ChunkController($origin);
+		$this->origin = ChunkController::empty();
 		if ($isFastSet) {
-			$this->result = new InjectingSubChunkController(clone $origin);
+			$this->result = InjectingSubChunkController::empty();
 		} else {
-			$this->result = new ChunkController(clone $origin);
+			$this->result = ChunkController::empty();
 		}
 		$this->changes = $changes;
+	}
+
+	public function setManager(ReferencedChunkManager $manager): void
+	{
+		$this->origin->reset($manager);
+		$this->result->reset(clone $manager);
 	}
 
 	/**

@@ -13,7 +13,9 @@ use pocketmine\math\Vector3;
 
 class SetTask extends PatternedEditTask
 {
-	use CubicStaticUndo;
+	use CubicStaticUndo {
+		getUndoBlockList as private getDefaultBlockList
+	};
 	use SettingNotifier;
 
 	/**
@@ -25,25 +27,15 @@ class SetTask extends PatternedEditTask
 	}
 
 	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
-	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
-	{
-		$undo = $handler->getChanges();
-		$undo->setPos1($undo->getPos1()->withComponents(null, $minY, null));
-		$undo->setPos2($undo->getPos2()->withComponents(null, $maxY, null));
-	}
-
-	/**
+	 * @param EditTaskhandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
-	public function prepareConstructors(): Generator
+	abstract public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$selection = $this->selection;
 		$pattern = $this->getPattern();
 		$updateHeightMap = $pattern->contains(GravityPattern::class);
-		yield $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($updateHeightMap, $pattern, $selection): void {
+		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($updateHeightMap, $pattern, $selection, $handler): void {
 			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection);
 			if ($block !== -1) {
 				$handler->changeBlock($x, $y, $z, $block);
@@ -52,5 +44,13 @@ class SetTask extends PatternedEditTask
 				}
 			}
 		}, $this->context);
+	}
+
+	/**
+	 * @return VerticalStaticBlockListSelection
+	 */
+	public function getUndoBlockList(): BlockListSelection
+	{
+		return $this->getPattern()->contains(GravityPattern::class) ? new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getCubicStart(), $this->getSelection()->getCubicEnd()) : $this->getDefaultBlockList();
 	}
 }

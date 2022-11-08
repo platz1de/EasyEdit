@@ -26,6 +26,16 @@ class ChunkController
 		$this->world = $world;
 	}
 
+	public function reset(ReferencedChunkManager $world): void
+	{
+		$this->world = $world;
+		$this->writeCount = 0;
+		$this->readCount = 0;
+		unset($this->currentChunk, $this->currentSubChunk);
+		$this->currentX = (Limits::INT32_MAX + 1) >> 4;
+		unset($this->currentY, $this->currentZ);
+	}
+
 	/**
 	 * @param int $x
 	 * @param int $y

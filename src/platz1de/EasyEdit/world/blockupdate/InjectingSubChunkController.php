@@ -13,6 +13,13 @@ class InjectingSubChunkController extends ChunkController
 	private array $injections = [];
 	private InjectingData $currentInjection;
 
+	public function reset(ReferencedChunkManager $world): void
+	{
+		parent::reset($world);
+		$this->injections = [];
+		unset($this->currentInjection);
+	}
+
 	/**
 	 * @param int $x
 	 * @param int $y
