@@ -30,7 +30,7 @@ class SetTask extends PatternedEditTask
 	 * @param EditTaskhandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
-	abstract public function prepareConstructors(EditTaskHandler $handler): Generator
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$selection = $this->selection;
 		$pattern = $this->getPattern();

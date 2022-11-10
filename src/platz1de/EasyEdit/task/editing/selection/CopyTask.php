@@ -73,13 +73,17 @@ class CopyTask extends SelectionEditTask
 		$this->sendOutputPacket(new MessageSendData("blocks-copied", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$result = $this->result;
 		$ox = $result->getWorldOffset()->getFloorX();
 		$oy = $result->getWorldOffset()->getFloorY();
 		$oz = $result->getWorldOffset()->getFloorZ();
-		$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
+		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
 		}, $this->context);

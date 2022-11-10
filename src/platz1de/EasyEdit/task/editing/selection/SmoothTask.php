@@ -27,17 +27,17 @@ class SmoothTask extends SelectionEditTask
 
 	/**
 	 * This is pretty much magic code, so better don't touch it
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
 	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		HeightMapCache::load($handler->getOrigin(), $this->selection);
 		$currentX = null;
 		$currentZ = null;
 		$map = [];
 		$reference = [];
-		$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
+		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;

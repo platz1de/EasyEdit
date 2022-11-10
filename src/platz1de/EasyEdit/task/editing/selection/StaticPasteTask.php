@@ -37,10 +37,14 @@ class StaticPasteTask extends SelectionEditTask
 		return "static_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$selection = $this->selection;
-		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $selection): void {
+		yield $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $selection): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
 			if (Selection::processBlock($block)) {
 				$handler->changeBlock($x, $y, $z, $block);

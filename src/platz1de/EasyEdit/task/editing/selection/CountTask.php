@@ -48,9 +48,13 @@ class CountTask extends SelectionEditTask
 		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted), "{blocks}" => implode("\n", $blocks)]));
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
+		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($this->counted[$id])) {
 				$this->counted[$id]++;

@@ -36,10 +36,14 @@ class StreamPasteTask extends SelectionEditTask
 		return "stream_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		//WARNING: This isn't the default closure style
-		$this->selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
+		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
 		}, $this->context);
 

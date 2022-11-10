@@ -54,48 +54,43 @@ class DynamicPasteTask extends SelectionEditTask
 		return "dynamic_paste";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$selection = $this->selection;
 		$place = $selection->getPoint();
 		$ox = $place->getFloorX();
 		$oy = $place->getFloorY();
 		$oz = $place->getFloorZ();
-		switch ($this->mode) {
-			case self::MODE_REPLACE_ALL:
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
+		$ignore = HeightMapCache::getIgnore();
+		yield match ($this->mode) {
+			self::MODE_REPLACE_ALL => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
 					$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 					if (Selection::processBlock($block)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context);
-				break;
-			case self::MODE_REPLACE_AIR:
-				$ignore = HeightMapCache::getIgnore();
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
+				}, $this->context),
+			self::MODE_REPLACE_AIR => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 					$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 					if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context);
-				break;
-			case self::MODE_ONLY_SOLID:
-				$ignore = HeightMapCache::getIgnore();
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
+				}, $this->context),
+			self::MODE_ONLY_SOLID => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 					$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 					if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context);
-				break;
-			case self::MODE_REPLACE_SOLID:
-				$ignore = HeightMapCache::getIgnore();
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
+				}, $this->context),
+			self::MODE_REPLACE_SOLID => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 					$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
 					if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true) && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 						$handler->changeBlock($x, $y, $z, $block);
 					}
-				}, $this->context);
+				}, $this->context)
 		}
 
 		foreach ($selection->getOffsetTiles($chunk) as $tile) {

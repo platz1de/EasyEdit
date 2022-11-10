@@ -49,7 +49,11 @@ class Noise3DTask extends SelectionEditTask
 		return "noise_3d";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		if (!isset($this->noise)) {
 			$this->noise = new Simplex(new Random(time()), $this->octaves, $this->persistence, $this->expansion);
@@ -57,7 +61,7 @@ class Noise3DTask extends SelectionEditTask
 		$selection = $this->selection;
 		$size = $selection->getSize()->subtract(1, 1, 1);
 		$noise = $this->noise->getFastNoise3D($size->getFloorX(), $size->getFloorY(), $size->getFloorZ(), 1, 1, 1, $selection->getPos1()->getFloorX(), $selection->getPos1()->getFloorY(), $selection->getPos1()->getFloorZ());
-		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
+		yield $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->getFloorX()][$z - $selection->getPos1()->getFloorZ()][$y - $selection->getPos1()->getFloorY()] > $this->threshold) {
 				$handler->changeBlock($x, $y, $z, BlockLegacyIds::STONE << Block::INTERNAL_METADATA_BITS);
 			} else {

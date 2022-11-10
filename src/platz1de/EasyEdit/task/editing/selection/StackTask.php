@@ -50,7 +50,11 @@ class StackTask extends SelectionEditTask
 		return "stack";
 	}
 
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	/**
+	 * @param EditTaskhandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		//TODO: chunkloading
 		return;
