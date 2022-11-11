@@ -14,8 +14,8 @@ use pocketmine\math\Vector3;
 class SetTask extends PatternedEditTask
 {
 	use CubicStaticUndo {
-		getUndoBlockList as private getDefaultBlockList
-	};
+        CubicStaticUndo::getUndoBlockList as private getDefaultBlockList;
+	}
 	use SettingNotifier;
 
 	/**
@@ -27,7 +27,7 @@ class SetTask extends PatternedEditTask
 	}
 
 	/**
-	 * @param EditTaskhandler $handler
+	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
