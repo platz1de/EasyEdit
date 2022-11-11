@@ -46,7 +46,7 @@ class TubeConstructor extends CylindricalConstructor
 		$closure = $this->closure;
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
-				for ($y = 0; $y < $this->height; $y++) {
+				for ($y = $this->height - 1; $y >= 0; $y--) {
 					if (($x ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($z ** 2) > $thicknessSquared) {
 						$closure($posX + $x, $posY + $y, $posZ + $z);
 					}
