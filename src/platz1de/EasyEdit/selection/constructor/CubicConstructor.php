@@ -38,9 +38,15 @@ class CubicConstructor extends ShapeConstructor
 		$min = Vector3::maxComponents($this->min, VectorUtils::getChunkPosition($chunk));
 		$max = Vector3::minComponents($this->max, VectorUtils::getChunkPosition($chunk)->add(15, World::Y_MAX - World::Y_MIN - 1, 15));
 		$closure = $this->closure;
-		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
-			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {
-				for ($y = $min->getY(); $y <= $max->getY(); $y++) {
+		$minX = $min->getFloorX();
+		$minY = $min->getFloorY();
+		$minZ = $min->getFloorZ();
+		$maxX = $max->getFloorX();
+		$maxY = $max->getFloorY();
+		$maxZ = $max->getFloorZ();
+		for ($x = $minX; $x <= $maxX; $x++) {
+			for ($z = $minZ; $z <= $maxZ; $z++) {
+				for ($y = $minY; $y <= $maxY; $y++) {
 					$closure($x, $y, $z);
 				}
 			}

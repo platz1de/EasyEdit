@@ -35,18 +35,21 @@ class HollowSphericalConstructor extends SphericalConstructor
 		$radiusSquared = $this->radius ** 2;
 		$thicknessSquared = ($this->radius - $this->thickness) ** 2;
 		$radius = ceil($this->radius);
-		$minX = max($min->getX() - $this->center->getX(), -$radius);
-		$maxX = min($max->getX() - $this->center->getX(), $radius);
-		$minY = max($min->getY() - $this->center->getY(), -$radius, -$this->center->getY());
-		$maxY = min($max->getY() - $this->center->getY(), $radius, World::Y_MAX - 1 - $this->center->getY());
-		$minZ = max($min->getZ() - $this->center->getZ(), -$radius);
-		$maxZ = min($max->getZ() - $this->center->getZ(), $radius);
+		$cenX = $this->center->getFloorX();
+		$cenY = $this->center->getFloorY();
+		$cenZ = $this->center->getFloorZ();
+		$minX = max($min->getX() - $cenX, -$radius);
+		$maxX = min($max->getX() - $cenX, $radius);
+		$minY = max($min->getY() - $cenY, -$radius, -$this->center->getY());
+		$maxY = min($max->getY() - $cenY, $radius, World::Y_MAX - 1 - $this->center->getY());
+		$minZ = max($min->getZ() - $cenZ, -$radius);
+		$maxZ = min($max->getZ() - $cenZ, $radius);
 		$closure = $this->closure;
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
 				for ($y = $minY; $y <= $maxY; $y++) {
 					if (($x ** 2) + ($y ** 2) + ($z ** 2) <= $radiusSquared && ($y === $minY || $y === $maxY || ($x ** 2) + ($y ** 2) + ($z ** 2) > $thicknessSquared)) {
-						$closure($this->center->getX() + $x, $this->center->getY() + $y, $this->center->getZ() + $z);
+						$closure($cenX + $x, $cenY + $y, $cenZ + $z);
 					}
 				}
 			}

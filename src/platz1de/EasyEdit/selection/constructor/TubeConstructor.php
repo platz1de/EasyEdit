@@ -36,16 +36,19 @@ class TubeConstructor extends CylindricalConstructor
 		$radiusSquared = $this->radius ** 2;
 		$thicknessSquared = ($this->radius - $this->thickness) ** 2;
 		$radius = ceil($this->radius);
-		$minX = max($min->getX() - $this->position->getX(), -$radius);
-		$maxX = min($max->getX() - $this->position->getX(), $radius);
-		$minZ = max($min->getZ() - $this->position->getZ(), -$radius);
-		$maxZ = min($max->getZ() - $this->position->getZ(), $radius);
+		$posX = $this->position->getFloorX();
+		$posY = $this->position->getFloorY();
+		$posZ = $this->position->getFloorZ();
+		$minX = max($min->getX() - $posX, -$radius);
+		$maxX = min($max->getX() - $posX, $radius);
+		$minZ = max($min->getZ() - $posZ, -$radius);
+		$maxZ = min($max->getZ() - $posZ, $radius);
 		$closure = $this->closure;
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
 				for ($y = 0; $y < $this->height; $y++) {
 					if (($x ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($z ** 2) > $thicknessSquared) {
-						$closure($this->position->getX() + $x, $this->position->getY() + $y, $this->position->getZ() + $z);
+						$closure($posX + $x, $posY + $y, $posZ + $z);
 					}
 				}
 			}
