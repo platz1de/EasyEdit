@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\thread\modules;
 
+use phpDocumentor\Reflection\Types\Self_;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\world\blockupdate;
 
 use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\world\World;
 
 class InjectingSubChunkController extends ChunkController

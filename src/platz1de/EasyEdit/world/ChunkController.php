@@ -21,9 +21,16 @@ class ChunkController
 	protected int $currentY;
 	protected int $currentZ;
 
-	public function __construct(ReferencedChunkManager $world)
+	public function __construct(?ReferencedChunkManager $world)
 	{
-		$this->world = $world;
+		if ($world !== null) {
+			$this->world = $world;
+		}
+	}
+
+	public static function empty(): static
+	{
+		return new static(null);
 	}
 
 	public function reset(ReferencedChunkManager $world): void

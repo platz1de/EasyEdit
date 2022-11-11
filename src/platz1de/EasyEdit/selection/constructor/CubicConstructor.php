@@ -35,8 +35,8 @@ class CubicConstructor extends ShapeConstructor
 
 	public function moveTo(int $chunk): void
 	{
-		$min = Vector3::minComponents($this->min, VectorUtils::getChunkPosition($chunk));
-		$max = Vector3::maxComponents($this->max, VectorUtils::getChunkPosition($chunk)->add(15, World::Y_MAX - World::Y_MIN - 1, 15));
+		$min = Vector3::maxComponents($this->min, VectorUtils::getChunkPosition($chunk));
+		$max = Vector3::minComponents($this->max, VectorUtils::getChunkPosition($chunk)->add(15, World::Y_MAX - World::Y_MIN - 1, 15));
 		$closure = $this->closure;
 		for ($x = $min->getX(); $x <= $max->getX(); $x++) {
 			for ($z = $min->getZ(); $z <= $max->getZ(); $z++) {

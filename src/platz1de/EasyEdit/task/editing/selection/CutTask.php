@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use BadMethodCallException;
+use Generator;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -78,6 +79,12 @@ class CutTask extends SelectionEditTask
 	{
 		$this->position = $stream->getVector();
 		parent::parseData($stream);
+	}
+
+	//TODO: execute task with custom splitting (chunk-by-chunk instead of copying all and then deleting)
+	public function prepareConstructors(EditTaskHandler $handler): Generator
+	{
+		throw new BadMethodCallException("Not implemented");
 	}
 
 	//TODO: execute task with custom splitting (chunk-by-chunk instead of copying all and then deleting)

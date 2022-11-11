@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -9,7 +11,6 @@ use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
-use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 use pocketmine\world\generator\noise\Noise;
 use pocketmine\world\generator\noise\Simplex;
@@ -50,7 +51,7 @@ class Noise3DTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param EditTaskhandler $handler
+	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
@@ -61,7 +62,7 @@ class Noise3DTask extends SelectionEditTask
 		$selection = $this->selection;
 		$size = $selection->getSize()->subtract(1, 1, 1);
 		$noise = $this->noise->getFastNoise3D($size->getFloorX(), $size->getFloorY(), $size->getFloorZ(), 1, 1, 1, $selection->getPos1()->getFloorX(), $selection->getPos1()->getFloorY(), $selection->getPos1()->getFloorZ());
-		yield $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
+		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->getFloorX()][$z - $selection->getPos1()->getFloorZ()][$y - $selection->getPos1()->getFloorY()] > $this->threshold) {
 				$handler->changeBlock($x, $y, $z, BlockLegacyIds::STONE << Block::INTERNAL_METADATA_BITS);
 			} else {

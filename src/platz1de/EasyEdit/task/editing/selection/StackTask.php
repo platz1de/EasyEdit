@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\helper\StackingHelper;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
@@ -57,6 +59,7 @@ class StackTask extends SelectionEditTask
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		//TODO: chunkloading
+		yield from [];
 		return;
 		$originalSize = $this->helper->getPos2()->subtractVector($this->helper->getPos1())->add(1, 1, 1);
 		$sizeX = $originalSize->getFloorX();

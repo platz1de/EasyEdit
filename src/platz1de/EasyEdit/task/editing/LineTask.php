@@ -48,6 +48,7 @@ class LineTask extends EditTask
 		$chunkHandler = new SingleChunkHandler($this->world);
 		ChunkRequestManager::setHandler($chunkHandler);
 		$current = null;
+		$this->prepare(true);
 		//offset points to not yield blocks beyond the endings
 		foreach (VoxelRayTrace::betweenPoints($this->start->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
 			if ($current === null) {
@@ -61,7 +62,7 @@ class LineTask extends EditTask
 				if ($chunk === null) {
 					return;
 				}
-				$this->run(true, $current, $chunk);
+				$this->run($current, $chunk);
 				$this->blocks = [];
 				$current = $c;
 			}
@@ -76,7 +77,7 @@ class LineTask extends EditTask
 			if ($chunk === null) {
 				return;
 			}
-			$this->run(true, $current, $chunk);
+			$this->run($current, $chunk);
 		}
 		$this->finalize();
 	}

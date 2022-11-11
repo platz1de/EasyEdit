@@ -2,14 +2,15 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\MixedUtils;
-use pocketmine\math\Vector3;
 
 class CountTask extends SelectionEditTask
 {
@@ -54,7 +55,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($this->counted[$id])) {
 				$this->counted[$id]++;

@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -27,7 +29,7 @@ class SmoothTask extends SelectionEditTask
 
 	/**
 	 * This is pretty much magic code, so better don't touch it
-	 * @param EditTaskhandler $handler
+	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
@@ -37,7 +39,7 @@ class SmoothTask extends SelectionEditTask
 		$currentZ = null;
 		$map = [];
 		$reference = [];
-		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;

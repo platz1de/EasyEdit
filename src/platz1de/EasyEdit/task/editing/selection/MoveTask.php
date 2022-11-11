@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
@@ -36,12 +38,13 @@ class MoveTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param EditTaskhandler $handler
+	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		//TODO: chunkloading
+		yield from [];
 		return;
 		$selection = $this->selection;
 		$direction = $this->direction;

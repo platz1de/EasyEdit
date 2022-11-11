@@ -4,17 +4,18 @@ namespace platz1de\EasyEdit\task\editing\selection\pattern;
 
 use Generator;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
+use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\VerticalStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\world\HeightMapCache;
-use pocketmine\math\Vector3;
 
 class SetTask extends PatternedEditTask
 {
 	use CubicStaticUndo {
-        CubicStaticUndo::getUndoBlockList as private getDefaultBlockList;
+		CubicStaticUndo::getUndoBlockList as private getDefaultBlockList;
 	}
 	use SettingNotifier;
 
@@ -47,7 +48,7 @@ class SetTask extends PatternedEditTask
 	}
 
 	/**
-	 * @return VerticalStaticBlockListSelection
+	 * @return BlockListSelection
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{

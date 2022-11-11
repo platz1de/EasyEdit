@@ -2,14 +2,13 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\PastingNotifier;
-use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 class StreamPasteTask extends SelectionEditTask
 {
@@ -43,15 +42,9 @@ class StreamPasteTask extends SelectionEditTask
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		//WARNING: This isn't the default closure style
-		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, $block);
 		}, $this->context);
-
-		$min = VectorUtils::getChunkPosition($chunk);
-		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		foreach ($this->selection->getTiles($min, $max) as $tile) {
-			$handler->addTile($tile);
-		}
 	}
 
 

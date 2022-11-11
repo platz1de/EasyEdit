@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
+use Generator;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
@@ -83,7 +85,7 @@ class CopyTask extends SelectionEditTask
 		$ox = $result->getWorldOffset()->getFloorX();
 		$oy = $result->getWorldOffset()->getFloorY();
 		$oz = $result->getWorldOffset()->getFloorZ();
-		yield $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
 		}, $this->context);

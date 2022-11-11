@@ -56,7 +56,7 @@ abstract class SelectionEditTask extends EditTask
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			if (($key = $handler->getKey()) !== null) {
 				$this->chunksLeft--;
-				$this->run($fastSet, $key, $handler->getNext());
+				$this->run($key, $handler->getNext());
 			}
 			if ($this->chunksLeft <= 0) {
 				break;
@@ -77,20 +77,20 @@ abstract class SelectionEditTask extends EditTask
 	abstract public function prepareConstructors(EditTaskHandler $handler): Generator;
 
 	/**
-	* @param EditTaskHandler $handler
-	* @param int             $chunk
-	*/
-   public function executeEdit(EditTaskHandler $handler, int $chunk): void
-   {
+	 * @param EditTaskHandler $handler
+	 * @param int             $chunk
+	 */
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	{
 		foreach ($this->constructors as $constructor) {
 			$constructor->moveTo($chunk);
 		}
-   }
-
-   /**
-
+	}
 
 	/**
+	 *
+	 *
+	 * /**
 	 * @param int[] $chunks
 	 * @return int[]
 	 */

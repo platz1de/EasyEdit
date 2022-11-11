@@ -6,6 +6,7 @@ use BadMethodCallException;
 use Closure;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
+use pocketmine\utils\Utils;
 use pocketmine\world\World;
 
 class BinaryStreamConstructor extends ShapeConstructor
@@ -14,7 +15,8 @@ class BinaryStreamConstructor extends ShapeConstructor
 
 	public function __construct(Closure $closure, ExtendedBinaryStream $stream)
 	{
-		parent::__construct($closure);
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z, int $block): void { }, $closure);
+		$this->closure = $closure;
 		$this->stream = $stream;
 	}
 

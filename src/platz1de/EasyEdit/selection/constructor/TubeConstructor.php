@@ -44,7 +44,7 @@ class TubeConstructor extends CylindricalConstructor
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
 				for ($y = 0; $y < $this->height; $y++) {
-					if (($x ** 2) + ($z ** 2) <= $radiusSquared & ($x ** 2) + ($z ** 2) > $thicknessSquared) {
+					if (($x ** 2) + ($z ** 2) <= $radiusSquared && ($x ** 2) + ($z ** 2) > $thicknessSquared) {
 						$closure($this->position->getX() + $x, $this->position->getY() + $y, $this->position->getZ() + $z);
 					}
 				}
