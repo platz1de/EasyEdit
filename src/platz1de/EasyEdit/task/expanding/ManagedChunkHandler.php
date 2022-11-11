@@ -17,7 +17,7 @@ class ManagedChunkHandler implements ChunkHandler
 {
 	private ReferencedChunkManager $manager;
 	private ReferencedChunkManager $manager2;
-	private ?ChunkInformation $current;
+	private ?ChunkInformation $current = null;
 	/**
 	 * @var int[]
 	 */
@@ -51,6 +51,9 @@ class ManagedChunkHandler implements ChunkHandler
 		$this->manager->setChunk($chunk, $this->current);
 		$this->manager2->setChunk($chunk, clone $this->current);
 		$this->current = null;
+		//TODO: Hack to prevent chunk cap
+		//Currently expanding selections expand in every direction, which means that the chunk cap is reached very quickly
+		ChunkRequestManager::markAsDone();
 		return true;
 	}
 
@@ -113,6 +116,7 @@ class ManagedChunkHandler implements ChunkHandler
 				unset($c[$chunk]);
 				return $c;
 			});
+			ChunkRequestManager::markAsDone();
 		}
 	}
 }

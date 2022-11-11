@@ -23,7 +23,6 @@ abstract class ExpandingTask extends ExecutableTask
 	protected string $world;
 	protected Vector3 $start;
 	private float $progress = 0; //worst case scenario
-	private BlockListSelection $undo;
 
 	/**
 	 * @param string  $world
@@ -40,11 +39,10 @@ abstract class ExpandingTask extends ExecutableTask
 	{
 		$start = microtime(true);
 
-		if (!isset($this->undo)) {
-			$this->undo = $this->getUndoBlockList();
-			StorageModule::startCollecting($this->undo);
-		}
-		$handler = new EditTaskHandler(new ReferencedChunkManager($this->world), $this->undo, true);
+		$undo = $this->getUndoBlockList();
+		StorageModule::startCollecting($undo);
+		$handler = new EditTaskHandler($undo, true);
+		$handler->setManager(new ReferencedChunkManager($this->world));
 		$loader = new ManagedChunkHandler($handler);
 		ChunkRequestManager::setHandler($loader);
 		if (!$loader->request(World::chunkHash($this->start->getFloorX() >> 4, $this->start->getFloorZ() >> 4))) {
@@ -100,11 +98,13 @@ abstract class ExpandingTask extends ExecutableTask
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->world);
+		$stream->putVector($this->start);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
+		$this->start = $stream->getVector();
 	}
 
 	/**
