@@ -10,7 +10,7 @@ use platz1de\EasyEdit\world\ChunkInformation;
 class SingleChunkHandler implements ChunkHandler
 {
 	/**
-	 * @var ChunkInformation[]
+	 * @var array<int, ChunkInformation>
 	 */
 	private array $chunks = [];
 	private string $world;
@@ -34,7 +34,7 @@ class SingleChunkHandler implements ChunkHandler
 	}
 
 	/**
-	 * @param ChunkInformation[] $chunks
+	 * @param array<int, ChunkInformation> $chunks
 	 */
 	public function handleInput(array $chunks): void
 	{

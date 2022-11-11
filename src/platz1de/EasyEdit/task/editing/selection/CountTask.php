@@ -7,7 +7,6 @@ use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\MixedUtils;
@@ -28,7 +27,7 @@ class CountTask extends SelectionEditTask
 	}
 
 	/**
-	 * @return StaticBlockListSelection
+	 * @return NonSavingBlockListSelection
 	 */
 	public function getUndoBlockList(): BlockListSelection
 	{

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
+use InvalidArgumentException;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -106,7 +107,8 @@ class DynamicPasteTask extends SelectionEditTask
 				if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true) && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
-			}, $this->context)
+			}, $this->context),
+			default => throw new InvalidArgumentException("Invalid mode $this->mode"),
 		};
 	}
 

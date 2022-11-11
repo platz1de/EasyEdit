@@ -21,7 +21,7 @@ class ChunkController
 	protected int $currentY;
 	protected int $currentZ;
 
-	public function __construct(?ReferencedChunkManager $world)
+	final public function __construct(?ReferencedChunkManager $world)
 	{
 		if ($world !== null) {
 			$this->world = $world;

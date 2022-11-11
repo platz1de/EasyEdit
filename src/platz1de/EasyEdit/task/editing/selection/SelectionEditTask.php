@@ -16,6 +16,7 @@ use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
+use RuntimeException;
 
 abstract class SelectionEditTask extends EditTask
 {
@@ -56,7 +57,11 @@ abstract class SelectionEditTask extends EditTask
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			if (($key = $handler->getKey()) !== null) {
 				$this->chunksLeft--;
-				$this->run($key, $handler->getNext());
+				$chunk = $handler->getNext();
+				if ($chunk === null) {
+					throw new RuntimeException("Chunk $key is null");
+				}
+				$this->run($key, $chunk);
 			}
 			if ($this->chunksLeft <= 0) {
 				break;

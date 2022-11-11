@@ -61,7 +61,7 @@ class BrushHandler
 							$session->sendMessage("no-clipboard");
 							return;
 						}
-						$session->runTask(new DynamicStoredPasteTask($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0) === 1));
+						$session->runTask(new DynamicStoredPasteTask($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0)));
 				}
 			} catch (ParseError $e) {
 				$session->sendMessage("pattern-invalid", ["{message}" => $e->getMessage()]);

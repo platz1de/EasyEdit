@@ -9,8 +9,7 @@ interface ChunkHandler
 	public function request(int $chunk): bool;
 
 	/**
-	 * @param ChunkInformation[] $chunks
-	 * @return void
+	 * @param array<int, ChunkInformation> $chunks
 	 */
 	public function handleInput(array $chunks): void;
 
