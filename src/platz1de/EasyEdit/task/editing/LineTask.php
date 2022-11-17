@@ -55,14 +55,13 @@ class LineTask extends EditTask
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
 				$chunkHandler->request($current);
-				$chunk = null;
-				while (($chunk = $chunkHandler->getNext()) === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+				while ($chunkHandler->getNextChunk() === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 					EditThread::getInstance()->waitForData();
 				}
-				if ($chunk === null) {
+				if ($chunkHandler->getNextChunk() === null) {
 					return;
 				}
-				$this->run($current, $chunk);
+				$this->run($current, $chunkHandler->getData());
 				$this->blocks = [];
 				$current = $c;
 			}
@@ -70,14 +69,13 @@ class LineTask extends EditTask
 		}
 		if ($current !== null) {
 			$chunkHandler->request($current);
-			$chunk = null;
-			while (($chunk = $chunkHandler->getNext()) === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+			while ($chunkHandler->getNextChunk() === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 				EditThread::getInstance()->waitForData();
 			}
-			if ($chunk === null) {
+			if ($chunkHandler->getNextChunk() === null) {
 				return;
 			}
-			$this->run($current, $chunk);
+			$this->run($current, $chunkHandler->getData());
 		}
 		$this->finalize();
 	}

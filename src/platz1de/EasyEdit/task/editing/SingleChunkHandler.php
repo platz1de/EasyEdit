@@ -2,26 +2,17 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
-use platz1de\EasyEdit\thread\chunk\ChunkHandler;
+use BadMethodCallException;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 
-class SingleChunkHandler implements ChunkHandler
+class SingleChunkHandler extends GroupedChunkHandler
 {
 	/**
 	 * @var array<int, ChunkInformation>
 	 */
 	private array $chunks = [];
-	private string $world;
-
-	/**
-	 * @param string $world
-	 */
-	public function __construct(string $world)
-	{
-		$this->world = $world;
-	}
 
 	/**
 	 * @param int $chunk
@@ -34,13 +25,13 @@ class SingleChunkHandler implements ChunkHandler
 	}
 
 	/**
-	 * @param array<int, ChunkInformation> $chunks
+	 * @param int              $chunk
+	 * @param ChunkInformation $data
+	 * @param int|null         $payload
 	 */
-	public function handleInput(array $chunks): void
+	public function handleInput(int $chunk, ChunkInformation $data, ?int $payload): void
 	{
-		foreach ($chunks as $index => $chunk) {
-			$this->chunks[$index] = $chunk;
-		}
+		$this->chunks[$chunk] = $data;
 	}
 
 	public function clear(): void
@@ -51,22 +42,22 @@ class SingleChunkHandler implements ChunkHandler
 	/**
 	 * @return int|null
 	 */
-	public function getKey(): ?int
+	public function getNextChunk(): ?int
 	{
 		return array_key_first($this->chunks);
 	}
 
 	/**
-	 * @return ChunkInformation|null
+	 * @return ChunkInformation[]
 	 */
-	public function getNext(): ?ChunkInformation
+	public function getData(): array
 	{
-		if (($key = $this->getKey()) === null) {
-			return null;
+		if (($key = $this->getNextChunk()) === null) {
+			throw new BadMethodCallException("No chunk available");
 		}
 		ChunkRequestManager::markAsDone();
 		$ret = $this->chunks[$key];
 		unset($this->chunks[$key]);
-		return $ret;
+		return [$key => $ret];
 	}
 }

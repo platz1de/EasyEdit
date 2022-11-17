@@ -8,7 +8,9 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\SingleChunkHandler;
+use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -55,18 +57,14 @@ abstract class SelectionEditTask extends EditTask
 			$handler->request($chunk);
 		}
 		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
-			if (($key = $handler->getKey()) !== null) {
+			if (($key = $handler->getNextChunk()) !== null) {
 				$this->chunksLeft--;
-				$chunk = $handler->getNext();
-				if ($chunk === null) {
-					throw new RuntimeException("Chunk $key is null");
-				}
-				$this->run($key, $chunk);
+				$this->run($key, $handler->getData());
 			}
 			if ($this->chunksLeft <= 0) {
 				break;
 			}
-			if ($handler->getKey() === null) {
+			if ($handler->getNextChunk() === null) {
 				EditThread::getInstance()->waitForData();
 			} else {
 				EditThread::getInstance()->parseInput();
@@ -93,9 +91,6 @@ abstract class SelectionEditTask extends EditTask
 	}
 
 	/**
-	 *
-	 *
-	 * /**
 	 * @param int[] $chunks
 	 * @return int[]
 	 */
@@ -127,9 +122,9 @@ abstract class SelectionEditTask extends EditTask
 	}
 
 	/**
-	 * @return SingleChunkHandler
+	 * @return GroupedChunkHandler
 	 */
-	public function getChunkHandler(): SingleChunkHandler
+	public function getChunkHandler(): GroupedChunkHandler
 	{
 		return new SingleChunkHandler($this->getWorld());
 	}

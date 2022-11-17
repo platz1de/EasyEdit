@@ -10,7 +10,7 @@ use pocketmine\world\World;
 
 class ChunkRequestManager
 {
-	private const MAX_REQUEST = 16; //max concurrent requests
+	public const MAX_REQUEST = 16; //max concurrent requests
 	/**
 	 * @var ChunkRequest[]
 	 */
@@ -33,18 +33,14 @@ class ChunkRequestManager
 		self::$currentRequests++;
 	}
 
-	public static function handleInput(string $data): void
+	public static function handleInput(string $data, ?int $payload): void
 	{
 		if (self::$handler === null) {
 			EditThread::getInstance()->debug("Received unexpected chunk data, probably a cancelled request");
 			return;
 		}
 		$stream = new ExtendedBinaryStream($data);
-		$chunks = [];
-		while (!$stream->feof()) {
-			$chunks[World::chunkHash($stream->getInt(), $stream->getInt())] = ChunkInformation::readFrom($stream);
-		}
-		self::$handler->handleInput($chunks);
+		self::$handler->handleInput(World::chunkHash($stream->getInt(), $stream->getInt()), ChunkInformation::readFrom($stream), $payload);
 	}
 
 	public static function markAsDone(): void

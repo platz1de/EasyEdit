@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
+use Exception;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\blockupdate\InjectingData;
@@ -140,6 +141,21 @@ class EditTaskHandler
 	 * @param int $x
 	 * @param int $y
 	 * @param int $z
+	 * @return int|null
+	 */
+	public function getBlockUnsafe(int $x, int $y, int $z): ?int
+	{
+		try {
+			return $this->origin->getBlock($x, $y, $z);
+		} catch (Exception) {
+			return null;
+		}
+	}
+
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
 	 * @return CompoundTag|null
 	 */
 	public function getTile(int $x, int $y, int $z): ?CompoundTag
@@ -187,6 +203,25 @@ class EditTaskHandler
 	{
 		$this->changeBlock($x, $y, $z, $this->origin->getBlock($ox, $oy, $oz), $overwrite);
 		$this->addTile(TileUtils::offsetCompound($this->origin->getTile($ox, $oy, $oz), $x - $ox, $y - $oy, $z - $oz));
+	}
+
+	/**
+	 * @param int  $x
+	 * @param int  $y
+	 * @param int  $z
+	 * @param int  $ox x of block to be copied
+	 * @param int  $oy y of block to be copied
+	 * @param int  $oz z of block to be copied
+	 * @param bool $overwrite
+	 */
+	public function copyBlockUnsafe(int $x, int $y, int $z, int $ox, int $oy, int $oz, bool $overwrite = true): void
+	{
+		try {
+			$this->changeBlock($x, $y, $z, $this->origin->getBlock($ox, $oy, $oz), $overwrite);
+			$this->addTile(TileUtils::offsetCompound($this->origin->getTile($ox, $oy, $oz), $x - $ox, $y - $oy, $z - $oz));
+		} catch (Exception) {
+			//expected to fail sometimes
+		}
 	}
 
 	/**

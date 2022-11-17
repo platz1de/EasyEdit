@@ -30,7 +30,7 @@ abstract class EditTask extends ExecutableTask
 		$this->world = $world;
 	}
 
-   	public function prepare(bool $fastSet): void
+	public function prepare(bool $fastSet): void
 	{
 		$this->undo = $this->getUndoBlockList();
 		StorageModule::startCollecting($this->undo);
@@ -38,12 +38,18 @@ abstract class EditTask extends ExecutableTask
 		EditThread::getInstance()->debug("Preparing Task " . $this->getTaskName() . ":" . $this->getTaskId() . "; Using fast-set: " . ($fastSet ? "true" : "false"));
 	}
 
-	public function run(int $chunk, ChunkInformation $chunkInformation): void
+	/**
+	 * @param int                $chunk
+	 * @param ChunkInformation[] $chunkInformation
+	 */
+	public function run(int $chunk, array $chunkInformation): void
 	{
 		$start = microtime(true);
 
 		$manager = new ReferencedChunkManager($this->world);
-		$manager->setChunk($chunk, $chunkInformation);
+		foreach ($chunkInformation as $key => $information) {
+			$manager->setChunk($key, $information);
+		}
 		$this->handler->setManager($manager);
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $this->handler->getChunkCount() . " Chunks");

@@ -27,7 +27,7 @@ class ChunkRequestExecutor
 	{
 		if ($request->getType() === ChunkRequest::TYPE_PRIORITY) {
 			World::getXZ($request->getChunk(), $x, $z);
-			ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()));
+			ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
 			return;
 		}
 		$this->handleRequest($request);
@@ -38,26 +38,18 @@ class ChunkRequestExecutor
 		World::getXZ($request->getChunk(), $x, $z);
 
 		if ($request->getWorld()->isChunkLoaded($x, $z)) {
-			if (($handler = $request->getCustomHandler()) !== null) {
-				//TODO
-				return;
-			}
 			//We can handle this request right away
-			ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()));
+			ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
 			return;
 		}
 
-		if ($this->counter >= self::MAX_CHUNKS_PER_TICK) {
+		if ($this->counter++ >= self::MAX_CHUNKS_PER_TICK) {
 			$this->requestQueue[] = $request;
 			return;
 		}
 		$request->getWorld()->requestChunkPopulation($x, $z, null)->onCompletion(
 			function () use ($request, $x, $z): void {
-				if (($handler = $request->getCustomHandler()) !== null) {
-					//TODO
-					return;
-				}
-				ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()));
+				ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
 			},
 			function () use ($x, $z): void {
 				throw new RuntimeException("Failed to load chunk $x $z");

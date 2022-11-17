@@ -57,12 +57,9 @@ class ManagedChunkHandler implements ChunkHandler
 		return true;
 	}
 
-	public function handleInput(array $chunks): void
+	public function handleInput(int $chunk, ChunkInformation $data, ?int $payload): void
 	{
-		if (count($chunks) !== 1) {
-			throw new UnexpectedValueException("Expected 1 chunk, got " . count($chunks));
-		}
-		$this->current = array_pop($chunks);
+		$this->current = $data;
 	}
 
 	public function clear(): void

@@ -1,26 +1,30 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing\selection\stack;
 
 use Generator;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
-use platz1de\EasyEdit\selection\helper\StackingHelper;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
+use platz1de\EasyEdit\task\editing\SingleChunkHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
+use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class StackTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
 	use SettingNotifier;
 
-	private Selection $helper;
+	private Selection $original;
 
 	private Vector3 $direction;
 	private bool $insert;
@@ -39,7 +43,8 @@ class StackTask extends SelectionEditTask
 
 	public function execute(): void
 	{
-		$this->helper = $this->selection;
+		return; //still not completely finished :/
+		$this->original = $this->selection;
 		$this->selection = new StackingHelper($this->selection, $this->direction);
 		parent::execute();
 	}
@@ -58,39 +63,47 @@ class StackTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		//TODO: chunkloading
-		yield from [];
-		return;
-		$originalSize = $this->helper->getPos2()->subtractVector($this->helper->getPos1())->add(1, 1, 1);
+		$originalSize = $this->original->getPos2()->subtractVector($this->original->getPos1())->add(1, 1, 1);
 		$sizeX = $originalSize->getFloorX();
 		$sizeY = $originalSize->getFloorY();
 		$sizeZ = $originalSize->getFloorZ();
-		$start = $this->helper->getPos1();
+		$start = $this->original->getPos1();
 		$startX = $start->getFloorX();
 		$startY = $start->getFloorY();
 		$startZ = $start->getFloorZ();
-		$dMin = Vector3::maxComponents($min, $this->selection->getPos1())->subtractVector($start);
-		$dMax = Vector3::minComponents($chunk, $this->selection->getPos2())->subtractVector($start);
-		$chunks = [];
-		for ($x = $startX + ($dMin->getX() % $sizeX + $sizeX) % $sizeX >> 4; $x <= $startX + ($dMax->getX() % $sizeX + $sizeX) % $sizeX >> 4; $x++) {
-			for ($z = $startZ + ($dMin->getZ() % $sizeZ + $sizeZ) % $sizeZ >> 4; $z <= $startZ + ($dMax->getZ() % $sizeZ + $sizeZ) % $sizeZ >> 4; $z++) {
-				$chunks[] = World::chunkHash($x, $z);
-			}
+		if (!$this->selection instanceof StackingHelper) {
+			throw new UnexpectedValueException("Selection is not a StackingHelper");
 		}
-		$this->requestRuntimeChunks($handler, $chunks);
 		if ($this->insert) {
 			$ignore = HeightMapCache::getIgnore();
-			$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ignore, $handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
-				$block = $handler->getBlock($startX + (($x - $startX) % $sizeX + $sizeX) % $sizeX, $startY + (($y - $startY) % $sizeY + $sizeY) % $sizeY, $startZ + (($z - $startZ) % $sizeZ + $sizeZ) % $sizeZ);
-				if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+			yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ignore, $handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
+				$block = $handler->getBlockUnsafe($startX + (($x - $startX) % $sizeX + $sizeX) % $sizeX, $startY + (($y - $startY) % $sizeY + $sizeY) % $sizeY, $startZ + (($z - $startZ) % $sizeZ + $sizeZ) % $sizeZ);
+				if ($block !== null && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, $this->context);
 		} else {
-			$this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
-				$handler->copyBlock($x, $y, $z, $startX + (($x - $startX) % $sizeX + $sizeX) % $sizeX, $startY + (($y - $startY) % $sizeY + $sizeY) % $sizeY, $startZ + (($z - $startZ) % $sizeZ + $sizeZ) % $sizeZ);
+			yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
+				$handler->copyBlockUnsafe($x, $y, $z, $startX + (($x - $startX) % $sizeX + $sizeX) % $sizeX, $startY + (($y - $startY) % $sizeY + $sizeY) % $sizeY, $startZ + (($z - $startZ) % $sizeZ + $sizeZ) % $sizeZ);
 			}, $this->context);
 		}
+	}
+
+	/**
+	 * @return GroupedChunkHandler
+	 */
+	public function getChunkHandler(): GroupedChunkHandler
+	{
+		if (!$this->selection instanceof StackingHelper) {
+			throw new UnexpectedValueException("Selection is not a StackingHelper");
+		}
+		if ($this->selection->getAxis() === Axis::Y) {
+			return new SingleChunkHandler($this->getWorld());
+		}
+		if ($this->selection->isCopying()) {
+			return new CopyingStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis(), $this->selection->getAmount());
+		}
+		return new SimpleStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis());
 	}
 
 	protected function sortChunks(array $chunks): array

@@ -11,24 +11,23 @@ class ChunkRequest
 
 	public const TYPE_NORMAL = 0; //loaded whenever possible (no special order)
 	public const TYPE_PRIORITY = 1; //loaded when received (editing thread must go to sleep until chunk is loaded)
-	public const TYPE_SPECIAL = 2; //custom handler (e.g. for stacking)
 
 	private int $type;
 	private int $chunk;
-	private string $customHandler;
+	private ?int $payload;
 
 	/**
-	 * @param string $world
-	 * @param int    $chunk
-	 * @param int    $type
-	 * @param string $customHandler
+	 * @param string   $world
+	 * @param int      $chunk
+	 * @param int      $type
+	 * @param int|null $payload
 	 */
-	public function __construct(string $world, int $chunk, int $type = self::TYPE_NORMAL, string $customHandler = "")
+	public function __construct(string $world, int $chunk, int $type = self::TYPE_NORMAL, ?int $payload = null)
 	{
 		$this->world = $world;
 		$this->chunk = $chunk;
 		$this->type = $type;
-		$this->customHandler = $customHandler;
+		$this->payload = $payload;
 	}
 
 	/**
@@ -48,11 +47,11 @@ class ChunkRequest
 	}
 
 	/**
-	 * @return string|null
+	 * @return int|null
 	 */
-	public function getCustomHandler(): ?string
+	public function getPayload(): ?int
 	{
-		return $this->type === self::TYPE_SPECIAL ? $this->customHandler : null;
+		return $this->payload;
 	}
 
 	/**
@@ -63,7 +62,10 @@ class ChunkRequest
 		$stream->putString($this->getWorldName());
 		$stream->putInt($this->chunk);
 		$stream->putInt($this->type);
-		$stream->putString($this->customHandler);
+		$stream->putBool($this->payload !== null);
+		if ($this->payload !== null) {
+			$stream->putInt($this->payload);
+		}
 	}
 
 	/**
@@ -72,6 +74,6 @@ class ChunkRequest
 	 */
 	public static function readFrom(ExtendedBinaryStream $stream): ChunkRequest
 	{
-		return new self($stream->getString(), $stream->getInt(), $stream->getInt(), $stream->getString());
+		return new self($stream->getString(), $stream->getInt(), $stream->getInt(), $stream->getBool() ? $stream->getInt() : null);
 	}
 }
