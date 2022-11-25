@@ -88,4 +88,14 @@ class MixedUtils
 
 		return $parsed;
 	}
+
+	/**
+	 * @param int $a
+	 * @param int $b
+	 * @return int
+	 */
+	public static function positiveModulo(int $a, int $b): int
+	{
+		return ($a % $b + $b) % $b;
+	}
 }

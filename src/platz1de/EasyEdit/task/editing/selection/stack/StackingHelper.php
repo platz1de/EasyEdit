@@ -52,7 +52,7 @@ class StackingHelper extends Selection
 	 */
 	public function getNeededChunks(): array
 	{
-		if ($this->axis === Axis::Y || $this->isCopying()) {
+		if ($this->axis === Axis::Y) {
 			return $this->parent->getNeededChunks();
 		}
 		//TODO: offset parent to not load chunks that are not needed

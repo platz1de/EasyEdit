@@ -6,17 +6,18 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
+use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\VectorUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\math\Axis;
+use pocketmine\math\Vector2;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
-//TODO: Fix this
 class CopyingStackingChunkHandler extends GroupedChunkHandler
 {
 	/**
-	 * @var array<int, array<int, ChunkInformation>>
+	 * @var array<int, array<int, array{bool, ChunkInformation}>>
 	 */
 	private array $groups = [];
 	/**
@@ -27,9 +28,14 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	 * @var ChunkInformation[]
 	 */
 	private array $executors = [];
+	/**
+	 * @var int[]
+	 */
+	private array $connections = [];
 	private Selection $selection;
 	private int $axis;
 	private int $amount;
+	private int $current;
 
 	/**
 	 * @param string    $world
@@ -54,27 +60,58 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		$this->waiting[$chunk] = 0;
 		$this->groups[$chunk] = [];
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, ChunkRequest::TYPE_NORMAL, $chunk));
-		$size = VectorUtils::getVectorAxis($this->selection->getSize(), $this->axis);
 		World::getXZ($chunk, $x, $z);
-		for ($i = 1; $i <= abs($this->amount); $i++) {
-			$j = $this->amount > 0 ? $i : -$i;
-			if ($this->axis === Axis::X) {
-				$minX = $x + ($size * $j) >> 4;
-				$maxX = $x + ($size * $j + 15) >> 4;
-				$minZ = $maxZ = $z;
-			} else {
-				$minZ = $z + ($size * $j) >> 4;
-				$maxZ = $z + ($size * $j + 15) >> 4;
-				$minX = $maxX = $x;
-			}
-			$this->waiting[$chunk]++;
-			ChunkRequestManager::addRequest(new ChunkRequest($this->world, World::chunkHash($minX, $minZ), ChunkRequest::TYPE_NORMAL, $chunk));
-			if ($minX !== $maxX || $minZ !== $maxZ) {
-				ChunkRequestManager::addRequest(new ChunkRequest($this->world, World::chunkHash($maxX, $maxZ), ChunkRequest::TYPE_NORMAL, $chunk));
-				$this->waiting[$chunk]++;
-			}
+		$min = $this->selection->getCubicStart();
+		$size = $this->selection->getSize();
+		//We are guaranteed to have a size bigger than one chunk (at least 8 actually)
+		if ($this->axis === Axis::X) {
+			$offsetMin = MixedUtils::positiveModulo(($x << 4) - $min->x, $size->x);
+			$offsetMax = MixedUtils::positiveModulo(($x << 4) - $min->x + 15, $size->x);
+		} else {
+			$offsetMin = MixedUtils::positiveModulo(($z << 4) - $min->z, $size->z);
+			$offsetMax = MixedUtils::positiveModulo(($z << 4) - $min->z + 15, $size->z);
+		}
+		if ($offsetMin < $offsetMax) {
+			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), 15);
+		} else {
+			//Jump from end to start of origin
+			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), VectorUtils::getVectorAxis($size, $this->axis) - $offsetMin - 1);
+			$this->orderGroupChunk($chunk, (new Vector2($x << 4, $z << 4))->add($this->axis === Axis::X ? $size->x - $offsetMin : 0, $this->axis === Axis::Z ? $size->z - $offsetMin : 0), $offsetMax);
 		}
 		return true;
+	}
+
+	/**
+	 * @param int     $chunk
+	 * @param Vector2 $start
+	 * @param int     $offset
+	 */
+	private function orderGroupChunk(int $chunk, Vector2 $start, int $offset): void
+	{
+		$size = $this->selection->getSize();
+		$min = $this->selection->getCubicStart();
+		if ($this->axis === Axis::X) {
+			$minX = ($min->x + MixedUtils::positiveModulo($start->x - $min->x, $size->x)) >> 4;
+			$maxX = ($min->x + MixedUtils::positiveModulo($start->x + $offset - $min->x, $size->x)) >> 4;
+			$minZ = $maxZ = $start->y >> 4;
+		} else {
+			$minZ = ($min->z + MixedUtils::positiveModulo($start->y - $min->z, $size->z)) >> 4;
+			$maxZ = ($min->z + MixedUtils::positiveModulo($start->y + $offset - $min->z, $size->z)) >> 4;
+			$minX = $maxX = $start->x >> 4;
+		}
+		if ($minX === $maxX && $minZ === $maxZ && World::chunkHash($minX, $minZ) === $chunk) {
+			return;
+		}
+		$this->waiting[$chunk]++;
+		if (isset($this->current) && $this->current === World::chunkHash($minX, $minZ)) {
+			$this->connections[$chunk] = $this->current;
+		} else {
+			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($minX, $minZ), ChunkRequest::TYPE_NORMAL, $chunk));
+		}
+		if ($minX !== $maxX || $minZ !== $maxZ) {
+			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($maxX, $maxZ), ChunkRequest::TYPE_NORMAL, $chunk));
+			$this->waiting[$chunk]++;
+		}
 	}
 
 	/**
@@ -90,7 +127,20 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		if ($chunk === $payload) {
 			$this->executors[$chunk] = $data;
 		} else {
-			$this->groups[$payload][] = $data;
+			$this->groups[$payload][$chunk] = [true, $data];
+			$this->waiting[$payload]--;
+			if ($this->waiting[$payload] === 0) {
+				unset($this->waiting[$payload]);
+			}
+			if (in_array($chunk, $this->connections, true)) {
+				$key = array_search($chunk, $this->connections, true);
+				$this->groups[$key][$chunk] = [false, $data];
+				$this->waiting[$key]--;
+				if ($this->waiting[$key] === 0) {
+					unset($this->waiting[$key]);
+				}
+				unset($this->connections[$key]);
+			}
 		}
 	}
 
@@ -106,9 +156,9 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	 */
 	public function getNextChunk(): ?int
 	{
-		foreach ($this->groups as $chunk => $group) {
-			if (isset($this->executors[$chunk]) && count($group) > 0) {
-				return array_key_first($group);
+		foreach ($this->executors as $chunk => $data) {
+			if (!isset($this->waiting[$chunk])) {
+				return $chunk;
 			}
 		}
 		return null;
@@ -122,21 +172,15 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		if (($key = $this->getNextChunk()) === null) {
 			throw new UnexpectedValueException("No chunk available");
 		}
-		foreach ($this->groups as $chunk => $group) {
-			if (isset($this->executors[$chunk]) && count($group) > 0) {
-				break;
+		ChunkRequestManager::markAsDone();
+		$ret = [$key => $this->executors[$key]];
+		foreach ($this->groups[$key] as $chunk => $data) {
+			$ret[$chunk] = $data[1];
+			if ($data[0]) {
+				ChunkRequestManager::markAsDone();
 			}
 		}
-		if (!isset($chunk)) {
-			throw new UnexpectedValueException("No chunk available");
-		}
-		ChunkRequestManager::markAsDone();
-		$ret = [$chunk => $this->executors[$chunk], $key => $this->groups[$chunk][$key]];
-		unset($this->groups[$chunk][$key]);
-		if (--$this->waiting[$chunk] === 0) {
-			unset($this->groups[$chunk], $this->waiting[$chunk], $this->executors[$chunk]);
-			ChunkRequestManager::markAsDone();
-		}
+		unset($this->executors[$key], $this->groups[$key]);
 		return $ret;
 	}
 }

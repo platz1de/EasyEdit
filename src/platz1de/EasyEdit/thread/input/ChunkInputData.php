@@ -32,13 +32,13 @@ class ChunkInputData extends InputData
 		$stream->putString($this->chunkData);
 		$stream->putBool($this->payload !== null);
 		if ($this->payload !== null) {
-			$stream->putInt($this->payload);
+			$stream->putLong($this->payload);
 		}
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->chunkData = $stream->getString();
-		$this->payload = $stream->getBool() ? $stream->getInt() : null;
+		$this->payload = $stream->getBool() ? $stream->getLong() : null;
 	}
 }

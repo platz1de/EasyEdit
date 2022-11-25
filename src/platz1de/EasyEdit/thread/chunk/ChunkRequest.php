@@ -60,11 +60,11 @@ class ChunkRequest
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->getWorldName());
-		$stream->putInt($this->chunk);
+		$stream->putLong($this->chunk);
 		$stream->putInt($this->type);
 		$stream->putBool($this->payload !== null);
 		if ($this->payload !== null) {
-			$stream->putInt($this->payload);
+			$stream->putLong($this->payload);
 		}
 	}
 
@@ -74,6 +74,6 @@ class ChunkRequest
 	 */
 	public static function readFrom(ExtendedBinaryStream $stream): ChunkRequest
 	{
-		return new self($stream->getString(), $stream->getInt(), $stream->getInt(), $stream->getBool() ? $stream->getInt() : null);
+		return new self($stream->getString(), $stream->getLong(), $stream->getInt(), $stream->getBool() ? $stream->getLong() : null);
 	}
 }
