@@ -120,6 +120,7 @@ class ChunkInformation
 		foreach ($this->tiles as $key => $tile) {
 			$this->tiles[$key] = clone $tile;
 		}
+		$this->used = false;
 	}
 
 	public function resetFlags(): void
