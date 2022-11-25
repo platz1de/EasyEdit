@@ -43,7 +43,6 @@ class StackTask extends SelectionEditTask
 
 	public function execute(): void
 	{
-		return; //still not completely finished :/
 		$this->original = $this->selection;
 		$this->selection = new StackingHelper($this->selection, $this->direction);
 		parent::execute();
@@ -112,13 +111,13 @@ class StackTask extends SelectionEditTask
 			usort($chunks, static function (int $a, int $b): int {
 				World::getXZ($a, $aX, $aZ);
 				World::getXZ($b, $bX, $bZ);
-				return $aX - $bX;
+				return $aZ - $bZ;
 			});
 		} else if ($this->direction->getFloorZ() !== 0) {
 			usort($chunks, static function (int $a, int $b): int {
 				World::getXZ($a, $aX, $aZ);
 				World::getXZ($b, $bX, $bZ);
-				return $aZ - $bZ;
+				return $aX - $bX;
 			});
 		}
 		//No sorting needed for y-Axis
