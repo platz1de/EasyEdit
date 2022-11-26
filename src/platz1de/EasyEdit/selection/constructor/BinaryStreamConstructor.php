@@ -12,12 +12,22 @@ use pocketmine\world\World;
 class BinaryStreamConstructor extends ShapeConstructor
 {
 	private ExtendedBinaryStream $stream;
+	/**
+	 * @var array<int, int>
+	 */
+	private array $chunks = [];
 
-	public function __construct(Closure $closure, ExtendedBinaryStream $stream)
+	/**
+	 * @param Closure              $closure
+	 * @param ExtendedBinaryStream $stream
+	 * @param array<int, int>      $chunks
+	 */
+	public function __construct(Closure $closure, ExtendedBinaryStream $stream, array $chunks)
 	{
 		Utils::validateCallableSignature(static function (int $x, int $y, int $z, int $block): void { }, $closure);
 		$this->closure = $closure;
 		$this->stream = $stream;
+		$this->chunks = $chunks;
 	}
 
 	public function getBlockCount(): int
@@ -27,7 +37,7 @@ class BinaryStreamConstructor extends ShapeConstructor
 
 	public function moveTo(int $chunk): void
 	{
-		$this->stream->rewind();
+		$this->stream->setOffset($this->chunks[$chunk]);
 		World::getXZ($chunk, $x, $z);
 		$minX = $x << 4;
 		$minZ = $z << 4;
@@ -35,13 +45,10 @@ class BinaryStreamConstructor extends ShapeConstructor
 		$maxZ = $minZ + 15;
 		$closure = $this->closure;
 		while (!$this->stream->feof()) {
-			$o = $this->stream->getOffset();
 			$x = $this->stream->getInt();
 			$y = $this->stream->getInt();
 			$z = $this->stream->getInt();
 			if ($x < $minX || $x > $maxX || $z < $minZ || $z > $maxZ) {
-				$this->stream->setOffset($o);
-				$this->stream = new ExtendedBinaryStream($this->stream->getRemaining());
 				break;
 			}
 			$closure($x, $y, $z, $this->stream->getInt());

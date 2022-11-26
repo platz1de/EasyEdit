@@ -18,6 +18,7 @@ use pocketmine\world\World;
 class BinaryBlockListStream extends BlockListSelection
 {
 	private ExtendedBinaryStream $blocks;
+	private array $chunks = [];
 
 	/**
 	 * @param string $world
@@ -38,6 +39,9 @@ class BinaryBlockListStream extends BlockListSelection
 
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void
 	{
+		if ($this->chunks === [] || array_key_last($this->chunks) !== World::chunkHash($x >> 4, $z >> 4)) {
+			$this->chunks[World::chunkHash($x >> 4, $z >> 4)] = strlen($this->blocks->getBuffer());
+		}
 		$this->blocks->putInt($x);
 		$this->blocks->putInt($y);
 		$this->blocks->putInt($z);
@@ -51,11 +55,7 @@ class BinaryBlockListStream extends BlockListSelection
 
 	public function getNeededChunks(): array
 	{
-		$this->blocks->rewind();
-		$x = $this->blocks->getInt() >> 4;
-		$this->blocks->getInt(); //y
-		$z = $this->blocks->getInt() >> 4;
-		return [World::chunkHash($x, $z)];
+		return array_keys($this->chunks);
 	}
 
 	public function shouldBeCached(int $x, int $z): bool
@@ -70,19 +70,29 @@ class BinaryBlockListStream extends BlockListSelection
 	 */
 	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
-		yield new BinaryStreamConstructor($closure, $this->blocks);
+		yield new BinaryStreamConstructor($closure, $this->blocks, $this->chunks);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 		$stream->putString($this->blocks->getBuffer());
+		$stream->putInt(count($this->chunks));
+		foreach ($this->chunks as $chunk => $offset) {
+			$stream->putLong($chunk);
+			$stream->putLong($offset);
+		}
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 		$this->blocks = new ExtendedBinaryStream($stream->getString());
+		$chunks = $stream->getInt();
+		for ($i = 0; $i < $chunks; $i++) {
+			/** @noinspection AmbiguousMethodsCallsInArrayMappingInspection */
+			$this->chunks[$stream->getLong()] = $stream->getLong();
+		}
 	}
 
 	public function free(): void
@@ -99,7 +109,11 @@ class BinaryBlockListStream extends BlockListSelection
 
 		parent::merge($selection);
 
+		$offset = $this->blocks->getOffset();
 		$this->blocks->put($selection->getData());
+		foreach ($selection->chunks as $chunk => $pos) {
+			$this->chunks[$chunk] = $offset + $pos;
+		}
 	}
 
 	/**
@@ -122,6 +136,7 @@ class BinaryBlockListStream extends BlockListSelection
 	{
 		$clone = new self($this->getWorldName());
 		$clone->setData($this->getData());
+		$clone->chunks = $this->chunks;
 		foreach ($this->getTiles($this->getPos1(), $this->getPos2()) as $tile) {
 			$clone->addTile($tile);
 		}
