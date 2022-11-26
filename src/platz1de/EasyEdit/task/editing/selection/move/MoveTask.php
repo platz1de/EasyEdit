@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing\selection\move;
 
 use Generator;
 use platz1de\EasyEdit\selection\BlockListSelection;
@@ -8,6 +8,8 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
+use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\math\Vector3;
@@ -43,27 +45,15 @@ class MoveTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		//TODO: chunkloading
-		yield from [];
-		return;
-		$selection = $this->selection;
-		$direction = $this->direction;
-		$dMin = $min->addVector($direction);
-		$dMax = $chunk->addVector($direction);
-		$chunks = [];
-		for ($x = $dMin->getX() >> 4; $x <= $dMax->getX() >> 4; $x++) {
-			for ($z = $dMin->getZ() >> 4; $z <= $dMax->getZ() >> 4; $z++) {
-				$chunks[] = World::chunkHash($x, $z);
-			}
-		}
-		$this->requestRuntimeChunks($handler, $chunks);
-		$handler->getChanges()->checkCachedData();
+		$dx = $this->direction->x;
+		$dy = $this->direction->y;
+		$dz = $this->direction->z;
 		//TODO: change order of iteration to optimize performance
-		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, 0); //Make sure we don't overwrite anything
 		}, $this->context);
-		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $direction): void {
-			$handler->copyBlock($x + $direction->getFloorX(), $y + $direction->getFloorY(), $z + $direction->getFloorZ(), $x, $y, $z, false);
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $dx, $dy, $dz): void {
+			$handler->copyBlock($x + $dx, $y + $dy, $z + $dz, $x, $y, $z, false);
 		}, $this->context);
 	}
 
@@ -87,6 +77,11 @@ class MoveTask extends SelectionEditTask
 		}, $chunks);
 		array_multisort($x, $this->direction->getFloorX() > 0 ? SORT_DESC : SORT_ASC, $z, $this->direction->getFloorZ() > 0 ? SORT_DESC : SORT_ASC, $chunks);
 		return $chunks;
+	}
+
+	public function getChunkHandler(): GroupedChunkHandler
+	{
+		return new MovingChunkHandler($this->getWorld(), $this->selection, $this->direction);
 	}
 
 	/**

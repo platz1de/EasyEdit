@@ -52,7 +52,7 @@ abstract class SelectionEditTask extends EditTask
 		$this->chunksLeft = count($chunks);
 		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
 		$this->prepare($fastSet);
-		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler));
+		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
 		foreach ($chunks as $chunk) {
 			$handler->request($chunk);
 		}

@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use BadMethodCallException;
 use Generator;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
@@ -98,6 +97,4 @@ abstract class BlockListSelection extends Selection
 	{
 		return count($this->tiles) > 0;
 	}
-
-	public function checkCachedData(): void { }
 }
