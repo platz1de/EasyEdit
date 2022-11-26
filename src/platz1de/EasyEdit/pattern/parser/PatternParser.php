@@ -105,7 +105,7 @@ class PatternParser
 		$weight = $weightData[1] ?? 100;
 		$patternString = $weightData[2];
 
-		if ($patternString === "") {
+		if ($patternString === "" || $patternString === "#") {
 			throw new ParseError("No pattern given");
 		}
 
