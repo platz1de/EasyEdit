@@ -90,7 +90,9 @@ class LineCommand extends SimpleFlagArgumentCommand
 				}, "mode");
 			}
 			array_shift($args);
+		} else if (!$flags->hasFlag("mode")) {
+			yield IntegerCommandFlag::with(self::MODE_LINE, "mode");
 		}
-		parent::parseArguments($flags, $session, $args);
+		yield from parent::parseArguments($flags, $session, $args);
 	}
 }

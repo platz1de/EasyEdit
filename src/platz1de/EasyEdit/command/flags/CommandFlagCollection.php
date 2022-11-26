@@ -15,7 +15,7 @@ class CommandFlagCollection
 	/**
 	 * @var CommandFlag[]
 	 */
-	private array $flags;
+	private array $flags = [];
 
 	public function addFlag(CommandFlag $flag): void
 	{
