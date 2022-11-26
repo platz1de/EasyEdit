@@ -9,9 +9,6 @@ class ChunkRequest
 {
 	use ReferencedWorldHolder;
 
-	public const TYPE_NORMAL = 0; //loaded whenever possible (no special order)
-	public const TYPE_PRIORITY = 1; //loaded when received (editing thread must go to sleep until chunk is loaded)
-
 	private int $type;
 	private int $chunk;
 	private ?int $payload;
@@ -19,14 +16,12 @@ class ChunkRequest
 	/**
 	 * @param string   $world
 	 * @param int      $chunk
-	 * @param int      $type
 	 * @param int|null $payload
 	 */
-	public function __construct(string $world, int $chunk, int $type = self::TYPE_NORMAL, ?int $payload = null)
+	public function __construct(string $world, int $chunk, ?int $payload = null)
 	{
 		$this->world = $world;
 		$this->chunk = $chunk;
-		$this->type = $type;
 		$this->payload = $payload;
 	}
 
@@ -36,14 +31,6 @@ class ChunkRequest
 	public function getChunk(): int
 	{
 		return $this->chunk;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getType(): int
-	{
-		return $this->type;
 	}
 
 	/**
@@ -61,7 +48,6 @@ class ChunkRequest
 	{
 		$stream->putString($this->getWorldName());
 		$stream->putLong($this->chunk);
-		$stream->putInt($this->type);
 		$stream->putBool($this->payload !== null);
 		if ($this->payload !== null) {
 			$stream->putLong($this->payload);
@@ -74,6 +60,6 @@ class ChunkRequest
 	 */
 	public static function readFrom(ExtendedBinaryStream $stream): ChunkRequest
 	{
-		return new self($stream->getString(), $stream->getLong(), $stream->getInt(), $stream->getBool() ? $stream->getLong() : null);
+		return new self($stream->getString(), $stream->getLong(), $stream->getBool() ? $stream->getLong() : null);
 	}
 }

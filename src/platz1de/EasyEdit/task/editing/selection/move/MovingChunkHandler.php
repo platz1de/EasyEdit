@@ -54,7 +54,7 @@ class MovingChunkHandler extends GroupedChunkHandler
 	public function request(int $chunk): bool
 	{
 		World::getXZ($chunk, $x, $z);
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, ChunkRequest::TYPE_NORMAL, $chunk));
+		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
 		$this->queue[] = $chunk;
 		$this->groupRequest[$chunk] = [$chunk => $chunk];
 		$min = Vector3::maxComponents($this->selection->getCubicStart(), VectorUtils::getChunkPosition($chunk))->addVector($this->direction);
@@ -70,7 +70,7 @@ class MovingChunkHandler extends GroupedChunkHandler
 					continue;
 				}
 				$this->groupRequest[$chunk][$c] = $c;
-				ChunkRequestManager::addRequest(new ChunkRequest($this->world, $c, ChunkRequest::TYPE_NORMAL, $chunk));
+				ChunkRequestManager::addRequest(new ChunkRequest($this->world, $c, $chunk));
 			}
 		}
 		$this->last = $chunk;

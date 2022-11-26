@@ -9,7 +9,6 @@ class EditAdapter extends Task
 {
 	public function onRun(): void
 	{
-		ChunkRequestExecutor::getInstance()->doTick();
 		EditThread::getInstance()->parseOutput();
 	}
 }

@@ -59,7 +59,7 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	{
 		$this->waiting[$chunk] = 0;
 		$this->groups[$chunk] = [];
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, ChunkRequest::TYPE_NORMAL, $chunk));
+		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
 		World::getXZ($chunk, $x, $z);
 		$min = $this->selection->getCubicStart();
 		$size = $this->selection->getSize();
@@ -106,10 +106,10 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		if (isset($this->current) && $this->current === World::chunkHash($minX, $minZ)) {
 			$this->connections[$chunk] = $this->current;
 		} else {
-			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($minX, $minZ), ChunkRequest::TYPE_NORMAL, $chunk));
+			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($minX, $minZ), $chunk));
 		}
 		if ($minX !== $maxX || $minZ !== $maxZ) {
-			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($maxX, $maxZ), ChunkRequest::TYPE_NORMAL, $chunk));
+			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($maxX, $maxZ), $chunk));
 			$this->waiting[$chunk]++;
 		}
 	}

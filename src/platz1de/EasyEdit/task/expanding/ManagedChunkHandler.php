@@ -41,7 +41,7 @@ class ManagedChunkHandler implements ChunkHandler
 			return true;
 		} catch (UnexpectedValueException) {
 		}
-		ChunkRequestManager::addRequest(new ChunkRequest($this->manager->getWorldName(), $chunk, ChunkRequest::TYPE_PRIORITY));
+		ChunkRequestManager::addRequest(new ChunkRequest($this->manager->getWorldName(), $chunk));
 		while ($this->current === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			EditThread::getInstance()->waitForData();
 		}

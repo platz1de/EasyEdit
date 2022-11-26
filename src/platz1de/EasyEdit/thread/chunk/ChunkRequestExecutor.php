@@ -16,24 +16,7 @@ class ChunkRequestExecutor
 {
 	use SingletonTrait;
 
-	private const MAX_CHUNKS_PER_TICK = 4;
-	/**
-	 * @var ChunkRequest[]
-	 */
-	private array $requestQueue = [];
-	private int $counter = 0;
-
 	public function addRequest(ChunkRequest $request): void
-	{
-		if ($request->getType() === ChunkRequest::TYPE_PRIORITY) {
-			World::getXZ($request->getChunk(), $x, $z);
-			ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
-			return;
-		}
-		$this->handleRequest($request);
-	}
-
-	private function handleRequest(ChunkRequest $request): void
 	{
 		World::getXZ($request->getChunk(), $x, $z);
 
@@ -43,10 +26,6 @@ class ChunkRequestExecutor
 			return;
 		}
 
-		if ($this->counter++ >= self::MAX_CHUNKS_PER_TICK) {
-			$this->requestQueue[] = $request;
-			return;
-		}
 		$request->getWorld()->requestChunkPopulation($x, $z, null)->onCompletion(
 			function () use ($request, $x, $z): void {
 				ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
@@ -55,14 +34,6 @@ class ChunkRequestExecutor
 				throw new RuntimeException("Failed to load chunk $x $z");
 			}
 		);
-	}
-
-	public function doTick(): void
-	{
-		$this->counter = 0;
-		while (count($this->requestQueue) > 0 && $this->counter < self::MAX_CHUNKS_PER_TICK) {
-			$this->handleRequest(array_shift($this->requestQueue));
-		}
 	}
 
 	/**

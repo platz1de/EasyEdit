@@ -70,13 +70,13 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 			}
 			for ($resX = $min->x >> 4; $resX <= $max->x >> 4; $resX++) {
 				for ($resZ = $min->z >> 4; $resZ <= $max->z >> 4; $resZ++) {
-					ChunkRequestManager::addRequest(new ChunkRequest($this->world, World::chunkHash($resX, $resZ), ChunkRequest::TYPE_NORMAL));
+					ChunkRequestManager::addRequest(new ChunkRequest($this->world, World::chunkHash($resX, $resZ)));
 					$this->sourceOrder[$this->current]++;
 				}
 			}
 		}
 		$this->waiting[$this->current]++;
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, ChunkRequest::TYPE_NORMAL, $this->current));
+		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $this->current));
 		return true;
 	}
 
