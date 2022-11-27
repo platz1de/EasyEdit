@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2022-11-03
+#Last updated at: 2022-11-27
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -212,3 +212,10 @@ command-pastestates-description: "Paste all known block states"
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Get a wooden axe"
 command-wand-usage: "//wand"
+
+command-thru-description: "Teleport through blocks"
+command-thru-usage: "//thru"
+command-unstuck-description: "Teleport to a safe location"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Teleport up"
+command-up-usage: "//up <amount>"

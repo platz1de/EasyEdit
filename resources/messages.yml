@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.1.5" #Please don't change this manually
+message-version: "2.1.6" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -213,3 +213,10 @@ command-pastestates-description: "Paste all known block states"
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Get a wooden axe"
 command-wand-usage: "//wand"
+
+command-thru-description: "Teleport through blocks"
+command-thru-usage: "//thru"
+command-unstuck-description: "Teleport to a safe location"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Teleport up"
+command-up-usage: "//up <amount>"

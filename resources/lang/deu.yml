@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2022-11-03
+#Last updated at: 2022-11-27
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -211,3 +211,10 @@ command-pastestates-description: "Füge alle bekannten Blockzustände in die Wel
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Erhalte eine Holzaxt"
 command-wand-usage: "//wand"
+
+command-thru-description: "Teleportiere durch blöcke hindurch"
+command-thru-usage: "//thru"
+command-unstuck-description: "Teleportiere zu einer sicheren Position"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Teleportiere nach oben"
+command-up-usage: "//up <anzahl>"

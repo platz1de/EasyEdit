@@ -212,3 +212,10 @@ command-pastestates-description: "Dán tất cả các trạng thái khối đã
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Nhận một cái rìu gỗ"
 command-wand-usage: "//wand"
+
+command-thru-description: "Teleport through blocks"
+command-thru-usage: "//thru"
+command-unstuck-description: "Teleport to a safe location"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Teleport up"
+command-up-usage: "//up <amount>"

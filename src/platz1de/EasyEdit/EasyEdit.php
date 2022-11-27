@@ -20,6 +20,9 @@ use platz1de\EasyEdit\command\defaults\generation\SphereCommand;
 use platz1de\EasyEdit\command\defaults\history\HistoryAccessCommand;
 use platz1de\EasyEdit\command\defaults\history\RedoCommand;
 use platz1de\EasyEdit\command\defaults\history\UndoCommand;
+use platz1de\EasyEdit\command\defaults\movement\ThruCommand;
+use platz1de\EasyEdit\command\defaults\movement\UnstuckCommand;
+use platz1de\EasyEdit\command\defaults\movement\UpCommand;
 use platz1de\EasyEdit\command\defaults\selection\AliasedContextCommand;
 use platz1de\EasyEdit\command\defaults\selection\CountCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtendCommand;
@@ -140,7 +143,12 @@ class EasyEdit extends PluginBase
 			new CancelCommand(),
 			new BenchmarkCommand(),
 			new PasteStatesCommand(),
-			new WandCommand()
+			new WandCommand(),
+
+			// Movement
+			new ThruCommand(),
+			new UnstuckCommand(),
+			new UpCommand()
 		]);
 
 		//Just for sending block data without using the protocol directly
