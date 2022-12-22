@@ -36,11 +36,10 @@ class FillTask extends ExpandingTask
 	}
 
 	/**
-	 * @param EditTaskHandler     $handler
-	 * @param ManagedChunkHandler $loader
-	 * @return void
+	 * @param EditTaskHandler $handler
+	 * @param int             $chunk
 	 */
-	protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($this->block->getId(), $ignore, true)) !== false) {
@@ -87,11 +86,11 @@ class FillTask extends ExpandingTask
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$this->updateProgress(-$current["priority"], $limit);
-			if (!$loader->checkRuntimeChunk($chunk)) {
+			if (!$this->loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
-				$loader->checkUnload($handler, $chunk);
+				$this->loader->checkUnload($handler, $chunk);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $id);
@@ -99,11 +98,11 @@ class FillTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if ($validate($side) && !isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$this->loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			$loader->checkUnload($handler, $chunk);
+			$this->loader->checkUnload($handler, $chunk);
 		}
 	}
 

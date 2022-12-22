@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task\expanding;
 
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
-use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
@@ -18,11 +17,10 @@ class DrainTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param EditTaskHandler     $handler
-	 * @param ManagedChunkHandler $loader
-	 * @return void
+	 * @param EditTaskHandler $handler
+	 * @param int             $chunk
 	 */
-	protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$target = [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA];
 
@@ -31,7 +29,7 @@ class DrainTask extends ExpandingTask
 		$startX = $this->start->getFloorX();
 		$startY = $this->start->getFloorY();
 		$startZ = $this->start->getFloorZ();
-		$loader->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
+		$this->loader->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$limit = ConfigManager::getFillDistance();
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
@@ -45,11 +43,11 @@ class DrainTask extends ExpandingTask
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$this->updateProgress(-$current["priority"], $limit);
-			if (!$loader->checkRuntimeChunk($chunk)) {
+			if (!$this->loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
 			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $target, true)) {
-				$loader->checkUnload($handler, $chunk);
+				$this->loader->checkUnload($handler, $chunk);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, 0);
@@ -57,11 +55,11 @@ class DrainTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$this->loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			$loader->checkUnload($handler, $chunk);
+			$this->loader->checkUnload($handler, $chunk);
 		}
 	}
 

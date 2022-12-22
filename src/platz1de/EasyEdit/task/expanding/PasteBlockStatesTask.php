@@ -12,11 +12,10 @@ class PasteBlockStatesTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param EditTaskHandler     $handler
-	 * @param ManagedChunkHandler $loader
-	 * @return void
+	 * @param EditTaskHandler $handler
+	 * @param int             $chunk
 	 */
-	protected function run(EditTaskHandler $handler, ManagedChunkHandler $loader): void
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$states = BlockStateConvertor::getAllKnownStates();
 		$count = count($states);
@@ -28,7 +27,7 @@ class PasteBlockStatesTask extends ExpandingTask
 		foreach ($states as $id => $state) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);
 			$this->updateProgress($i, $count);
-			if (!$loader->checkRuntimeChunk($chunk)) {
+			if (!$this->loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
 			$handler->changeBlock((int) ($x + floor($i / 100) * 2), $y, $z + ($i % 100) * 2, $id);

@@ -10,13 +10,11 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\world\ChunkInformation;
-use platz1de\EasyEdit\world\ReferencedChunkManager;
 use UnexpectedValueException;
 
 class ManagedChunkHandler implements ChunkHandler
 {
-	private ReferencedChunkManager $manager;
-	private ReferencedChunkManager $manager2;
+	private EditTaskHandler $handler;
 	private ?ChunkInformation $current = null;
 	/**
 	 * @var int[]
@@ -29,27 +27,27 @@ class ManagedChunkHandler implements ChunkHandler
 
 	public function __construct(EditTaskHandler $handler)
 	{
-		$this->manager = $handler->getOrigin()->getManager();
-		$this->manager2 = $handler->getResult();
+		$this->handler = $handler;
 	}
 
 	public function request(int $chunk): bool
 	{
+		$manager = $this->handler->getOrigin()->getManager();
 		try {
-			$this->manager->getChunk($chunk);
+			$manager->getChunk($chunk);
 			EditThread::getInstance()->debug("Requested chunk is already loaded");
 			return true;
 		} catch (UnexpectedValueException) {
 		}
-		ChunkRequestManager::addRequest(new ChunkRequest($this->manager->getWorldName(), $chunk));
+		ChunkRequestManager::addRequest(new ChunkRequest($manager->getWorldName(), $chunk));
 		while ($this->current === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			EditThread::getInstance()->waitForData();
 		}
 		if ($this->current === null) {
 			return false;
 		}
-		$this->manager->setChunk($chunk, $this->current);
-		$this->manager2->setChunk($chunk, clone $this->current);
+		$manager->setChunk($chunk, $this->current);
+		$this->handler->getResult()->setChunk($chunk, clone $this->current);
 		$this->current = null;
 		//TODO: Hack to prevent chunk cap
 		//Currently expanding selections expand in every direction, which means that the chunk cap is reached very quickly
@@ -64,7 +62,7 @@ class ManagedChunkHandler implements ChunkHandler
 
 	public function clear(): void
 	{
-		$this->manager->cleanChunks();
+		$this->handler->getOrigin()->getManager()->cleanChunks();
 		$this->current = null;
 	}
 
@@ -103,13 +101,13 @@ class ManagedChunkHandler implements ChunkHandler
 		if (isset($this->requests[$chunk]) && --$this->requests[$chunk] <= 0) {
 			unset($this->requests[$chunk], $this->loaded[$chunk]);
 
-			EditThread::getInstance()->sendOutput(new ResultingChunkData($this->manager->getWorldName(), [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk)));
+			EditThread::getInstance()->sendOutput(new ResultingChunkData($this->handler->getResult()->getWorldName(), [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk)));
 
-			$this->manager->filterChunks(function (array $c) use ($chunk): array {
+			$this->handler->getOrigin()->getManager()->filterChunks(function (array $c) use ($chunk): array {
 				unset($c[$chunk]);
 				return $c;
 			});
-			$this->manager2->filterChunks(function (array $c) use ($chunk): array {
+			$this->handler->getResult()->filterChunks(function (array $c) use ($chunk): array {
 				unset($c[$chunk]);
 				return $c;
 			});
