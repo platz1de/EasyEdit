@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\StaticPasteTask;
 use platz1de\EasyEdit\task\editing\selection\StreamPasteTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -55,7 +54,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		$this->executor->executeAssociated($this, false);
 
 		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), $this->isUndo));
-		$this->executor->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->executor->notifyUser((string) round($this->executor->getTotalTime(), 2), MixedUtils::humanReadable($this->executor->getTotalBlocks()));
 	}
 
 	public function getProgress(): float

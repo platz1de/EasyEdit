@@ -6,7 +6,6 @@
 
 namespace platz1de\EasyEdit\thread;
 
-use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\modules\StorageModule;
@@ -68,7 +67,6 @@ class EditThread extends Thread
 			} else {
 				try {
 					ThreadData::canExecute(); //clear pending cancel requests
-					EditTaskResultCache::clear();
 					StorageModule::clear();
 					$this->stats->startTask($task);
 					$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());

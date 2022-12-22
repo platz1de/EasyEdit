@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
-use Exception;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\blockupdate\InjectingData;

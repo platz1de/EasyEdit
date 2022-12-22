@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\benchmark;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
@@ -46,8 +45,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//Task #1 - set static
 		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->executeAssociated($this, false);
-		$results[] = ["set static", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
-		EditTaskResultCache::clear();
+		$results[] = ["set static", $this->setSimpleBenchmark->getTotalTime(), $this->setSimpleBenchmark->getTotalBlocks()];
 		StorageModule::clear();
 
 		//Task #2 - set complex
@@ -55,15 +53,13 @@ class BenchmarkExecutor extends ExecutableTask
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
 		$this->setComplexBenchmark->executeAssociated($this, false);
-		$results[] = ["set complex", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
-		EditTaskResultCache::clear();
+		$results[] = ["set complex", $this->setComplexBenchmark->getTotalTime(), $this->setComplexBenchmark->getTotalBlocks()];
 		StorageModule::clear();
 
 		//Task #3 - copy
 		$this->copyBenchmark = new CopyTask($testCube, $pos);
 		$this->copyBenchmark->executeAssociated($this, false);
-		$results[] = ["copy", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
-		EditTaskResultCache::clear();
+		$results[] = ["copy", $this->copyBenchmark->getTotalTime(), $this->copyBenchmark->getTotalBlocks()];
 
 		$copied = StorageModule::mustGetDynamic($id = StorageModule::finishCollecting());
 		StorageModule::cleanStored($id);
@@ -71,7 +67,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//Task #4 - paste
 		$this->pasteBenchmark = new DynamicPasteTask($this->world, $copied, $pos);
 		$this->pasteBenchmark->executeAssociated($this, false);
-		$results[] = ["paste", EditTaskResultCache::getTime(), EditTaskResultCache::getChanged()];
+		$results[] = ["paste", $this->pasteBenchmark->getTotalTime(), $this->pasteBenchmark->getTotalBlocks()];
 		StorageModule::clear();
 
 		$this->sendOutputPacket(new BenchmarkCallbackData($this->world, $results));

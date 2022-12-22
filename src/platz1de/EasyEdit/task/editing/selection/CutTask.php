@@ -52,7 +52,7 @@ class CutTask extends SelectionEditTask
 		$this->executor2 = new SetTask($this->selection, new StaticBlock(0), $this->context);
 		$this->executor2->executeAssociated($this, false);
 		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), false));
-		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round($this->executor1->totalTime + $this->executor2->totalTime, 2), MixedUtils::humanReadable($this->executor1->totalBlocks + $this->executor2->totalBlocks));
 	}
 
 	/**

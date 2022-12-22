@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task\expanding;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
@@ -23,6 +22,8 @@ abstract class ExpandingTask extends ExecutableTask
 	protected string $world;
 	protected Vector3 $start;
 	private float $progress = 0; //worst case scenario
+	protected int $totalBlocks = 0;
+	protected float $totalTime = 0;
 
 	/**
 	 * @param string  $world
@@ -53,7 +54,10 @@ abstract class ExpandingTask extends ExecutableTask
 		$this->run($handler, $loader);
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $handler->getChangedBlockCount() . " blocks (" . $handler->getReadBlockCount() . " read, " . $handler->getWrittenBlockCount() . " written)");
-		EditTaskResultCache::from(microtime(true) - $start, $handler->getChangedBlockCount());
+
+		$this->totalTime += microtime(true) - $start;
+		$this->totalBlocks += $handler->getChangedBlockCount();
+
 		$this->finalize($handler);
 	}
 
@@ -67,7 +71,7 @@ abstract class ExpandingTask extends ExecutableTask
 		$this->sendOutputPacket(new ResultingChunkData($this->world, $handler->getResult()->getChunks(), $handler->prepareAllInjectionData()));
 		$changeId = StorageModule::finishCollecting();
 		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
 		ChunkRequestManager::clear();
 	}
 

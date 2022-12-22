@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
@@ -42,12 +41,12 @@ class CopyTask extends SelectionEditTask
 			$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
 			parent::execute();
 			StorageModule::startCollecting($this->result);
-			EditTaskResultCache::from(0, $this->result->getBlockCount());
+			$this->totalBlocks = $this->result->getBlockCount();
 			return;
 		}
 		$this->executeAssociated($this, false); //this calls this method again, but without the default handler
 		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::finishCollecting()));
-		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
 	}
 
 	/**

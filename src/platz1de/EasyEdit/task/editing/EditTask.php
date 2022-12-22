@@ -20,6 +20,8 @@ abstract class EditTask extends ExecutableTask
 	protected string $world;
 	private BlockListSelection $undo;
 	protected EditTaskHandler $handler;
+	protected float $totalTime = 0;
+	protected int $totalBlocks = 0;
 
 	/**
 	 * @param string $world
@@ -52,14 +54,13 @@ abstract class EditTask extends ExecutableTask
 		}
 		$this->handler->setManager($manager);
 
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " loaded " . $this->handler->getChunkCount() . " Chunks");
-
 		HeightMapCache::prepare();
 
 		$this->executeEdit($this->handler, $chunk);
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
 
-		EditTaskResultCache::from(microtime(true) - $start, $this->handler->getChangedBlockCount());
+		$this->totalTime += microtime(true) - $start;
+		$this->totalBlocks += $this->handler->getChangedBlockCount();
 
 		$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($this->handler->getResult()->getChunks()), $this->handler->prepareAllInjectionData()));
 	}
@@ -71,7 +72,7 @@ abstract class EditTask extends ExecutableTask
 		}
 		$changeId = StorageModule::finishCollecting();
 		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-		$this->notifyUser((string) round(EditTaskResultCache::getTime(), 2), MixedUtils::humanReadable(EditTaskResultCache::getChanged()));
+		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
 		ChunkRequestManager::clear();
 	}
 
@@ -123,5 +124,21 @@ abstract class EditTask extends ExecutableTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getTotalTime(): float
+	{
+		return $this->totalTime;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTotalBlocks(): int
+	{
+		return $this->totalBlocks;
 	}
 }
