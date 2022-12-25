@@ -51,7 +51,7 @@ class StreamPasteTask extends SelectionEditTask
 	/**
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new BinaryBlockListStream($this->getWorld());
 	}

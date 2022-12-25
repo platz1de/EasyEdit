@@ -8,7 +8,6 @@ use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\EditTaskResultCache;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
@@ -48,10 +47,10 @@ class CutTask extends SelectionEditTask
 	{
 		$this->executor1 = new CopyTask($this->selection, $this->position, $this->context);
 		$this->executor1->executeAssociated($this, false);
-		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::finishCollecting()));
+		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->executor1->getResult())));
 		$this->executor2 = new SetTask($this->selection, new StaticBlock(0), $this->context);
 		$this->executor2->executeAssociated($this, false);
-		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), false));
+		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->executor2->undo), false));
 		$this->notifyUser((string) round($this->executor1->totalTime + $this->executor2->totalTime, 2), MixedUtils::humanReadable($this->executor1->totalBlocks + $this->executor2->totalBlocks));
 	}
 
@@ -93,7 +92,7 @@ class CutTask extends SelectionEditTask
 		throw new BadMethodCallException("Not implemented");
 	}
 
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		throw new RuntimeException("Not implemented");
 	}

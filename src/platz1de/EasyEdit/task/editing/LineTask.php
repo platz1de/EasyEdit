@@ -94,7 +94,7 @@ class LineTask extends EditTask
 	/**
 	 * @return BinaryBlockListStream
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new BinaryBlockListStream($this->getWorld());
 	}

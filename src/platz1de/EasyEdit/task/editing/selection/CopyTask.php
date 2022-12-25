@@ -40,12 +40,11 @@ class CopyTask extends SelectionEditTask
 		if (!$handle) {
 			$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
 			parent::execute();
-			StorageModule::startCollecting($this->result);
 			$this->totalBlocks = $this->result->getBlockCount();
 			return;
 		}
 		$this->executeAssociated($this, false); //this calls this method again, but without the default handler
-		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::finishCollecting()));
+		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->result)));
 		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
 	}
 
@@ -60,7 +59,7 @@ class CopyTask extends SelectionEditTask
 	/**
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new NonSavingBlockListSelection();
 	}
@@ -100,5 +99,13 @@ class CopyTask extends SelectionEditTask
 	{
 		$this->position = $stream->getVector();
 		parent::parseData($stream);
+	}
+
+	/**
+	 * @return DynamicBlockListSelection
+	 */
+	public function getResult(): DynamicBlockListSelection
+	{
+		return $this->result;
 	}
 }

@@ -15,7 +15,7 @@ use platz1de\EasyEdit\world\HeightMapCache;
 class SetTask extends PatternedEditTask
 {
 	use CubicStaticUndo {
-		CubicStaticUndo::getUndoBlockList as private getDefaultBlockList;
+		CubicStaticUndo::createUndoBlockList as private getDefaultBlockList;
 	}
 	use SettingNotifier;
 
@@ -50,7 +50,7 @@ class SetTask extends PatternedEditTask
 	/**
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return $this->getPattern()->contains(GravityPattern::class) ? new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getCubicStart(), $this->getSelection()->getCubicEnd()) : $this->getDefaultBlockList();
 	}

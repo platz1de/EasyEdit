@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\thread\modules;
 
-use phpDocumentor\Reflection\Types\Self_;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -19,57 +18,21 @@ class StorageModule
 	 */
 	private static array $storage = [];
 	private static int $storageSlot = 0;
-	private static ?BlockListSelection $collected = null;
 
 	/**
+	 * @param BlockListSelection $selection
 	 * @return StoredSelectionIdentifier
 	 */
-	public static function finishCollecting(): StoredSelectionIdentifier
+	public static function store(BlockListSelection $selection): StoredSelectionIdentifier
 	{
-		if (self::$collected === null) {
+		if ($selection instanceof NonSavingBlockListSelection) {
 			return StoredSelectionIdentifier::invalid();
 		}
-		$id = self::nextStorageId();
-		self::$storage[$id] = self::$collected;
-		$identifier = new StoredSelectionIdentifier($id, self::$collected::class);
-		self::$collected = null;
+		$id = self::$storageSlot++;
+		self::$storage[$id] = $selection;
+		$identifier = new StoredSelectionIdentifier($id, $selection::class);
 		EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
 		return $identifier;
-	}
-
-	/**
-	 * @param BlockListSelection $piece
-	 */
-	public static function startCollecting(BlockListSelection $piece): void
-	{
-		if ($piece instanceof NonSavingBlockListSelection) {
-			return;
-		}
-		if (self::$collected === null) {
-			self::$collected = $piece;
-		} else {
-			throw new UnexpectedValueException("Already collecting something");
-		}
-	}
-
-	public static function checkFinished(): void
-	{
-		if (self::$collected !== null) {
-			throw new UnexpectedValueException("Storage module was not properly cleaned");
-		}
-	}
-
-	public static function clear(): void
-	{
-		self::$collected = null;
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function nextStorageId(): int
-	{
-		return self::$storageSlot++;
 	}
 
 	/**
@@ -124,13 +87,5 @@ class StorageModule
 	{
 		unset(self::$storage[$id->getMagicId()]);
 		EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
-	}
-
-	/**
-	 * @return BlockListSelection|null
-	 */
-	public static function getCurrentCollected(): ?BlockListSelection
-	{
-		return self::$collected;
 	}
 }

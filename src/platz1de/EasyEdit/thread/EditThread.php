@@ -8,7 +8,6 @@ namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\input\InputData;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\session\CrashReportData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
@@ -67,7 +66,6 @@ class EditThread extends Thread
 			} else {
 				try {
 					ThreadData::canExecute(); //clear pending cancel requests
-					StorageModule::clear();
 					$this->stats->startTask($task);
 					$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
 					$task->execute();
@@ -75,7 +73,6 @@ class EditThread extends Thread
 					$result = new TaskResultData();
 					$result->setTaskId($task->getTaskId());
 					$this->sendOutput($result);
-					StorageModule::checkFinished();
 				} catch (Throwable $throwable) {
 					$this->logger->logException($throwable);
 					//TODO: move this to result

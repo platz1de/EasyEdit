@@ -98,7 +98,7 @@ class PathfindingTask extends ExpandingTask
 	/**
 	 * @return BinaryBlockListStream
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new BinaryBlockListStream($this->getWorld());
 	}

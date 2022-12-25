@@ -87,7 +87,7 @@ class MoveTask extends SelectionEditTask
 	/**
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new StaticBlockListSelection($this->getWorld(), Vector3::minComponents($this->getSelection()->getCubicStart(), $this->getSelection()->getCubicStart()->addVector($this->direction)), Vector3::maxComponents($this->getSelection()->getCubicEnd(), $this->getSelection()->getCubicEnd()->addVector($this->direction)));
 	}

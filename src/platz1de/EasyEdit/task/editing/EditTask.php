@@ -18,7 +18,7 @@ use platz1de\EasyEdit\world\ReferencedChunkManager;
 abstract class EditTask extends ExecutableTask
 {
 	protected string $world;
-	private BlockListSelection $undo;
+	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
 	protected float $totalTime = 0;
 	protected int $totalBlocks = 0;
@@ -34,8 +34,7 @@ abstract class EditTask extends ExecutableTask
 
 	public function prepare(bool $fastSet): void
 	{
-		$this->undo = $this->getUndoBlockList();
-		StorageModule::startCollecting($this->undo);
+		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->undo, $fastSet);
 		EditThread::getInstance()->debug("Preparing Task " . $this->getTaskName() . ":" . $this->getTaskId() . "; Using fast-set: " . ($fastSet ? "true" : "false"));
 	}
@@ -70,7 +69,7 @@ abstract class EditTask extends ExecutableTask
 		if (!$this->useDefaultHandler()) {
 			return;
 		}
-		$changeId = StorageModule::finishCollecting();
+		$changeId = StorageModule::store($this->undo);
 		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
 		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
 		ChunkRequestManager::clear();
@@ -106,7 +105,7 @@ abstract class EditTask extends ExecutableTask
 	/**
 	 * @return BlockListSelection
 	 */
-	abstract public function getUndoBlockList(): BlockListSelection;
+	abstract public function createUndoBlockList(): BlockListSelection;
 
 	/**
 	 * @return string
@@ -140,5 +139,13 @@ abstract class EditTask extends ExecutableTask
 	public function getTotalBlocks(): int
 	{
 		return $this->totalBlocks;
+	}
+
+	/**
+	 * @return BlockListSelection
+	 */
+	public function getUndo(): BlockListSelection
+	{
+		return $this->undo;
 	}
 }

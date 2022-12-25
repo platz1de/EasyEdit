@@ -53,7 +53,7 @@ class StaticStoredPasteTask extends ExecutableTask
 		}
 		$this->executor->executeAssociated($this, false);
 
-		$this->sendOutputPacket(new HistoryCacheData(StorageModule::finishCollecting(), $this->isUndo));
+		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->executor->getUndo()), $this->isUndo));
 		$this->executor->notifyUser((string) round($this->executor->getTotalTime(), 2), MixedUtils::humanReadable($this->executor->getTotalBlocks()));
 	}
 

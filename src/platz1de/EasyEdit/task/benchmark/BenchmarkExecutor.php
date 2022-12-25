@@ -9,7 +9,6 @@ use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\BenchmarkCallbackData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
@@ -46,7 +45,6 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->executeAssociated($this, false);
 		$results[] = ["set static", $this->setSimpleBenchmark->getTotalTime(), $this->setSimpleBenchmark->getTotalBlocks()];
-		StorageModule::clear();
 
 		//Task #2 - set complex
 		//3D-Chess Pattern with stone and dirt
@@ -54,21 +52,16 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
 		$this->setComplexBenchmark->executeAssociated($this, false);
 		$results[] = ["set complex", $this->setComplexBenchmark->getTotalTime(), $this->setComplexBenchmark->getTotalBlocks()];
-		StorageModule::clear();
 
 		//Task #3 - copy
 		$this->copyBenchmark = new CopyTask($testCube, $pos);
 		$this->copyBenchmark->executeAssociated($this, false);
 		$results[] = ["copy", $this->copyBenchmark->getTotalTime(), $this->copyBenchmark->getTotalBlocks()];
 
-		$copied = StorageModule::mustGetDynamic($id = StorageModule::finishCollecting());
-		StorageModule::cleanStored($id);
-
 		//Task #4 - paste
-		$this->pasteBenchmark = new DynamicPasteTask($this->world, $copied, $pos);
+		$this->pasteBenchmark = new DynamicPasteTask($this->world, $this->copyBenchmark->getResult(), $pos);
 		$this->pasteBenchmark->executeAssociated($this, false);
 		$results[] = ["paste", $this->pasteBenchmark->getTotalTime(), $this->pasteBenchmark->getTotalBlocks()];
-		StorageModule::clear();
 
 		$this->sendOutputPacket(new BenchmarkCallbackData($this->world, $results));
 	}

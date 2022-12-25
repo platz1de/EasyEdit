@@ -115,7 +115,7 @@ class DynamicPasteTask extends SelectionEditTask
 	/**
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->selection->getPoint()));
 	}

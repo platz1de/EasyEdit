@@ -10,15 +10,12 @@ use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\SingleChunkHandler;
-use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use RuntimeException;
 
 abstract class SelectionEditTask extends EditTask
 {
@@ -46,7 +43,6 @@ abstract class SelectionEditTask extends EditTask
 	{
 		$handler = $this->getChunkHandler();
 		ChunkRequestManager::setHandler($handler);
-		StorageModule::checkFinished();
 		$chunks = $this->sortChunks($this->selection->getNeededChunks());
 		$this->totalChunks = count($chunks);
 		$this->chunksLeft = count($chunks);
@@ -127,22 +123,6 @@ abstract class SelectionEditTask extends EditTask
 	public function getChunkHandler(): GroupedChunkHandler
 	{
 		return new SingleChunkHandler($this->getWorld());
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getTotalChunks(): int
-	{
-		return $this->totalChunks;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getChunksLeft(): int
-	{
-		return $this->chunksLeft;
 	}
 
 	public function getProgress(): float

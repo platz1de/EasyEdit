@@ -38,8 +38,7 @@ class SchematicLoadTask extends ExecutableTask
 		$start = microtime(true);
 		$selection = new DynamicBlockListSelection(Vector3::zero(), Vector3::zero(), Vector3::zero());
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
-		StorageModule::startCollecting($selection);
-		$changeId = StorageModule::finishCollecting();
+		$changeId = StorageModule::store($selection);
 		$this->sendOutputPacket(new ClipboardCacheData($changeId));
 		$this->sendOutputPacket(new MessageSendData("blocks-copied", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($selection->getIterator()->getWrittenBlockCount())]));
 	}

@@ -53,7 +53,7 @@ abstract class ExpandingTask extends EditTask
 	/**
 	 * @return BlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new ExpandingStaticBlockListSelection($this->getWorld(), $this->start);
 	}

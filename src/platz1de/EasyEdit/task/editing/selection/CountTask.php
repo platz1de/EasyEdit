@@ -29,7 +29,7 @@ class CountTask extends SelectionEditTask
 	/**
 	 * @return NonSavingBlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		return new NonSavingBlockListSelection();
 	}

@@ -15,7 +15,7 @@ trait CubicStaticUndo
 	/**
 	 * @return StaticBlockListSelection
 	 */
-	public function getUndoBlockList(): BlockListSelection
+	public function createUndoBlockList(): BlockListSelection
 	{
 		$ret = new StaticBlockListSelection($this->getWorld(), $this->getSelection()->getCubicStart(), $this->getSelection()->getCubicEnd());
 		return $ret;
