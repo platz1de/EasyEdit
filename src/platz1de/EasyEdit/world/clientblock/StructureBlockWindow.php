@@ -47,7 +47,7 @@ class StructureBlockWindow extends ClientSideBlock
 
 	public function send(Player $player): void
 	{
-		PacketUtils::sendFakeBlock($this->position, $this->position->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS, $this->data);
+		PacketUtils::sendFakeBlock($this->position, $this->position->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_STATE_DATA_BITS, $this->data);
 		if (($inv = $player->getNetworkSession()->getInvManager()) instanceof InventoryManager) {
 			$player->getNetworkSession()->sendDataPacket(ContainerOpenPacket::blockInv($inv->getCurrentWindowId(), WindowTypes::STRUCTURE_EDITOR, new BlockPosition($this->position->getFloorX(), $this->position->getFloorY(), $this->position->getFloorZ())));
 		}

@@ -77,7 +77,7 @@ class StackTask extends SelectionEditTask
 			$ignore = HeightMapCache::getIgnore();
 			yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ignore, $handler, $sizeX, $sizeY, $sizeZ, $startX, $startY, $startZ): void {
 				$block = $handler->getBlock($startX + (($x - $startX) % $sizeX + $sizeX) % $sizeX, $startY + (($y - $startY) % $sizeY + $sizeY) % $sizeY, $startZ + (($z - $startZ) % $sizeZ + $sizeZ) % $sizeZ);
-				if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+				if ($block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, $this->context);

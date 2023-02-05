@@ -92,19 +92,19 @@ class DynamicPasteTask extends SelectionEditTask
 			}, $this->context),
 			self::MODE_REPLACE_AIR => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
-				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+				if (Selection::processBlock($block) && $block !== 0 && in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, $this->context),
 			self::MODE_ONLY_SOLID => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
-				if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+				if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, $this->context),
 			self::MODE_REPLACE_SOLID => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
-				if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_METADATA_BITS, $ignore, true) && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+				if (Selection::processBlock($block) && !in_array($block >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true) && !in_array($handler->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, $this->context),

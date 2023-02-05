@@ -33,7 +33,7 @@ class SolidBlock extends BlockType
 	 */
 	public function equals(int $fullBlock): bool
 	{
-		return !in_array($fullBlock >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore(), true);
+		return !in_array($fullBlock >> Block::INTERNAL_STATE_DATA_BITS, HeightMapCache::getIgnore(), true);
 	}
 
 	/**

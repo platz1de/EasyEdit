@@ -82,10 +82,10 @@ class BlockParser
 	private static function parseInternal(string $string): int
 	{
 		if (is_numeric($string)) {
-			return ((int) $string) << Block::INTERNAL_METADATA_BITS;
+			return ((int) $string) << Block::INTERNAL_STATE_DATA_BITS;
 		}
 		if (preg_match("/(.*):(.*)/", $string, $matches) === 1 && is_numeric($matches[1]) && is_numeric($matches[2])) {
-			return ((int) $matches[1] << Block::INTERNAL_METADATA_BITS) | (int) $matches[2];
+			return ((int) $matches[1] << Block::INTERNAL_STATE_DATA_BITS) | (int) $matches[2];
 		}
 
 		return self::getBlock($string);
@@ -101,6 +101,6 @@ class BlockParser
 		if (!isset($data[1])) {
 			throw new ParseError("Expected string block id, got " . $stringId);
 		}
-		return ((int) $data[0] << Block::INTERNAL_METADATA_BITS) | (int) $data[1];
+		return ((int) $data[0] << Block::INTERNAL_STATE_DATA_BITS) | (int) $data[1];
 	}
 }

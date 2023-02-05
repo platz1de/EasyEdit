@@ -52,8 +52,8 @@ class LineTask extends EditTask
 		//offset points to not yield blocks beyond the endings
 		foreach (VoxelRayTrace::betweenPoints($this->start->add(0.5, 0.5, 0.5), $this->end->add(0.5, 0.5, 0.5)) as $pos) {
 			if ($current === null) {
-				$current = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS);
-			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_METADATA_BITS, $pos->z >> Block::INTERNAL_METADATA_BITS))) {
+				$current = World::chunkHash($pos->x >> Block::INTERNAL_STATE_DATA_BITS, $pos->z >> Block::INTERNAL_STATE_DATA_BITS);
+			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_STATE_DATA_BITS, $pos->z >> Block::INTERNAL_STATE_DATA_BITS))) {
 				$chunkHandler->request($current);
 				while ($chunkHandler->getNextChunk() === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 					EditThread::getInstance()->waitForData();

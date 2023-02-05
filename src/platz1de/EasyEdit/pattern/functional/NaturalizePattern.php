@@ -41,7 +41,7 @@ class NaturalizePattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
-		return !in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore(), true);
+		return !in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, HeightMapCache::getIgnore(), true);
 	}
 
 	/**

@@ -47,11 +47,11 @@ class HeightMapCache
 				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
 					$y = World::Y_MAX - 1;
 					while ($y > World::Y_MIN) {
-						while ($y >= World::Y_MIN && in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+						while ($y >= World::Y_MIN && in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, self::$ignore, true)) {
 							$y--;
 						}
 						$c = $y;
-						while ($y >= World::Y_MIN && !in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, self::$ignore, true)) {
+						while ($y >= World::Y_MIN && !in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, self::$ignore, true)) {
 							$y--;
 						}
 						self::$heightMap[$x][$z][$c] = $c - $y;

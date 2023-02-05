@@ -4,9 +4,7 @@ namespace platz1de\EasyEdit\world;
 
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
-use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\world\format\BiomeArray;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\FastChunkSerializer;
 use pocketmine\world\World;
@@ -37,7 +35,7 @@ class ChunkInformation
 	 */
 	public static function empty(): ChunkInformation
 	{
-		return new self(new Chunk([], BiomeArray::fill(BiomeIds::OCEAN), true), []);
+		return new self(new Chunk([], true), []);
 	}
 
 	/**

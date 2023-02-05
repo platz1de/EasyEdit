@@ -66,7 +66,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 			$this->updateProgress(-$current["priority"], $limit);
 			$this->loader->checkRuntimeChunk($chunk);
 			$this->loader->checkRuntimeChunk($c);
-			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
 				$this->loader->checkUnload($handler, $chunk);
 				$this->loader->checkUnload($handler, $c);
 				continue;

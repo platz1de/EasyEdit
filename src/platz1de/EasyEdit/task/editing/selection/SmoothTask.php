@@ -9,7 +9,7 @@ use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -84,7 +84,7 @@ class SmoothTask extends SelectionEditTask
 			if ($reference[$y] <= 0) {
 				if ($y < (World::Y_MAX - 1)) {
 					$b = $handler->getBlock($x, $y + 1, $z);
-					if (in_array($b >> Block::INTERNAL_METADATA_BITS, [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA], true)) {
+					if ($b >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::WATER || $b >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::LAVA) {
 						$handler->changeBlock($x, $y, $z, $b);
 						return;
 					}
@@ -95,7 +95,7 @@ class SmoothTask extends SelectionEditTask
 							continue;
 						}
 						$b = $handler->getBlock($x + $i, $y, $z + $j);
-						if (in_array($b >> Block::INTERNAL_METADATA_BITS, [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA], true)) {
+						if ($b >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::WATER || $b >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::LAVA) {
 							$handler->changeBlock($x, $y, $z, $b);
 							return;
 						}

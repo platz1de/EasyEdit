@@ -89,7 +89,7 @@ class ChunkController
 		$this->readCount++;
 		$y = min(World::Y_MAX - 1, max(0, $y));
 		$this->moveTo($x, $y, $z);
-		return $this->currentSubChunk->getFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f);
+		return $this->currentSubChunk->getBlockStateId($x & 0x0f, $y & 0x0f, $z & 0x0f);
 	}
 
 	/**
@@ -115,7 +115,7 @@ class ChunkController
 		$this->writeCount++;
 		$y = min(World::Y_MAX - 1, max(0, $y));
 		$this->moveTo($x, $y, $z);
-		$this->currentSubChunk->setFullBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
+		$this->currentSubChunk->setBlockStateId($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 	}
 
 	/**

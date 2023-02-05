@@ -89,7 +89,7 @@ class FillTask extends ExpandingTask
 			if (!$this->loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
-			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, $ignore, true)) {
+			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
 				$this->loader->checkUnload($handler, $chunk);
 				continue;
 			}

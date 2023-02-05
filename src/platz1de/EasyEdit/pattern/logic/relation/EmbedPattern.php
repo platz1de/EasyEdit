@@ -26,10 +26,10 @@ class EmbedPattern extends Pattern
 	 */
 	public function isValidAt(int $x, int $y, int $z, ChunkController $iterator, Selection $selection): bool
 	{
-		if (in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore(), true)) {
+		if (in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, HeightMapCache::getIgnore(), true)) {
 			return false;
 		}
-		if ($y + 1 < World::Y_MAX && !in_array($iterator->getBlock($x, $y + 1, $z) >> Block::INTERNAL_METADATA_BITS, HeightMapCache::getIgnore(), true)) {
+		if ($y + 1 < World::Y_MAX && !in_array($iterator->getBlock($x, $y + 1, $z) >> Block::INTERNAL_STATE_DATA_BITS, HeightMapCache::getIgnore(), true)) {
 			return false;
 		}
 		foreach ((new Vector3($x, $y, $z))->sidesAroundAxis(Axis::Y) as $vector) {

@@ -30,13 +30,13 @@ class StructureBlockOutline extends ClientSideBlock
 	public function send(Player $player): void
 	{
 		$this->recalculatePosition($player);
-		PacketUtils::sendFakeBlock($this->currentPosition, $this->currentPosition->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS, $this->data);
+		PacketUtils::sendFakeBlock($this->currentPosition, $this->currentPosition->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_STATE_DATA_BITS, $this->data);
 	}
 
 	public function remove(Player $player): void
 	{
 		//Minecraft doesn't delete BlockData if the original Block shouldn't have some or whole chunks get sent
-		PacketUtils::sendFakeBlock($this->currentPosition, $player->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_METADATA_BITS);
+		PacketUtils::sendFakeBlock($this->currentPosition, $player->getWorld(), $player, BlockLegacyIds::STRUCTURE_BLOCK << Block::INTERNAL_STATE_DATA_BITS);
 		PacketUtils::resendBlock($this->currentPosition, $player->getWorld(), $player);
 	}
 

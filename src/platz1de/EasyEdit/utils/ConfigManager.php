@@ -44,7 +44,7 @@ class ConfigManager
 		Messages::load(strtolower(self::mustGetString($config, "language", "auto")));
 
 		self::$terrainIgnored = array_map(static function (string $block): int {
-			return BlockParser::getBlock($block) >> Block::INTERNAL_METADATA_BITS;
+			return BlockParser::getBlock($block) >> Block::INTERNAL_STATE_DATA_BITS;
 		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
 
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);

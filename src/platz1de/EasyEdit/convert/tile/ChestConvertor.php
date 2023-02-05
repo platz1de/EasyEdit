@@ -23,7 +23,7 @@ class ChestConvertor extends InventoryConvertor
 
 	public static function toJava(int $blockId, CompoundTag $tile): void
 	{
-		if ($blockId >> Block::INTERNAL_METADATA_BITS === BlockLegacyIds::TRAPPED_CHEST) {
+		if ($blockId >> Block::INTERNAL_STATE_DATA_BITS === BlockLegacyIds::TRAPPED_CHEST) {
 			$tile->setString(Tile::TAG_ID, TileConvertor::TILE_TRAPPED_CHEST); //pmmp uses the same tile here
 		}
 		if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {
