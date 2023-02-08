@@ -87,6 +87,9 @@ class TileConvertor
 			}
 		}
 		try {
+			/**
+			 * @var ?class-string<TileConvertorPiece> $class
+			 */
 			$class = self::getConvertor($tile->getString(Tile::TAG_ID));
 			if ($class !== null) {
 				$class::toBedrock($tile);
@@ -106,6 +109,9 @@ class TileConvertor
 	{
 		$tile->setString(Tile::TAG_ID, self::getJavaId($tile->getString(Tile::TAG_ID)));
 		try {
+			/**
+			 * @var ?class-string<TileConvertorPiece> $class
+			 */
 			$class = self::getConvertor($tile->getString(Tile::TAG_ID));
 		} catch (UnexpectedValueException) {
 			EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));

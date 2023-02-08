@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\convert\tile;
 
 use platz1de\EasyEdit\convert\TileConvertor;
 use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\block\tile\Chest;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
@@ -23,7 +23,7 @@ class ChestConvertor extends InventoryConvertor
 
 	public static function toJava(int $blockId, CompoundTag $tile): void
 	{
-		if ($blockId >> Block::INTERNAL_STATE_DATA_BITS === BlockLegacyIds::TRAPPED_CHEST) {
+		if ($blockId >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::TRAPPED_CHEST) {
 			$tile->setString(Tile::TAG_ID, TileConvertor::TILE_TRAPPED_CHEST); //pmmp uses the same tile here
 		}
 		if (isset($tile->getValue()[Chest::TAG_PAIRX], $tile->getValue()[Chest::TAG_PAIRZ])) {

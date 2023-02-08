@@ -27,7 +27,7 @@ class StaticBlock extends BlockType
 	 */
 	public static function from(Block $block): StaticBlock
 	{
-		return new self($block->getFullId());
+		return new self($block->getStateId());
 	}
 
 	/**

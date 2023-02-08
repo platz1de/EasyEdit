@@ -11,7 +11,7 @@ use platz1de\EasyEdit\utils\BlockInfoTool;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
 use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
@@ -88,19 +88,19 @@ class DefaultEventListener implements Listener
 	public function onUse(PlayerItemUseEvent $event): void
 	{
 		try {
-			$block = $event->getPlayer()->getTargetBlock(self::CREATIVE_REACH, [BlockLegacyIds::STILL_WATER => true, BlockLegacyIds::FLOWING_WATER => true, BlockLegacyIds::STILL_LAVA => true, BlockLegacyIds::FLOWING_LAVA => true, BlockLegacyIds::AIR => true]);
+			$block = $event->getPlayer()->getTargetBlock(self::CREATIVE_REACH, [BlockTypeIds::WATER => true, BlockTypeIds::LAVA => true, BlockTypeIds::AIR => true]);
 		} catch (Throwable) {
 			//No idea why this is crashing for some users, probably caused by weird binaries / plugins
 			EasyEdit::getInstance()->getLogger()->warning("Player " . $event->getPlayer()->getName() . " has thrown an exception while trying to get a target block");
 			return;
 		}
 		$item = $event->getItem();
-		if ($block === null || in_array($block->getId(), [BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_LAVA, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::AIR], true)) {
+		if ($block === null || in_array($block->getTypeId(), [BlockTypeIds::WATER, BlockTypeIds::LAVA, BlockTypeIds::AIR], true)) {
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
 					try {
-						$target = $event->getPlayer()->getTargetBlock(100, [BlockLegacyIds::STILL_WATER => true, BlockLegacyIds::FLOWING_WATER => true, BlockLegacyIds::STILL_LAVA => true, BlockLegacyIds::FLOWING_LAVA => true, BlockLegacyIds::AIR => true]);
+						$target = $event->getPlayer()->getTargetBlock(100, [BlockTypeIds::WATER => true, BlockTypeIds::LAVA => true, BlockTypeIds::AIR => true]);
 					} catch (Throwable) {
 						//No idea why this is crashing for some users, probably caused by weird binaries / plugins
 						EasyEdit::getInstance()->getLogger()->warning("Player " . $event->getPlayer()->getName() . " has thrown an exception while trying to get a target block");
