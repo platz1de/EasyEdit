@@ -2,89 +2,143 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use platz1de\EasyEdit\convert\BlockStateConvertor;
+use InvalidArgumentException;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use pocketmine\block\Block;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\item\LegacyStringToItemParser;
 use pocketmine\item\LegacyStringToItemParserException;
 use pocketmine\item\StringToItemParser;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 
 class BlockParser
 {
-
 	/**
 	 * @param string $string
 	 * @return int
 	 * @throws ParseError
 	 */
-	public static function getBlock(string $string): int
+	public static function getRuntime(string $string): int
 	{
+		//Legacy Format (id:meta or name:meta)
 		try {
-			$item = LegacyStringToItemParser::getInstance()->parse($string);
+			$item = LegacyStringToItemParser::getInstance()->parse(trim($string));
+			return $item->getBlock()->getStateId();
 		} catch (LegacyStringToItemParserException) {
-			//Also accept prefixed blocks
-			if (($item = StringToItemParser::getInstance()->parse(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[0])) === null) {
-				if (($id = BlockStateConvertor::getFromState("minecraft:" . str_replace([" ", "minecraft:"], ["_", ""], trim($string)))) !== 0) {
-					return $id;
+			//Ignore
+		}
+
+		//Name Parser
+		$item = StringToItemParser::getInstance()->parse(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[0]);
+		if ($item !== null) {
+			return $item->getBlock()->getStateId();
+		}
+
+		$string = "minecraft:" . str_replace([" ", "minecraft:"], ["_", ""], trim($string));
+		//Block State Parser (bedrock)
+		try {
+			return self::runtimeFromStateString($string, BlockStateData::CURRENT_VERSION);
+		} catch (InvalidArgumentException) {
+			//Ignore
+		}
+
+		//TODO: Block State Parser (java)
+		throw new ParseError("Unknown Block " . $string);
+	}
+
+	/**
+	 * @param int $block
+	 * @return string
+	 */
+	public static function runtimeToStateString(int $block): string
+	{
+		return self::toStateString(GlobalBlockStateHandlers::getSerializer()->serialize($block));
+	}
+
+	/**
+	 * @param Block $block
+	 * @return string
+	 */
+	public static function blockToStateString(Block $block): string
+	{
+		return self::toStateString(GlobalBlockStateHandlers::getSerializer()->serializeBlock($block));
+	}
+
+	/**
+	 * @param BlockStateData $block
+	 * @return string id[stateName=value,stateName=value...]
+	 */
+	public static function toStateString(BlockStateData $block): string
+	{
+		if ($block->getStates() === []) {
+			return $block->getName();
+		}
+		$states = [];
+		foreach ($block->getStates() as $key => $value) {
+			$states[] = $key . "=" . match (get_class($value)) {
+					StringTag::class => $value->getValue(),
+					IntTag::class => (string) $value->getValue(),
+					ByteTag::class => $value->getValue() ? "true" : "false",
+					default => throw new InvalidArgumentException("Unexpected tag type " . get_class($value))
+				};
+		}
+		return $block->getName() . "[" . implode(",", $states) . "]";
+	}
+
+	/**
+	 * @param string $block
+	 * @param int    $version
+	 * @return int
+	 */
+	public static function runtimeFromStateString(string $block, int $version): int
+	{
+		$state = self::fromStateString($block, $version);
+		$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
+		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
+	}
+
+	/**
+	 * @param string $block
+	 * @param int    $version
+	 * @return Block
+	 */
+	public static function blockFromStateString(string $block, int $version): Block
+	{
+		$state = self::fromStateString($block, $version);
+		$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
+		return GlobalBlockStateHandlers::getDeserializer()->deserializeBlock($state);
+	}
+
+	/**
+	 * @param string $block
+	 * @param int    $version
+	 * @return BlockStateData
+	 */
+	public static function fromStateString(string $block, int $version): BlockStateData
+	{
+		if (preg_match("/([az_:]*)(?:\[([az_=,]*)])?/", strtolower($block), $matches)) {
+			$block = $matches[1];
+			if (!isset($matches[2])) {
+				return new BlockStateData($block, [], $version);
+			}
+			$states = [];
+			foreach (explode(",", $matches[2]) as $state) {
+				$state = explode("=", $state);
+				if (count($state) === 2) {
+					$states[$state[0]] = match ($state[1]) {
+						"true" => new ByteTag(1),
+						"false" => new ByteTag(0),
+						default => is_numeric($state[1]) ? new IntTag((int) $state[1]) : new StringTag($state[1])
+					};
+				} else {
+					throw new InvalidArgumentException("Invalid state argument " . $block);
 				}
-				throw new ParseError("Unknown Block " . $string);
 			}
+			return new BlockStateData($block, $states, $version);
 		}
-
-		return $item->getBlock()->getFullId();
-	}
-
-	/**
-	 * @param string $string
-	 * @return int
-	 */
-	public static function parseBlockIdentifier(string $string): int
-	{
-		$suppress = false;
-		if (str_starts_with($string, "#")) {
-			$string = substr($string, 1);
-			$suppress = true;
-		}
-		if (ConfigManager::isAllowingUnregisteredBlocks()) {
-			$id = self::parseInternal($string);
-		} else {
-			$id = self::getBlock($string);
-		}
-		if (!$suppress) {
-			$state = BlockStateConvertor::getState($id);
-			if (str_contains($state, "persistent=false")) {
-				$id = BlockStateConvertor::getFromState(str_replace("persistent=false", "persistent=true", $state));
-			}
-		}
-		return $id;
-	}
-
-	/**
-	 * @param string $string
-	 * @return int
-	 */
-	private static function parseInternal(string $string): int
-	{
-		if (is_numeric($string)) {
-			return ((int) $string) << Block::INTERNAL_STATE_DATA_BITS;
-		}
-		if (preg_match("/(.*):(.*)/", $string, $matches) === 1 && is_numeric($matches[1]) && is_numeric($matches[2])) {
-			return ((int) $matches[1] << Block::INTERNAL_STATE_DATA_BITS) | (int) $matches[2];
-		}
-
-		return self::getBlock($string);
-	}
-
-	/**
-	 * @param string $stringId Id in format id:meta
-	 * @return int fullID
-	 */
-	public static function fromStringId(string $stringId): int
-	{
-		$data = explode(":", $stringId);
-		if (!isset($data[1])) {
-			throw new ParseError("Expected string block id, got " . $stringId);
-		}
-		return ((int) $data[0] << Block::INTERNAL_STATE_DATA_BITS) | (int) $data[1];
+		throw new InvalidArgumentException("Invalid block state string " . $block);
 	}
 }

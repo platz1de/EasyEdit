@@ -38,7 +38,7 @@ class PatternParser
 	public static function validateInput(string $pattern, Player $player): string
 	{
 		self::parseInput($pattern, $player);
-		return str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getId() . ":" . $player->getInventory()->getItemInHand()->getBlock()->getMeta(), $pattern);
+		return str_replace("hand", BlockParser::blockToStateString($player->getInventory()->getItemInHand()->getBlock()), $pattern);
 	}
 
 	/**
@@ -52,7 +52,7 @@ class PatternParser
 		if ($pattern === "") {
 			throw new ParseError("No pattern given");
 		}
-		return self::parseInternal(str_replace("hand", $player->getInventory()->getItemInHand()->getBlock()->getId() . ":" . $player->getInventory()->getItemInHand()->getBlock()->getMeta(), $pattern));
+		return self::parseInternal(str_replace("hand", BlockParser::blockToStateString($player->getInventory()->getItemInHand()->getBlock()), $pattern));
 	}
 
 	/**
@@ -115,7 +115,7 @@ class PatternParser
 		//blocks have priority
 		try {
 			$invert = false; //this would be always false
-			$pattern = new StaticBlock(BlockParser::parseBlockIdentifier($patternString));
+			$pattern = new StaticBlock(BlockParser::getRuntime($patternString));
 		} catch (ParseError) {
 			//This still allows old syntax, starting with #
 			//I have no idea what phpstorm is doing here
@@ -179,7 +179,7 @@ class PatternParser
 			return new SolidBlock();
 		}
 
-		return new StaticBlock(BlockParser::parseBlockIdentifier($string));
+		return new StaticBlock(BlockParser::getRuntime($string));
 
 		//return new DynamicBlock(BlockParser::parseBlockIdentifier($string));
 	}
