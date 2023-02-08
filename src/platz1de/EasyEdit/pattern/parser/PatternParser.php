@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\pattern\parser;
 
 use platz1de\EasyEdit\pattern\block\BlockType;
-use platz1de\EasyEdit\pattern\block\DynamicBlock;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
@@ -180,10 +179,8 @@ class PatternParser
 			return new SolidBlock();
 		}
 
-		if (BlockParser::isStatic($string)) {
-			return new StaticBlock(BlockParser::parseBlockIdentifier($string));
-		}
+		return new StaticBlock(BlockParser::parseBlockIdentifier($string));
 
-		return new DynamicBlock(BlockParser::parseBlockIdentifier($string));
+		//return new DynamicBlock(BlockParser::parseBlockIdentifier($string));
 	}
 }

@@ -11,22 +11,6 @@ use pocketmine\item\StringToItemParser;
 
 class BlockParser
 {
-	/**
-	 * @param string $string
-	 * @return bool
-	 */
-	public static function isStatic(string $string): bool
-	{
-		if (str_starts_with($string, "#") || isset(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[1])) {
-			return true; //given with meta value
-		}
-		try {
-			LegacyStringToItemParser::getInstance()->parse($string);
-			return false;
-		} catch (LegacyStringToItemParserException) {
-			return true; //given with prefix (or unknown)
-		}
-	}
 
 	/**
 	 * @param string $string
