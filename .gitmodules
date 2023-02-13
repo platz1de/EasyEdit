@@ -1,4 +1,4 @@
 [submodule "resources/repo"]
 	path = resources/repo
 	url = https://github.com/platz1de/EasyEdit-Data.git
-	branch = format-v2.0
+	branch = format-v3.0

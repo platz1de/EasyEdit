@@ -85,4 +85,9 @@ class RepoManager
 
 		return MixedUtils::decodeJson($data, $depth);
 	}
+
+	public static function getVersion(): int
+	{
+		return self::$repoData["state-data"] ?? throw new UnexpectedValueException("Repo data does not contain state-data");
+	}
 }

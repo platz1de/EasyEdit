@@ -18,15 +18,18 @@ class LegacyBlockIdConvertor
 	 */
 	private static array $conversionFrom;
 	private static bool $available = false;
+	public const METADATA_BITS = 4;
 
 	public static function load(): void
 	{
 		self::$conversionFrom = [];
 
 		try {
-			/** @var string $bedrockStringId */
-			foreach (RepoManager::getJson("bedrock-conversion-map", 2) as $javaStringId => $bedrockStringId) {
-				self::$conversionFrom[BlockParser::fromStringId($javaStringId)] = BlockParser::fromStringId($bedrockStringId);
+			$version = RepoManager::getVersion();
+			/** @var string $bedrockState */
+			foreach (RepoManager::getJson("legacy-conversion-map", 2) as $javaStringId => $bedrockState) {
+				$javaId = explode(":", $javaStringId);
+				self::$conversionFrom[((int) $javaId[0]) << self::METADATA_BITS | ((int) $javaId[1])] = BlockParser::runtimeFromStateString($bedrockState, $version);
 			}
 			self::$available = true;
 		} catch (Throwable $e) {

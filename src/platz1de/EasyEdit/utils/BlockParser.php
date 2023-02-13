@@ -12,6 +12,7 @@ use pocketmine\item\StringToItemParser;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\nbt\tag\Tag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 
 class BlockParser
@@ -78,12 +79,7 @@ class BlockParser
 		}
 		$states = [];
 		foreach ($block->getStates() as $key => $value) {
-			$states[] = $key . "=" . match (get_class($value)) {
-					StringTag::class => $value->getValue(),
-					IntTag::class => (string) $value->getValue(),
-					ByteTag::class => $value->getValue() ? "true" : "false",
-					default => throw new InvalidArgumentException("Unexpected tag type " . get_class($value))
-				};
+			$states[] = $key . "=" . self::tagToStringValue($value);
 		}
 		return $block->getName() . "[" . implode(",", $states) . "]";
 	}
@@ -128,11 +124,7 @@ class BlockParser
 			foreach (explode(",", $matches[2]) as $state) {
 				$state = explode("=", $state);
 				if (count($state) === 2) {
-					$states[$state[0]] = match ($state[1]) {
-						"true" => new ByteTag(1),
-						"false" => new ByteTag(0),
-						default => is_numeric($state[1]) ? new IntTag((int) $state[1]) : new StringTag($state[1])
-					};
+					$states[$state[0]] = self::tagFromStringValue($state[1]);
 				} else {
 					throw new InvalidArgumentException("Invalid state argument " . $block);
 				}
@@ -140,5 +132,32 @@ class BlockParser
 			return new BlockStateData($block, $states, $version);
 		}
 		throw new InvalidArgumentException("Invalid block state string " . $block);
+	}
+
+	/**
+	 * @param Tag $tag
+	 * @return string
+	 */
+	public static function tagToStringValue(Tag $tag): string
+	{
+		return match (get_class($tag)) {
+			StringTag::class => $tag->getValue(),
+			IntTag::class => (string) $tag->getValue(),
+			ByteTag::class => $tag->getValue() ? "true" : "false",
+			default => throw new InvalidArgumentException("Unexpected tag type " . get_class($tag))
+		};
+	}
+
+	/**
+	 * @param string $block
+	 * @return Tag
+	 */
+	public static function tagFromStringValue(string $block): Tag
+	{
+		return match ($block) {
+			"true" => new ByteTag(1),
+			"false" => new ByteTag(0),
+			default => is_numeric($block) ? new IntTag((int) $block) : new StringTag($block)
+		};
 	}
 }

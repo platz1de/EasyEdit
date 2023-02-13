@@ -56,7 +56,7 @@ class McEditSchematic extends SchematicType
 					$id = ord($blockIdChunk[$i % AbstractByteArrayTag::CHUNK_SIZE]);
 					$meta = ord($blockMetaChunk[$i % AbstractByteArrayTag::CHUNK_SIZE]);
 
-					$target->addBlock($x, $y, $z, LegacyBlockIdConvertor::convertFromJava(($id << Block::INTERNAL_STATE_DATA_BITS) | $meta));
+					$target->addBlock($x, $y, $z, LegacyBlockIdConvertor::convertFromJava(($id << LegacyBlockIdConvertor::METADATA_BITS) | $meta));
 					$i++;
 				}
 			}

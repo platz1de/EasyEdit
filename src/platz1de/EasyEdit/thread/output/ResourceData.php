@@ -8,6 +8,15 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ResourceData extends OutputData
 {
+	private string $rawJTB;
+	private string $rawBTJ;
+
+	public function __construct(string $rawJTB, string $rawBTJ)
+	{
+		$this->rawJTB = $rawJTB;
+		$this->rawBTJ = $rawBTJ;
+	}
+
 	public function handle(): void
 	{
 		RuntimeInputData::create();
@@ -15,11 +24,12 @@ class ResourceData extends OutputData
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString(BlockStateConvertor::getResourceData());
+		$stream->putString($this->rawJTB);
+		$stream->putString($this->rawBTJ);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		BlockStateConvertor::loadResourceData($stream->getString());
+		BlockStateConvertor::loadResourceData($stream->getString(), $stream->getString());
 	}
 }

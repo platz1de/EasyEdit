@@ -98,7 +98,7 @@ class SpongeSchematic extends SchematicType
 		$tilePalette = [];
 		/** @var IntTag $id */
 		foreach ($paletteData->getValue() as $name => $id) {
-			$palette[$id->getValue()] = BlockStateConvertor::getFromState($name);
+			$palette[$id->getValue()] = BlockStateConvertor::javaStringToRuntime($name);
 			$tilePalette[$id->getValue()] = BlockStateConvertor::getTileDataFromState($name);
 		}
 
@@ -168,7 +168,7 @@ class SpongeSchematic extends SchematicType
 					$block = $target->getIterator()->getBlock($x, $y, $z);
 
 					if (!isset($translation[$block])) {
-						$translation[$block] = BlockStateConvertor::getState($block);
+						$translation[$block] = BlockStateConvertor::runtimeToJavaString($block);
 					}
 					$state = $translation[$block];
 
