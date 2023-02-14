@@ -13,22 +13,33 @@ use UnexpectedValueException;
  */
 class CombinedStateTranslator extends SingularStateTranslator
 {
+	/**
+	 * @var string[]
+	 */
 	private array $combinedStates;
-	private array $combinedStateData;
+	/**
+	 * @var array<string, mixed>
+	 */
+	private array $combinedStateData = [];
 	private string $resultState;
 
+	/**
+	 * @param array<string, mixed> $data
+	 */
 	public function __construct(array $data)
 	{
 		parent::__construct($data);
-		if (!isset($data["combined_names"])) {
+		if (!isset($data["combined_names"]) || !is_array($data["combined_names"])) {
 			throw new UnexpectedValueException("Missing combined_name");
 		}
 		$this->combinedStates = $data["combined_names"];
-		if (!isset($data["combined_states"])) {
+
+		if (!isset($data["combined_states"]) || !is_array($data["combined_states"])) {
 			throw new UnexpectedValueException("Missing combined_states");
 		}
 		$this->parseCombinedStates($data["combined_states"], $this->combinedStateData);
-		if (!isset($data["target_name"])) {
+
+		if (!isset($data["target_name"]) || !is_string($data["target_name"])) {
 			throw new UnexpectedValueException("Missing target_name");
 		}
 		$this->resultState = $data["target_name"];
@@ -48,17 +59,29 @@ class CombinedStateTranslator extends SingularStateTranslator
 		return new BlockStateData($state->getName(), $states, RepoManager::getVersion());
 	}
 
+	/**
+	 * @param array<string, mixed> $states
+	 * @param array<string, mixed> $target
+	 */
 	private function parseCombinedStates(array $states, array &$target): void
 	{
 		foreach ($states as $name => $state) {
 			if (is_array($state)) {
 				$this->parseCombinedStates($state, $target[$name]);
-			} else {
+			} elseif (is_string($state)) {
 				$target[$name] = BlockParser::tagFromStringValue($state);
+			} else {
+				throw new UnexpectedValueException("Invalid state $name");
 			}
 		}
 	}
 
+	/**
+	 * @param Tag[]                $states
+	 * @param array<string, mixed> $current
+	 * @param string[]             $left
+	 * @return Tag
+	 */
 	private function getCombinedState(array $states, array $current, array $left): Tag
 	{
 		$state = array_shift($left);
@@ -71,6 +94,9 @@ class CombinedStateTranslator extends SingularStateTranslator
 		}
 		if (is_array($current[$stateValue])) {
 			return $this->getCombinedState($states, $current[$stateValue], $left);
+		}
+		if (!($current[$stateValue] instanceof Tag)) {
+			throw new UnexpectedValueException("Invalid state $stateValue");
 		}
 		return clone $current[$stateValue];
 	}

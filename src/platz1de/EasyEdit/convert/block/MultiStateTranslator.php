@@ -18,19 +18,30 @@ class MultiStateTranslator extends BaseStateTranslator
 	 */
 	private array $multiTranslations = [];
 
+	/**
+	 * @param array<string, mixed> $data
+	 */
 	public function __construct(array $data)
 	{
 		parent::__construct($data);
-		if (!isset($data["multi_state"])) {
+		if (!isset($data["multi_state"]) || !is_string($data["multi_state"])) {
 			throw new UnexpectedValueException("Missing multi_state");
 		}
 		$this->multiState = $data["multi_state"];
+
 		$multi = $data["multi_translations"] ?? [];
+		if (!is_array($multi)) {
+			throw new UnexpectedValueException("Missing multi_translations");
+		}
 		foreach ($multi as $value => $multiData) {
 			$this->multiTranslations[$value] = new SingularStateTranslator($multiData);
 		}
 	}
 
+	/**
+	 * @param BlockStateData $state
+	 * @return BlockStateData
+	 */
 	public function translate(BlockStateData $state): BlockStateData
 	{
 		$state = parent::translate($state);

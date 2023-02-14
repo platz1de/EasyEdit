@@ -11,6 +11,7 @@ use platz1de\EasyEdit\convert\block\SingularStateTranslator;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResourceData;
 use platz1de\EasyEdit\utils\BlockParser;
+use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
@@ -23,7 +24,7 @@ use UnexpectedValueException;
 class BlockStateConvertor
 {
 	/**
-	 * @var array<int, BlockStateTranslator>
+	 * @var array<string, BlockStateTranslator>
 	 */
 	private static array $convertorsJTB;
 	/**
@@ -40,14 +41,18 @@ class BlockStateConvertor
 		$rawBTJ = "{}";
 
 		try {
-			/** @var string $bedrockStringId */
 			foreach ($jtb = RepoManager::getJson("java-to-bedrock", 10) as $javaState => $bedrockData) {
+				if (!is_array($bedrockData)) {
+					throw new UnexpectedValueException("Invalid bedrock data for $javaState");
+				}
 				self::$convertorsJTB[$javaState] = self::parseConvertor($bedrockData);
 			}
 			$rawJTB = json_encode($jtb, JSON_THROW_ON_ERROR);
 
-			/** @var string $javaState */
 			foreach ($btj = RepoManager::getJson("bedrock-to-java", 10) as $bedrockState => $javaData) {
+				if (!is_array($javaData)) {
+					throw new UnexpectedValueException("Invalid java data for $bedrockState");
+				}
 				self::$convertorsBTJ[$bedrockState] = self::parseConvertor($javaData);
 			}
 			$rawBTJ = json_encode($btj, JSON_THROW_ON_ERROR);
@@ -61,9 +66,13 @@ class BlockStateConvertor
 		EditThread::getInstance()->sendOutput(new ResourceData($rawJTB, $rawBTJ));
 	}
 
+	/**
+	 * @param array<string, mixed> $data
+	 * @return BlockStateTranslator
+	 */
 	private static function parseConvertor(array $data): BlockStateTranslator
 	{
-		if (!isset($data["type"])) {
+		if (!isset($data["type"]) || !is_string($data["type"])) {
 			throw new UnexpectedValueException("Missing type in convertor");
 		}
 		$type = $data["type"];
@@ -88,6 +97,7 @@ class BlockStateConvertor
 			EditThread::getInstance()->debug("Unknown java state " . $state->getName());
 			return $state;
 		}
+		$state = $converter->applyDefaults($state);
 		return $converter->translate($state);
 	}
 
@@ -102,7 +112,8 @@ class BlockStateConvertor
 			EditThread::getInstance()->debug("Unknown bedrock state " . $state->getName());
 			return $state;
 		}
-		return $converter->translate($state);
+		$state = $converter->translate($state);
+		return $converter->applyDefaults($state);
 	}
 
 	/**
@@ -128,8 +139,8 @@ class BlockStateConvertor
 	public static function loadResourceData(string $rawJTB, string $rawBTJ): void
 	{
 		try {
-			$jtb = json_decode($rawJTB, true, 512, JSON_THROW_ON_ERROR);
-			$btj = json_decode($rawBTJ, true, 512, JSON_THROW_ON_ERROR);
+			$jtb = MixedUtils::decodeJson($rawJTB, 10);
+			$btj = MixedUtils::decodeJson($rawBTJ, 10);
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse state data, Java state display is not available");
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
@@ -137,10 +148,16 @@ class BlockStateConvertor
 		}
 
 		foreach ($jtb as $javaState => $bedrockData) {
+			if (!is_array($bedrockData)) {
+				throw new UnexpectedValueException("Invalid bedrock data for $javaState");
+			}
 			self::$convertorsJTB[$javaState] = self::parseConvertor($bedrockData);
 		}
 
 		foreach ($btj as $bedrockState => $javaData) {
+			if (!is_array($javaData)) {
+				throw new UnexpectedValueException("Invalid java data for $bedrockState");
+			}
 			self::$convertorsBTJ[$bedrockState] = self::parseConvertor($javaData);
 		}
 	}

@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\convert\block;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\block\BlockStateData;
+use pocketmine\nbt\tag\Tag;
 use UnexpectedValueException;
 
 /**
@@ -12,23 +13,48 @@ use UnexpectedValueException;
  */
 abstract class BaseStateTranslator extends BlockStateTranslator
 {
+	/**
+	 * @var string[]
+	 */
 	private array $removedStates;
+	/**
+	 * @var array<string, Tag>
+	 */
 	private array $addedStates = [];
+	/**
+	 * @var array<string, array<string, Tag>>
+	 */
 	private array $valueReplacements = [];
 
+	/**
+	 * @param array<string, mixed> $data
+	 */
 	public function __construct(array $data)
 	{
 		parent::__construct($data);
+
 		$added = $data["state_additions"] ?? [];
+		if (!is_array($added)) {
+			throw new UnexpectedValueException("state_additions must be an array");
+		}
 		foreach ($added as $state => $value) {
 			$this->addedStates[$state] = BlockParser::tagFromStringValue($value);
 		}
-		$this->removedStates = $data["state_removals"] ?? [];
+
+		$removed = $data["state_removals"] ?? [];
+		if (!is_array($removed)) {
+			throw new UnexpectedValueException("state_removals must be an array");
+		}
+		$this->removedStates = $removed;
+
 		$replace = $data["state_values"] ?? [];
+		if (!is_array($replace)) {
+			throw new UnexpectedValueException("state_values must be an array");
+		}
 		foreach ($replace as $stateName => $values) {
 			$this->valueReplacements[$stateName] = [];
 			foreach ($values as $value) {
-				$this->valueReplacements[$stateName][$value] = BlockParser::tagFromStringValue($value);
+				$this->valueReplacements[$stateName][(string) $value] = BlockParser::tagFromStringValue($value);
 			}
 		}
 	}
@@ -44,7 +70,7 @@ abstract class BaseStateTranslator extends BlockStateTranslator
 		}
 		foreach ($states as $stateName => $stateValue) {
 			if (isset($this->valueReplacements[$stateName])) {
-				$states[$stateName] = clone $this->valueReplacements[$stateName][BlockParser::tagToStringValue($stateValue)] ?? $stateValue;
+				$states[$stateName] = clone($this->valueReplacements[$stateName][BlockParser::tagToStringValue($stateValue)] ?? $stateValue);
 			}
 		}
 		return new BlockStateData($state->getName(), $states, RepoManager::getVersion());
