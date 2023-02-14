@@ -2,10 +2,13 @@
 
 namespace platz1de\EasyEdit\convert;
 
+use InvalidArgumentException;
+use platz1de\EasyEdit\convert\block\BlockRotationTranslator;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\math\Axis;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use Throwable;
 use UnexpectedValueException;
 
@@ -15,36 +18,21 @@ use UnexpectedValueException;
 class BlockRotationManipulator
 {
 	/**
-	 * @var array<int, int>
+	 * @var array<string, BlockRotationTranslator>
 	 */
-	private static array $rotationData;
-	/**
-	 * @var array<int, array<int, int>>
-	 */
-	private static array $flipData;
+	private static array $convertors;
 	private static bool $available = false;
 
 	public static function load(): void
 	{
-		self::$rotationData = [];
-		self::$flipData = [];
+		self::$convertors = [];
 
 		try {
-			/** @var string $pastRotationId */
-			foreach (RepoManager::getJson("rotation-data", 2) as $preRotationId => $pastRotationId) {
-				self::$rotationData[BlockParser::fromStringId($preRotationId)] = BlockParser::fromStringId($pastRotationId);
-			}
-			/** @var array<string, string> $axisFlips */
-			foreach (RepoManager::getJson("flip-data", 3) as $axisName => $axisFlips) {
-				$axis = match ($axisName) {
-					"xAxis" => Axis::X,
-					"yAxis" => Axis::Y,
-					"zAxis" => Axis::Z,
-					default => throw new UnexpectedValueException("Unknown axis name $axisName")
-				};
-				foreach ($axisFlips as $preFlipId => $pastFlipId) {
-					self::$flipData[$axis][BlockParser::fromStringId($preFlipId)] = BlockParser::fromStringId($pastFlipId);
+			foreach (RepoManager::getJson("manipulation-data", 5) as $type => $data) {
+				if (!is_array($data)) {
+					throw new UnexpectedValueException("Invalid data for $type");
 				}
+				self::$convertors[$type] = new BlockRotationTranslator($data);
 			}
 			self::$available = true;
 		} catch (Throwable $e) {
@@ -54,22 +42,58 @@ class BlockRotationManipulator
 	}
 
 	/**
-	 * @param int $id
+	 * @param BlockStateData $state
+	 * @return BlockStateData
+	 */
+	public static function rotate(BlockStateData $state): BlockStateData
+	{
+		$converter = self::$convertors[$state->getName()] ?? null;
+		if ($converter === null) {
+			return $state;
+		}
+		return $converter->rotate($state);
+	}
+
+	/**
+	 * @param int            $axis
+	 * @param BlockStateData $state
+	 * @return BlockStateData
+	 */
+	public static function flip(int $axis, BlockStateData $state): BlockStateData
+	{
+		$converter = self::$convertors[$state->getName()] ?? null;
+		if ($converter === null) {
+			return $state;
+		}
+		return match ($axis) {
+			Axis::X => $converter->flipX($state),
+			Axis::Y => $converter->flipY($state),
+			Axis::Z => $converter->flipZ($state),
+			default => throw new InvalidArgumentException("Invalid axis $axis"),
+		};
+	}
+
+	/**
+	 * @param int $runtimeId
 	 * @return int
 	 */
-	public static function rotate(int $id): int
+	public static function rotateRuntime(int $runtimeId): int
 	{
-		return self::$rotationData[$id] ?? $id;
+		$state = GlobalBlockStateHandlers::getSerializer()->serialize($runtimeId);
+		$state = self::rotate($state);
+		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 	}
 
 	/**
 	 * @param int $axis
-	 * @param int $id
+	 * @param int $runtimeId
 	 * @return int
 	 */
-	public static function flip(int $axis, int $id): int
+	public static function flipRuntime(int $axis, int $runtimeId): int
 	{
-		return self::$flipData[$axis][$id] ?? $id;
+		$state = GlobalBlockStateHandlers::getSerializer()->serialize($runtimeId);
+		$state = self::flip($axis, $state);
+		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 	}
 
 	/**

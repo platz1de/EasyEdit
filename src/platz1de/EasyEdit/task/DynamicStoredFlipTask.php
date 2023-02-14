@@ -56,7 +56,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
 					Selection::processBlock($block);
-					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flip(Axis::X, $block));
+					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flipRuntime(Axis::X, $block));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::X, $tile, $selection->getPos2()->getFloorX()));
@@ -68,7 +68,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
 					Selection::processBlock($block);
-					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flip(Axis::Y, $block));
+					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flipRuntime(Axis::Y, $block));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Y, $tile, $selection->getPos2()->getFloorY()));
@@ -80,7 +80,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
 					Selection::processBlock($block);
-					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flip(Axis::Z, $block));
+					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flipRuntime(Axis::Z, $block));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Z, $tile, $selection->getPos2()->getFloorZ()));
