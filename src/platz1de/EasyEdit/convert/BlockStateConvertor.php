@@ -163,12 +163,15 @@ class BlockStateConvertor
 	}
 
 	/**
-	 * @return string[]
+	 * @return int[]
 	 */
 	public static function getAllKnownStates(): array
 	{
-		//TODO
-		return self::$paletteTo;
+		$states = [];
+		foreach (self::$convertorsJTB as $state => $converter) {
+			$states[] = $converter->getAllPossibleStates($state);
+		}
+		return $states;
 	}
 
 	/**
