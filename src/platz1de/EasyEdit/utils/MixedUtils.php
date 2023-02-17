@@ -60,7 +60,7 @@ class MixedUtils
 	{
 		$data = Internet::getURL($url, 10, [], $err);
 		if ($data === null || $data->getCode() !== 200) {
-			if (isset($err)) {
+			if (isset($err) && is_string($err)) {
 				throw new InternetException($err);
 			}
 			throw new InternetException("Couldn't load file: " . $data?->getCode());

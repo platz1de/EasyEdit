@@ -16,6 +16,7 @@ class RepoManager
 	 */
 	private static array $repoData;
 	private static bool $available = false;
+	private static int $version = 0;
 
 	public static function init(string $repo): void
 	{
@@ -23,6 +24,10 @@ class RepoManager
 			try {
 				self::$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
 				self::$available = true;
+				if(!isset(self::$repoData["state-data"]) || !is_int(self::$repoData["state-data"])){
+					throw new UnexpectedValueException("Repo data does not contain a state version");
+				}
+				self::$version = self::$repoData["state-data"];
 				if (ConfigManager::useCache()) {
 					$version = self::$repoData["version"];
 					$cache = scandir(ConfigManager::getCachePath());
@@ -88,6 +93,6 @@ class RepoManager
 
 	public static function getVersion(): int
 	{
-		return self::$repoData["state-data"] ?? throw new UnexpectedValueException("Repo data does not contain state-data");
+		return self::$version;
 	}
 }

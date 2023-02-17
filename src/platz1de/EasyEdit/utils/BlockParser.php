@@ -115,7 +115,7 @@ class BlockParser
 	 */
 	public static function fromStateString(string $block, int $version): BlockStateData
 	{
-		if (preg_match("/([az_:]*)(?:\[([az_=,]*)])?/", strtolower($block), $matches)) {
+		if (preg_match("/([az_:]*)(?:\[([az_=,]*)])?/", strtolower($block), $matches) === 1) {
 			$block = $matches[1];
 			if (!isset($matches[2])) {
 				return new BlockStateData($block, [], $version);
@@ -140,12 +140,16 @@ class BlockParser
 	 */
 	public static function tagToStringValue(Tag $tag): string
 	{
-		return match (get_class($tag)) {
-			StringTag::class => $tag->getValue(),
-			IntTag::class => (string) $tag->getValue(),
-			ByteTag::class => $tag->getValue() ? "true" : "false",
-			default => throw new InvalidArgumentException("Unexpected tag type " . get_class($tag))
-		};
+		if ($tag instanceof IntTag) {
+			return (string) $tag->getValue();
+		}
+		if ($tag instanceof ByteTag) {
+			return $tag->getValue() === 1 ? "true" : "false";
+		}
+		if ($tag instanceof StringTag) {
+			return $tag->getValue();
+		}
+		throw new InvalidArgumentException("Unexpected tag type " . get_class($tag));
 	}
 
 	/**
