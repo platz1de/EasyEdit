@@ -11,13 +11,14 @@ use platz1de\EasyEdit\listener\RemapEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "2.1.0";
+	private const CONFIG_VERSION = "3.0.0";
 
 	/**
 	 * @var int[]
@@ -44,7 +45,7 @@ class ConfigManager
 		Messages::load(strtolower(self::mustGetString($config, "language", "auto")));
 
 		self::$terrainIgnored = array_map(static function (string $block): int {
-			return BlockParser::getBlock($block) >> Block::INTERNAL_STATE_DATA_BITS;
+			return BlockParser::runtimeFromStateString($block, BlockStateData::CURRENT_VERSION) >> Block::INTERNAL_STATE_DATA_BITS;
 		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
 
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
