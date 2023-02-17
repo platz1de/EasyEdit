@@ -45,9 +45,9 @@ class MoveTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$dx = $this->direction->x;
-		$dy = $this->direction->y;
-		$dz = $this->direction->z;
+		$dx = $this->direction->getFloorX();
+		$dy = $this->direction->getFloorY();
+		$dz = $this->direction->getFloorZ();
 		//TODO: change order of iteration to optimize performance
 		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$handler->changeBlock($x, $y, $z, 0); //Make sure we don't overwrite anything

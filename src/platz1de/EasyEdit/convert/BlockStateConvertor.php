@@ -169,7 +169,9 @@ class BlockStateConvertor
 	{
 		$states = [];
 		foreach (self::$convertorsJTB as $state => $converter) {
-			$states[] = $converter->getAllPossibleStates($state);
+			foreach ($converter->getAllPossibleStates($state) as $possibleState) {
+				$states[] = $possibleState;
+			}
 		}
 		return $states;
 	}

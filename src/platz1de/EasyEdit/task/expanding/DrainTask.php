@@ -6,7 +6,7 @@ use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -22,8 +22,6 @@ class DrainTask extends ExpandingTask
 	 */
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
-		$target = [BlockLegacyIds::FLOWING_WATER, BlockLegacyIds::STILL_WATER, BlockLegacyIds::FLOWING_LAVA, BlockLegacyIds::STILL_LAVA];
-
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$startX = $this->start->getFloorX();
@@ -46,7 +44,8 @@ class DrainTask extends ExpandingTask
 			if (!$this->loader->checkRuntimeChunk($chunk)) {
 				return;
 			}
-			if (!in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $target, true)) {
+			$res = $handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS;
+			if ($res !== BlockTypeIds::WATER && $res !== BlockTypeIds::LAVA) {
 				$this->loader->checkUnload($handler, $chunk);
 				continue;
 			}

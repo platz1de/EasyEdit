@@ -17,6 +17,6 @@ class DynamicBlock extends StaticBlock
 
 	public function equals(int $fullBlock): bool
 	{
-		return ($fullBlock >> Block::INTERNAL_STATE_DATA_BITS) === $this->getId();
+		return ($fullBlock >> Block::INTERNAL_STATE_DATA_BITS) === $this->getTypeId();
 	}
 }

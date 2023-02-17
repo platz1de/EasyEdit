@@ -54,7 +54,7 @@ class StaticBlock extends BlockType
 	/**
 	 * @return int
 	 */
-	public function getId(): int
+	public function getTypeId(): int
 	{
 		return $this->id >> Block::INTERNAL_STATE_DATA_BITS;
 	}
@@ -62,9 +62,9 @@ class StaticBlock extends BlockType
 	/**
 	 * @return int
 	 */
-	public function getMeta(): int
+	public function getStateData(): int
 	{
-		return $this->id & Block::INTERNAL_METADATA_MASK;
+		return $this->id & Block::INTERNAL_STATE_DATA_MASK;
 	}
 
 	/**

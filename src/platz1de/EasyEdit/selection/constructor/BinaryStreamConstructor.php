@@ -15,7 +15,7 @@ class BinaryStreamConstructor extends ShapeConstructor
 	/**
 	 * @var array<int, int>
 	 */
-	private array $chunks = [];
+	private array $chunks;
 
 	/**
 	 * @param Closure              $closure

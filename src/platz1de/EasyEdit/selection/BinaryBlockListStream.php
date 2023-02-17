@@ -18,6 +18,9 @@ use pocketmine\world\World;
 class BinaryBlockListStream extends BlockListSelection
 {
 	private ExtendedBinaryStream $blocks;
+	/**
+	 * @var int[]
+	 */
 	private array $chunks = [];
 
 	/**

@@ -100,7 +100,7 @@ class StackTask extends SelectionEditTask
 			return new SingleChunkHandler($this->getWorld());
 		}
 		if ($this->selection->isCopying()) {
-			return new CopyingStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis(), $this->selection->getAmount());
+			return new CopyingStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis());
 		}
 		return new SimpleStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis());
 	}

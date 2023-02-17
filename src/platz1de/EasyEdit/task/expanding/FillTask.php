@@ -42,7 +42,7 @@ class FillTask extends ExpandingTask
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$ignore = HeightMapCache::getIgnore();
-		if (($k = array_search($this->block->getId(), $ignore, true)) !== false) {
+		if (($k = array_search($this->block->getTypeId(), $ignore, true)) !== false) {
 			unset($ignore[$k]);
 		}
 

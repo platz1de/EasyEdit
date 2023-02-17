@@ -9,7 +9,6 @@ class ChunkRequest
 {
 	use ReferencedWorldHolder;
 
-	private int $type;
 	private int $chunk;
 	private ?int $payload;
 

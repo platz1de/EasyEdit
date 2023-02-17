@@ -53,7 +53,6 @@ class MovingChunkHandler extends GroupedChunkHandler
 	 */
 	public function request(int $chunk): bool
 	{
-		World::getXZ($chunk, $x, $z);
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
 		$this->queue[] = $chunk;
 		$this->groupRequest[$chunk] = [$chunk => $chunk];
@@ -84,9 +83,12 @@ class MovingChunkHandler extends GroupedChunkHandler
 	 */
 	public function handleInput(int $chunk, ChunkInformation $data, ?int $payload): void
 	{
+		if ($payload === null) {
+			throw new UnexpectedValueException("Payload is null");
+		}
 		$this->groupData[$payload][$chunk] = $data;
 		if (isset($this->connections[$chunk])) {
-			$this->groupData[$this->connections[$chunk]][$chunk] = $chunk;
+			$this->groupData[$this->connections[$chunk]][$chunk] = $data;
 			unset($this->connections[$chunk]);
 		}
 	}

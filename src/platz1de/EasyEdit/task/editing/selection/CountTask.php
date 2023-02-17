@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
+use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\MixedUtils;
 
 class CountTask extends SelectionEditTask
@@ -43,7 +44,7 @@ class CountTask extends SelectionEditTask
 		arsort($this->counted);
 		$blocks = [];
 		foreach ($this->counted as $block => $count) {
-			$blocks[] = BlockStateConvertor::getState($block) . ": " . MixedUtils::humanReadable($count);
+			$blocks[] = BlockParser::runtimeToStateString($block) . ": " . MixedUtils::humanReadable($count);
 		}
 		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted), "{blocks}" => implode("\n", $blocks)]));
 	}

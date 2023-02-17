@@ -101,14 +101,16 @@ class PatternParser
 	{
 		preg_match("/(?:([^%(]*)%)?(.*)/", $input, $weightData, PREG_UNMATCHED_AS_NULL);
 
-		$weight = $weightData[1] ?? 100;
+		$weight = $weightData[1] ?? null;
 		$patternString = $weightData[2];
 
-		if ($patternString === "" || $patternString === "#") {
+		if ($patternString === null || $patternString === "" || $patternString === "#") {
 			throw new ParseError("No pattern given");
 		}
 
-		if (!is_numeric($weight)) {
+		if ($weight === null) {
+			$weight = 100;
+		} else if (!is_numeric($weight)) {
 			throw new ParseError("Invalid pattern weight");
 		}
 

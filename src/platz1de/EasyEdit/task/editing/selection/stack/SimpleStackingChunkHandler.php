@@ -90,9 +90,9 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 		if ($payload === null) {
 			World::getXZ($chunk, $x, $z);
 			if ($this->axis === Axis::X) {
-				$payload = (int) $z;
+				$payload = $z;
 			} else {
-				$payload = (int) $x;
+				$payload = $x;
 			}
 			$this->source[$payload][$chunk] = $data;
 			if (--$this->sourceOrder[$payload] === 0) {
