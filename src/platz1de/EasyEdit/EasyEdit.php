@@ -53,7 +53,8 @@ use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\CompoundTile;
 use platz1de\EasyEdit\utils\ConfigManager;
-use pocketmine\block\tile\TileFactory;
+use platz1de\EasyEdit\world\clientblock\Registry;
+use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\AssumptionFailedError;
@@ -144,8 +145,7 @@ class EasyEdit extends PluginBase
 			new UpCommand()
 		]);
 
-		//Just for sending block data without using the protocol directly
-		TileFactory::getInstance()->register(CompoundTile::class);
+		Registry::registerToNetwork();
 	}
 
 	/**
