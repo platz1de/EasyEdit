@@ -115,7 +115,7 @@ class BlockParser
 	 */
 	public static function fromStateString(string $block, int $version): BlockStateData
 	{
-		if (preg_match("/([az_:]*)(?:\[([az_=,]*)])?/", strtolower($block), $matches) === 1) {
+		if (preg_match("/^([a-z\d_:]+)(?:\[([a-z\d_=,]*)])?$/", strtolower($block), $matches) === 1) {
 			$block = $matches[1];
 			if (!isset($matches[2])) {
 				return new BlockStateData($block, [], $version);

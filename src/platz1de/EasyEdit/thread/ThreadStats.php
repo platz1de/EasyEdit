@@ -16,9 +16,9 @@ use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 use RuntimeException;
 use Thread;
-use Threaded;
+use ThreadedBase;
 
-class ThreadStats extends Threaded
+class ThreadStats extends ThreadedBase
 {
 	use SingletonTrait;
 

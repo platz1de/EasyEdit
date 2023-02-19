@@ -29,7 +29,11 @@ class LegacyBlockIdConvertor
 			/** @var string $bedrockState */
 			foreach (RepoManager::getJson("legacy-conversion-map", 2) as $javaStringId => $bedrockState) {
 				$javaId = explode(":", $javaStringId);
-				self::$conversionFrom[((int) $javaId[0]) << self::METADATA_BITS | ((int) $javaId[1])] = BlockParser::runtimeFromStateString($bedrockState, $version);
+				try {
+					self::$conversionFrom[((int) $javaId[0]) << self::METADATA_BITS | ((int) $javaId[1])] = BlockParser::runtimeFromStateString($bedrockState, $version);
+				} catch (Throwable $e) {
+					EditThread::getInstance()->getLogger()->debug($e->getMessage());
+				}
 			}
 			self::$available = true;
 		} catch (Throwable $e) {

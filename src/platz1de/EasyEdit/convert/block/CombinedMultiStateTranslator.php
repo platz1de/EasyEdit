@@ -68,6 +68,9 @@ class CombinedMultiStateTranslator extends SingularStateTranslator
 	{
 		foreach ($states as $name => $state) {
 			if (is_array($state[array_key_first($state)])) {
+				if (!isset($target[$name])) {
+					$target[$name] = [];
+				}
 				/** @var array<array<string, mixed>> $state */
 				$this->parseCombinedStates($state, $target[$name]);
 			} else {

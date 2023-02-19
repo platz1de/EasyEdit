@@ -24,10 +24,10 @@ class RepoManager
 			try {
 				self::$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
 				self::$available = true;
-				if(!isset(self::$repoData["state-data"]) || !is_int(self::$repoData["state-data"])){
+				if (!isset(self::$repoData["state-version"]) || !is_int(self::$repoData["state-version"])) {
 					throw new UnexpectedValueException("Repo data does not contain a state version");
 				}
-				self::$version = self::$repoData["state-data"];
+				self::$version = self::$repoData["state-version"];
 				if (ConfigManager::useCache()) {
 					$version = self::$repoData["version"];
 					$cache = scandir(ConfigManager::getCachePath());

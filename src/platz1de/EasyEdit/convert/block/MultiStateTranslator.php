@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\convert\block;
 
-use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\data\bedrock\block\BlockStateData;
 use UnexpectedValueException;
@@ -24,10 +23,10 @@ class MultiStateTranslator extends BaseStateTranslator
 	public function __construct(array $data)
 	{
 		parent::__construct($data);
-		if (!isset($data["multi_state"]) || !is_string($data["multi_state"])) {
-			throw new UnexpectedValueException("Missing multi_state");
+		if (!isset($data["multi_name"]) || !is_string($data["multi_name"])) {
+			throw new UnexpectedValueException("Missing multi_name");
 		}
-		$this->multiState = $data["multi_state"];
+		$this->multiState = $data["multi_name"];
 
 		$multi = $data["multi_translations"] ?? [];
 		if (!is_array($multi)) {

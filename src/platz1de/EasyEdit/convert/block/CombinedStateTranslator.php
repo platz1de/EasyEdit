@@ -67,6 +67,9 @@ class CombinedStateTranslator extends SingularStateTranslator
 	{
 		foreach ($states as $name => $state) {
 			if (is_array($state)) {
+				if (!isset($target[$name])) {
+					$target[$name] = [];
+				}
 				$this->parseCombinedStates($state, $target[$name]);
 			} elseif (is_string($state)) {
 				$target[$name] = BlockParser::tagFromStringValue($state);
