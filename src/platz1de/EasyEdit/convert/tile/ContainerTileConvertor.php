@@ -5,15 +5,25 @@ namespace platz1de\EasyEdit\convert\tile;
 use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use pocketmine\block\tile\Container;
+use pocketmine\block\tile\Tile;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use UnexpectedValueException;
 
-class InventoryConvertor extends TileConvertorPiece
+//TODO: LootTables (according to the wiki java seed uses a long while bedrock uses an int, no idea whether this is correct though)
+//TODO: Test color codes of lock items (might need conversion)
+class ContainerTileConvertor extends TileConvertorPiece
 {
-	public static function toBedrock(CompoundTag $tile): void
+	public function preprocessTileState(BlockStateData $state): ?CompoundTag
 	{
+		return null;
+	}
+
+	public function toBedrock(CompoundTag $tile): void
+	{
+		$tile->setString(Tile::TAG_ID, $this->bedrockName);
 		$items = $tile->getTag(Container::TAG_ITEMS);
 		if (!$items instanceof AbstractListTag) {
 			return;
@@ -30,11 +40,12 @@ class InventoryConvertor extends TileConvertorPiece
 		}
 	}
 
-	public static function toJava(int $blockId, CompoundTag $tile): void
+	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
+		$tile->setString(Tile::TAG_ID, $this->javaName);
 		$items = $tile->getListTag(Container::TAG_ITEMS);
 		if ($items === null) {
-			return;
+			return null;
 		}
 		foreach ($items as $item) {
 			if (!$item instanceof CompoundTag) {
@@ -42,5 +53,6 @@ class InventoryConvertor extends TileConvertorPiece
 			}
 			ItemConvertor::convertItemJava($item);
 		}
+		return null;
 	}
 }

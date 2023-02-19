@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\thread\output;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ResourceData extends OutputData
@@ -16,7 +17,10 @@ class ResourceData extends OutputData
 		$this->rawBTJ = $rawBTJ;
 	}
 
-	public function handle(): void {}
+	public function handle(): void
+	{
+		TileConvertor::load();
+	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{

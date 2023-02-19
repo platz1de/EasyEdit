@@ -2,41 +2,25 @@
 
 namespace platz1de\EasyEdit\convert;
 
-use platz1de\EasyEdit\convert\tile\ChestConvertor;
-use platz1de\EasyEdit\convert\tile\InventoryConvertor;
+use InvalidArgumentException;
+use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
+use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
-use pocketmine\block\tile\Chest;
-use pocketmine\block\tile\Hopper;
-use pocketmine\block\tile\ShulkerBox;
-use pocketmine\block\tile\Sign;
-use pocketmine\block\tile\Skull;
+use platz1de\EasyEdit\utils\BlockParser;
+use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\block\tile\Tile;
-use pocketmine\block\tile\TileFactory;
 use pocketmine\nbt\tag\CompoundTag;
 use Throwable;
-use UnexpectedValueException;
 
 class TileConvertor
 {
-	public const DATA_CHEST_RELATION = "chest_relation";
-	public const DATA_SHULKER_BOX_FACING = "shulker_box_facing";
-	public const DATA_SKULL_TYPE = "skull_type";
-	public const DATA_SKULL_ROTATION = "skull_rotation";
-
-	public const TILE_CHEST = "minecraft:chest";
-	public const TILE_DISPENSER = "minecraft:dispenser";
-	public const TILE_DROPPER = "minecraft:dropper";
-	public const TILE_HOPPER = "minecraft:hopper";
-	public const TILE_SHULKER_BOX = "minecraft:shulker_box";
-	public const TILE_SIGN = "minecraft:sign";
-	public const TILE_SKULL = "minecraft:skull";
-	public const TILE_TRAPPED_CHEST = "minecraft:trapped_chest";
+	public const PREPROCESSED_TYPE = "EasyEditTileType";
 
 	/**
-	 * TODO: Add all of the tiles underneath
+	 * TODO: Add all the tiles underneath
 	 * Beehive
 	 * Bee Nest
 	 * Banners
@@ -68,10 +52,16 @@ class TileConvertor
 	 * Cauldron (blockstate in java)
 	 * Conduit
 	 * Bell
-	 * Lodestone
+	 * Lodestone (compass contains coordinates in java, shared id in bedrock)
+	 * Chiseled Bookshelf (1.20)
+	 * Skull
 	 *
 	 * Item Frame (entity in java)
 	 */
+	/**
+	 * @var array<string, TileConvertorPiece>
+	 */
+	private static array $convertors = [];
 
 	/**
 	 * @param CompoundTag        $tile
@@ -83,17 +73,21 @@ class TileConvertor
 		//some of these aren't actually part of pmmp yet, but plugins might use them
 		if ($extraData !== null) {
 			foreach ($extraData->getValue() as $key => $value) {
+				if ($key === Tile::TAG_ID) {
+					continue;
+				}
 				$tile->setTag($key, $value);
 			}
 		}
+		if (!isset(self::$convertors[$tile->getString(Tile::TAG_ID)])) {
+			EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
+			return;
+		}
+		if ($extraData !== null && $extraData->getString(self::PREPROCESSED_TYPE) !== self::$convertors[$tile->getString(Tile::TAG_ID)]::class) {
+			throw new InvalidArgumentException("Preprocessed tile type doesn't match");
+		}
 		try {
-			/**
-			 * @var ?class-string<TileConvertorPiece> $class
-			 */
-			$class = self::getConvertor($tile->getString(Tile::TAG_ID));
-			if ($class !== null) {
-				$class::toBedrock($tile);
-			}
+			self::$convertors[$tile->getString(Tile::TAG_ID)]->toBedrock($tile);
 			$selection->addTile($tile);
 		} catch (Throwable $exception) {
 			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID) . ": " . $exception->getMessage());
@@ -101,58 +95,56 @@ class TileConvertor
 	}
 
 	/**
-	 * @param int         $blockId
 	 * @param CompoundTag $tile
-	 * @return bool
+	 * @param string      $state
+	 * @return bool Whether the tile should be included
 	 */
-	public static function toJava(int $blockId, CompoundTag $tile): bool
+	public static function toJava(CompoundTag $tile, string &$state): bool
 	{
-		$tile->setString(Tile::TAG_ID, self::getJavaId($tile->getString(Tile::TAG_ID)));
-		try {
-			/**
-			 * @var ?class-string<TileConvertorPiece> $class
-			 */
-			$class = self::getConvertor($tile->getString(Tile::TAG_ID));
-		} catch (UnexpectedValueException) {
+		if (!isset(self::$convertors[$tile->getString(Tile::TAG_ID)])) {
 			EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
 			return false;
 		}
-		if ($class !== null) {
-			$class::toJava($blockId, $tile);
+		try {
+			$newState = self::$convertors[$tile->getString(Tile::TAG_ID)]->toJava($tile, BlockParser::fromStateString($state, RepoManager::getVersion()));
+			if ($newState !== null) {
+				$state = BlockParser::toStateString($newState);
+			}
+		} catch (Throwable $exception) {
+			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID) . ": " . $exception->getMessage());
 		}
 		return true;
 	}
 
 	/**
-	 * @param string $tile
-	 * @return ?class-string<TileConvertorPiece>
+	 * @param string $name
+	 * @return CompoundTag|null
 	 */
-	public static function getConvertor(string $tile): ?string
+	public static function preprocessTileState(string $name): ?CompoundTag
 	{
-		return match ($tile) {
-			self::TILE_SIGN => SignConvertor::class,
-			self::TILE_CHEST, self::TILE_TRAPPED_CHEST => ChestConvertor::class,
-			self::TILE_SHULKER_BOX, self::TILE_DISPENSER, self::TILE_DROPPER, self::TILE_HOPPER => InventoryConvertor::class,
-			self::TILE_SKULL => null,
-			default => throw new UnexpectedValueException("Unknown tile " . $tile)
-		};
+		$state = BlockParser::fromStateString($name, RepoManager::getVersion());
+		if (isset(self::$convertors[$state->getName()])) {
+			return self::$convertors[$state->getName()]->preprocessTileState($state)?->setString(self::PREPROCESSED_TYPE, self::$convertors[$state->getName()]::class);
+		}
+		return null;
 	}
 
-	/**
-	 * @param string $tile
-	 * @return string
-	 */
-	public static function getJavaId(string $tile): string
+	public static function load(): void
 	{
-		return match ($tile) {
-			TileFactory::getInstance()->getSaveId(Chest::class) => self::TILE_CHEST,
-			"Dispenser" => self::TILE_DISPENSER,
-			"Dropper" => self::TILE_DROPPER,
-			TileFactory::getInstance()->getSaveId(Hopper::class) => self::TILE_HOPPER,
-			TileFactory::getInstance()->getSaveId(ShulkerBox::class) => self::TILE_SHULKER_BOX,
-			TileFactory::getInstance()->getSaveId(Sign::class) => self::TILE_SIGN,
-			TileFactory::getInstance()->getSaveId(Skull::class) => self::TILE_SKULL,
-			default => $tile //just attempt it
-		};
+		/**
+		 * @var TileConvertorPiece $convertor
+		 */
+		foreach ([
+			         new ChestTileConvertor("Chest", "minecraft:chest", "minecraft:trapped_chest"),
+			         new ContainerTileConvertor("Dispenser", "minecraft:dispenser"),
+			         new ContainerTileConvertor("Dropper", "minecraft:dropper"),
+			         new ContainerTileConvertor("Hopper", "minecraft:hopper"),
+			         new ContainerTileConvertor("ShulkerBox", "minecraft:shulker_box"), //TODO: facing
+			         new SignConvertor("Sign", "minecraft:sign"),
+		         ] as $convertor) {
+			foreach ($convertor->getIdentifiers() as $identifier) {
+				self::$convertors[$identifier] = $convertor;
+			}
+		}
 	}
 }

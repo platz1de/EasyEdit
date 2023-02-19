@@ -38,6 +38,7 @@ class ItemConvertor
 	 */
 	public static function convertItemBedrock(CompoundTag $item): void
 	{
+		//TODO: redo this
 		try {
 			$javaId = $item->getString("id");
 		} catch (Throwable) {

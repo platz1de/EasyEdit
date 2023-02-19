@@ -98,8 +98,9 @@ class SpongeSchematic extends SchematicType
 		$tilePalette = [];
 		/** @var IntTag $id */
 		foreach ($paletteData->getValue() as $name => $id) {
+			//TODO: Use version of sponge to update states (java state upgrades needed)
 			$palette[$id->getValue()] = BlockStateConvertor::javaStringToRuntime($name);
-			$tilePalette[$id->getValue()] = BlockStateConvertor::getTileDataFromState($name);
+			$tilePalette[$id->getValue()] = TileConvertor::preprocessTileState($name);
 		}
 
 		if ($tiles instanceof AbstractListTag && $tiles->getTagType() === NBT::TAG_Compound) {
@@ -173,7 +174,7 @@ class SpongeSchematic extends SchematicType
 					$state = $translation[$block];
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {
-						self::writeTileData($tileData[World::blockHash($x, $y, $z)], $block, $tiles, $state);
+						self::writeTileData($tileData[World::blockHash($x, $y, $z)], $tiles, $state);
 					}
 
 					if (!isset($palette[$state])) {
@@ -242,15 +243,13 @@ class SpongeSchematic extends SchematicType
 
 	/**
 	 * @param CompoundTag   $tile
-	 * @param int           $blockId
 	 * @param CompoundTag[] $tiles
 	 * @param string        $state
 	 * @return void
 	 */
-	private static function writeTileData(CompoundTag $tile, int $blockId, array &$tiles, string &$state): void
+	private static function writeTileData(CompoundTag $tile, array &$tiles, string &$state): void
 	{
-		if (TileConvertor::toJava($blockId, $tile)) {
-			$state = BlockStateConvertor::processTileData($state, $tile);
+		if (TileConvertor::toJava($tile, $state)) {
 			$id = $tile->getString(Tile::TAG_ID);
 			$x = $tile->getInt(Tile::TAG_X);
 			$y = $tile->getInt(Tile::TAG_Y);

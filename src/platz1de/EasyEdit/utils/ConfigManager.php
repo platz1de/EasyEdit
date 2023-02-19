@@ -6,6 +6,7 @@ use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
+use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
@@ -275,6 +276,7 @@ class ConfigManager
 		BlockStateConvertor::load();
 		BlockRotationManipulator::load();
 		ItemConvertor::load();
+		TileConvertor::load();
 	}
 
 	private static function loadConfig(): Config
