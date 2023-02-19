@@ -62,8 +62,8 @@ benchmark-finished: "Các kết quả điểm chuẩn của bạn:\nTPS trung b�
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} trong {time}s"
 
-#Args: {id} {meta} {name} {x} {y} {z} {java_state}
-block-info: "{name} ({id}:{meta}) tại {x} {y} {z}\nTrạng thái khối: {java_state}"
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) tại {x} {y} {z}\nTrạng thái khối: {state}\nJava state: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Sơ đồ không xác định \"{schematic}\"\nCác sơ đồ đã biết: {known}"

@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.1.6" #Please don't change this manually
+message-version: "2.1.7" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -63,8 +63,8 @@ benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 
-#Args: {id} {meta} {name} {x} {y} {z} {java_state}
-block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {java_state}"
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava state: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"

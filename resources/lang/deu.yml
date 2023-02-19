@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2022-11-27
+#Last updated at: 2023-02-19
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -62,8 +62,8 @@ benchmark-finished: "Resultate des Benchmarks:\nDurchschnittliche TPS: {tps_avg}
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 
-#Args: {id} {meta} {name} {x} {y} {z} {java_state}
-block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlockzustand: {java_state}"
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlockzustand: {state}\nJava Blockzustand: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unbekannte Struktur \"{schematic}\"\nBekannte Strukturen:{known}"

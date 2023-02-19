@@ -62,8 +62,8 @@ benchmark-finished: "あなたのベンチマークのスコア:\n平均TPS: {tp
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} を {time} 秒で処理"
 
-#Args: {id} {meta} {name} {x} {y} {z} {java_state}
-block-info: "{name} ({id}:{meta}) {x} {y} {z}\nブロックステート: {java_state}"
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) {x} {y} {z}\nブロックステート: {state}\nJava state: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "不明なschematic: \"{schematic}\"\n既知のschematic: {known}"

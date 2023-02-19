@@ -7,6 +7,7 @@ use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\block\Block;
 use pocketmine\block\tile\Tile;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 
 class BlockInfoTool
 {
@@ -16,21 +17,21 @@ class BlockInfoTool
 	 */
 	public static function display(Session $session, Block $block): void
 	{
-		$state = BlockStateConvertor::getState($block->getFullId());
+		$state = BlockParser::blockToStateString($block);
+		$java = BlockParser::toStateString(BlockStateConvertor::bedrockToJava(GlobalBlockStateHandlers::getSerializer()->serializeBlock($block)));
 		if (($t = $block->getPosition()->getWorld()->getTile($block->getPosition())) instanceof Tile) {
 			$tile = $t->saveNBT();
-			if (TileConvertor::toJava($block->getFullId(), $tile)) {
-				$state = BlockStateConvertor::processTileData($state, $tile);
-			}
+			TileConvertor::toJava($tile, $java);
 		}
 		$session->sendMessage("block-info", [
-			"{id}" => (string) $block->getId(),
-			"{meta}" => (string) $block->getMeta(),
+			"{state}" => $state,
+			"{id}" => (string) $block->getTypeId(),
+			"{meta}" => (string) $block->computeStateData(),
 			"{name}" => $block->getName(),
 			"{x}" => (string) $block->getPosition()->getX(),
 			"{y}" => (string) $block->getPosition()->getY(),
 			"{z}" => (string) $block->getPosition()->getZ(),
-			"{java_state}" => $state
+			"{java_state}" => $java
 		]);
 	}
 }
