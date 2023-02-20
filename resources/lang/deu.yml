@@ -52,9 +52,11 @@ schematic-created: "{changed} Blöcke wurden als \"{name}\" in {time}s gespeiche
 #Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
 thread-stats: "Status des EditThreads:\nStatus: {status}\nMomentaner Auftrag: {task}\nFortschritt: {progress}\nWartende Aufträge: {queue}\nGespeicherte Auswahlen: {storage}\nThread Arbeitsspeicher: {mem_current}MB ({mem_max}MB)"
 
-benchmark-start: "Benchmark wurde gestartet, dies kann bis zu einer Minute dauern!"
+benchmark-start: "Benchmark wurde gestartet, dies kann ein paar Minuten dauern..."
 benchmark-running: "Es läuft bereits ein Benchmark"
-benchmark-cancel: "Benchmarks können nicht abgebrochen werden"
+
+#Args: {done} {total}
+benchmark-progress: "Fortschritt des Benchmarks: {done}/{total}"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
 benchmark-finished: "Resultate des Benchmarks:\nDurchschnittliche TPS: {tps_avg} ({load_avg}%)\nSchlechteste TPS: {tps_min} ({load_max}%)\n{tasks} Aufträge in {time}s ausgeführt:\n{results}"

@@ -37,6 +37,7 @@ class BenchmarkCallbackData extends OutputData
 			$stream->putString($result[0]);
 			$stream->putFloat($result[1]);
 			$stream->putInt($result[2]);
+			$stream->putFloat($result[3]);
 		}
 	}
 
@@ -47,7 +48,7 @@ class BenchmarkCallbackData extends OutputData
 		$count = $stream->getInt();
 		$this->result = [];
 		for ($i = 0; $i < $count; $i++) {
-			$this->result[] = [$stream->getString(), $stream->getFloat(), $stream->getInt()];
+			$this->result[] = [$stream->getString(), $stream->getFloat(), $stream->getInt(), $stream->getFloat()];
 		}
 	}
 }

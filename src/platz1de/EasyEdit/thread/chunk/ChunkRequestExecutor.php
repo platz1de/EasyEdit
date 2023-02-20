@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\thread\chunk;
 
+use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
@@ -10,7 +11,6 @@ use pocketmine\block\tile\Tile;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\World;
-use RuntimeException;
 
 class ChunkRequestExecutor
 {
@@ -31,7 +31,7 @@ class ChunkRequestExecutor
 				ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
 			},
 			function () use ($x, $z): void {
-				throw new RuntimeException("Failed to load chunk $x $z");
+				EditThread::getInstance()->getLogger()->warning("Failed to load chunk $x $z");
 			}
 		);
 	}

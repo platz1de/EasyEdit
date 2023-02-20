@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.1.7" #Please don't change this manually
+message-version: "2.1.8" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -53,9 +53,11 @@ schematic-created: "{changed} blocks were saved as \"{name}\" in {time}s"
 #Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
 thread-stats: "Status of EditThread:\nStatus: {status}\nCurrent Task: {task}\nProgress: {progress}\nQueued tasks: {queue}\nStored selections: {storage}\nThread memory: {mem_current}MB ({mem_max}MB)"
 
-benchmark-start: "Started benchmark, this can take up to a minute"
+benchmark-start: "Started benchmark, this can take a few minutes..."
 benchmark-running: "There is already a benchmark running"
-benchmark-cancel: "Benchmarks can't be cancelled"
+
+#Args: {done} {total}
+benchmark-progress: "Benchmark progress: {done}/{total}"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
 benchmark-finished: "Your benchmark results:\nAverage TPS: {tps_avg} ({load_avg}%)\nMinimal TPS: {tps_min} ({load_max}%)\nExecuted {tasks} tasks in {time}s:\n{results}"

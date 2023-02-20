@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\task\benchmark;
 
 use Closure;
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\Server;
@@ -21,15 +21,16 @@ class BenchmarkManager
 	private static bool $cleanup;
 
 	/**
+	 * @param Session $session
 	 * @param Closure $closure
 	 * @param bool    $deleteWorldAfter Useful when testing core functions
 	 */
-	public static function start(Closure $closure, bool $deleteWorldAfter = true): void
+	public static function start(Session $session, Closure $closure, bool $deleteWorldAfter = true): void
 	{
 		if (self::$running) {
 			throw new UnexpectedValueException("Benchmark is already running");
 		}
-		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results): void { }, $closure);
+		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results): void {}, $closure);
 
 		self::$closure = $closure;
 		self::$cleanup = $deleteWorldAfter;
@@ -39,7 +40,7 @@ class BenchmarkManager
 
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		EditHandler::runTask(new BenchmarkExecutor($name));
+		$session->runTask(new BenchmarkExecutor($name));
 	}
 
 	/**
@@ -56,7 +57,7 @@ class BenchmarkManager
 		 */
 		$benchmark = self::$task->getTask();
 		$time = array_sum(array_map(static function (array $dat): float {
-			return $dat[1];
+			return $dat[3];
 		}, $results));
 		$closure = self::$closure;
 		$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);

@@ -52,9 +52,11 @@ schematic-created: "{changed} các khối đã được lưu dưới dạng \"{n
 #Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
 thread-stats: "Trạng thái của Luồng Chỉnh Sửa:\nTrạng thái: {status}\nTác vụ hiện tại: {task}\nTiến độ: {progress}\nCác tác vụ đã được xếp hàng đợi: {queue}\nCác lựa chọn đã lưu trữ: {storage}\nLuồng Bộ nhớ: {mem_current}MB ({mem_max}MB)"
 
-benchmark-start: "Điểm chuẩn đã bắt đầu, quá trình này có thể mất đến một phút"
+benchmark-start: "Started benchmark, this can take a few minutes..."
 benchmark-running: "Đã có một điểm chuẩn đang hoạt động"
-benchmark-cancel: "Không thể hủy các điểm chuẩn"
+
+#Args: {done} {total}
+benchmark-progress: "Benchmark progress: {done}/{total}"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
 benchmark-finished: "Các kết quả điểm chuẩn của bạn:\nTPS trung bình: {tps_avg} ({load_avg}%)\nTPS nhỏ nhất: {tps_min} ({load_max}%)\nĐã thực hiện {tasks} tác vụ trong {time}s:\n{results}"

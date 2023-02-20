@@ -10,6 +10,7 @@ use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\output\BenchmarkCallbackData;
+use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
@@ -38,30 +39,37 @@ class BenchmarkExecutor extends ExecutableTask
 
 		$pos = new Vector3(0, World::Y_MIN, 0);
 
-		//4x 3x3 Chunk cubes
-		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(95, World::Y_MAX - 1, 95));
+		//10x10 Chunk cube
+		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(159, World::Y_MAX - 1, 159));
 
 		//Task #1 - set static
+		$start = microtime(true);
 		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->executeAssociated($this, false);
-		$results[] = ["set static", $this->setSimpleBenchmark->getTotalTime(), $this->setSimpleBenchmark->getTotalBlocks()];
+		$results[] = ["set static", $this->setSimpleBenchmark->getTotalTime(), $this->setSimpleBenchmark->getTotalBlocks(), microtime(true) - $start];
+		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => 1, "{total}" => 4]));
 
 		//Task #2 - set complex
+		$start = microtime(true);
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
 		$this->setComplexBenchmark->executeAssociated($this, false);
-		$results[] = ["set complex", $this->setComplexBenchmark->getTotalTime(), $this->setComplexBenchmark->getTotalBlocks()];
+		$results[] = ["set complex", $this->setComplexBenchmark->getTotalTime(), $this->setComplexBenchmark->getTotalBlocks(), microtime(true) - $start];
+		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => 2, "{total}" => 4]));
 
 		//Task #3 - copy
+		$start = microtime(true);
 		$this->copyBenchmark = new CopyTask($testCube, $pos);
 		$this->copyBenchmark->executeAssociated($this, false);
-		$results[] = ["copy", $this->copyBenchmark->getTotalTime(), $this->copyBenchmark->getTotalBlocks()];
+		$results[] = ["copy", $this->copyBenchmark->getTotalTime(), $this->copyBenchmark->getTotalBlocks(), microtime(true) - $start];
+		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => 3, "{total}" => 4]));
 
 		//Task #4 - paste
+		$start = microtime(true);
 		$this->pasteBenchmark = new DynamicPasteTask($this->world, $this->copyBenchmark->getResult(), $pos);
 		$this->pasteBenchmark->executeAssociated($this, false);
-		$results[] = ["paste", $this->pasteBenchmark->getTotalTime(), $this->pasteBenchmark->getTotalBlocks()];
+		$results[] = ["paste", $this->pasteBenchmark->getTotalTime(), $this->pasteBenchmark->getTotalBlocks(), microtime(true) - $start];
 
 		$this->sendOutputPacket(new BenchmarkCallbackData($this->world, $results));
 	}

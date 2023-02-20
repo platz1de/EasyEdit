@@ -8,7 +8,6 @@ use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\benchmark\BenchmarkManager;
 use platz1de\EasyEdit\thread\input\task\CancelTaskData;
 
 class CancelCommand extends EasyEditCommand
@@ -24,13 +23,9 @@ class CancelCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		if (BenchmarkManager::isRunning()) {
-			$session->sendMessage("benchmark-cancel");
-		} else {
-			//TODO: check if task is running
-			CancelTaskData::from();
-			$session->sendMessage("task-cancelled");
-		}
+		//TODO: check if task is running
+		CancelTaskData::from();
+		$session->sendMessage("task-cancelled");
 	}
 
 	/**

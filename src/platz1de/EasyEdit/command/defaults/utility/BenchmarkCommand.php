@@ -35,13 +35,13 @@ class BenchmarkCommand extends EasyEditCommand
 		$session->sendMessage("benchmark-start");
 
 		$executor = $session->getPlayer();
-		BenchmarkManager::start(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($executor): void {
+		BenchmarkManager::start($session, static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results) use ($executor): void {
 			$resultMsg = new MessageCompound();
 			foreach ($results as $i => $result) {
 				$resultMsg->addComponent(new MessageComponent("benchmark-result", [
 					"{task}" => (string) ($i + 1),
 					"{name}" => (string) $result[0],
-					"{time}" => (string) round($result[1], 2),
+					"{time}" => (string) round($result[3], 2),
 					"{blocks}" => MixedUtils::humanReadable($result[2])
 				]));
 			}

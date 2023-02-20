@@ -49,8 +49,11 @@ class ThreadData
 	 */
 	public static function canExecute(): bool
 	{
-		$data = self::$stop;
+		return !self::$stop;
+	}
+
+	public static function clear(): void
+	{
 		self::$stop = false;
-		return !$data;
 	}
 }

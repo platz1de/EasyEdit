@@ -52,9 +52,11 @@ schematic-created: "{changed} ブロックを {time} 秒で \"{name}\" という
 #Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
 thread-stats: "Editスレッドの状況:\n状況: {status}\n現在実行中のタスク: {task}\n進捗: {progress}\n待機中のタスク: {queue}\n保存された項目: {storage}\nスレッドのメモリ使用量: {mem_current}MB (最大: {mem_max}MB)"
 
-benchmark-start: "ベンチマークを開始しました。これには数分かかる場合があります"
+benchmark-start: "Started benchmark, this can take a few minutes..."
 benchmark-running: "既に実行中のベンチマークがあります"
-benchmark-cancel: "ベンチマークは中断できません"
+
+#Args: {done} {total}
+benchmark-progress: "Benchmark progress: {done}/{total}"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
 benchmark-finished: "あなたのベンチマークのスコア:\n平均TPS: {tps_avg} ({load_avg}%)\n最小TPS: {tps_min} ({load_max}%)\n{tasks} つのタスクを {time} 秒で実行:\n{results}"
