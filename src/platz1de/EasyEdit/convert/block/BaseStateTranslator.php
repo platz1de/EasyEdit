@@ -53,8 +53,8 @@ abstract class BaseStateTranslator extends BlockStateTranslator
 		}
 		foreach ($replace as $stateName => $values) {
 			$this->valueReplacements[$stateName] = [];
-			foreach ($values as $value) {
-				$this->valueReplacements[$stateName][(string) $value] = BlockParser::tagFromStringValue($value);
+			foreach ($values as $key => $value) {
+				$this->valueReplacements[$stateName][(string) $key] = BlockParser::tagFromStringValue($value);
 			}
 		}
 	}

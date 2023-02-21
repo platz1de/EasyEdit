@@ -122,9 +122,15 @@ class BlockStateConvertor
 	 */
 	public static function javaStringToRuntime(string $state): int
 	{
-		$data = self::javaToBedrock(BlockParser::fromStateString($state, RepoManager::getVersion()));
-		$data = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($data);
-		return GlobalBlockStateHandlers::getDeserializer()->deserialize($data);
+		try {
+			$data = self::javaToBedrock(BlockParser::fromStateString($state, RepoManager::getVersion()));
+			$data = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($data);
+			return GlobalBlockStateHandlers::getDeserializer()->deserialize($data);
+		} catch (Throwable $e) {
+			EditThread::getInstance()->debug("Failed to parse java state $state");
+			EditThread::getInstance()->debug($e->getMessage());
+			return GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
+		}
 	}
 
 	/**

@@ -46,7 +46,6 @@ class SingularStateTranslator extends BaseStateTranslator
 	 */
 	public function translate(BlockStateData $state): BlockStateData
 	{
-		$state = parent::translate($state);
 		$states = $state->getStates();
 		foreach ($this->renamedStates as $old => $new) {
 			if (isset($states[$old])) {
@@ -57,6 +56,6 @@ class SingularStateTranslator extends BaseStateTranslator
 				unset($states[$old]);
 			}
 		}
-		return new BlockStateData($this->targetState, $states, RepoManager::getVersion());
+		return parent::translate(new BlockStateData($this->targetState, $states, RepoManager::getVersion()));
 	}
 }
