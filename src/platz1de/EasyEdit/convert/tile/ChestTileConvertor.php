@@ -89,4 +89,14 @@ class ChestTileConvertor extends ContainerTileConvertor
 		$states["type"] = new StringTag($type);
 		return new BlockStateData($state->getName(), $states, $state->getVersion());
 	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getIdentifiers(): array
+	{
+		$identifiers = parent::getIdentifiers();
+		$identifiers[] = $this->javaNameTrapped;
+		return $identifiers;
+	}
 }

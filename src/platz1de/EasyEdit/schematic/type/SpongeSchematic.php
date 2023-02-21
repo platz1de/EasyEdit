@@ -224,7 +224,7 @@ class SpongeSchematic extends SchematicType
 				$tile = $tiles->next();
 				$id = $tile->getString(self::ENTITY_ID);
 				$pos = $tile->getIntArray(self::ENTITY_POSITION);
-				$position = new Vector3($pos[0], $pos[1], $pos[2]);
+				$position = new Vector3($pos[0], $pos[1] + World::Y_MIN, $pos[2]);
 				if ($version === 3) {
 					$data = $tile->getCompoundTag(self::ENTITY_EXTRA_DATA) ?? new CompoundTag();
 				} else {
@@ -254,7 +254,7 @@ class SpongeSchematic extends SchematicType
 		if (TileConvertor::toJava($tile, $state)) {
 			$id = $tile->getString(Tile::TAG_ID);
 			$x = $tile->getInt(Tile::TAG_X);
-			$y = $tile->getInt(Tile::TAG_Y);
+			$y = $tile->getInt(Tile::TAG_Y) - World::Y_MIN;
 			$z = $tile->getInt(Tile::TAG_Z);
 			$tile->removeTag(Tile::TAG_ID, Tile::TAG_X, Tile::TAG_Y, Tile::TAG_Z);
 			//$data = new CompoundTag();
