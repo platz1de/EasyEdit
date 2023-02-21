@@ -28,9 +28,9 @@ class MultiStateTranslator extends BaseStateTranslator
 		}
 		$this->multiState = $data["multi_name"];
 
-		$multi = $data["multi_translations"] ?? [];
+		$multi = $data["multi_states"] ?? null;
 		if (!is_array($multi)) {
-			throw new UnexpectedValueException("Missing multi_translations");
+			throw new UnexpectedValueException("Missing multi_states");
 		}
 		foreach ($multi as $value => $multiData) {
 			$this->multiTranslations[$value] = new SingularStateTranslator($multiData);
