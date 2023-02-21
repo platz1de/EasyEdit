@@ -61,7 +61,7 @@ class SpongeSchematic extends SchematicType
 		$xSize = $nbt->getShort(self::TAG_WIDTH);
 		$ySize = $nbt->getShort(self::TAG_HEIGHT);
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
-		$target->setPoint($offset);
+		$target->setPoint($offset->down(World::Y_MIN));
 		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
 		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
 		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
@@ -109,7 +109,8 @@ class SpongeSchematic extends SchematicType
 
 		$blockData = $blockDataRaw->nextChunk();
 		$i = 0;
-		for ($y = 0; $y < $ySize; ++$y) {
+		$yMax = $ySize + World::Y_MIN;
+		for ($y = World::Y_MIN; $y < $yMax; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
 					if ($i + 5 > AbstractByteArrayTag::CHUNK_SIZE) {
@@ -138,7 +139,7 @@ class SpongeSchematic extends SchematicType
 		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
 		$metaData->setInt(McEditSchematic::OFFSET_X, $target->getPoint()->getFloorX());
-		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->getFloorY());
+		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->getFloorY() - World::Y_MIN);
 		$metaData->setInt(McEditSchematic::OFFSET_Z, $target->getPoint()->getFloorZ());
 		$nbt->setTag(self::METADATA, $metaData);
 		//$nbt->setIntArray("Offset", [-$target->getPoint()->getFloorX(), -$target->getPoint()->getFloorY(), -$target->getPoint()->getFloorZ()]);
@@ -163,7 +164,8 @@ class SpongeSchematic extends SchematicType
 		$palette = [];
 		$translation = []; //cache
 
-		for ($y = 0; $y < $ySize; ++$y) {
+		$yMax = $ySize + World::Y_MIN;
+		for ($y = World::Y_MIN; $y < $yMax; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
 					$block = $target->getIterator()->getBlock($x, $y, $z);
