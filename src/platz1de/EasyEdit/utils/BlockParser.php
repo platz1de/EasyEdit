@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use Exception;
 use InvalidArgumentException;
+use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use pocketmine\block\Block;
 use pocketmine\data\bedrock\block\BlockStateData;
@@ -42,11 +44,15 @@ class BlockParser
 		//Block State Parser (bedrock)
 		try {
 			return self::runtimeFromStateString($string, BlockStateData::CURRENT_VERSION);
-		} catch (InvalidArgumentException) {
+		} catch (Exception) {
+			//Ignore
+		}
+		try {
+			return BlockStateConvertor::javaStringToRuntime($string);
+		} catch (Exception) {
 			//Ignore
 		}
 
-		//TODO: Block State Parser (java)
 		throw new ParseError("Unknown Block " . $string);
 	}
 
@@ -117,7 +123,7 @@ class BlockParser
 	{
 		if (preg_match("/^([a-z\d_:]+)(?:\[([a-z\d_=,]*)])?$/", strtolower($block), $matches) === 1) {
 			$block = $matches[1];
-			if (!isset($matches[2])) {
+			if (!isset($matches[2]) || $matches[2] === "") {
 				return new BlockStateData($block, [], $version);
 			}
 			$states = [];
