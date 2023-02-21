@@ -35,10 +35,10 @@ class ChestTileConvertor extends ContainerTileConvertor
 			return null;
 		}
 		$pairFacing = match (true) {
-			$type === "left" && $facing === "north", $type === "right" && $facing === "south" => Facing::WEST,
-			$type === "left" && $facing === "east", $type === "right" && $facing === "west" => Facing::NORTH,
-			$type === "left" && $facing === "south", $type === "right" && $facing === "north" => Facing::EAST,
-			$type === "left" && $facing === "west", $type === "right" && $facing === "east" => Facing::SOUTH,
+			$type === "right" && $facing === "north", $type === "left" && $facing === "south" => Facing::WEST,
+			$type === "right" && $facing === "east", $type === "left" && $facing === "west" => Facing::NORTH,
+			$type === "right" && $facing === "south", $type === "left" && $facing === "north" => Facing::EAST,
+			$type === "right" && $facing === "west", $type === "left" && $facing === "east" => Facing::SOUTH,
 			default => throw new InvalidArgumentException("Invalid chest type: $type $facing")
 		};
 		$vector = Vector3::zero()->getSide($pairFacing);
@@ -81,8 +81,8 @@ class ChestTileConvertor extends ContainerTileConvertor
 		}
 		$facing = $facing->getValue();
 		$type = match (true) {
-			$pairFacing === Facing::NORTH && $facing === "north", $pairFacing === Facing::SOUTH && $facing === "south", $pairFacing === Facing::EAST && $facing === "east", $pairFacing === Facing::WEST && $facing === "west" => "left",
-			$pairFacing === Facing::NORTH && $facing === "south", $pairFacing === Facing::SOUTH && $facing === "north", $pairFacing === Facing::EAST && $facing === "west", $pairFacing === Facing::WEST && $facing === "east" => "right",
+			$pairFacing === Facing::NORTH && $facing === "north", $pairFacing === Facing::SOUTH && $facing === "south", $pairFacing === Facing::EAST && $facing === "east", $pairFacing === Facing::WEST && $facing === "west" => "right",
+			$pairFacing === Facing::NORTH && $facing === "south", $pairFacing === Facing::SOUTH && $facing === "north", $pairFacing === Facing::EAST && $facing === "west", $pairFacing === Facing::WEST && $facing === "east" => "left",
 			default => throw new InvalidArgumentException("Invalid chest type: $pairFacing $facing")
 		};
 		$states = $state->getStates();
