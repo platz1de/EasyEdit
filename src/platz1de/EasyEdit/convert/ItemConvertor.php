@@ -41,6 +41,21 @@ class ItemConvertor
 				self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
 			}
 
+			/**
+			 * TODO: Add more convertors
+			 * Bucket of Aquatic Mob
+			 * Lodestone Compass
+			 * Filled Map
+			 * Glow Stick
+			 * Banner
+			 * Firework
+			 * Firework Star
+			 * Written Book
+			 * Book and Quill
+			 * Shulker Box
+			 * Crossbow
+			 * Potion
+			 */
 			self::$convertors = [
 				new BlockItemConvertor(),
 				new DisplayItemConvertor(),
