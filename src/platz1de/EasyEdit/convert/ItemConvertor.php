@@ -6,6 +6,7 @@ use platz1de\EasyEdit\convert\item\AdventurePropertyItemConvertor;
 use platz1de\EasyEdit\convert\item\BedrockExclusiveItemConvertor;
 use platz1de\EasyEdit\convert\item\BlockItemConvertor;
 use platz1de\EasyEdit\convert\item\DisplayItemConvertor;
+use platz1de\EasyEdit\convert\item\EnchantmentItemConvertor;
 use platz1de\EasyEdit\convert\item\ItemConvertorPiece;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\RepoManager;
@@ -43,6 +44,7 @@ class ItemConvertor
 			self::$convertors = [
 				new BlockItemConvertor(),
 				new DisplayItemConvertor(),
+				new EnchantmentItemConvertor(),
 				new AdventurePropertyItemConvertor(),
 				new BedrockExclusiveItemConvertor()
 			];
