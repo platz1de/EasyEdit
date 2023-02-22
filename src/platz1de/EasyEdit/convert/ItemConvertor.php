@@ -2,8 +2,10 @@
 
 namespace platz1de\EasyEdit\convert;
 
-use platz1de\EasyEdit\convert\item\BedrockExclusiveItemConverter;
+use platz1de\EasyEdit\convert\item\AdventurePropertyItemConvertor;
+use platz1de\EasyEdit\convert\item\BedrockExclusiveItemConvertor;
 use platz1de\EasyEdit\convert\item\BlockItemConvertor;
+use platz1de\EasyEdit\convert\item\DisplayItemConvertor;
 use platz1de\EasyEdit\convert\item\ItemConvertorPiece;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\RepoManager;
@@ -40,7 +42,9 @@ class ItemConvertor
 
 			self::$convertors = [
 				new BlockItemConvertor(),
-				new BedrockExclusiveItemConverter()
+				new DisplayItemConvertor(),
+				new AdventurePropertyItemConvertor(),
+				new BedrockExclusiveItemConvertor()
 			];
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
