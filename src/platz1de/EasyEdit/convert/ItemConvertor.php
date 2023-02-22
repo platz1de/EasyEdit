@@ -36,7 +36,7 @@ class ItemConvertor
 			 * @var string                                  $java
 			 * @var array{name: string, damage: string|int} $bedrock
 			 */
-			foreach (RepoManager::getJson("item-conversion-map", 2) as $java => $bedrock) {
+			foreach (RepoManager::getJson("item-conversion-map", 3) as $java => $bedrock) {
 				self::$itemTranslationBedrock[$java] = [$bedrock["name"], (int) $bedrock["damage"]];
 				self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
 			}
