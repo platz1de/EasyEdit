@@ -35,8 +35,10 @@ class ContainerTileConvertor extends TileConvertorPiece
 			if (!$item instanceof CompoundTag) {
 				throw new UnexpectedValueException("Items need to be represented as compound tags");
 			}
-			$new->push($item);
-			ItemConvertor::convertItemBedrock($item);
+			$converted = ItemConvertor::convertItemBedrock($item);
+			if ($converted !== null) {
+				$new->push($converted);
+			}
 		}
 	}
 
@@ -47,11 +49,15 @@ class ContainerTileConvertor extends TileConvertorPiece
 		if ($items === null) {
 			return null;
 		}
+		$tile->setTag(Container::TAG_ITEMS, $new = new ListTag([], NBT::TAG_Compound));
 		foreach ($items as $item) {
 			if (!$item instanceof CompoundTag) {
 				throw new UnexpectedValueException("Items need to be represented as compound tags");
 			}
-			ItemConvertor::convertItemJava($item);
+			$converted = ItemConvertor::convertItemJava($item);
+			if ($converted !== null) {
+				$new->push($converted);
+			}
 		}
 		return null;
 	}

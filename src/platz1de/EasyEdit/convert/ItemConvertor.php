@@ -2,169 +2,124 @@
 
 namespace platz1de\EasyEdit\convert;
 
-use JsonException;
+use platz1de\EasyEdit\convert\item\BedrockExclusiveItemConverter;
+use platz1de\EasyEdit\convert\item\BlockItemConvertor;
+use platz1de\EasyEdit\convert\item\ItemConvertorPiece;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\RepoManager;
-use pocketmine\nbt\NBT;
+use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\tag\StringTag;
 use Throwable;
-use UnexpectedValueException;
 
 class ItemConvertor
 {
 	/**
-	 * @var array<string, array{int, int}>
+	 * @var array<string, array{string, int}>
 	 */
-	private static array $itemTranslationBedrock;
+	private static array $itemTranslationBedrock = [];
 	/**
-	 * @var array<int, array<int, string>>
+	 * @var array<string, array<int, string>>
 	 */
-	private static array $itemTranslationJava;
+	private static array $itemTranslationJava = [];
+	/**
+	 * @var ItemConvertorPiece[]
+	 */
+	private static array $convertors = [];
 
 	public static function load(): void
 	{
-		/** @var string $bedrock */
-		foreach (RepoManager::getJson("bedrock-item-map", 2) as $java => $bedrock) {
-			$id = explode(":", $bedrock);
-			self::$itemTranslationBedrock[$java] = [(int) $id[0], (int) $id[1]];
-			self::$itemTranslationJava[(int) $id[0]][(int) $id[1]] = $java;
+		try {
+			/**
+			 * @var string                                  $java
+			 * @var array{name: string, damage: string|int} $bedrock
+			 */
+			foreach (RepoManager::getJson("item-conversion-map", 2) as $java => $bedrock) {
+				self::$itemTranslationBedrock[$java] = [$bedrock["name"], (int) $bedrock["damage"]];
+				self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
+			}
+
+			self::$convertors = [
+				new BlockItemConvertor(),
+				new BedrockExclusiveItemConverter()
+			];
+		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
+			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
 	}
 
 	/**
 	 * @param CompoundTag $item
 	 */
-	public static function convertItemBedrock(CompoundTag $item): void
+	public static function convertItemBedrock(CompoundTag $item): ?CompoundTag
 	{
-		//TODO: redo this
 		try {
 			$javaId = $item->getString("id");
 		} catch (Throwable) {
-			return; //probably already bedrock format, or at least not convertable
+			$real = self::convertItemJava($item);
+			if ($real === null) {
+				return null; //couldn't convert
+			}
+			return $item; //already in bedrock format
 		}
 		try {
 			$i = self::$itemTranslationBedrock["minecraft:" . mb_strtolower(str_replace([" ", "minecraft:"], ["_", ""], trim($javaId)))];
 		} catch (Throwable) {
 			EditThread::getInstance()->debug("Couldn't convert item " . $javaId);
-			return;
+			return null;
 		}
-		$item->setShort("id", $i[0]);
-		$item->setShort("Damage", $i[1]);
+		$item->removeTag("id");
+		$item->setString(SavedItemData::TAG_NAME, $i[0]);
+		$item->setShort(SavedItemData::TAG_DAMAGE, $i[1]);
 
 		try {
-			$extraData = $item->getCompoundTag("tag");
-		} catch (Throwable) {
-			return;
-		}
-		if ($extraData instanceof CompoundTag) {
-			foreach ($extraData->getValue() as $key => $value) {
-				switch ($key) {
-					case "display":
-						/** @var CompoundTag $value */
-						$customName = $value->getString("Name", "");
-						if ($customName !== "") {
-							try {
-								/** @var array<array{text: string}> $json */
-								$json = json_decode($customName, true, 3, JSON_THROW_ON_ERROR);
-								if (!isset($json[0]["text"])) {
-									throw new JsonException("Missing text key");
-								}
-								$name = $json[0]["text"];
-							} catch (JsonException) {
-								throw new UnexpectedValueException("Invalid JSON for item name");
-							}
-							$value->setString("Name", $name);
-						}
-
-						try {
-							$lore = $value->getListTag("Lore");
-						} catch (Throwable) {
-							break;
-						}
-						if ($lore === null) {
-							break;
-						}
-						$lines = new ListTag([], NBT::TAG_String);
-						/** @var StringTag $line */
-						foreach ($lore as $line) {
-							try {
-								/** @var array<array{text: string}> $json */
-								$json = json_decode($line->getValue(), true, 3, JSON_THROW_ON_ERROR);
-								if (!isset($json[0]["text"])) {
-									throw new JsonException("Missing text key");
-								}
-								$text = $json[0]["text"];
-							} catch (JsonException) {
-								throw new UnexpectedValueException("Invalid JSON for item lore");
-							}
-							$lines->push(new StringTag($text));
-						}
-						$value->setTag("Lore", $lines);
-				}
+			$extraData = $item->getCompoundTag(SavedItemData::TAG_TAG);
+			$item->removeTag(SavedItemData::TAG_TAG);
+			if (!$extraData instanceof CompoundTag) {
+				$extraData = new CompoundTag();
 			}
+		} catch (Throwable) {
+			$extraData = new CompoundTag();
 		}
+		foreach (self::$convertors as $convertor) {
+			$convertor->toBedrock($item, $extraData);
+		}
+		if ($extraData->getCount() > 0) {
+			$item->setTag(SavedItemData::TAG_TAG, $extraData);
+		}
+		return $item;
 	}
 
 	/**
 	 * @param CompoundTag $item
 	 */
-	public static function convertItemJava(CompoundTag $item): void
+	public static function convertItemJava(CompoundTag $item): ?CompoundTag
 	{
 		try {
-			$i = self::$itemTranslationJava[$item->getShort("id")][$item->getShort("Damage")];
+			$i = self::$itemTranslationJava[$item->getString(SavedItemData::TAG_NAME)][$item->getShort(SavedItemData::TAG_DAMAGE)];
 		} catch (Throwable) {
-			EditThread::getInstance()->debug("Couldn't convert item " . $item->getShort("id") . ":" . $item->getShort("Damage"));
-			return;
+			EditThread::getInstance()->debug("Couldn't convert item " . $item->getString(SavedItemData::TAG_NAME) . ":" . $item->getShort(SavedItemData::TAG_DAMAGE));
+			return null;
 		}
-		$item->removeTag("Damage");
+		$item->removeTag(SavedItemData::TAG_NAME);
+		$item->removeTag(SavedItemData::TAG_DAMAGE);
 		$item->setString("id", $i);
 
 		try {
-			$extraData = $item->getCompoundTag("tag");
-		} catch (Throwable) {
-			return;
-		}
-		if ($extraData instanceof CompoundTag) {
-			foreach ($extraData->getValue() as $key => $value) {
-				switch ($key) {
-					case "display":
-						/** @var CompoundTag $value */
-						$customName = $value->getString("Name", "");
-						if ($customName !== "") {
-							try {
-								/** @var string $json */
-								$json = json_encode([["text" => $customName]], JSON_THROW_ON_ERROR);
-							} catch (JsonException) {
-								throw new UnexpectedValueException("Failed to encode JSON for item name");
-							}
-							$value->setString("Name", $json);
-						}
-
-						try {
-							$lore = $value->getListTag("Lore");
-						} catch (Throwable) {
-							break;
-						}
-						if ($lore === null) {
-							break;
-						}
-						$lines = new ListTag([], NBT::TAG_String);
-						/** @var StringTag $line */
-						foreach ($lore as $line) {
-							$text = $line->getValue();
-							try {
-								/** @var string $json */
-								$json = json_encode([["text" => $text]], JSON_THROW_ON_ERROR);
-							} catch (JsonException) {
-								throw new UnexpectedValueException("Failed to encode JSON for item lore");
-							}
-							$lines->push(new StringTag($json));
-						}
-						$value->setTag("Lore", $lines);
-				}
+			$extraData = $item->getCompoundTag(SavedItemData::TAG_TAG);
+			$item->removeTag(SavedItemData::TAG_TAG);
+			if (!$extraData instanceof CompoundTag) {
+				$extraData = new CompoundTag();
 			}
+		} catch (Throwable) {
+			$extraData = new CompoundTag();
 		}
+		foreach (self::$convertors as $convertor) {
+			$convertor->toJava($item, $extraData);
+		}
+		if ($extraData->getCount() > 0) {
+			$item->setTag(SavedItemData::TAG_TAG, $extraData);
+		}
+		return $item;
 	}
 }

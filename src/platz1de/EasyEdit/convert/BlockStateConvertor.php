@@ -88,12 +88,16 @@ class BlockStateConvertor
 
 	/**
 	 * @param BlockStateData $state
+	 * @param bool           $strict
 	 * @return BlockStateData
 	 */
-	public static function javaToBedrock(BlockStateData $state): BlockStateData
+	public static function javaToBedrock(BlockStateData $state, bool $strict = false): BlockStateData
 	{
 		$converter = self::$convertorsJTB[$state->getName()] ?? null;
 		if ($converter === null) {
+			if ($strict) {
+				throw new UnexpectedValueException("Unknown java state " . $state->getName());
+			}
 			EditThread::getInstance()->debug("Unknown java state " . $state->getName());
 			return $state;
 		}

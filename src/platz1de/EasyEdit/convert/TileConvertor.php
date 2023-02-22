@@ -64,11 +64,11 @@ class TileConvertor
 	private static array $convertors = [];
 
 	/**
-	 * @param CompoundTag        $tile
-	 * @param BlockListSelection $selection
-	 * @param CompoundTag|null   $extraData
+	 * @param CompoundTag      $tile
+	 * @param CompoundTag|null $extraData
+	 * @return CompoundTag|null
 	 */
-	public static function toBedrock(CompoundTag $tile, BlockListSelection $selection, ?CompoundTag $extraData): void
+	public static function toBedrock(CompoundTag $tile, ?CompoundTag $extraData): ?CompoundTag
 	{
 		//some of these aren't actually part of pmmp yet, but plugins might use them
 		if ($extraData !== null) {
@@ -81,17 +81,18 @@ class TileConvertor
 		}
 		if (!isset(self::$convertors[$tile->getString(Tile::TAG_ID)])) {
 			EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
-			return;
+			return null;
 		}
 		if ($extraData !== null && $extraData->getString(self::PREPROCESSED_TYPE) !== self::$convertors[$tile->getString(Tile::TAG_ID)]::class) {
 			throw new InvalidArgumentException("Preprocessed tile type doesn't match");
 		}
 		try {
 			self::$convertors[$tile->getString(Tile::TAG_ID)]->toBedrock($tile);
-			$selection->addTile($tile);
+			return $tile;
 		} catch (Throwable $exception) {
 			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID) . ": " . $exception->getMessage());
 		}
+		return null;
 	}
 
 	/**
@@ -146,5 +147,23 @@ class TileConvertor
 				self::$convertors[$identifier] = $convertor;
 			}
 		}
+	}
+
+	/**
+	 * @param string $item Java or Bedrock item name
+	 * @return string|null Java tile name
+	 */
+	public static function itemToTileName(string $item): ?string
+	{
+		if (isset(self::$convertors[$item])) {
+			return $item;
+		}
+		if (str_ends_with($item, "sign")) { //wooden variants
+			return "minecraft:sign";
+		}
+		if (str_ends_with($item, "shulker_box")) { //colored variants + undyed from bedrock
+			return "minecraft:shulker_box";
+		}
+		return null;
 	}
 }
