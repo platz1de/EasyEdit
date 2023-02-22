@@ -97,7 +97,11 @@ class EnchantmentItemConvertor extends ItemConvertorPiece
 					->setString(self::ENCHANTMENT_TAG, "minecraft:" . strtolower($java))
 					->setShort(self::ENCHANTMENT_LVL, $level);
 			}
-			$tag->setTag(self::JAVA_ENCHANTMENTS_TAG, new ListTag($enchantmentList, NBT::TAG_Compound));
+			if ($item->getString("id") === "minecraft:enchanted_book") {
+				$tag->setTag(self::JAVA_STORED_ENCHANTMENTS_TAG, new ListTag($enchantmentList, NBT::TAG_Compound));
+			} else {
+				$tag->setTag(self::JAVA_ENCHANTMENTS_TAG, new ListTag($enchantmentList, NBT::TAG_Compound));
+			}
 		}
 	}
 }
