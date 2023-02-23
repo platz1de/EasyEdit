@@ -38,7 +38,11 @@ class ChunkInformation
 	 */
 	public static function empty(): ChunkInformation
 	{
-		return new self(new Chunk(array_fill(0, Chunk::MAX_SUBCHUNKS, new SubChunk(0, [], new PalettedBlockArray(BiomeIds::OCEAN))), true), []);
+		$subChunks = [];
+		for ($y = 0; $y < Chunk::MAX_SUBCHUNKS; $y++) {
+			$subChunks[$y] = new SubChunk(0, [], new PalettedBlockArray(BiomeIds::OCEAN));
+		}
+		return new self(new Chunk($subChunks, true), []);
 	}
 
 	/**
