@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
@@ -47,7 +46,6 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$selection->setPoint(Vector3::zero());
 		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $rotated): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
-			Selection::processBlock($block);
 			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, BlockRotationManipulator::rotateRuntime($block));
 		}, SelectionContext::full());
 		foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {

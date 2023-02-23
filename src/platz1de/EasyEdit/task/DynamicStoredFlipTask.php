@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
@@ -55,7 +54,6 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->setPoint(Vector3::zero());
 				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
-					Selection::processBlock($block);
 					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flipRuntime(Axis::X, $block));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
@@ -67,7 +65,6 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->setPoint(Vector3::zero());
 				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
-					Selection::processBlock($block);
 					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flipRuntime(Axis::Y, $block));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
@@ -79,7 +76,6 @@ class DynamicStoredFlipTask extends ExecutableTask
 				$selection->setPoint(Vector3::zero());
 				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
-					Selection::processBlock($block);
 					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flipRuntime(Axis::Z, $block));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {

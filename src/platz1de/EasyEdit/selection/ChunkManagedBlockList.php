@@ -49,12 +49,6 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	 */
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void
 	{
-		if ($id === 0xD90) {
-			return;
-		}
-		if ($id === 0) {
-			$id = 0xD90; //structure_void
-		}
 		if ($overwrite || $this->iterator->getBlock($x, $y, $z) === 0) {
 			$this->iterator->setBlock($x, $y, $z, $id);
 		}

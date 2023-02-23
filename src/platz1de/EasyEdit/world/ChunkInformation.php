@@ -4,9 +4,12 @@ namespace platz1de\EasyEdit\world;
 
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
+use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\FastChunkSerializer;
+use pocketmine\world\format\PalettedBlockArray;
+use pocketmine\world\format\SubChunk;
 use pocketmine\world\World;
 
 class ChunkInformation
@@ -35,7 +38,7 @@ class ChunkInformation
 	 */
 	public static function empty(): ChunkInformation
 	{
-		return new self(new Chunk([], true), []);
+		return new self(new Chunk(array_fill(0, Chunk::MAX_SUBCHUNKS, new SubChunk(0, [], new PalettedBlockArray(BiomeIds::OCEAN))), true), []);
 	}
 
 	/**

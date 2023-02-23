@@ -15,6 +15,7 @@ use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
 use RuntimeException;
 
@@ -48,7 +49,7 @@ class CutTask extends SelectionEditTask
 		$this->executor1 = new CopyTask($this->selection, $this->position, $this->context);
 		$this->executor1->executeAssociated($this, false);
 		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->executor1->getResult())));
-		$this->executor2 = new SetTask($this->selection, new StaticBlock(0), $this->context);
+		$this->executor2 = new SetTask($this->selection, StaticBlock::from(VanillaBlocks::AIR()), $this->context);
 		$this->executor2->executeAssociated($this, false);
 		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->executor2->undo), false));
 		$this->notifyUser((string) round($this->executor1->totalTime + $this->executor2->totalTime, 2), MixedUtils::humanReadable($this->executor1->totalBlocks + $this->executor2->totalBlocks));

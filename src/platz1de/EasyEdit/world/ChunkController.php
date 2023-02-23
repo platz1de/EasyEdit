@@ -115,6 +115,7 @@ class ChunkController
 		$this->writeCount++;
 		$y = min(World::Y_MAX - 1, max(World::Y_MIN, $y));
 		$this->moveTo($x, $y, $z);
+		//Note: this will break if air blocks ever become their id of 0 back again.
 		$this->currentSubChunk->setBlockStateId($x & 0x0f, $y & 0x0f, $z & 0x0f, $block);
 	}
 

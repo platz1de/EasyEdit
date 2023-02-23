@@ -7,6 +7,7 @@ use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -29,6 +30,7 @@ class DrainTask extends ExpandingTask
 		$startZ = $this->start->getFloorZ();
 		$this->loader->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$limit = ConfigManager::getFillDistance();
+		$air = VanillaBlocks::AIR()->getStateId();
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
 		$queue->insert(World::blockHash($startX, $startY, $startZ), 0);
@@ -49,7 +51,7 @@ class DrainTask extends ExpandingTask
 				$this->loader->checkUnload($handler, $chunk);
 				continue;
 			}
-			$handler->changeBlock($x, $y, $z, 0);
+			$handler->changeBlock($x, $y, $z, $air);
 			foreach (Facing::ALL as $facing) {
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {

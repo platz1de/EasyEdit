@@ -11,6 +11,7 @@ use platz1de\EasyEdit\task\expanding\ExpandingTask;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -57,6 +58,7 @@ class PathfindingTask extends ExpandingTask
 		$endX = $this->end->getFloorX();
 		$endY = $this->end->getFloorY();
 		$endZ = $this->end->getFloorZ();
+		$air = VanillaBlocks::AIR()->getStateId();
 
 		$open->insert(new Node($startX, $startY, $startZ, null, $endX, $endY, $endZ));
 		while ($checked++ < $limit) {
@@ -78,7 +80,7 @@ class PathfindingTask extends ExpandingTask
 				}
 				return;
 			}
-			if ($handler->getBlock($current->x, $current->y, $current->z) === 0) {
+			if ($handler->getBlock($current->x, $current->y, $current->z) === $air) {
 				foreach ($current->getSides($this->allowDiagonal) as $side) {
 					$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ());
 					if ($side->y < World::Y_MIN || $side->y >= World::Y_MAX || isset($closed[$hash])) {

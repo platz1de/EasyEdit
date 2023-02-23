@@ -61,7 +61,7 @@ class StaticPasteTask extends SelectionEditTask
 		$selection = $this->selection;
 		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $selection): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
-			if (Selection::processBlock($block)) {
+			if ($block !== 0) {
 				$handler->changeBlock($x, $y, $z, $block);
 			}
 		}, $this->context);

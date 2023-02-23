@@ -11,6 +11,8 @@ use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\world\HeightMapCache;
+use pocketmine\block\Block;
+use pocketmine\block\BlockTypeIds;
 
 class SetTask extends PatternedEditTask
 {
@@ -41,7 +43,7 @@ class SetTask extends PatternedEditTask
 			if ($block !== -1) {
 				$handler->changeBlock($x, $y, $z, $block);
 				if ($updateHeightMap) {
-					HeightMapCache::setBlockAt($x, $y, $z, $block === 0);
+					HeightMapCache::setBlockAt($x, $y, $z, $block >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::AIR);
 				}
 			}
 		}, $this->context);

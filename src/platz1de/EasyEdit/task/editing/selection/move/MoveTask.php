@@ -12,6 +12,7 @@ use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -49,8 +50,9 @@ class MoveTask extends SelectionEditTask
 		$dy = $this->direction->getFloorY();
 		$dz = $this->direction->getFloorZ();
 		//TODO: change order of iteration to optimize performance
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
-			$handler->changeBlock($x, $y, $z, 0); //Make sure we don't overwrite anything
+		$air = VanillaBlocks::AIR()->getStateId();
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $air): void {
+			$handler->changeBlock($x, $y, $z, $air); //Make sure we don't overwrite anything
 		}, $this->context);
 		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $dx, $dy, $dz): void {
 			$handler->copyBlock($x + $dx, $y + $dy, $z + $dz, $x, $y, $z, false);

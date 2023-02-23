@@ -151,21 +151,6 @@ abstract class Selection
 	}
 
 	/**
-	 * @param int $block
-	 * @return bool
-	 */
-	public static function processBlock(int &$block): bool
-	{
-		$return = ($block !== 0);
-
-		if ($block === 0xD90) { //structure_void
-			$block = 0;
-		}
-
-		return $return;
-	}
-
-	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
