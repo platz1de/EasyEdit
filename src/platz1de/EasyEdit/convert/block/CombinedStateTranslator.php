@@ -37,7 +37,11 @@ class CombinedStateTranslator extends SingularStateTranslator
 		if (!isset($data["combined_states"]) || !is_array($data["combined_states"])) {
 			throw new UnexpectedValueException("Missing combined_states");
 		}
-		$this->parseCombinedStates($data["combined_states"], $this->combinedStateData);
+		$combinedStates = $data["combined_states"];
+		if (isset($combinedStates["default"])) {
+			$this->combinedStateData["default"] = BlockParser::tagFromStringValue($combinedStates["default"]);
+		}
+		$this->parseCombinedStates($combinedStates, $this->combinedStateData);
 
 		if (!isset($data["target_name"]) || !is_string($data["target_name"])) {
 			throw new UnexpectedValueException("Missing target_name");
@@ -52,7 +56,15 @@ class CombinedStateTranslator extends SingularStateTranslator
 		if (isset($states[$this->resultState])) {
 			throw new UnexpectedValueException("State $this->resultState already exists");
 		}
-		$states[$this->resultState] = $this->getCombinedState($states, $this->combinedStateData, $this->combinedStates);
+		try {
+			$states[$this->resultState] = $this->getCombinedState($states, $this->combinedStateData, $this->combinedStates);
+		} catch (UnexpectedValueException $e) {
+			if (isset($this->combinedStateData["default"])) {
+				$states[$this->resultState] = $this->combinedStateData["default"];
+			} else {
+				throw $e;
+			}
+		}
 		foreach ($this->combinedStates as $combinedState) {
 			unset($states[$combinedState]);
 		}
