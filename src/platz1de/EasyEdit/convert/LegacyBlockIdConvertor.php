@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\convert;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use Throwable;
 
 /**
@@ -48,7 +49,11 @@ class LegacyBlockIdConvertor
 	 */
 	public static function convertFromJava(int $id): int
 	{
-		return self::$conversionFrom[$id] ?? $id;
+		if (isset(self::$conversionFrom[$id])) {
+			return self::$conversionFrom[$id];
+		}
+		EditThread::getInstance()->debug("Failed to convert $id");
+		return GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
 	}
 
 	/**
