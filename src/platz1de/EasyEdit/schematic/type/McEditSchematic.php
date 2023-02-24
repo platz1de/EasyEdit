@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\schematic\type;
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
-use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\InternetException;
@@ -44,6 +43,7 @@ class McEditSchematic extends SchematicType
 
 		$blockIdChunk = "";
 		$blockMetaChunk = "";
+		$blockCache = [];
 		$i = 0;
 		//McEdit why this weird order?
 		for ($y = 0; $y < $ySize; ++$y) {
@@ -56,7 +56,12 @@ class McEditSchematic extends SchematicType
 					$id = ord($blockIdChunk[$i % AbstractByteArrayTag::CHUNK_SIZE]);
 					$meta = ord($blockMetaChunk[$i % AbstractByteArrayTag::CHUNK_SIZE]);
 
-					$target->addBlock($x, $y, $z, LegacyBlockIdConvertor::convertFromJava(($id << LegacyBlockIdConvertor::METADATA_BITS) | $meta));
+					$j = $id << LegacyBlockIdConvertor::METADATA_BITS | $meta;
+					if (!isset($blockCache[$j])) {
+						$blockCache[$j] = LegacyBlockIdConvertor::convertFromJava($j);
+					}
+
+					$target->addBlock($x, $y, $z, $blockCache[$j]);
 					$i++;
 				}
 			}
