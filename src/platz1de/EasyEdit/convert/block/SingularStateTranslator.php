@@ -12,10 +12,6 @@ use UnexpectedValueException;
 class SingularStateTranslator extends BaseStateTranslator
 {
 	private string $targetState;
-	/**
-	 * @var array<string, string>
-	 */
-	private array $renamedStates = [];
 
 	/**
 	 * @param array<string, mixed> $data
@@ -27,17 +23,6 @@ class SingularStateTranslator extends BaseStateTranslator
 			throw new UnexpectedValueException("Missing name");
 		}
 		$this->targetState = $data["name"];
-
-		$renames = $data["state_renames"] ?? [];
-		if (!is_array($renames)) {
-			throw new UnexpectedValueException("state_renames must be an array");
-		}
-		foreach ($renames as $old => $new) {
-			if (!is_string($old) || !is_string($new)) {
-				throw new UnexpectedValueException("state_renames must be an array of strings");
-			}
-			$this->renamedStates[$old] = $new;
-		}
 	}
 
 	/**
@@ -46,16 +31,6 @@ class SingularStateTranslator extends BaseStateTranslator
 	 */
 	public function translate(BlockStateData $state): BlockStateData
 	{
-		$states = $state->getStates();
-		foreach ($this->renamedStates as $old => $new) {
-			if (isset($states[$old])) {
-				if (isset($states[$new])) {
-					throw new UnexpectedValueException("State $new already exists");
-				}
-				$states[$new] = $states[$old];
-				unset($states[$old]);
-			}
-		}
-		return parent::translate(new BlockStateData($this->targetState, $states, RepoManager::getVersion()));
+		return parent::translate(new BlockStateData($this->targetState, $state->getStates(), RepoManager::getVersion()));
 	}
 }

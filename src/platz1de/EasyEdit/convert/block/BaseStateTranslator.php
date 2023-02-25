@@ -25,6 +25,10 @@ abstract class BaseStateTranslator extends BlockStateTranslator
 	 * @var array<string, array<string, Tag>>
 	 */
 	private array $valueReplacements = [];
+	/**
+	 * @var array<string, string>
+	 */
+	private array $renamedStates = [];
 
 	/**
 	 * @param array<string, mixed> $data
@@ -57,6 +61,17 @@ abstract class BaseStateTranslator extends BlockStateTranslator
 				$this->valueReplacements[$stateName][(string) $key] = BlockParser::tagFromStringValue($value);
 			}
 		}
+
+		$renames = $data["state_renames"] ?? [];
+		if (!is_array($renames)) {
+			throw new UnexpectedValueException("state_renames must be an array");
+		}
+		foreach ($renames as $old => $new) {
+			if (!is_string($old) || !is_string($new)) {
+				throw new UnexpectedValueException("state_renames must be an array of strings");
+			}
+			$this->renamedStates[$old] = $new;
+		}
 	}
 
 	public function translate(BlockStateData $state): BlockStateData
@@ -64,6 +79,15 @@ abstract class BaseStateTranslator extends BlockStateTranslator
 		$states = $state->getStates();
 		foreach ($this->removedStates as $removedState) {
 			unset($states[$removedState]);
+		}
+		foreach ($this->renamedStates as $old => $new) {
+			if (isset($states[$old])) {
+				if (isset($states[$new])) {
+					throw new UnexpectedValueException("State $new already exists");
+				}
+				$states[$new] = $states[$old];
+				unset($states[$old]);
+			}
 		}
 		foreach ($this->addedStates as $addedState => $addedValue) {
 			$states[$addedState] = clone $addedValue;

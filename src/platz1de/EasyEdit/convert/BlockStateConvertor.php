@@ -103,6 +103,7 @@ class BlockStateConvertor
 		try {
 			return $converter->translate($state);
 		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->critical("Failed to convert " . $state->getName() . " to bedrock");
 			EditThread::getInstance()->getLogger()->logException($e);
 			return $state;
 		}
@@ -122,6 +123,7 @@ class BlockStateConvertor
 		try {
 			$state = $converter->translate($state);
 		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->critical("Failed to convert " . $state->getName() . " to java");
 			EditThread::getInstance()->getLogger()->logException($e);
 		}
 		return $converter->applyDefaults($state);
