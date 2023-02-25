@@ -54,8 +54,8 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\CompoundTile;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\world\clientblock\Registry;
-use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\AssumptionFailedError;
 
@@ -146,6 +146,14 @@ class EasyEdit extends PluginBase
 		]);
 
 		Registry::registerToNetwork();
+		Server::getInstance()->getAsyncPool()->addWorkerStartHook(function (int $workerId): void {
+			Server::getInstance()->getAsyncPool()->submitTaskToWorker(new class extends AsyncTask {
+				public function onRun(): void
+				{
+					Registry::registerToNetwork(); //keep the registry in sync
+				}
+			}, $workerId);
+		});
 	}
 
 	/**
