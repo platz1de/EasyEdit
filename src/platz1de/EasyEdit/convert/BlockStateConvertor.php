@@ -100,7 +100,12 @@ class BlockStateConvertor
 			return $state;
 		}
 		$state = $converter->applyDefaults($state);
-		return $converter->translate($state);
+		try {
+			return $converter->translate($state);
+		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->logException($e);
+			return $state;
+		}
 	}
 
 	/**
@@ -114,7 +119,11 @@ class BlockStateConvertor
 			EditThread::getInstance()->debug("Unknown bedrock state " . $state->getName());
 			return $state;
 		}
-		$state = $converter->translate($state);
+		try {
+			$state = $converter->translate($state);
+		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->logException($e);
+		}
 		return $converter->applyDefaults($state);
 	}
 
