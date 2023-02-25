@@ -156,6 +156,11 @@ class EasyEdit extends PluginBase
 		});
 	}
 
+	protected function onDisable(): void
+	{
+		EditThread::getInstance()->quit();
+	}
+
 	/**
 	 * @return EasyEdit
 	 */
