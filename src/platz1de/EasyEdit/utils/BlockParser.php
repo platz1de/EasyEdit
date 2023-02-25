@@ -41,14 +41,19 @@ class BlockParser
 		}
 
 		$string = "minecraft:" . str_replace([" ", "minecraft:"], ["_", ""], trim($string));
-		//Block State Parser (bedrock)
 		try {
-			return self::runtimeFromStateString($string, BlockStateData::CURRENT_VERSION);
-		} catch (Exception) {
-			//Ignore
-		}
-		try {
-			return BlockStateConvertor::javaStringToRuntime($string);
+			$state = self::fromStateString($string, BlockStateData::CURRENT_VERSION);
+
+			try {
+				return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
+			} catch (Exception) {
+				//Ignore
+			}
+
+			$state = new BlockStateData($state->getName(), $state->getStates(), RepoManager::getVersion());
+			$state = BlockStateConvertor::javaToBedrock($state);
+			$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
+			return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 		} catch (Exception) {
 			//Ignore
 		}
@@ -88,30 +93,6 @@ class BlockParser
 			$states[] = $key . "=" . self::tagToStringValue($value);
 		}
 		return $block->getName() . "[" . implode(",", $states) . "]";
-	}
-
-	/**
-	 * @param string $block
-	 * @param int    $version
-	 * @return int
-	 */
-	public static function runtimeFromStateString(string $block, int $version): int
-	{
-		$state = self::fromStateString($block, $version);
-		$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
-		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
-	}
-
-	/**
-	 * @param string $block
-	 * @param int    $version
-	 * @return Block
-	 */
-	public static function blockFromStateString(string $block, int $version): Block
-	{
-		$state = self::fromStateString($block, $version);
-		$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
-		return GlobalBlockStateHandlers::getDeserializer()->deserializeBlock($state);
 	}
 
 	/**
@@ -169,5 +150,12 @@ class BlockParser
 			"false" => new ByteTag(0),
 			default => is_numeric($block) ? new IntTag((int) $block) : new StringTag($block)
 		};
+	}
+
+	private static int $invalidBlockId;
+
+	public static function getInvalidBlockId(): int
+	{
+		return self::$invalidBlockId ??= GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
 	}
 }

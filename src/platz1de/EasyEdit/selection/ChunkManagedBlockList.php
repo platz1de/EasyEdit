@@ -4,10 +4,12 @@ namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
+use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
@@ -52,6 +54,14 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		if ($overwrite || $this->iterator->getBlock($x, $y, $z) === 0) {
 			$this->iterator->setBlock($x, $y, $z, $id);
 		}
+	}
+
+	/**
+	 * @return BlockStateData[]|false
+	 */
+	public function requestBlockStates(): array|false
+	{
+		return BlockStateTranslationManager::requestBlockState($this->iterator->collectPalette($this->pos1, $this->pos2));
 	}
 
 	/**

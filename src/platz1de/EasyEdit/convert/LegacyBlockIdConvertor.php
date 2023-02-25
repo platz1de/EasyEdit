@@ -2,10 +2,10 @@
 
 namespace platz1de\EasyEdit\convert;
 
+use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
-use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use Throwable;
 
 /**
@@ -27,15 +27,19 @@ class LegacyBlockIdConvertor
 
 		try {
 			$version = RepoManager::getVersion();
+			$conversionMap = [];
 			/** @var string $bedrockState */
 			foreach (RepoManager::getJson("legacy-conversion-map", 2) as $javaStringId => $bedrockState) {
 				$javaId = explode(":", $javaStringId);
-				try {
-					self::$conversionFrom[((int) $javaId[0]) << self::METADATA_BITS | ((int) $javaId[1])] = BlockParser::runtimeFromStateString($bedrockState, $version);
-				} catch (Throwable $e) {
-					EditThread::getInstance()->getLogger()->debug($e->getMessage());
-				}
+				$conversionMap[((int) $javaId[0]) << self::METADATA_BITS | ((int) $javaId[1])] = BlockParser::fromStateString($bedrockState, $version);
 			}
+
+			$result = BlockStateTranslationManager::requestRuntimeId($conversionMap);
+			if ($result === false) {
+				return;
+			}
+			self::$conversionFrom = $result;
+
 			self::$available = true;
 		} catch (Throwable $e) {
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, McEdit schematic conversion is not available");
@@ -53,7 +57,7 @@ class LegacyBlockIdConvertor
 			return self::$conversionFrom[$id];
 		}
 		EditThread::getInstance()->debug("Failed to convert $id");
-		return GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
+		return BlockParser::getInvalidBlockId();
 	}
 
 	/**

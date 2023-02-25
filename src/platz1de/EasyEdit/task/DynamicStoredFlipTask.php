@@ -6,6 +6,7 @@ use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -47,14 +48,24 @@ class DynamicStoredFlipTask extends ExecutableTask
 		}
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
+
+		$palette = $selection->requestBlockStates();
+		if ($palette === false) {
+			return;
+		}
+		foreach ($palette as $key => $state) {
+			$palette[$key] = BlockRotationManipulator::flip($this->axis, $state);
+		}
+		$map = BlockStateTranslationManager::requestRuntimeId($palette);
+
 		$flipped = new DynamicBlockListSelection(new Vector3($selection->getPos2()->getX(), $selection->getPos2()->getY(), $selection->getPos2()->getZ()), $selection->getWorldOffset(), Vector3::zero());
 		switch ($this->axis) {
 			case Axis::X:
 				$flipped->setPoint(new Vector3(-$selection->getPos2()->getX() - $selection->getPoint()->getX(), $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
 				$selection->setPoint(Vector3::zero());
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
+				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped, $map): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
-					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, BlockRotationManipulator::flipRuntime(Axis::X, $block));
+					$flipped->addBlock($selection->getPos2()->getFloorX() - $x, $y, $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::X, $tile, $selection->getPos2()->getFloorX()));
@@ -63,9 +74,9 @@ class DynamicStoredFlipTask extends ExecutableTask
 			case Axis::Y:
 				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), -$selection->getPos2()->getY() - $selection->getPoint()->getY(), $selection->getPoint()->getZ()));
 				$selection->setPoint(Vector3::zero());
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
+				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped, $map): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
-					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, BlockRotationManipulator::flipRuntime(Axis::Y, $block));
+					$flipped->addBlock($x, $selection->getPos2()->getFloorY() - $y, $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Y, $tile, $selection->getPos2()->getFloorY()));
@@ -74,9 +85,9 @@ class DynamicStoredFlipTask extends ExecutableTask
 			case Axis::Z:
 				$flipped->setPoint(new Vector3($selection->getPoint()->getX(), $selection->getPoint()->getY(), -$selection->getPos2()->getZ() - $selection->getPoint()->getZ()));
 				$selection->setPoint(Vector3::zero());
-				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped): void {
+				$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $flipped, $map): void {
 					$block = $selection->getIterator()->getBlock($x, $y, $z);
-					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, BlockRotationManipulator::flipRuntime(Axis::Z, $block));
+					$flipped->addBlock($x, $y, $selection->getPos2()->getFloorZ() - $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
 				}, SelectionContext::full());
 				foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 					$flipped->addTile(TileUtils::flipCompound(Axis::Z, $tile, $selection->getPos2()->getFloorZ()));

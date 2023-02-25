@@ -10,11 +10,9 @@ use platz1de\EasyEdit\convert\block\ReplicaStateTranslator;
 use platz1de\EasyEdit\convert\block\SingularStateTranslator;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResourceData;
-use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\block\BlockStateData;
-use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use Throwable;
 use UnexpectedValueException;
 
@@ -118,32 +116,6 @@ class BlockStateConvertor
 		}
 		$state = $converter->translate($state);
 		return $converter->applyDefaults($state);
-	}
-
-	/**
-	 * @param string $state
-	 * @return int
-	 */
-	public static function javaStringToRuntime(string $state): int
-	{
-		try {
-			$data = self::javaToBedrock(BlockParser::fromStateString($state, RepoManager::getVersion()));
-			$data = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($data);
-			return GlobalBlockStateHandlers::getDeserializer()->deserialize($data);
-		} catch (Throwable $e) {
-			EditThread::getInstance()->debug("Failed to parse java state $state");
-			EditThread::getInstance()->debug($e->getMessage());
-			return GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
-		}
-	}
-
-	/**
-	 * @param int $state
-	 * @return string
-	 */
-	public static function runtimeToJavaString(int $state): string
-	{
-		return BlockParser::toStateString(self::bedrockToJava(GlobalBlockStateHandlers::getSerializer()->serialize($state)));
 	}
 
 	public static function loadResourceData(string $rawJTB, string $rawBTJ): void

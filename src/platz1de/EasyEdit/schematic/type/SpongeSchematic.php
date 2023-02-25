@@ -7,6 +7,10 @@ use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\utils\BlockParser;
+use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
@@ -16,6 +20,7 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
 use pocketmine\utils\InternetException;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use pocketmine\world\World;
 use Throwable;
 use UnexpectedValueException;
@@ -94,13 +99,24 @@ class SpongeSchematic extends SchematicType
 			throw new UnexpectedValueException("Invalid schematic");
 		}
 
-		$palette = [];
+		$javaPalette = [];
 		$tilePalette = [];
 		/** @var IntTag $id */
 		foreach ($paletteData->getValue() as $name => $id) {
 			//TODO: Use version of sponge to update states (java state upgrades needed)
-			$palette[$id->getValue()] = BlockStateConvertor::javaStringToRuntime($name);
-			$tilePalette[$id->getValue()] = TileConvertor::preprocessTileState($name);
+			try {
+				$javaPalette[$id->getValue()] = BlockStateConvertor::javaToBedrock(BlockParser::fromStateString($name, RepoManager::getVersion()));
+				$tilePalette[$id->getValue()] = TileConvertor::preprocessTileState($name);
+			} catch (Throwable $e) {
+				EditThread::getInstance()->debug("Failed to convert block state $name: " . $e->getMessage());
+				$javaPalette[$id->getValue()] = GlobalBlockStateHandlers::getUnknownBlockStateData();
+				$tilePalette[$id->getValue()] = null;
+			}
+		}
+
+		$palette = BlockStateTranslationManager::requestRuntimeId($javaPalette);
+		if ($palette === false) {
+			return; //cancelled
 		}
 
 		if ($tiles instanceof AbstractListTag && $tiles->getTagType() === NBT::TAG_Compound) {
@@ -162,17 +178,21 @@ class SpongeSchematic extends SchematicType
 		$blockData = new BinaryStream();
 		$tiles = [];
 		$palette = [];
-		$translation = []; //cache
 
 		$yMax = $ySize + World::Y_MIN;
+
+		$translation = $target->requestBlockStates();
+		if ($translation === false) {
+			return; //cancelled
+		}
+		foreach ($translation as $id => $state) {
+			$translation[$id] = BlockParser::toStateString(BlockStateConvertor::bedrockToJava($state));
+		}
+
 		for ($y = World::Y_MIN; $y < $yMax; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
 					$block = $target->getIterator()->getBlock($x, $y, $z);
-
-					if (!isset($translation[$block])) {
-						$translation[$block] = BlockStateConvertor::runtimeToJavaString($block);
-					}
 					$state = $translation[$block];
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {

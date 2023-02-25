@@ -8,7 +8,6 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\math\Axis;
-use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use Throwable;
 use UnexpectedValueException;
 
@@ -71,29 +70,6 @@ class BlockRotationManipulator
 			Axis::Z => $converter->flipZ($state),
 			default => throw new InvalidArgumentException("Invalid axis $axis"),
 		};
-	}
-
-	/**
-	 * @param int $runtimeId
-	 * @return int
-	 */
-	public static function rotateRuntime(int $runtimeId): int
-	{
-		$state = GlobalBlockStateHandlers::getSerializer()->serialize($runtimeId);
-		$state = self::rotate($state);
-		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
-	}
-
-	/**
-	 * @param int $axis
-	 * @param int $runtimeId
-	 * @return int
-	 */
-	public static function flipRuntime(int $axis, int $runtimeId): int
-	{
-		$state = GlobalBlockStateHandlers::getSerializer()->serialize($runtimeId);
-		$state = self::flip($axis, $state);
-		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 	}
 
 	/**
