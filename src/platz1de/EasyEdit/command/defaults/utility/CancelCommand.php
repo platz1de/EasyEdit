@@ -9,6 +9,7 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\thread\input\task\CancelTaskData;
+use platz1de\EasyEdit\thread\ThreadStats;
 
 class CancelCommand extends EasyEditCommand
 {
@@ -23,7 +24,10 @@ class CancelCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		//TODO: check if task is running
+		if (!ThreadStats::getInstance()->hasTask()) {
+			$session->sendMessage("no-task");
+			return;
+		}
 		CancelTaskData::from();
 		$session->sendMessage("task-cancelled");
 	}
