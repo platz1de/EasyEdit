@@ -2,29 +2,28 @@
 
 namespace platz1de\EasyEdit\task\editing\selection;
 
-use BadMethodCallException;
 use Generator;
-use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
+use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
 use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
+use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
-use RuntimeException;
 
 class CutTask extends SelectionEditTask
 {
-	private Vector3 $position;
+	use CubicStaticUndo;
 
-	private CopyTask $executor1;
-	private SetTask $executor2;
+	private Vector3 $position;
+	private DynamicBlockListSelection $result;
 
 	/**
 	 * @param Selection $selection
@@ -46,13 +45,30 @@ class CutTask extends SelectionEditTask
 
 	public function execute(): void
 	{
-		$this->executor1 = new CopyTask($this->selection, $this->position, $this->context);
-		$this->executor1->executeAssociated($this, false);
-		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->executor1->getResult())));
-		$this->executor2 = new SetTask($this->selection, StaticBlock::from(VanillaBlocks::AIR()), $this->context);
-		$this->executor2->executeAssociated($this, false);
-		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->executor2->undo), false));
-		$this->notifyUser((string) round($this->executor1->totalTime + $this->executor2->totalTime, 2), MixedUtils::humanReadable($this->executor1->totalBlocks + $this->executor2->totalBlocks));
+		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
+		parent::execute();
+		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->result)));
+		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->undo), false));
+		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
+	}
+
+	/**
+	 * @param EditTaskHandler $handler
+	 * @return Generator<ShapeConstructor>
+	 */
+	public function prepareConstructors(EditTaskHandler $handler): Generator
+	{
+		$result = $this->result;
+		$id = VanillaBlocks::AIR()->getStateId();
+		$ox = $result->getWorldOffset()->getFloorX();
+		$oy = $result->getWorldOffset()->getFloorY();
+		$oz = $result->getWorldOffset()->getFloorZ();
+
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($id, $handler, $result, $ox, $oy, $oz): void {
+			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
+			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
+			$handler->changeBlock($x, $y, $z, $id);
+		}, $this->context);
 	}
 
 	/**
@@ -62,11 +78,6 @@ class CutTask extends SelectionEditTask
 	public function notifyUser(string $time, string $changed): void
 	{
 		$this->sendOutputPacket(new MessageSendData("blocks-cut", ["{time}" => $time, "{changed}" => $changed]));
-	}
-
-	public function getProgress(): float
-	{
-		return ($this->executor1->getProgress() + (isset($this->executor2) ? $this->executor2->getProgress() : 0)) / 2;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -79,22 +90,5 @@ class CutTask extends SelectionEditTask
 	{
 		$this->position = $stream->getVector();
 		parent::parseData($stream);
-	}
-
-	//TODO: execute task with custom splitting (chunk-by-chunk instead of copying all and then deleting)
-	public function prepareConstructors(EditTaskHandler $handler): Generator
-	{
-		throw new BadMethodCallException("Not implemented");
-	}
-
-	//TODO: execute task with custom splitting (chunk-by-chunk instead of copying all and then deleting)
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
-	{
-		throw new BadMethodCallException("Not implemented");
-	}
-
-	public function createUndoBlockList(): BlockListSelection
-	{
-		throw new RuntimeException("Not implemented");
 	}
 }
