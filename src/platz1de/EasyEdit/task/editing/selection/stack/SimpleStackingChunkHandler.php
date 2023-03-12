@@ -61,8 +61,8 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 			$this->current = $current;
 			$this->sourceOrder[$this->current] = 0;
 			$this->waiting[$this->current] = 0;
-			$min = $this->selection->getCubicStart();
-			$max = $this->selection->getCubicEnd();
+			$min = $this->selection->getPos1();
+			$max = $this->selection->getPos2();
 			if ($this->axis === Axis::X) {
 				$min->z = $max->z = $current << 4;
 			} else {

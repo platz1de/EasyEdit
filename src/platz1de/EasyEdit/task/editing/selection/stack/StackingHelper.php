@@ -57,8 +57,8 @@ class StackingHelper extends Selection
 		}
 		//TODO: offset parent to not load chunks that are not needed
 		$size = $this->parent->getSize();
-		$min = $this->parent->getCubicStart();
-		$max = $this->parent->getCubicEnd();
+		$min = $this->parent->getPos1();
+		$max = $this->parent->getPos2();
 		$offset = VectorUtils::getVectorAxis($size, $this->axis);
 		$offsetVector = $this->axis === Axis::X ? new Vector3($offset, 0, 0) : new Vector3(0, 0, $offset);
 		if ($this->amount > 0) {

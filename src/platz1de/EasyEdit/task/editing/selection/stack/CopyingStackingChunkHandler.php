@@ -58,7 +58,7 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		$this->groups[$chunk] = [];
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
 		World::getXZ($chunk, $x, $z);
-		$min = $this->selection->getCubicStart();
+		$min = $this->selection->getPos1();
 		$size = $this->selection->getSize();
 		//We are guaranteed to have a size bigger than one chunk (at least 8 actually)
 		if ($this->axis === Axis::X) {
@@ -86,7 +86,7 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	private function orderGroupChunk(int $chunk, Vector2 $start, int $offset): void
 	{
 		$size = $this->selection->getSize();
-		$min = $this->selection->getCubicStart();
+		$min = $this->selection->getPos1();
 		if ($this->axis === Axis::X) {
 			$minX = ($min->x + MixedUtils::positiveModulo($start->getFloorX() - $min->getFloorX(), $size->getFloorX())) >> 4;
 			$maxX = ($min->x + MixedUtils::positiveModulo($start->getFloorX() + $offset - $min->getFloorX(), $size->getFloorX())) >> 4;

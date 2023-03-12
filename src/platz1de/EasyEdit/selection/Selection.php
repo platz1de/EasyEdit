@@ -52,22 +52,6 @@ abstract class Selection
 	/**
 	 * @return Vector3
 	 */
-	public function getCubicStart(): Vector3
-	{
-		return $this->getPos1();
-	}
-
-	/**
-	 * @return Vector3
-	 */
-	public function getCubicEnd(): Vector3
-	{
-		return $this->getPos2();
-	}
-
-	/**
-	 * @return Vector3
-	 */
 	public function getSize(): Vector3
 	{
 		return $this->getPos2()->subtractVector($this->getPos1())->add(1, 1, 1);

@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\selection\cubic;
 
-use platz1de\EasyEdit\selection\Patterned;
 use pocketmine\world\World;
 
 trait CubicChunkLoader
@@ -13,8 +12,8 @@ trait CubicChunkLoader
 	public function getNeededChunks(): array
 	{
 		$chunks = [];
-		$start = $this->getCubicStart();
-		$end = $this->getCubicEnd();
+		$start = $this->getPos1();
+		$end = $this->getPos2();
 
 		//if ($this instanceof Patterned) {
 		//	$start = $start->subtract(1, 1, 1);

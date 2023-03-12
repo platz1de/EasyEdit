@@ -46,7 +46,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public function getNeededChunks(): array
 	{
-		return $this->getNonEmptyChunks($this->getCubicStart()->addVector($this->getPoint()), $this->getCubicEnd()->addVector($this->getPoint()));
+		return $this->getNonEmptyChunks($this->getPos1()->addVector($this->getPoint()), $this->getPos2()->addVector($this->getPoint()));
 	}
 
 	/**

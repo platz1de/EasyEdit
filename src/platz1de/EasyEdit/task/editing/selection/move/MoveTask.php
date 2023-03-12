@@ -91,7 +91,7 @@ class MoveTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), Vector3::minComponents($this->getSelection()->getCubicStart(), $this->getSelection()->getCubicStart()->addVector($this->direction)), Vector3::maxComponents($this->getSelection()->getCubicEnd(), $this->getSelection()->getCubicEnd()->addVector($this->direction)));
+		return new StaticBlockListSelection($this->getWorld(), Vector3::minComponents($this->getSelection()->getPos1(), $this->getSelection()->getPos1()->addVector($this->direction)), Vector3::maxComponents($this->getSelection()->getPos2(), $this->getSelection()->getPos2()->addVector($this->direction)));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

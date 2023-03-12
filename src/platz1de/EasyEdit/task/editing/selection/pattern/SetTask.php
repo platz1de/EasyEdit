@@ -54,6 +54,6 @@ class SetTask extends PatternedEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return $this->getPattern()->contains(GravityPattern::class) ? new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getCubicStart(), $this->getSelection()->getCubicEnd()) : $this->getDefaultBlockList();
+		return $this->getPattern()->contains(GravityPattern::class) ? new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2()) : $this->getDefaultBlockList();
 	}
 }
