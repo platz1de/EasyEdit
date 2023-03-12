@@ -37,11 +37,13 @@ class BlockRequestData extends OutputData
 		$stream->putBool($this->type);
 		$stream->putInt(count($this->states));
 		if ($this->type) {
+			/** @var BlockStateData $state */
 			foreach ($this->states as $key => $state) {
 				$stream->putInt($key);
 				$stream->putString(BlockParser::toStateString($state));
 			}
 		} else {
+			/** @var int $state */
 			foreach ($this->states as $key => $state) {
 				$stream->putInt($key);
 				$stream->putInt($state);

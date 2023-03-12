@@ -48,7 +48,10 @@ class Registry
 			RuntimeBlockStateRegistry::getInstance()->register($block);
 
 			//Note: not registering to Deserializer
-			GlobalBlockStateHandlers::getSerializer()->map($block, function (CompoundBlock $block): BlockStateWriter {
+			GlobalBlockStateHandlers::getSerializer()->map($block, function (Block $block): BlockStateWriter {
+				if (!$block instanceof CompoundBlock) {
+					throw new BlockStateSerializeException("Cannot serialize " . get_class($block));
+				}
 				return BlockStateWriter::create(BlockTypeNames::STRUCTURE_BLOCK)
 					->writeString(BlockStateNames::STRUCTURE_BLOCK_TYPE, match ($type = $block->getType()) {
 						0 => BlockStateStringValues::STRUCTURE_BLOCK_TYPE_DATA,
@@ -57,7 +60,7 @@ class Registry
 						3 => BlockStateStringValues::STRUCTURE_BLOCK_TYPE_CORNER,
 						4 => BlockStateStringValues::STRUCTURE_BLOCK_TYPE_INVALID,
 						5 => BlockStateStringValues::STRUCTURE_BLOCK_TYPE_EXPORT,
-						default => throw new BlockStateSerializeException("Invalid Structure Block mode {$type}"),
+						default => throw new BlockStateSerializeException("Invalid Structure Block mode $type"),
 					});
 			});
 		}

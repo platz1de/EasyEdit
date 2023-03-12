@@ -47,7 +47,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
 		$this->setSimpleBenchmark->executeAssociated($this, false);
 		$results[] = ["set static", $this->setSimpleBenchmark->getTotalTime(), $this->setSimpleBenchmark->getTotalBlocks(), microtime(true) - $start];
-		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => 1, "{total}" => 4]));
+		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => "1", "{total}" => "4"]));
 
 		//Task #2 - set complex
 		$start = microtime(true);
@@ -56,14 +56,14 @@ class BenchmarkExecutor extends ExecutableTask
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
 		$this->setComplexBenchmark->executeAssociated($this, false);
 		$results[] = ["set complex", $this->setComplexBenchmark->getTotalTime(), $this->setComplexBenchmark->getTotalBlocks(), microtime(true) - $start];
-		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => 2, "{total}" => 4]));
+		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => "2", "{total}" => "4"]));
 
 		//Task #3 - copy
 		$start = microtime(true);
 		$this->copyBenchmark = new CopyTask($testCube, $pos);
 		$this->copyBenchmark->executeAssociated($this, false);
 		$results[] = ["copy", $this->copyBenchmark->getTotalTime(), $this->copyBenchmark->getTotalBlocks(), microtime(true) - $start];
-		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => 3, "{total}" => 4]));
+		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => "3", "{total}" => "4"]));
 
 		//Task #4 - paste
 		$start = microtime(true);

@@ -21,6 +21,7 @@ class CombinedStateTranslator extends SingularStateTranslator
 	 * @var array<string, mixed>
 	 */
 	private array $combinedStateData = [];
+	private Tag $defaultState;
 	private string $resultState;
 
 	/**
@@ -39,7 +40,8 @@ class CombinedStateTranslator extends SingularStateTranslator
 		}
 		$combinedStates = $data["combined_states"];
 		if (isset($combinedStates["default"])) {
-			$this->combinedStateData["default"] = BlockParser::tagFromStringValue($combinedStates["default"]);
+			$this->defaultState = BlockParser::tagFromStringValue($combinedStates["default"]);
+			unset($combinedStates["default"]);
 		}
 		$this->parseCombinedStates($combinedStates, $this->combinedStateData);
 
@@ -59,8 +61,8 @@ class CombinedStateTranslator extends SingularStateTranslator
 		try {
 			$states[$this->resultState] = $this->getCombinedState($states, $this->combinedStateData, $this->combinedStates);
 		} catch (UnexpectedValueException $e) {
-			if (isset($this->combinedStateData["default"])) {
-				$states[$this->resultState] = $this->combinedStateData["default"];
+			if (isset($this->defaultState)) {
+				$states[$this->resultState] = $this->defaultState;
 			} else {
 				throw $e;
 			}

@@ -26,7 +26,7 @@ class BlockInfoTool
 		$session->sendMessage("block-info", [
 			"{state}" => $state,
 			"{id}" => (string) $block->getTypeId(),
-			"{meta}" => (string) $block->computeStateData(),
+			"{meta}" => (string) $block->computeTypeAndStateData(),
 			"{name}" => $block->getName(),
 			"{x}" => (string) $block->getPosition()->getX(),
 			"{y}" => (string) $block->getPosition()->getY(),

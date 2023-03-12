@@ -37,11 +37,13 @@ class BlockInputData extends InputData
 		$stream->putBool($this->type);
 		$stream->putInt(count($this->states));
 		if ($this->type) {
+			/** @var int $state */
 			foreach ($this->states as $key => $state) {
 				$stream->putInt($key);
 				$stream->putInt($state);
 			}
 		} else {
+			/** @var BlockStateData $state */
 			foreach ($this->states as $key => $state) {
 				$stream->putInt($key);
 				$stream->putString(BlockParser::toStateString($state));
@@ -54,13 +56,14 @@ class BlockInputData extends InputData
 		$this->type = $stream->getBool();
 		$states = [];
 		for ($i = 0, $iMax = $stream->getInt(); $i < $iMax; $i++) {
+			/** @noinspection AmbiguousMethodsCallsInArrayMappingInspection */
 			$states[$stream->getInt()] = $this->type ? $stream->getInt() : BlockParser::fromStateString($stream->getString(), BlockStateData::CURRENT_VERSION);
 		}
 		$this->states = $states;
 	}
 
 	/**
-	 * @return array
+	 * @return BlockStateData[]|int[]
 	 */
 	public function getStates(): array
 	{

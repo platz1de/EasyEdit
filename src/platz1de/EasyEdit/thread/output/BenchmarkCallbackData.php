@@ -9,13 +9,13 @@ class BenchmarkCallbackData extends OutputData
 {
 	private string $world;
 	/**
-	 * @var array<array{string, float, int}>
+	 * @var array<array{string, float, int, float}>
 	 */
 	private array $result;
 
 	/**
-	 * @param string                           $world
-	 * @param array<array{string, float, int}> $result
+	 * @param string                                  $world
+	 * @param array<array{string, float, int, float}> $result
 	 */
 	public function __construct(string $world, array $result)
 	{

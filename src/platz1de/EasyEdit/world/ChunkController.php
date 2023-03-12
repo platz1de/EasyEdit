@@ -140,14 +140,14 @@ class ChunkController
 		$palette = [];
 		$pos1 = $pos1->divide(16)->floor();
 		$pos2 = $pos2->divide(16)->floor();
-		for ($x = $pos1->x; $x <= $pos2->x; $x++) {
-			for ($z = $pos1->z; $z <= $pos2->z; $z++) {
+		for ($x = $pos1->getFloorX(); $x <= $pos2->getFloorX(); $x++) {
+			for ($z = $pos1->getFloorZ(); $z <= $pos2->getFloorZ(); $z++) {
 				$chunk = $this->world->getChunk(World::chunkHash($x, $z));
-				for ($y = $pos1->y; $y <= $pos2->y; $y++) {
+				for ($y = $pos1->getFloorY(); $y <= $pos2->getFloorY(); $y++) {
 					$subChunk = $chunk->getChunk()->getSubChunk($y);
-					$p = $subChunk->getBlockLayers()[0]?->getPalette();
-					if ($p !== null) {
-						foreach ($p as $block) {
+					$p = $subChunk->getBlockLayers();
+					if ($p !== []) {
+						foreach ($p[0]->getPalette() as $block) {
 							$palette[$block] = $block;
 						}
 					}

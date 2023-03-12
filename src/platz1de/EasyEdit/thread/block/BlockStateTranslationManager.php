@@ -24,21 +24,23 @@ class BlockStateTranslationManager
 	 * @param bool             $suppress Suppress invalid block state exceptions
 	 * @return int[]|false
 	 */
-	public static function requestRuntimeId(array $states, bool $suppress): array|false
+	public static function requestRuntimeId(array $states, bool $suppress = false): array|false
 	{
 		self::$request = null;
 		EditThread::getInstance()->sendOutput(new BlockRequestData($states, true, $suppress));
-		while (self::$request === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+		while (self::waitingForResponse()) {
 			EditThread::getInstance()->waitForData();
 		}
-		if (self::$request === null) {
+		/** @var BlockInputData|null $request */
+		$request = self::$request;
+		if ($request === null) {
 			return false;
 		}
-		if (!self::$request->isRuntime()) {
+		if (!$request->isRuntime()) {
 			throw new BlockStateSerializeException("Expected runtime id, got block state");
 		}
 		/** @var int[] $res */
-		$res = self::$request->getStates();
+		$res = $request->getStates();
 		self::$request = null;
 		return $res;
 	}
@@ -51,17 +53,19 @@ class BlockStateTranslationManager
 	{
 		self::$request = null;
 		EditThread::getInstance()->sendOutput(new BlockRequestData($ids, false));
-		while (self::$request === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+		while (self::waitingForResponse()) {
 			EditThread::getInstance()->waitForData();
 		}
-		if (self::$request === null) {
+		/** @var BlockInputData|null $request */
+		$request = self::$request;
+		if ($request === null) {
 			return false;
 		}
-		if (self::$request->isRuntime()) {
+		if ($request->isRuntime()) {
 			throw new BlockStateSerializeException("Expected block state, got runtime id");
 		}
 		/** @var BlockStateData[] $res */
-		$res = self::$request->getStates();
+		$res = $request->getStates();
 		self::$request = null;
 		return $res;
 	}
@@ -69,6 +73,14 @@ class BlockStateTranslationManager
 	public static function handleBlockResponse(BlockInputData $input): void
 	{
 		self::$request = $input;
+	}
+
+	/**
+	 * Thanks for being stupid phpstan
+	 */
+	private static function waitingForResponse(): bool
+	{
+		return self::$request === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution();
 	}
 
 	private const MAX_PER_TICK = 250;
@@ -114,8 +126,9 @@ class BlockStateTranslationManager
 			}
 
 			if (self::$toRuntime) {
-				$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
+				/** @var BlockStateData $state */
 				try {
+					$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
 					self::$done[$key] = GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 				} catch (UnsupportedBlockStateException $e) {
 					if (!self::$suppress) {
@@ -124,6 +137,7 @@ class BlockStateTranslationManager
 					self::$done[$key] = GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
 				}
 			} else {
+				/** @var int $state */
 				try {
 					self::$done[$key] = GlobalBlockStateHandlers::getSerializer()->serialize($state);
 				} catch (BlockStateSerializeException $e) {

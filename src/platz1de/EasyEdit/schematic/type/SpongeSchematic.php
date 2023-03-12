@@ -12,6 +12,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\block\tile\Tile;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -185,6 +186,7 @@ class SpongeSchematic extends SchematicType
 		if ($translation === false) {
 			return; //cancelled
 		}
+		/** @var BlockStateData $state */
 		foreach ($translation as $id => $state) {
 			$translation[$id] = BlockParser::toStateString(BlockStateConvertor::bedrockToJava($state));
 		}
