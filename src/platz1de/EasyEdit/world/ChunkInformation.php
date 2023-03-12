@@ -132,4 +132,17 @@ class ChunkInformation
 	{
 		$this->used = false;
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function isEmpty(): bool
+	{
+		foreach ($this->chunk->getSubChunks() as $subChunk) {
+			if (!$subChunk->isEmptyFast()) {
+				return false;
+			}
+		}
+		return $this->tiles === [];
+	}
 }

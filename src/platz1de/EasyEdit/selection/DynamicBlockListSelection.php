@@ -46,16 +46,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public function getNeededChunks(): array
 	{
-		$start = $this->getCubicStart()->addVector($this->getPoint());
-		$end = $this->getCubicEnd()->addVector($this->getPoint());
-
-		$chunks = [];
-		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
-			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
-				$chunks[] = World::chunkHash($x, $z);
-			}
-		}
-		return $chunks;
+		return $this->getNonEmptyChunks($this->getCubicStart()->addVector($this->getPoint()), $this->getCubicEnd()->addVector($this->getPoint()));
 	}
 
 	/**

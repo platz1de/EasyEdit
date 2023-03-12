@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\selection;
 
 use BadMethodCallException;
-use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
@@ -15,8 +14,6 @@ use pocketmine\world\World;
 
 abstract class ChunkManagedBlockList extends BlockListSelection
 {
-	use CubicChunkLoader;
-
 	private ReferencedChunkManager $manager;
 	private ChunkController $iterator;
 
@@ -62,6 +59,33 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	public function requestBlockStates(): array|false
 	{
 		return BlockStateTranslationManager::requestBlockState($this->iterator->collectPalette($this->pos1, $this->pos2));
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public function getNeededChunks(): array
+	{
+		return $this->getNonEmptyChunks($this->pos1, $this->pos2);
+	}
+
+	/**
+	 * @param Vector3 $start
+	 * @param Vector3 $end
+	 * @return int[]
+	 */
+	protected function getNonEmptyChunks(Vector3 $start, Vector3 $end): array
+	{
+		$chunks = [];
+		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
+			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
+				$chunk = World::chunkHash($x, $z);
+				if (!$this->manager->getChunk($chunk)->isEmpty()) {
+					$chunks[] = $chunk;
+				}
+			}
+		}
+		return $chunks;
 	}
 
 	/**
