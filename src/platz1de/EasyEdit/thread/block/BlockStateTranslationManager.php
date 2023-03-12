@@ -21,12 +21,13 @@ class BlockStateTranslationManager
 
 	/**
 	 * @param BlockStateData[] $states
+	 * @param bool             $suppress Suppress invalid block state exceptions
 	 * @return int[]|false
 	 */
-	public static function requestRuntimeId(array $states): array|false
+	public static function requestRuntimeId(array $states, bool $suppress): array|false
 	{
 		self::$request = null;
-		EditThread::getInstance()->sendOutput(new BlockRequestData($states, true));
+		EditThread::getInstance()->sendOutput(new BlockRequestData($states, true, $suppress));
 		while (self::$request === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
 			EditThread::getInstance()->waitForData();
 		}
@@ -81,17 +82,19 @@ class BlockStateTranslationManager
 	 */
 	private static array $done;
 	private static bool $toRuntime;
+	private static bool $suppress;
 
 	/**
 	 * @param BlockStateData[]|int[] $states
 	 * @param bool                   $type Whether to convert to runtime or block state
 	 */
-	public static function handleStateToRuntime(array $states, bool $type): void
+	public static function handleStateToRuntime(array $states, bool $type, bool $suppress): void
 	{
 		if (self::$isRunning) { //probably from a request before the thread crashed
 			EasyEdit::getInstance()->getLogger()->warning("BlockStateTranslationManager is already running");
 		}
 		self::$toRuntime = $type;
+		self::$suppress = $suppress;
 		self::$missing = $states;
 		self::$done = [];
 
@@ -115,14 +118,18 @@ class BlockStateTranslationManager
 				try {
 					self::$done[$key] = GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 				} catch (UnsupportedBlockStateException $e) {
-					EditThread::getInstance()->debug($e->getMessage());
+					if (!self::$suppress) {
+						EditThread::getInstance()->debug($e->getMessage());
+					}
 					self::$done[$key] = GlobalBlockStateHandlers::getDeserializer()->deserialize(GlobalBlockStateHandlers::getUnknownBlockStateData());
 				}
 			} else {
 				try {
 					self::$done[$key] = GlobalBlockStateHandlers::getSerializer()->serialize($state);
 				} catch (BlockStateSerializeException $e) {
-					EditThread::getInstance()->debug($e->getMessage());
+					if (!self::$suppress) {
+						EditThread::getInstance()->debug($e->getMessage());
+					}
 					self::$done[$key] = GlobalBlockStateHandlers::getUnknownBlockStateData();
 				}
 			}
