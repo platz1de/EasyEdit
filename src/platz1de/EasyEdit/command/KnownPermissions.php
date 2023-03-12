@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\command;
 
 class KnownPermissions
 {
+	public const PERMISSION_INFO = "easyedit.info";
 	public const PERMISSION_EDIT = "easyedit.edit";
 	public const PERMISSION_GENERATE = "easyedit.generate";
 	public const PERMISSION_HISTORY = "easyedit.history";

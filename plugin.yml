@@ -4,6 +4,9 @@ api: 5.0.0
 version: 3.0.0-dev
 author: platz1de
 permissions:
+  easyedit.info:
+    default: true
+    description: "Allows the user to see information about the plugin"
   easyedit.edit:
     default: op
     description: "Allows the user to edit blocks"

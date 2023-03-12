@@ -14,7 +14,7 @@ class FlagRemapAlias extends EasyEditCommand
 
 	public function __construct(EasyEditCommand $alias, CommandFlag $flag, string $name, array $aliases = [])
 	{
-		parent::__construct($name, $alias->getPermissionTypes(), $aliases);
+		parent::__construct($name, $alias->getPermissions(), $aliases);
 		$this->parent = $alias;
 		$this->flag = $flag;
 	}

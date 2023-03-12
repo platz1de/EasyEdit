@@ -2,12 +2,11 @@
 
 namespace platz1de\EasyEdit\command\defaults\utility;
 
-use Generator;
 use platz1de\EasyEdit\command\CommandManager;
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
+use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\lang\Translatable;
@@ -19,7 +18,7 @@ class HelpCommand extends SimpleFlagArgumentCommand
 
 	public function __construct()
 	{
-		parent::__construct("/commands", ["page" => false], [], ["/h", "/cmd"]);
+		parent::__construct("/commands", ["page" => false], [KnownPermissions::PERMISSION_INFO], ["/h", "/cmd"]);
 	}
 
 	/**

@@ -7,8 +7,7 @@ use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\Opaque;
-use pocketmine\data\runtime\RuntimeDataReader;
-use pocketmine\data\runtime\RuntimeDataWriter;
+use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\nbt\tag\CompoundTag;
 
 /**
@@ -39,12 +38,7 @@ class CompoundBlock extends Opaque
 		parent::__clone();
 	}
 
-	public function getRequiredTypeDataBits(): int
-	{
-		return $this->typeLength;
-	}
-
-	protected function describeType(RuntimeDataWriter|RuntimeDataReader $w): void
+	protected function describeType(RuntimeDataDescriber $w): void
 	{
 		$w->int($this->typeLength, $this->type);
 	}

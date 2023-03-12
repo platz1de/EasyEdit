@@ -17,11 +17,6 @@ use pocketmine\plugin\PluginOwned;
 abstract class EasyEditCommand extends Command implements PluginOwned
 {
 	/**
-	 * @var string[]
-	 */
-	private array $permissions;
-
-	/**
 	 * @param string   $name
 	 * @param string[] $permissions
 	 * @param string[] $aliases
@@ -30,7 +25,7 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	{
 		$realName = str_starts_with($name, "/") ? substr($name, 1) : $name;
 		parent::__construct($name, Messages::translate("command-$realName-description"), $this->prepareUsage($realName), $aliases);
-		$this->permissions = $permissions;
+		$this->setPermissions($permissions);
 	}
 
 	/**
@@ -44,10 +39,8 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 		if (!$sender instanceof Player) {
 			return;
 		}
-		foreach ($this->permissions as $permission) {
-			if (!$this->testPermission($sender, $permission)) {
-				return;
-			}
+		if (!$this->testPermission($sender)) {
+			return;
 		}
 
 		CommandManager::processCommand($this, $args, $sender);
@@ -92,13 +85,5 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 			$usages[] = str_contains($help, " - ") ? $help : $help . " - " . Messages::translate("command-$commandName-description");
 		}
 		return implode(PHP_EOL, $usages);
-	}
-
-	/**
-	 * @return string[]
-	 */
-	public function getPermissionTypes(): array
-	{
-		return $this->permissions;
 	}
 }
