@@ -15,21 +15,25 @@ class BlockRequestData extends OutputData
 	private array $states;
 	private bool $type;
 	private bool $suppress;
+	private bool $full;
 
 	/**
 	 * @param BlockStateData[]|int[] $states
 	 * @param bool                   $type
+	 * @param bool                   $suppress
+	 * @param bool                   $full
 	 */
-	public function __construct(array $states, bool $type, bool $suppress = false)
+	public function __construct(array $states, bool $type, bool $suppress = false, bool $full = false)
 	{
 		$this->states = $states;
 		$this->type = $type;
 		$this->suppress = $suppress;
+		$this->full = $full;
 	}
 
 	public function handle(): void
 	{
-		BlockStateTranslationManager::handleStateToRuntime($this->states, $this->type, $this->suppress);
+		BlockStateTranslationManager::handleStateToRuntime($this->states, $this->type, $this->suppress, $this->full);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
@@ -50,6 +54,7 @@ class BlockRequestData extends OutputData
 			}
 		}
 		$stream->putBool($this->suppress);
+		$stream->putBool($this->full);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -61,5 +66,6 @@ class BlockRequestData extends OutputData
 		}
 		$this->states = $states;
 		$this->suppress = $stream->getBool();
+		$this->full = $stream->getBool();
 	}
 }

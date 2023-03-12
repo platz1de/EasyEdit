@@ -23,8 +23,8 @@ class Registry
 
 	protected static function setup(): void
 	{
-		self::_registryRegister("outline_block", new CompoundBlock(3, 0, CompoundTag::create()->setByte("showBoundingBox", 1)));
-		self::_registryRegister("window_block", new CompoundBlock(3, 5, CompoundTag::create()
+		self::_registryRegister("outline_block", new CompoundBlock(5, 0, CompoundTag::create()->setByte("showBoundingBox", 1)));
+		self::_registryRegister("window_block", new CompoundBlock(5, 5, CompoundTag::create()
 			->setString("id", "StructureBlock")
 			->setString("structureName", "clipboard")
 			->setString("dataField", "")
@@ -45,8 +45,6 @@ class Registry
 		 * @var Block $block
 		 */
 		foreach (self::_registryGetAll() as $block) {
-			RuntimeBlockStateRegistry::getInstance()->register($block);
-
 			//Note: not registering to Deserializer
 			GlobalBlockStateHandlers::getSerializer()->map($block, function (Block $block): BlockStateWriter {
 				if (!$block instanceof CompoundBlock) {
@@ -63,6 +61,8 @@ class Registry
 						default => throw new BlockStateSerializeException("Invalid Structure Block mode $type"),
 					});
 			});
+
+			RuntimeBlockStateRegistry::getInstance()->register($block);
 		}
 	}
 }

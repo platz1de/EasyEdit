@@ -156,20 +156,6 @@ class BlockStateConvertor
 	}
 
 	/**
-	 * @return int[]
-	 */
-	public static function getAllKnownStates(): array
-	{
-		$states = [];
-		foreach (self::$convertorsJTB as $state => $converter) {
-			foreach ($converter->getAllPossibleStates($state) as $possibleState) {
-				$states[] = $possibleState;
-			}
-		}
-		return $states;
-	}
-
-	/**
 	 * @return bool
 	 */
 	public static function isAvailable(): bool

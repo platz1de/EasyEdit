@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
-use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
+use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use pocketmine\world\World;
 
 class PasteBlockStatesTask extends ExpandingTask
@@ -17,14 +17,14 @@ class PasteBlockStatesTask extends ExpandingTask
 	 */
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
-		$states = BlockStateConvertor::getAllKnownStates();
+		$states = BlockStateTranslationManager::requestRuntimeId([], true, true);
 		$count = count($states);
 		$x = $this->start->getFloorX();
 		$y = $this->start->getFloorY();
 		$z = $this->start->getFloorZ();
 
 		$i = 0;
-		foreach ($states as $id => $state) {
+		foreach ($states as $id) {
 			$chunk = World::chunkHash(($x + floor($i / 100) * 2) >> 4, ($z + ($i % 100) * 2) >> 4);
 			$this->updateProgress($i, $count);
 			if (!$this->loader->checkRuntimeChunk($chunk)) {

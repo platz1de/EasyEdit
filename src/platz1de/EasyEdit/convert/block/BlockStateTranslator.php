@@ -72,12 +72,4 @@ abstract class BlockStateTranslator
 		}
 		return new BlockStateData($state->getName(), $states, $state->getVersion());
 	}
-
-	/**
-	 * @return int[]
-	 */
-	public function getAllPossibleStates(string $name): array
-	{
-		return []; //TODO
-	}
 }

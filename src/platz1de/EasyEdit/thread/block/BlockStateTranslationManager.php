@@ -2,9 +2,11 @@
 
 namespace platz1de\EasyEdit\thread\block;
 
+use InvalidArgumentException;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\ThreadData;
+use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\data\bedrock\block\BlockStateSerializeException;
 use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
@@ -22,12 +24,13 @@ class BlockStateTranslationManager
 	/**
 	 * @param BlockStateData[] $states
 	 * @param bool             $suppress Suppress invalid block state exceptions
+	 * @param bool             $full     Return full block state data
 	 * @return int[]|false
 	 */
-	public static function requestRuntimeId(array $states, bool $suppress = false): array|false
+	public static function requestRuntimeId(array $states, bool $suppress = false, bool $full = false): array|false
 	{
 		self::$request = null;
-		EditThread::getInstance()->sendOutput(new BlockRequestData($states, true, $suppress));
+		EditThread::getInstance()->sendOutput(new BlockRequestData($states, true, $suppress, $full));
 		while (self::waitingForResponse()) {
 			EditThread::getInstance()->waitForData();
 		}
@@ -88,7 +91,7 @@ class BlockStateTranslationManager
 	/**
 	 * @var BlockStateData[]|int[]
 	 */
-	private static array $missing;
+	private static ?array $missing;
 	/**
 	 * @var BlockStateData[]|int[]
 	 */
@@ -100,14 +103,17 @@ class BlockStateTranslationManager
 	 * @param BlockStateData[]|int[] $states
 	 * @param bool                   $type Whether to convert to runtime or block state
 	 */
-	public static function handleStateToRuntime(array $states, bool $type, bool $suppress): void
+	public static function handleStateToRuntime(array $states, bool $type, bool $suppress, bool $full): void
 	{
 		if (self::$isRunning) { //probably from a request before the thread crashed
 			EasyEdit::getInstance()->getLogger()->warning("BlockStateTranslationManager is already running");
 		}
+		if ($full && $states !== []) {
+			throw new InvalidArgumentException("Full block state data can only be requested for empty states");
+		}
 		self::$toRuntime = $type;
 		self::$suppress = $suppress;
-		self::$missing = $states;
+		self::$missing = $full ? null : $states;
 		self::$done = [];
 
 		self::$isRunning = true;
@@ -116,6 +122,12 @@ class BlockStateTranslationManager
 	public static function tick(): void
 	{
 		if (!self::$isRunning) {
+			return;
+		}
+
+		if (self::$missing === null) {
+			self::$isRunning = false;
+			BlockInputData::from(array_keys(RuntimeBlockStateRegistry::getInstance()->getAllKnownStates()), self::$toRuntime);
 			return;
 		}
 

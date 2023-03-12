@@ -7,6 +7,7 @@ use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\Opaque;
+use pocketmine\data\runtime\InvalidSerializedRuntimeDataException;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -40,7 +41,10 @@ class CompoundBlock extends Opaque
 
 	protected function describeType(RuntimeDataDescriber $w): void
 	{
-		$w->int($this->typeLength, $this->type);
+		$w->int((int) ceil(log($this->typeLength, 2)), $this->type);
+		if ($this->type > $this->typeLength) {
+			throw new InvalidSerializedRuntimeDataException("Type $this->type is too big for type length $this->typeLength");
+		}
 	}
 
 	/**
