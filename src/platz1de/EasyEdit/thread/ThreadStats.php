@@ -10,7 +10,6 @@ use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
-use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
@@ -22,7 +21,6 @@ class ThreadStats extends ThreadedBase
 {
 	use SingletonTrait;
 
-	private const STATUS_CRASHED = -1;
 	private const STATUS_IDLE = 0;
 	private const STATUS_RUNNING = 1;
 	private const STATUS_WAITING = 2;
@@ -60,21 +58,11 @@ class ThreadStats extends ThreadedBase
 			case TaskResultData::class:
 				$this->synchronized(function (): void {
 					$this->status = self::STATUS_IDLE;
-					$this->lastResponse = microtime(true);
-					$this->taskName = "";
-					$this->taskId = -1;
-					$this->progress = 0.0;
 				});
 				break;
 			case ChunkRequestData::class:
 				$this->synchronized(function (): void {
 					$this->status = self::STATUS_WAITING;
-					$this->lastResponse = microtime(true);
-				});
-				break;
-			case ResultingChunkData::class:
-				$this->synchronized(function (): void {
-					$this->lastResponse = microtime(true);
 				});
 				break;
 		}
@@ -126,16 +114,17 @@ class ThreadStats extends ThreadedBase
 		});
 	}
 
+	public function hasTask(): bool
+	{
+		return $this->status !== self::STATUS_IDLE;
+	}
+
 	public function sendStatusMessage(Session $session): void
 	{
 		$time = microtime(true) - $this->lastResponse;
 
 		$session->sendMessage("thread-stats", [
-			"{task}" => match ($this->status) {
-				self::STATUS_IDLE => "none",
-				self::STATUS_RUNNING, self::STATUS_WAITING => $this->taskName . ":" . $this->taskId . ($this->taskId !== -1 ? " by " . EditHandler::getExecutor($this->taskId)->getName() : ""),
-				default => "crashed (" . $this->taskName . ":" . $this->taskId . ($this->taskId !== -1 ? " by " . EditHandler::getExecutor($this->taskId)->getName() : "") . ")",
-			},
+			"{task}" => $this->hasTask() ? $this->taskName . ":" . $this->taskId . ($this->taskId !== -1 ? " by " . EditHandler::getExecutor($this->taskId)->getName() : "") : "none",
 			"{queue}" => (string) $this->queueLength,
 			"{status}" => match ($this->status) {
 				self::STATUS_IDLE => TextFormat::GREEN . "OK" . TextFormat::RESET,
@@ -145,7 +134,7 @@ class ThreadStats extends ThreadedBase
 						default => TextFormat::GREEN
 					} . round($time * 1000) . "ms" . TextFormat::RESET,
 				self::STATUS_WAITING => TextFormat::AQUA . "WAITING" . TextFormat::GRAY . ": " . TextFormat::GREEN . round($time * 1000) . "ms" . TextFormat::RESET,
-				default => TextFormat::RED . "CRASHED" . TextFormat::GRAY . ": " . TextFormat::RED . round($time * 1000) . "ms" . TextFormat::RESET
+				default => TextFormat::RED . "UNKNOWN" . TextFormat::RESET
 			},
 			"{progress}" => $this->status === self::STATUS_IDLE ? "-" : round($this->progress * 100, 2) . "%",
 			"{storage}" => (string) $this->storageSize,
