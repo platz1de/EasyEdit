@@ -2,7 +2,9 @@
 
 namespace platz1de\EasyEdit\thread\input;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
+use platz1de\EasyEdit\thread\ThreadStats;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ChunkInputData extends InputData
@@ -16,6 +18,10 @@ class ChunkInputData extends InputData
 	 */
 	public static function from(string $chunkData, ?int $payload): void
 	{
+		if (!ThreadStats::getInstance()->hasTask()) {
+			EasyEdit::getInstance()->getLogger()->debug("Ignored leftover chunk data");
+			return;
+		}
 		$data = new self();
 		$data->chunkData = $chunkData;
 		$data->payload = $payload;
