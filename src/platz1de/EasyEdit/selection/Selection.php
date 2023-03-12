@@ -50,13 +50,6 @@ abstract class Selection
 	}
 
 	/**
-	 * @param int $x
-	 * @param int $z
-	 * @return bool whether the chunk should be cached to aid in later executions
-	 */
-	abstract public function shouldBeCached(int $x, int $z): bool;
-
-	/**
 	 * @return Vector3
 	 */
 	public function getCubicStart(): Vector3

@@ -29,21 +29,21 @@ trait CubicChunkLoader
 		return $chunks;
 	}
 
-	/**
-	 * @param int $x
-	 * @param int $z
-	 * @return bool
-	 */
-	public function shouldBeCached(int $x, int $z): bool
-	{
-		if ($this instanceof Patterned) {
-			$start = $this->getCubicStart();
-			$end = $this->getCubicEnd();
-
-			//we execute in z-direction first, caching x-direction is not efficient
-			return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && ($z === $end->getZ() >> 4 || $z === ($end->getZ() >> 4) + 1);
-		}
-
-		return false; //No overlapping chunks needed
-	}
+	///**
+	// * @param int $x
+	// * @param int $z
+	// * @return bool
+	// */
+	//public function shouldBeCached(int $x, int $z): bool
+	//{
+	//	if ($this instanceof Patterned) {
+	//		$start = $this->getCubicStart();
+	//		$end = $this->getCubicEnd();
+	//
+	//		//we execute in z-direction first, caching x-direction is not efficient
+	//		return $start->getX() >> 4 <= $x && $x <= $end->getX() >> 4 && ($z === $end->getZ() >> 4 || $z === ($end->getZ() >> 4) + 1);
+	//	}
+	//
+	//	return false; //No overlapping chunks needed
+	//}
 }

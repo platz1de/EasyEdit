@@ -77,11 +77,6 @@ class StackingHelper extends Selection
 		return $chunks;
 	}
 
-	public function shouldBeCached(int $x, int $z): bool
-	{
-		return false;
-	}
-
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context

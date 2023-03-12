@@ -38,11 +38,6 @@ class NonSavingBlockListSelection extends BlockListSelection
 		return [];
 	}
 
-	public function shouldBeCached(int $x, int $z): bool
-	{
-		return false;
-	}
-
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context

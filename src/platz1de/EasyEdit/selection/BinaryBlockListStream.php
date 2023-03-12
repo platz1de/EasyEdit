@@ -61,11 +61,6 @@ class BinaryBlockListStream extends BlockListSelection
 		return array_keys($this->chunks);
 	}
 
-	public function shouldBeCached(int $x, int $z): bool
-	{
-		return false;
-	}
-
 	/**
 	 * @param Closure          $closure
 	 * @param SelectionContext $context
