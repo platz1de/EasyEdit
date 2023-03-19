@@ -9,8 +9,6 @@ use pocketmine\world\World;
 
 class TubeConstructor extends CylindricalConstructor
 {
-	private float $thickness;
-
 	/**
 	 * @param Closure $closure
 	 * @param Vector3 $position
@@ -18,10 +16,9 @@ class TubeConstructor extends CylindricalConstructor
 	 * @param int     $height
 	 * @param float   $thickness
 	 */
-	public function __construct(Closure $closure, Vector3 $position, float $radius, int $height, float $thickness)
+	public function __construct(Closure $closure, Vector3 $position, float $radius, int $height, private float $thickness)
 	{
 		parent::__construct($closure, $position, $radius, $height);
-		$this->thickness = $thickness;
 	}
 
 	public function getBlockCount(): int

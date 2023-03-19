@@ -9,18 +9,15 @@ use pocketmine\world\World;
 
 class HollowSphericalConstructor extends SphericalConstructor
 {
-	private float $thickness;
-
 	/**
 	 * @param Closure $closure
 	 * @param Vector3 $center
 	 * @param float   $radius
 	 * @param float   $thickness
 	 */
-	public function __construct(Closure $closure, Vector3 $center, float $radius, float $thickness)
+	public function __construct(Closure $closure, Vector3 $center, float $radius, private float $thickness)
 	{
 		parent::__construct($closure, $center, $radius);
-		$this->thickness = $thickness;
 	}
 
 	public function getBlockCount(): int

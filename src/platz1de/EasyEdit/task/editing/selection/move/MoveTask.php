@@ -20,16 +20,13 @@ class MoveTask extends SelectionEditTask
 {
 	use SettingNotifier;
 
-	private Vector3 $direction;
-
 	/**
 	 * @param Selection $selection
 	 * @param Vector3   $direction
 	 */
-	public function __construct(Selection $selection, Vector3 $direction)
+	public function __construct(Selection $selection, private Vector3 $direction)
 	{
 		parent::__construct($selection);
-		$this->direction = $direction;
 	}
 
 	/**

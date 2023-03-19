@@ -9,12 +9,9 @@ use UnexpectedValueException;
 
 class UnknownFlagException extends CommandException
 {
-	private EasyEditCommand $command;
-
-	public function __construct(string $flag, EasyEditCommand $command)
+	public function __construct(string $flag, private EasyEditCommand $command)
 	{
 		parent::__construct($flag);
-		$this->command = $command;
 	}
 
 	public function sendWarning(Session $session): void

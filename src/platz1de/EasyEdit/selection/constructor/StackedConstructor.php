@@ -16,17 +16,11 @@ class StackedConstructor extends ShapeConstructor
 	 * @var ShapeConstructor[]
 	 */
 	private array $parents;
-	private Selection $selection;
-	private int $axis;
-	private int $amount;
 
-	public function __construct(Closure $closure, Selection $selection, SelectionContext $context, int $axis, int $amount)
+	public function __construct(Closure $closure, private Selection $selection, SelectionContext $context, private int $axis, private int $amount)
 	{
 		parent::__construct($closure);
 		$this->parents = iterator_to_array($selection->asShapeConstructors($closure, $context));
-		$this->selection = $selection;
-		$this->axis = $axis;
-		$this->amount = $amount;
 	}
 
 	public function getBlockCount(): int

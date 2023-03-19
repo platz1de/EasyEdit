@@ -16,15 +16,13 @@ use pocketmine\nbt\tag\CompoundTag;
  */
 class CompoundBlock extends Opaque
 {
-	private int $typeLength;
-	private int $type;
-	private CompoundTag $data;
-
-	public function __construct(int $typeLength, int $type, CompoundTag $staticData)
+	/**
+	 * @param int         $typeLength
+	 * @param int         $type
+	 * @param CompoundTag $data
+	 */
+	public function __construct(private int $typeLength, private int $type, private CompoundTag $data)
 	{
-		$this->data = $staticData;
-		$this->typeLength = $typeLength;
-		$this->type = $type;
 		parent::__construct(new BlockIdentifier($id = BlockTypeIds::newId()), "EasyEdit Helper $id", new BlockTypeInfo(BlockBreakInfo::instant()));
 	}
 

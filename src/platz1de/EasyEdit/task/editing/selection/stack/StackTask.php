@@ -26,18 +26,13 @@ class StackTask extends SelectionEditTask
 
 	private Selection $original;
 
-	private Vector3 $direction;
-	private bool $insert;
-
 	/**
 	 * @param Selection $selection
 	 * @param Vector3   $direction
 	 * @param bool      $insert
 	 */
-	public function __construct(Selection $selection, Vector3 $direction, bool $insert = false)
+	public function __construct(Selection $selection, private Vector3 $direction, private bool $insert = false)
 	{
-		$this->insert = $insert;
-		$this->direction = $direction;
 		parent::__construct($selection);
 	}
 

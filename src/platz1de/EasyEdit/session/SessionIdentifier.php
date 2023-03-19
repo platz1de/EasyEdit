@@ -6,18 +6,11 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class SessionIdentifier
 {
-	private bool $player;
-	private string $name;
-
 	/**
 	 * @param bool   $player
 	 * @param string $name
 	 */
-	public function __construct(bool $player, string $name)
-	{
-		$this->player = $player;
-		$this->name = $name;
-	}
+	public function __construct(private bool $player, private string $name) {}
 
 	public static function internal(string $name): SessionIdentifier
 	{

@@ -7,21 +7,11 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class BenchmarkCallbackData extends OutputData
 {
-	private string $world;
-	/**
-	 * @var array<array{string, float, int, float}>
-	 */
-	private array $result;
-
 	/**
 	 * @param string                                  $world
 	 * @param array<array{string, float, int, float}> $result
 	 */
-	public function __construct(string $world, array $result)
-	{
-		$this->world = $world;
-		$this->result = $result;
-	}
+	public function __construct(private string $world, private array $result) {}
 
 	public function handle(): void
 	{

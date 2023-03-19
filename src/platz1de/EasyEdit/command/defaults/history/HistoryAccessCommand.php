@@ -14,11 +14,8 @@ use platz1de\EasyEdit\utils\ConfigManager;
 
 class HistoryAccessCommand extends EasyEditCommand
 {
-	private bool $type;
-
-	public function __construct(bool $type)
+	public function __construct(private bool $type)
 	{
-		$this->type = $type;
 		parent::__construct($type ? "/undo" : "/redo", [KnownPermissions::PERMISSION_HISTORY, KnownPermissions::PERMISSION_EDIT]);
 	}
 

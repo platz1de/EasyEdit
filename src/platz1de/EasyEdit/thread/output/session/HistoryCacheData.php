@@ -9,18 +9,11 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class HistoryCacheData extends SessionOutputData
 {
-	private StoredSelectionIdentifier $changeId;
-	private bool $isUndo;
-
 	/**
 	 * @param StoredSelectionIdentifier $changeId
 	 * @param bool                      $isUndo
 	 */
-	public function __construct(StoredSelectionIdentifier $changeId, bool $isUndo)
-	{
-		$this->changeId = $changeId;
-		$this->isUndo = $isUndo;
-	}
+	public function __construct(private StoredSelectionIdentifier $changeId, private bool $isUndo) {}
 
 	public function checkSend(): bool
 	{

@@ -22,7 +22,6 @@ class LineTask extends EditTask
 
 	private Vector3 $start;
 	private Vector3 $end;
-	private StaticBlock $block;
 
 	/**
 	 * @var Vector3[]
@@ -35,11 +34,10 @@ class LineTask extends EditTask
 	 * @param Vector3     $end
 	 * @param StaticBlock $block
 	 */
-	public function __construct(Position $start, Vector3 $end, StaticBlock $block)
+	public function __construct(Position $start, Vector3 $end, protected StaticBlock $block)
 	{
 		$this->start = $start->asVector3();
 		$this->end = $end->asVector3();
-		$this->block = $block;
 		parent::__construct($start->getWorld()->getFolderName());
 	}
 

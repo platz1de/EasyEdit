@@ -14,7 +14,6 @@ use UnexpectedValueException;
 
 class ManagedChunkHandler implements ChunkHandler
 {
-	private EditTaskHandler $handler;
 	private ?ChunkInformation $current = null;
 	/**
 	 * @var int[]
@@ -25,10 +24,7 @@ class ManagedChunkHandler implements ChunkHandler
 	 */
 	private array $loaded = [];
 
-	public function __construct(EditTaskHandler $handler)
-	{
-		$this->handler = $handler;
-	}
+	public function __construct(private EditTaskHandler $handler) {}
 
 	public function request(int $chunk): bool
 	{

@@ -10,22 +10,15 @@ use pocketmine\world\World;
 
 class CylindricalConstructor extends ShapeConstructor
 {
-	protected Vector3 $position;
-	protected float $radius;
-	protected int $height;
-
 	/**
 	 * @param Closure $closure
 	 * @param Vector3 $position
 	 * @param float   $radius
 	 * @param int     $height
 	 */
-	public function __construct(Closure $closure, Vector3 $position, float $radius, int $height)
+	public function __construct(Closure $closure, protected Vector3 $position, protected float $radius, protected int $height)
 	{
 		parent::__construct($closure);
-		$this->position = $position;
-		$this->radius = $radius;
-		$this->height = $height;
 	}
 
 	public function getBlockCount(): int

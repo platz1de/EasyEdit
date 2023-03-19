@@ -51,7 +51,6 @@ use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\utils\CompoundTile;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\world\clientblock\Registry;
 use pocketmine\plugin\PluginBase;

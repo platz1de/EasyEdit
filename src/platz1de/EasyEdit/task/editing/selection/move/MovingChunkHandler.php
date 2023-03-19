@@ -32,19 +32,14 @@ class MovingChunkHandler extends GroupedChunkHandler
 	private array $connections = [];
 	private int $last;
 
-	private Selection $selection;
-	private Vector3 $direction;
-
 	/**
 	 * @param string    $world
 	 * @param Selection $selection
 	 * @param Vector3   $direction
 	 */
-	public function __construct(string $world, Selection $selection, Vector3 $direction)
+	public function __construct(string $world, private Selection $selection, private Vector3 $direction)
 	{
 		parent::__construct($world);
-		$this->selection = $selection;
-		$this->direction = $direction;
 	}
 
 	/**

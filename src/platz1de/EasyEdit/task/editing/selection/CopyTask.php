@@ -20,7 +20,6 @@ use pocketmine\math\Vector3;
 
 class CopyTask extends SelectionEditTask
 {
-	private Vector3 $position;
 	private DynamicBlockListSelection $result;
 
 	/**
@@ -28,9 +27,8 @@ class CopyTask extends SelectionEditTask
 	 * @param Vector3               $position
 	 * @param SelectionContext|null $context
 	 */
-	public function __construct(Selection $selection, Vector3 $position, ?SelectionContext $context = null)
+	public function __construct(Selection $selection, private Vector3 $position, ?SelectionContext $context = null)
 	{
-		$this->position = $position;
 		parent::__construct($selection, $context);
 	}
 

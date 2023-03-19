@@ -11,11 +11,8 @@ use pocketmine\world\Position;
 
 class DynamicStoredPasteTask extends ExecutableTask
 {
-	private StoredSelectionIdentifier $saveId;
 	private string $world;
 	private Vector3 $position;
-	private bool $keep;
-	private int $mode;
 	private DynamicPasteTask $executor;
 
 	/**
@@ -24,13 +21,10 @@ class DynamicStoredPasteTask extends ExecutableTask
 	 * @param bool                      $keep
 	 * @param int                       $mode
 	 */
-	public function __construct(StoredSelectionIdentifier $saveId, Position $position, bool $keep, int $mode = DynamicPasteTask::MODE_REPLACE_ALL)
+	public function __construct(private StoredSelectionIdentifier $saveId, Position $position, private bool $keep, private int $mode = DynamicPasteTask::MODE_REPLACE_ALL)
 	{
-		$this->saveId = $saveId;
 		$this->world = $position->getWorld()->getFolderName();
 		$this->position = $position->asVector3();
-		$this->keep = $keep;
-		$this->mode = $mode;
 		parent::__construct();
 	}
 

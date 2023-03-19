@@ -14,7 +14,6 @@ use pocketmine\world\World;
 
 class ChunkInformation
 {
-	private Chunk $chunk;
 	/**
 	 * @var CompoundTag[]
 	 */
@@ -25,9 +24,8 @@ class ChunkInformation
 	 * @param Chunk         $chunk
 	 * @param CompoundTag[] $tiles
 	 */
-	public function __construct(Chunk $chunk, array $tiles)
+	public function __construct(private Chunk $chunk, array $tiles)
 	{
-		$this->chunk = $chunk;
 		foreach ($tiles as $tile) {
 			$this->tiles[World::blockHash($tile->getInt(Tile::TAG_X) & 0x0f, $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z) & 0x0f)] = $tile;
 		}

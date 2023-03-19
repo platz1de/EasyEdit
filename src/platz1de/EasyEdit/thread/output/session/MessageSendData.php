@@ -7,21 +7,11 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class MessageSendData extends SessionOutputData
 {
-	private string $key;
-	/**
-	 * @var string[]
-	 */
-	private array $args;
-
 	/**
 	 * @param string   $key
 	 * @param string[] $args
 	 */
-	public function __construct(string $key, array $args = [])
-	{
-		$this->key = $key;
-		$this->args = $args;
-	}
+	public function __construct(private string $key, private array $args = []) {}
 
 	public function handleSession(Session $session): void
 	{

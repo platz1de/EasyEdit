@@ -8,19 +8,13 @@ use pocketmine\world\World;
 
 class Node
 {
-	public int $x;
-	public int $y;
-	public int $z;
 	public int $hash;
 	public float $g;
 	public int $parentHash;
 	public float $h;
 
-	public function __construct(int $x, int $y, int $z, ?Node $parent, int $sx, int $sy, int $sz)
+	public function __construct(public int $x, public int $y, public int $z, ?Node $parent, int $sx, int $sy, int $sz)
 	{
-		$this->x = $x;
-		$this->y = $y;
-		$this->z = $z;
 		$this->hash = World::blockHash($x, $y, $z);
 		if ($parent !== null) {
 			$this->g = $parent->g + sqrt(abs($x - $parent->x) + abs($y - $parent->y) + abs($z - $parent->z));

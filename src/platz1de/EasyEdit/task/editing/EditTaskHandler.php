@@ -15,13 +15,12 @@ class EditTaskHandler
 {
 	private ChunkController $origin; //Read-only
 	private ChunkController $result; //Write-only
-	private BlockListSelection $changes;
 
 	/**
 	 * @param BlockListSelection $changes Saves made changes, used for undoing
 	 * @param bool               $isFastSet
 	 */
-	public function __construct(BlockListSelection $changes, bool $isFastSet)
+	public function __construct(protected BlockListSelection $changes, bool $isFastSet)
 	{
 		//TODO: Never use changes as result (eg. copy)
 		$this->origin = ChunkController::empty();
@@ -30,7 +29,6 @@ class EditTaskHandler
 		} else {
 			$this->result = ChunkController::empty();
 		}
-		$this->changes = $changes;
 	}
 
 	public function setManager(ReferencedChunkManager $manager): void

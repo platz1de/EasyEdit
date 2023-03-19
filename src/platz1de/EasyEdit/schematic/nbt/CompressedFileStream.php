@@ -12,11 +12,9 @@ class CompressedFileStream extends BinaryStream
 	 * @var resource
 	 */
 	private $stream;
-	private string $fileName;
 
-	public function __construct(string $fileName)
+	public function __construct(private string $fileName)
 	{
-		$this->fileName = $fileName;
 		$file = gzopen($fileName, "r");
 
 		if ($file === false) {

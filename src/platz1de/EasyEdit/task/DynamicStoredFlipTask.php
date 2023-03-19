@@ -19,17 +19,12 @@ use UnexpectedValueException;
 
 class DynamicStoredFlipTask extends ExecutableTask
 {
-	private StoredSelectionIdentifier $saveId;
-	private int $axis;
-
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param int                       $axis
 	 */
-	public function __construct(StoredSelectionIdentifier $saveId, int $axis)
+	public function __construct(private StoredSelectionIdentifier $saveId, private int $axis)
 	{
-		$this->saveId = $saveId;
-		$this->axis = $axis;
 		parent::__construct();
 	}
 

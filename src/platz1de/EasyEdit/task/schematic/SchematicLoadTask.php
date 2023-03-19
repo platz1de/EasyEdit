@@ -14,14 +14,11 @@ use pocketmine\math\Vector3;
 
 class SchematicLoadTask extends ExecutableTask
 {
-	private string $schematicPath;
-
 	/**
 	 * @param string $schematicPath
 	 */
-	public function __construct(string $schematicPath)
+	public function __construct(private string $schematicPath)
 	{
-		$this->schematicPath = $schematicPath;
 		parent::__construct();
 	}
 

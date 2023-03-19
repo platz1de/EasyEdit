@@ -32,8 +32,6 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	 * @var int[]
 	 */
 	private array $connections = [];
-	private Selection $selection;
-	private int $axis;
 	private int $current;
 
 	/**
@@ -41,11 +39,9 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	 * @param Selection $selection
 	 * @param int       $axis
 	 */
-	public function __construct(string $world, Selection $selection, int $axis)
+	public function __construct(string $world, private Selection $selection, private int $axis)
 	{
 		parent::__construct($world);
-		$this->selection = $selection;
-		$this->axis = $axis;
 	}
 
 	/**

@@ -8,16 +8,13 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 trait BlockPatternData
 {
-	private BlockType $block;
-
 	/**
 	 * @param BlockType $block
 	 * @param Pattern[] $pieces
 	 */
-	public function __construct(BlockType $block, array $pieces)
+	public function __construct(private BlockType $block, array $pieces)
 	{
 		parent::__construct($pieces);
-		$this->block = $block;
 	}
 
 	/**

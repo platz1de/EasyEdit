@@ -9,14 +9,9 @@ use platz1de\EasyEdit\session\Session;
 
 class FlagRemapAlias extends EasyEditCommand
 {
-	private EasyEditCommand $parent;
-	private CommandFlag $flag;
-
-	public function __construct(EasyEditCommand $alias, CommandFlag $flag, string $name, array $aliases = [])
+	public function __construct(private EasyEditCommand $parent, private CommandFlag $flag, string $name, array $aliases = [])
 	{
-		parent::__construct($name, $alias->getPermissions(), $aliases);
-		$this->parent = $alias;
-		$this->flag = $flag;
+		parent::__construct($name, $parent->getPermissions(), $aliases);
 	}
 
 	public function process(Session $session, CommandFlagCollection $flags): void

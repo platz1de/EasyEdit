@@ -7,21 +7,11 @@ namespace platz1de\EasyEdit\utils;
  */
 class MessageComponent
 {
-	private string $key;
-	/**
-	 * @var string[]|MessageComponent[]|MessageCompound[]
-	 */
-	private array $args;
-
 	/**
 	 * @param string                                        $key
 	 * @param string[]|MessageComponent[]|MessageCompound[] $args
 	 */
-	public function __construct(string $key, array $args = [])
-	{
-		$this->key = $key;
-		$this->args = $args;
-	}
+	public function __construct(private string $key, private array $args = []) {}
 
 	/**
 	 * @return string

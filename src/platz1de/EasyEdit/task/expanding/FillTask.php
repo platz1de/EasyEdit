@@ -19,19 +19,14 @@ class FillTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	private int $direction;
-	private StaticBlock $block;
-
 	/**
 	 * @param string      $world
 	 * @param Vector3     $start
 	 * @param int         $direction
 	 * @param StaticBlock $block
 	 */
-	public function __construct(string $world, Vector3 $start, int $direction, StaticBlock $block)
+	public function __construct(string $world, Vector3 $start, private int $direction, private StaticBlock $block)
 	{
-		$this->direction = $direction;
-		$this->block = $block;
 		parent::__construct($world, $start);
 	}
 

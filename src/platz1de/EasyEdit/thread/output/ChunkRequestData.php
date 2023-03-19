@@ -8,15 +8,10 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ChunkRequestData extends OutputData
 {
-	private ChunkRequest $request;
-
 	/**
 	 * @param ChunkRequest $request
 	 */
-	public function __construct(ChunkRequest $request)
-	{
-		$this->request = $request;
-	}
+	public function __construct(private ChunkRequest $request) {}
 
 	public function handle(): void
 	{

@@ -10,15 +10,12 @@ use pocketmine\block\Block;
 
 class StaticBlock extends BlockType
 {
-	private int $id;
-
 	/**
 	 * @param int $id
 	 */
-	public function __construct(int $id)
+	public function __construct(private int $id)
 	{
 		parent::__construct();
-		$this->id = $id;
 	}
 
 	/**

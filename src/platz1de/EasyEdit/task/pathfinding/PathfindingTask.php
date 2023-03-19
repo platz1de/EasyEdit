@@ -19,10 +19,6 @@ class PathfindingTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	private Vector3 $end;
-	private bool $allowDiagonal;
-	private StaticBlock $block;
-
 	/**
 	 * @param string      $world
 	 * @param Vector3     $start
@@ -30,11 +26,8 @@ class PathfindingTask extends ExpandingTask
 	 * @param bool        $allowDiagonal
 	 * @param StaticBlock $block
 	 */
-	public function __construct(string $world, Vector3 $start, Vector3 $end, bool $allowDiagonal, StaticBlock $block)
+	public function __construct(string $world, Vector3 $start, private Vector3 $end, private bool $allowDiagonal, private StaticBlock $block)
 	{
-		$this->end = $end;
-		$this->allowDiagonal = $allowDiagonal;
-		$this->block = $block;
 		parent::__construct($world, $start);
 	}
 

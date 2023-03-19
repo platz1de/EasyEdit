@@ -10,26 +10,12 @@ use pocketmine\data\bedrock\block\BlockStateData;
 class BlockRequestData extends OutputData
 {
 	/**
-	 * @var BlockStateData[]|int[]
-	 */
-	private array $states;
-	private bool $type;
-	private bool $suppress;
-	private bool $full;
-
-	/**
 	 * @param BlockStateData[]|int[] $states
 	 * @param bool                   $type
 	 * @param bool                   $suppress
 	 * @param bool                   $full
 	 */
-	public function __construct(array $states, bool $type, bool $suppress = false, bool $full = false)
-	{
-		$this->states = $states;
-		$this->type = $type;
-		$this->suppress = $suppress;
-		$this->full = $full;
-	}
+	public function __construct(private array $states, private bool $type, private bool $suppress = false, private bool $full = false) {}
 
 	public function handle(): void
 	{

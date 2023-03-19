@@ -8,12 +8,9 @@ use pocketmine\utils\Utils;
 
 abstract class ShapeConstructor
 {
-	protected Closure $closure;
-
-	public function __construct(Closure $closure)
+	public function __construct(protected Closure $closure)
 	{
-		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void { }, $closure);
-		$this->closure = $closure;
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z): void {}, $closure);
 	}
 
 	abstract public function getBlockCount(): int;

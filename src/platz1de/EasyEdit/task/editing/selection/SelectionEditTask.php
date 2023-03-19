@@ -19,7 +19,6 @@ use platz1de\EasyEdit\utils\VectorUtils;
 
 abstract class SelectionEditTask extends EditTask
 {
-	protected Selection $selection;
 	protected SelectionContext $context;
 	private int $totalChunks;
 	private int $chunksLeft;
@@ -32,9 +31,8 @@ abstract class SelectionEditTask extends EditTask
 	 * @param Selection             $selection
 	 * @param SelectionContext|null $context
 	 */
-	public function __construct(Selection $selection, ?SelectionContext $context = null)
+	public function __construct(protected Selection $selection, ?SelectionContext $context = null)
 	{
-		$this->selection = $selection;
 		$this->context = $context ?? SelectionContext::full();
 		parent::__construct($selection->getWorldName());
 	}

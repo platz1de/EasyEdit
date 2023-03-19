@@ -6,13 +6,8 @@ use platz1de\EasyEdit\session\Session;
 
 class WrongSelectionTypeException extends CommandException
 {
-	private string $given;
-	private string $expected;
-
-	public function __construct(string $given, string $expected)
+	public function __construct(private string $given, private string $expected)
 	{
-		$this->given = $given;
-		$this->expected = $expected;
 		parent::__construct("Wrong selection type " . $given . " given, expected " . $expected);
 	}
 

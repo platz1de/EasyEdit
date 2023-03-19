@@ -17,16 +17,13 @@ class ExtendBlockFaceTask extends ExpandingTask
 {
 	use SettingNotifier;
 
-	private int $face;
-
 	/**
 	 * @param string  $world
 	 * @param Vector3 $block
 	 * @param int     $face
 	 */
-	public function __construct(string $world, Vector3 $block, int $face)
+	public function __construct(string $world, Vector3 $block, private int $face)
 	{
-		$this->face = $face;
 		parent::__construct($world, $block);
 	}
 

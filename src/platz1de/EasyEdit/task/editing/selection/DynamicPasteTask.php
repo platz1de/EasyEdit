@@ -32,19 +32,14 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	protected Selection $selection;
 
-	protected Vector3 $position;
-	protected int $mode;
-
 	/**
 	 * @param string                    $world
 	 * @param DynamicBlockListSelection $selection
 	 * @param Vector3                   $position
 	 * @param int                       $mode
 	 */
-	public function __construct(string $world, DynamicBlockListSelection $selection, Vector3 $position, int $mode = self::MODE_REPLACE_ALL)
+	public function __construct(string $world, DynamicBlockListSelection $selection, Vector3 $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
-		$this->mode = $mode;
-		$this->position = $position;
 		$selection->setPoint($selection->getPoint()->addVector($position));
 		parent::__construct($selection);
 		$this->world = $world;

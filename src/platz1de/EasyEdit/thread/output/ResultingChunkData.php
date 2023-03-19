@@ -14,24 +14,13 @@ class ResultingChunkData extends OutputData
 	use ReferencedWorldHolder;
 
 	/**
-	 * @var ChunkInformation[]
-	 */
-	private array $chunkData;
-	/**
-	 * @var string[]
-	 */
-	private array $injections;
-
-	/**
 	 * @param string             $world
-	 * @param ChunkInformation[] $chunks
+	 * @param ChunkInformation[] $chunkData
 	 * @param string[]           $injections UpdateSubChunkBlocksPacket data
 	 */
-	public function __construct(string $world, array $chunks, array $injections = [])
+	public function __construct(string $world, private array $chunkData, private array $injections = [])
 	{
 		$this->world = $world;
-		$this->chunkData = $chunks;
-		$this->injections = $injections;
 	}
 
 	public function checkSend(): bool

@@ -15,7 +15,7 @@ class StructureBlockWindow extends ClientSideBlock
 {
 	use ReferencedWorldHolder;
 
-	public CompoundBlock $block;
+	private CompoundBlock $block;
 
 	public function __construct(Player $player, Vector3 $pos1, Vector3 $pos2)
 	{

@@ -13,7 +13,6 @@ use pocketmine\world\World;
 
 abstract class ExpandingTask extends EditTask
 {
-	protected Vector3 $start;
 	private float $progress = 0; //worst case scenario
 	protected ManagedChunkHandler $loader;
 
@@ -21,9 +20,8 @@ abstract class ExpandingTask extends EditTask
 	 * @param string  $world
 	 * @param Vector3 $start
 	 */
-	public function __construct(string $world, Vector3 $start)
+	public function __construct(string $world, protected Vector3 $start)
 	{
-		$this->start = $start;
 		parent::__construct($world);
 	}
 

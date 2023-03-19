@@ -4,16 +4,12 @@ namespace platz1de\EasyEdit\utils;
 
 class MessageCompound
 {
-	private string $divisor;
 	/**
 	 * @var MessageComponent[]
 	 */
 	private array $components = [];
 
-	public function __construct(string $divisor = "\n")
-	{
-		$this->divisor = $divisor;
-	}
+	public function __construct(private string $divisor = "\n") {}
 
 	/**
 	 * @param MessageComponent $component

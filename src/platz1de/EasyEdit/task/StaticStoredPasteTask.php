@@ -13,9 +13,6 @@ use platz1de\EasyEdit\utils\MixedUtils;
 
 class StaticStoredPasteTask extends ExecutableTask
 {
-	private StoredSelectionIdentifier $saveId;
-	private bool $keep;
-	private bool $isUndo;
 	private StaticPasteTask|StreamPasteTask $executor;
 
 	/**
@@ -23,11 +20,8 @@ class StaticStoredPasteTask extends ExecutableTask
 	 * @param bool                      $keep
 	 * @param bool                      $isUndo
 	 */
-	public function __construct(StoredSelectionIdentifier $saveId, bool $keep, bool $isUndo = false)
+	public function __construct(private StoredSelectionIdentifier $saveId, private bool $keep, private bool $isUndo = false)
 	{
-		$this->saveId = $saveId;
-		$this->keep = $keep;
-		$this->isUndo = $isUndo;
 		parent::__construct();
 	}
 

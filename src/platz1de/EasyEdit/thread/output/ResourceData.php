@@ -8,14 +8,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class ResourceData extends OutputData
 {
-	private string $rawJTB;
-	private string $rawBTJ;
-
-	public function __construct(string $rawJTB, string $rawBTJ)
-	{
-		$this->rawJTB = $rawJTB;
-		$this->rawBTJ = $rawBTJ;
-	}
+	public function __construct(private string $rawJTB, private string $rawBTJ) {}
 
 	public function handle(): void
 	{

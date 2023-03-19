@@ -12,20 +12,14 @@ use platz1de\EasyEdit\session\Session;
 abstract class SimpleFlagArgumentCommand extends EasyEditCommand
 {
 	/**
-	 * @var bool[]
-	 */
-	private array $flagOrder;
-
-	/**
 	 * @param string   $name
 	 * @param bool[]   $flagOrder
 	 * @param string[] $permissions
 	 * @param string[] $aliases
 	 */
-	public function __construct(string $name, array $flagOrder, array $permissions, array $aliases = [])
+	public function __construct(string $name, private array $flagOrder, array $permissions, array $aliases = [])
 	{
 		parent::__construct($name, $permissions, $aliases);
-		$this->flagOrder = $flagOrder;
 	}
 
 	/**

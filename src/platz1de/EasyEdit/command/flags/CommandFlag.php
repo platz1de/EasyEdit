@@ -7,11 +7,6 @@ use platz1de\EasyEdit\session\Session;
 
 abstract class CommandFlag
 {
-	private string $name;
-	/**
-	 * @var string[]
-	 */
-	private array $aliases;
 	private string $id;
 
 	/**
@@ -19,10 +14,8 @@ abstract class CommandFlag
 	 * @param string[]    $aliases
 	 * @param string|null $id
 	 */
-	final public function __construct(string $name, array $aliases = null, string $id = null)
+	final public function __construct(private string $name, private array $aliases = [], string $id = null)
 	{
-		$this->name = $name;
-		$this->aliases = $aliases ?? [];
 		$this->id = $id ?? $name[0];
 	}
 

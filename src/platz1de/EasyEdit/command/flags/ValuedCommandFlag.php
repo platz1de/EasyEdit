@@ -24,7 +24,7 @@ abstract class ValuedCommandFlag extends CommandFlag
 	 * @param string|null $id
 	 * @return static
 	 */
-	public static function default(mixed $default, string $name, array $aliases = null, string $id = null): static
+	public static function default(mixed $default, string $name, array $aliases = [], string $id = null): static
 	{
 		$instance = new static($name, $aliases, $id);
 		$instance->default = $default;
@@ -39,7 +39,7 @@ abstract class ValuedCommandFlag extends CommandFlag
 	 * @param bool        $default
 	 * @return static
 	 */
-	public static function with(mixed $argument, string $name, array $aliases = null, string $id = null, bool $default = false): static
+	public static function with(mixed $argument, string $name, array $aliases = [], string $id = null, bool $default = false): static
 	{
 		$instance = new static($name, $aliases, $id);
 		$instance->argument = $argument;

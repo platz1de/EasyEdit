@@ -18,14 +18,11 @@ use RuntimeException;
 
 class DynamicStoredRotateTask extends ExecutableTask
 {
-	private StoredSelectionIdentifier $saveId;
-
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 */
-	public function __construct(StoredSelectionIdentifier $saveId)
+	public function __construct(private StoredSelectionIdentifier $saveId)
 	{
-		$this->saveId = $saveId;
 		parent::__construct();
 	}
 

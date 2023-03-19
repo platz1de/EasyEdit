@@ -22,16 +22,14 @@ class CutTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
 
-	private Vector3 $position;
 	private DynamicBlockListSelection $result;
 
 	/**
 	 * @param Selection $selection
 	 * @param Vector3   $position
 	 */
-	public function __construct(Selection $selection, Vector3 $position)
+	public function __construct(Selection $selection, private Vector3 $position)
 	{
-		$this->position = $position;
 		parent::__construct($selection);
 	}
 

@@ -20,10 +20,6 @@ class Noise3DTask extends SelectionEditTask
 	use CubicStaticUndo;
 	use SettingNotifier;
 
-	private int $octaves;
-	private float $persistence;
-	private float $expansion;
-	private float $threshold;
 	private Noise $noise;
 
 	/**
@@ -33,12 +29,8 @@ class Noise3DTask extends SelectionEditTask
 	 * @param float     $expansion
 	 * @param float     $threshold
 	 */
-	public function __construct(Selection $selection, int $octaves = 4, float $persistence = 0.25, float $expansion = 0.05, float $threshold = 0)
+	public function __construct(Selection $selection, private int $octaves = 4, private float $persistence = 0.25, private float $expansion = 0.05, private float $threshold = 0)
 	{
-		$this->octaves = $octaves;
-		$this->persistence = $persistence;
-		$this->expansion = $expansion;
-		$this->threshold = $threshold;
 		parent::__construct($selection);
 	}
 

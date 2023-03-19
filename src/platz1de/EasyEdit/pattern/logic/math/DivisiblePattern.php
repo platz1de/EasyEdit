@@ -18,17 +18,14 @@ class DivisiblePattern extends Pattern
 		AxisPatternData::parseData as private parseAxisPatternData;
 	}
 
-	private int $divisor;
-
 	/**
 	 * @param AxisArgumentWrapper $axi
 	 * @param int                 $divisor
 	 * @param Pattern[]           $pieces
 	 */
-	public function __construct(AxisArgumentWrapper $axi, int $divisor, array $pieces)
+	public function __construct(AxisArgumentWrapper $axi, private int $divisor, array $pieces)
 	{
 		parent::__construct($pieces);
-		$this->divisor = $divisor;
 		$this->__constructAxisPatternData($axi, $pieces);
 
 		if ($divisor <= 0) {

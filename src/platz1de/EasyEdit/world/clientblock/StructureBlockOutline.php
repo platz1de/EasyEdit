@@ -13,15 +13,15 @@ class StructureBlockOutline extends ClientSideBlock
 	use ReferencedWorldHolder;
 
 	public CompoundBlock $block;
-	public Vector3 $startPosition;
-	public Vector3 $endPosition;
 
-	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2)
+	/**
+	 * @param string  $world
+	 * @param Vector3 $startPosition
+	 * @param Vector3 $endPosition
+	 */
+	public function __construct(string $world, private Vector3 $startPosition, private Vector3 $endPosition)
 	{
-		$this->startPosition = $pos1;
-		$this->endPosition = $pos2;
 		$this->world = $world;
-
 		parent::__construct();
 	}
 

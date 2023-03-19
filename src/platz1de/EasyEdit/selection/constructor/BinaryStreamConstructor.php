@@ -11,23 +11,15 @@ use pocketmine\world\World;
 
 class BinaryStreamConstructor extends ShapeConstructor
 {
-	private ExtendedBinaryStream $stream;
-	/**
-	 * @var array<int, int>
-	 */
-	private array $chunks;
-
 	/**
 	 * @param Closure              $closure
 	 * @param ExtendedBinaryStream $stream
 	 * @param array<int, int>      $chunks
 	 */
-	public function __construct(Closure $closure, ExtendedBinaryStream $stream, array $chunks)
+	public function __construct(Closure $closure, private ExtendedBinaryStream $stream, private array $chunks)
 	{
-		Utils::validateCallableSignature(static function (int $x, int $y, int $z, int $block): void { }, $closure);
+		Utils::validateCallableSignature(static function (int $x, int $y, int $z, int $block): void {}, $closure);
 		$this->closure = $closure;
-		$this->stream = $stream;
-		$this->chunks = $chunks;
 	}
 
 	public function getBlockCount(): int

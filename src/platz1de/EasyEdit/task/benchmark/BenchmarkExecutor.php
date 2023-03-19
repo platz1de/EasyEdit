@@ -18,7 +18,6 @@ use pocketmine\world\World;
 
 class BenchmarkExecutor extends ExecutableTask
 {
-	private string $world;
 	private SetTask $setSimpleBenchmark;
 	private SetTask $setComplexBenchmark;
 	private CopyTask $copyBenchmark;
@@ -27,9 +26,8 @@ class BenchmarkExecutor extends ExecutableTask
 	/**
 	 * @param string $world
 	 */
-	public function __construct(string $world)
+	public function __construct(private string $world)
 	{
-		$this->world = $world;
 		parent::__construct();
 	}
 

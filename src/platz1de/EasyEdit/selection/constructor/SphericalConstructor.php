@@ -9,19 +9,14 @@ use pocketmine\world\World;
 
 class SphericalConstructor extends ShapeConstructor
 {
-	protected Vector3 $center;
-	protected float $radius;
-
 	/**
 	 * @param Closure $closure
 	 * @param Vector3 $center
 	 * @param float   $radius
 	 */
-	public function __construct(Closure $closure, Vector3 $center, float $radius)
+	public function __construct(Closure $closure, protected Vector3 $center, protected float $radius)
 	{
 		parent::__construct($closure);
-		$this->center = $center;
-		$this->radius = $radius;
 	}
 
 	public function getBlockCount(): int

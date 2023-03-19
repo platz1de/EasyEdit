@@ -12,17 +12,12 @@ use platz1de\EasyEdit\utils\MixedUtils;
 
 class SchematicSaveTask extends ExecutableTask
 {
-	private string $schematicPath;
-	private StoredSelectionIdentifier $saveId;
-
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $schematicPath
 	 */
-	public function __construct(StoredSelectionIdentifier $saveId, string $schematicPath)
+	public function __construct(private StoredSelectionIdentifier $saveId, private string $schematicPath)
 	{
-		$this->schematicPath = $schematicPath;
-		$this->saveId = $saveId;
 		parent::__construct();
 	}
 

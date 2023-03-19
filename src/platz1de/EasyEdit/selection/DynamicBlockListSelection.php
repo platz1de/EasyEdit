@@ -14,20 +14,15 @@ use pocketmine\world\World;
 
 class DynamicBlockListSelection extends ChunkManagedBlockList
 {
-	private Vector3 $point;
-	private Vector3 $offset;
-
 	/**
 	 * DynamicBlockListSelection constructor.
 	 * @param Vector3 $end
-	 * @param Vector3 $worldOffset
 	 * @param Vector3 $offset
+	 * @param Vector3 $point
 	 */
-	public function __construct(Vector3 $end, Vector3 $worldOffset, Vector3 $offset)
+	public function __construct(Vector3 $end, private Vector3 $offset, private Vector3 $point)
 	{
 		parent::__construct("", new Vector3(0, World::Y_MIN, 0), $end);
-		$this->point = $offset;
-		$this->offset = $worldOffset;
 	}
 
 	/**

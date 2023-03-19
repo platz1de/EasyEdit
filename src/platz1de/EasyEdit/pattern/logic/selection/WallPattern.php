@@ -14,16 +14,13 @@ use platz1de\EasyEdit\world\ChunkController;
 
 class WallPattern extends Pattern
 {
-	private float $thickness;
-
 	/**
 	 * @param float     $thickness
 	 * @param Pattern[] $pieces
 	 */
-	public function __construct(float $thickness, array $pieces)
+	public function __construct(private float $thickness, array $pieces)
 	{
 		parent::__construct($pieces);
-		$this->thickness = $thickness;
 	}
 
 	/**

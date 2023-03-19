@@ -9,19 +9,14 @@ class ChunkRequest
 {
 	use ReferencedWorldHolder;
 
-	private int $chunk;
-	private ?int $payload;
-
 	/**
 	 * @param string   $world
 	 * @param int      $chunk
 	 * @param int|null $payload
 	 */
-	public function __construct(string $world, int $chunk, ?int $payload = null)
+	public function __construct(string $world, private int $chunk, private ?int $payload = null)
 	{
 		$this->world = $world;
-		$this->chunk = $chunk;
-		$this->payload = $payload;
 	}
 
 	/**

@@ -25,7 +25,6 @@ use SplStack;
 
 class Session
 {
-	private SessionIdentifier $id;
 	/**
 	 * @var SplStack<StoredSelectionIdentifier>
 	 */
@@ -38,12 +37,11 @@ class Session
 	private Selection $selection;
 	private int $highlight = -1;
 
-	public function __construct(SessionIdentifier $id)
+	public function __construct(private SessionIdentifier $id)
 	{
 		if (!$id->isPlayer()) {
 			throw new BadMethodCallException("Session can only be created for players, plugins or internal use should use tasks directly");
 		}
-		$this->id = $id;
 		$this->past = new SplStack();
 		$this->future = new SplStack();
 		$this->clipboard = StoredSelectionIdentifier::invalid();

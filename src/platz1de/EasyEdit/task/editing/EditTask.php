@@ -17,7 +17,6 @@ use platz1de\EasyEdit\world\ReferencedChunkManager;
 
 abstract class EditTask extends ExecutableTask
 {
-	protected string $world;
 	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
 	protected float $totalTime = 0;
@@ -26,10 +25,9 @@ abstract class EditTask extends ExecutableTask
 	/**
 	 * @param string $world
 	 */
-	public function __construct(string $world)
+	public function __construct(protected string $world)
 	{
 		parent::__construct();
-		$this->world = $world;
 	}
 
 	public function prepare(bool $fastSet): void
