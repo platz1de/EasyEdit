@@ -4,6 +4,11 @@
 
 Feature-rich WorldEditor for PocketMine-MP
 
+# Note: This branch is already updated to PMMP 5
+
+If you are looking for the current api 4 version, please use the [api4 branch](https://github.com/platz1de/EasyEdit/tree/api4).
+There won't be any further releases till pmmp api 5 finally gets released.
+
 ## Features
 
 - large variety of commands
