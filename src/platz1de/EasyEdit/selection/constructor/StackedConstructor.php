@@ -4,10 +4,10 @@ namespace platz1de\EasyEdit\selection\constructor;
 
 use BadMethodCallException;
 use Closure;
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class StackedConstructor extends ShapeConstructor
@@ -32,23 +32,26 @@ class StackedConstructor extends ShapeConstructor
 	{
 		$min = VectorUtils::getChunkPosition($chunk);
 		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		$size = (int) VectorUtils::getVectorAxis($this->selection->getSize(), $this->axis);
-		$source = (int) VectorUtils::getVectorAxis($this->selection->getPos1(), $this->axis);
-		$offsetMin = (int) floor((VectorUtils::getVectorAxis($min, $this->axis) - $source) / $size);
-		$offsetMax = (int) floor((VectorUtils::getVectorAxis($max, $this->axis) - $source) / $size);
+		$size = $this->selection->getSize()->getComponent($this->axis);
+		$source = $this->selection->getPos1()->getComponent($this->axis);
+		$offsetMin = (int) floor(($min->getComponent($this->axis) - $source) / $size);
+		$offsetMax = (int) floor(($max->getComponent($this->axis) - $source) / $size);
 		if ($this->amount < 0) {
-			[$offsetMin, $offsetMax] = [-$offsetMax, -$offsetMin];
+			[$offsetMin, $offsetMax] = [$offsetMax, $offsetMin];
+			$offsetMin = max($offsetMin, $this->amount);
+			$offsetMax = min($offsetMax, -1);
+		} else {
+			$offsetMin = max($offsetMin, 1);
+			$offsetMax = min($offsetMax, $this->amount);
 		}
-		$offsetMin = max($offsetMin, 1);
-		$offsetMax = min($offsetMax, abs($this->amount));
 		for ($i = $offsetMin; $i <= $offsetMax; $i++) {
 			foreach ($this->parents as $parent) {
-				$parent->offset(Vector3::zero()->getSide($this->axis << 1 | ($this->amount > 0 ? 1 : 0), $i * $size))->moveTo($chunk);
+				$parent->offset(BlockOffsetVector::zero()->addComponent($this->axis, $i * $size))->moveTo($chunk);
 			}
 		}
 	}
 
-	public function offset(Vector3 $offset): ShapeConstructor
+	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
 		throw new BadMethodCallException("Stacked cubes can't be offset");
 	}

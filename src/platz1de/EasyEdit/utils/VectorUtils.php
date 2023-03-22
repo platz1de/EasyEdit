@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use InvalidArgumentException;
+use platz1de\EasyEdit\math\BlockVector;
 use pocketmine\entity\Location;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
@@ -119,11 +120,11 @@ class VectorUtils
 
 	/**
 	 * @param int $chunk
-	 * @return Vector3
+	 * @return BlockVector
 	 */
-	public static function getChunkPosition(int $chunk): Vector3
+	public static function getChunkPosition(int $chunk): BlockVector
 	{
 		World::getXZ($chunk, $x, $z);
-		return new Vector3($x << 4, World::Y_MIN, $z << 4);
+		return new BlockVector($x << 4, World::Y_MIN, $z << 4);
 	}
 }

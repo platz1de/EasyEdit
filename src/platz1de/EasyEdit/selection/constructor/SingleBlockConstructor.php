@@ -3,20 +3,21 @@
 namespace platz1de\EasyEdit\selection\constructor;
 
 use Closure;
-use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 
 /**
  * The probably most pointless class in the world
  */
 class SingleBlockConstructor extends ShapeConstructor
 {
-	private Vector3 $position;
-
-	public function __construct(Closure $closure, Vector3 $position)
+	/**
+	 * @param Closure     $closure
+	 * @param BlockVector $position
+	 */
+	public function __construct(Closure $closure, private BlockVector $position)
 	{
 		parent::__construct($closure);
-		$this->position = $position->floor();
 	}
 
 	public function getBlockCount(): int
@@ -26,14 +27,14 @@ class SingleBlockConstructor extends ShapeConstructor
 
 	public function moveTo(int $chunk): void
 	{
-		if ((VectorUtils::isVectorInChunk($this->position, $chunk))) {
+		if ($this->position->isInChunk($chunk)) {
 			$closure = $this->closure;
-			$closure($this->position->getX(), $this->position->getY(), $this->position->getZ());
+			$closure($this->position->x, $this->position->y, $this->position->z);
 		}
 	}
 
-	public function offset(Vector3 $offset): self
+	public function offset(BlockOffsetVector $offset): self
 	{
-		return new self($this->closure, $this->position->addVector($offset));
+		return new self($this->closure, $this->position->offset($offset));
 	}
 }

@@ -4,46 +4,38 @@ namespace platz1de\EasyEdit\selection\constructor;
 
 use Closure;
 use Generator;
-use InvalidArgumentException;
-use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Axis;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
-use pocketmine\world\World;
 
 class CubicConstructor extends ShapeConstructor
 {
-	private Vector3 $min;
-	private Vector3 $max;
-
 	/**
-	 * @param Closure $closure
-	 * @param Vector3 $min
-	 * @param Vector3 $max
+	 * @param Closure     $closure
+	 * @param BlockVector $min
+	 * @param BlockVector $max
 	 */
-	public function __construct(Closure $closure, Vector3 $min, Vector3 $max)
+	public function __construct(Closure $closure, private BlockVector $min, private BlockVector $max)
 	{
 		parent::__construct($closure);
-		$this->min = VectorUtils::enforceHeight($min);
-		$this->max = VectorUtils::enforceHeight($max);
 	}
 
 	public function getBlockCount(): int
 	{
-		return (int) VectorUtils::product($this->max->subtractVector($this->min)->add(1, 1, 1));
+		return $this->max->diff($this->min)->cubicArea();
 	}
 
 	public function moveTo(int $chunk): void
 	{
-		$min = Vector3::maxComponents($this->min, VectorUtils::getChunkPosition($chunk));
-		$max = Vector3::minComponents($this->max, VectorUtils::getChunkPosition($chunk)->add(15, World::Y_MAX - World::Y_MIN - 1, 15));
+		$min = $this->min->forceIntoChunkStart($chunk);
+		$max = $this->max->forceIntoChunkEnd($chunk);
 		$closure = $this->closure;
-		$minX = $min->getFloorX();
-		$minY = $min->getFloorY();
-		$minZ = $min->getFloorZ();
-		$maxX = $max->getFloorX();
-		$maxY = $max->getFloorY();
-		$maxZ = $max->getFloorZ();
+		$minX = $min->x;
+		$minY = $min->y;
+		$minZ = $min->z;
+		$maxX = $max->x;
+		$maxY = $max->y;
+		$maxZ = $max->z;
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
 				for ($y = $minY; $y <= $maxY; $y++) {
@@ -54,74 +46,50 @@ class CubicConstructor extends ShapeConstructor
 	}
 
 	/**
-	 * @param Vector3 $min
-	 * @param Vector3 $max
-	 * @param int     $side
-	 * @param float   $thickness
-	 * @param Closure $closure
+	 * @param BlockVector $min
+	 * @param BlockVector $max
+	 * @param int         $side
+	 * @param int         $thickness
+	 * @param Closure     $closure
 	 * @return CubicConstructor
 	 */
-	public static function forSide(Vector3 $min, Vector3 $max, int $side, float $thickness, Closure $closure): CubicConstructor
+	public static function forSide(BlockVector $min, BlockVector $max, int $side, int $thickness, Closure $closure): CubicConstructor
 	{
-		return match ($side) {
-			Facing::DOWN => new self($closure, $min, $max->withComponents(null, $min->getY() + $thickness - 1, null)),
-			Facing::UP => new self($closure, $min->withComponents(null, $max->getY() - $thickness + 1, null), $max),
-			Facing::NORTH => new self($closure, $min, $max->withComponents(null, null, $min->getZ() + $thickness - 1)),
-			Facing::SOUTH => new self($closure, $min->withComponents(null, null, $max->getZ() - $thickness + 1), $max),
-			Facing::WEST => new self($closure, $min, $max->withComponents($min->getX() + $thickness - 1, null, null)),
-			Facing::EAST => new self($closure, $min->withComponents($max->getX() - $thickness + 1, null, null), $max),
-			default => throw new InvalidArgumentException("Invalid side $side")
-		};
+		$axis = Facing::axis($side);
+		if (Facing::isPositive($side)) {
+			$min = $min->addComponent($axis, $max->getComponent($axis) - $min->getComponent($axis) + 1 - $thickness);
+		} else {
+			$max = $max->addComponent($axis, $min->getComponent($axis) - $max->getComponent($axis) - 1 + $thickness);
+		}
+		return new self($closure, $min, $max);
 	}
 
 	/**
-	 * @param Vector3 $min
-	 * @param Vector3 $max
-	 * @param int[]   $sides
-	 * @param float   $thickness
-	 * @param Closure $closure
-	 * @return Generator<CubicConstructor>
+	 * @param BlockVector $min
+	 * @param BlockVector $max
+	 * @param int[]       $sides
+	 * @param int         $thickness
+	 * @param Closure     $closure
+	 * @return Generator
 	 */
-	public static function forSides(Vector3 $min, Vector3 $max, array $sides, float $thickness, Closure $closure): Generator
+	public static function forSides(BlockVector $min, BlockVector $max, array $sides, int $thickness, Closure $closure): Generator
 	{
-		//remove duplicate Blocks from sides (Priority: y, z, x)
-		$xMin = $min;
-		$xMax = $max;
-		$zMin = $min;
-		$zMax = $max;
-
-		if (in_array(Facing::DOWN, $sides, true)) {
-			$xMin = $xMin->up();
-			$zMin = $zMin->up();
-		}
-		if (in_array(Facing::UP, $sides, true)) {
-			$xMax = $xMax->down();
-			$zMax = $zMax->down();
-		}
-
-		if (in_array(Facing::NORTH, $sides, true)) {
-			$xMin = $xMin->south();
-		}
-		if (in_array(Facing::SOUTH, $sides, true)) {
-			$xMax = $xMax->north();
-		}
+		$sides = array_unique($sides); //TODO: removing this can lead to interesting results as positions are shifted around (add this as a feature?)
 
 		foreach ($sides as $side) {
-			switch (Facing::axis($side)) {
-				case Axis::Y:
-					yield self::forSide($min, $max, $side, $thickness, $closure);
-					break;
-				case Axis::X:
-					yield self::forSide($xMin, $xMax, $side, $thickness, $closure);
-					break;
-				case Axis::Z:
-					yield self::forSide($zMin, $zMax, $side, $thickness, $closure);
+			yield self::forSide($min, $max, $side, $thickness, $closure);
+
+			//These blocks are now already done, so we can remove them from the selection
+			if (Facing::isPositive($side)) {
+				$max = $max->addComponent(Facing::axis($side), -$thickness);
+			} else {
+				$min = $min->addComponent(Facing::axis($side), $thickness);
 			}
 		}
 	}
 
-	public function offset(Vector3 $offset): ShapeConstructor
+	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
-		return new self($this->closure, $this->min->addVector($offset), $this->max->addVector($offset));
+		return new self($this->closure, $this->min->offset($offset), $this->max->offset($offset));
 	}
 }

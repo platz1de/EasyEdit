@@ -3,20 +3,21 @@
 namespace platz1de\EasyEdit\selection\constructor;
 
 use Closure;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class TubeConstructor extends CylindricalConstructor
 {
 	/**
-	 * @param Closure $closure
-	 * @param Vector3 $position
-	 * @param float   $radius
-	 * @param int     $height
-	 * @param float   $thickness
+	 * @param Closure            $closure
+	 * @param OffGridBlockVector $position
+	 * @param float              $radius
+	 * @param int                $height
+	 * @param float              $thickness
 	 */
-	public function __construct(Closure $closure, Vector3 $position, float $radius, int $height, private float $thickness)
+	public function __construct(Closure $closure, OffGridBlockVector $position, float $radius, int $height, private float $thickness)
 	{
 		parent::__construct($closure, $position, $radius, $height);
 	}
@@ -33,13 +34,13 @@ class TubeConstructor extends CylindricalConstructor
 		$radiusSquared = $this->radius ** 2;
 		$thicknessSquared = ($this->radius - $this->thickness) ** 2;
 		$radius = ceil($this->radius);
-		$posX = $this->position->getFloorX();
-		$posY = $this->position->getFloorY();
-		$posZ = $this->position->getFloorZ();
-		$minX = max($min->getX() - $posX, -$radius);
-		$maxX = min($max->getX() - $posX, $radius);
-		$minZ = max($min->getZ() - $posZ, -$radius);
-		$maxZ = min($max->getZ() - $posZ, $radius);
+		$posX = $this->position->x;
+		$posY = $this->position->y;
+		$posZ = $this->position->z;
+		$minX = max($min->x - $posX, -$radius);
+		$maxX = min($max->x - $posX, $radius);
+		$minZ = max($min->z - $posZ, -$radius);
+		$maxZ = min($max->z - $posZ, $radius);
 		$closure = $this->closure;
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
@@ -52,8 +53,8 @@ class TubeConstructor extends CylindricalConstructor
 		}
 	}
 
-	public function offset(Vector3 $offset): ShapeConstructor
+	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
-		return new self($this->closure, $this->position->addVector($offset), $this->radius, $this->height, $this->thickness);
+		return new self($this->closure, $this->position->offset($offset), $this->radius, $this->height, $this->thickness);
 	}
 }

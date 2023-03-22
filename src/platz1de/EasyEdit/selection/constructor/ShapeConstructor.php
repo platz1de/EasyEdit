@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\selection\constructor;
 
 use Closure;
-use pocketmine\math\Vector3;
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use pocketmine\utils\Utils;
 
 abstract class ShapeConstructor
@@ -17,5 +17,5 @@ abstract class ShapeConstructor
 
 	abstract public function moveTo(int $chunk): void;
 
-	abstract public function offset(Vector3 $offset): self;
+	abstract public function offset(BlockOffsetVector $offset): self;
 }

@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\selection\constructor;
 
 use BadMethodCallException;
 use Closure;
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\math\Vector3;
 use pocketmine\utils\Utils;
 use pocketmine\world\World;
 
@@ -47,7 +47,7 @@ class BinaryStreamConstructor extends ShapeConstructor
 		}
 	}
 
-	public function offset(Vector3 $offset): ShapeConstructor
+	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
 		throw new BadMethodCallException("Binary streams can't be offset");
 	}

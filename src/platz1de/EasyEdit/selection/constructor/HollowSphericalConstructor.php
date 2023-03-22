@@ -3,19 +3,20 @@
 namespace platz1de\EasyEdit\selection\constructor;
 
 use Closure;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class HollowSphericalConstructor extends SphericalConstructor
 {
 	/**
-	 * @param Closure $closure
-	 * @param Vector3 $center
-	 * @param float   $radius
-	 * @param float   $thickness
+	 * @param Closure            $closure
+	 * @param OffGridBlockVector $center
+	 * @param float              $radius
+	 * @param float              $thickness
 	 */
-	public function __construct(Closure $closure, Vector3 $center, float $radius, private float $thickness)
+	public function __construct(Closure $closure, OffGridBlockVector $center, float $radius, private float $thickness)
 	{
 		parent::__construct($closure, $center, $radius);
 	}
@@ -32,15 +33,15 @@ class HollowSphericalConstructor extends SphericalConstructor
 		$radiusSquared = $this->radius ** 2;
 		$thicknessSquared = ($this->radius - $this->thickness) ** 2;
 		$radius = ceil($this->radius);
-		$cenX = $this->center->getFloorX();
-		$cenY = $this->center->getFloorY();
-		$cenZ = $this->center->getFloorZ();
-		$minX = max($min->getX() - $cenX, -$radius);
-		$maxX = min($max->getX() - $cenX, $radius);
-		$minY = max($min->getY() - $cenY, -$radius, -$this->center->getY());
-		$maxY = min($max->getY() - $cenY, $radius, World::Y_MAX - 1 - $this->center->getY());
-		$minZ = max($min->getZ() - $cenZ, -$radius);
-		$maxZ = min($max->getZ() - $cenZ, $radius);
+		$cenX = $this->center->x;
+		$cenY = $this->center->y;
+		$cenZ = $this->center->z;
+		$minX = max($min->x - $cenX, -$radius);
+		$maxX = min($max->x - $cenX, $radius);
+		$minY = max($min->y - $cenY, -$radius, World::Y_MIN - $this->center->y);
+		$maxY = min($max->y - $cenY, $radius, World::Y_MAX - 1 - $this->center->y);
+		$minZ = max($min->z - $cenZ, -$radius);
+		$maxZ = min($max->z - $cenZ, $radius);
 		$closure = $this->closure;
 		for ($x = $minX; $x <= $maxX; $x++) {
 			for ($z = $minZ; $z <= $maxZ; $z++) {
@@ -53,8 +54,8 @@ class HollowSphericalConstructor extends SphericalConstructor
 		}
 	}
 
-	public function offset(Vector3 $offset): ShapeConstructor
+	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
-		return new self($this->closure, $this->center->addVector($offset), $this->radius, $this->thickness);
+		return new self($this->closure, $this->center->offset($offset), $this->radius, $this->thickness);
 	}
 }
