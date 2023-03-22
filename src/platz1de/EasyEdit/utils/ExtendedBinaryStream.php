@@ -68,7 +68,8 @@ class ExtendedBinaryStream extends BinaryStream
 	public function putCompounds(array $compounds): void
 	{
 		$this->putInt(count($compounds));
-		foreach ($compounds as $compound) {
+		foreach ($compounds as $hash => $compound) {
+			$this->putInt($hash);
 			$this->putCompound($compound);
 		}
 	}
@@ -81,7 +82,7 @@ class ExtendedBinaryStream extends BinaryStream
 		$compounds = [];
 		$count = $this->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$compounds[] = $this->getCompound();
+			$compounds[$this->getInt()] = $this->getCompound();
 		}
 		return $compounds;
 	}
