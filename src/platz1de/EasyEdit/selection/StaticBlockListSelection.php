@@ -19,14 +19,6 @@ class StaticBlockListSelection extends ChunkManagedBlockList
 		yield new CubicConstructor($closure, $this->getPos1(), $this->getPos2());
 	}
 
-	/**
-	 * @param string $world
-	 */
-	public function setWorld(string $world): void
-	{
-		$this->world = $world;
-	}
-
 	public function createSafeClone(): StaticBlockListSelection
 	{
 		$clone = new self($this->getWorldName(), $this->getPos1(), $this->getPos2());

@@ -99,21 +99,6 @@ class BinaryBlockListStream extends BlockListSelection
 		$this->blocks = new ExtendedBinaryStream();
 	}
 
-	public function merge(BlockListSelection $selection): void
-	{
-		if (!$selection instanceof self) {
-			throw new BadMethodCallException("Can't merge block lists of different types");
-		}
-
-		parent::merge($selection);
-
-		$offset = $this->blocks->getOffset();
-		$this->blocks->put($selection->getData());
-		foreach ($selection->chunks as $chunk => $pos) {
-			$this->chunks[$chunk] = $offset + $pos;
-		}
-	}
-
 	/**
 	 * @return string
 	 */

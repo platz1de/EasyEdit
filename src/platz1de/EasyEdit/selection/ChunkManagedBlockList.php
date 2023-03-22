@@ -138,25 +138,6 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		$this->manager->cleanChunks();
 	}
 
-	/**
-	 * @param BlockListSelection $selection
-	 */
-	public function merge(BlockListSelection $selection): void
-	{
-		if (!$selection instanceof self) {
-			throw new BadMethodCallException("Can't merge block lists of different types");
-		}
-
-		parent::merge($selection);
-
-		foreach ($selection->getManager()->getChunks() as $hash => $chunk) {
-			//TODO: only create Chunks which are really needed
-			if ($chunk->wasUsed()) {
-				$this->getManager()->setChunk($hash, $chunk);
-			}
-		}
-	}
-
 	public function containsData(): bool
 	{
 		foreach ($this->getManager()->getChunks() as $chunk) {
