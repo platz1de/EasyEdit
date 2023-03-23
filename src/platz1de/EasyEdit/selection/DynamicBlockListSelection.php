@@ -4,11 +4,13 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\constructor\CubicConstructor;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
 
@@ -16,24 +18,29 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 {
 	/**
 	 * DynamicBlockListSelection constructor.
-	 * @param Vector3 $end
-	 * @param Vector3 $offset
-	 * @param Vector3 $point
+	 * @param BlockOffsetVector $size   Actual size is one bigger in every direction (e.g. 1x1x0 contains 4 blocks)
+	 * @param BlockOffsetVector $offset Offset from the world origin (to bottom of the selection)
+	 * @param BlockOffsetVector $point  Pasting offset (to bottom of the selection)
 	 */
-	public function __construct(Vector3 $end, private Vector3 $offset, private Vector3 $point)
+	private function __construct(BlockOffsetVector $size, private BlockOffsetVector $offset, private BlockOffsetVector $point)
 	{
-		parent::__construct("", new Vector3(0, World::Y_MIN, 0), $end);
+		parent::__construct("", new BlockVector(0, World::Y_MIN, 0), (new BlockVector(0, World::Y_MAX, 0))->offset($size));
+	}
+
+	public static function empty(): self
+	{
+		return new self(new BlockOffsetVector(0, 0, 0), new BlockOffsetVector(0, -World::Y_MIN, 0), new BlockOffsetVector(0, World::Y_MIN, 0));
 	}
 
 	/**
-	 * @param Vector3 $place
-	 * @param Vector3 $pos1
-	 * @param Vector3 $pos2
+	 * @param OffGridBlockVector $place
+	 * @param BlockVector        $pos1
+	 * @param BlockVector        $pos2
 	 * @return DynamicBlockListSelection
 	 */
-	public static function fromWorldPositions(Vector3 $place, Vector3 $pos1, Vector3 $pos2): DynamicBlockListSelection
+	public static function fromWorldPositions(OffGridBlockVector $place, BlockVector $pos1, BlockVector $pos2): DynamicBlockListSelection
 	{
-		return new self($pos2->subtractVector($pos1)->up(World::Y_MIN), $pos1->down(World::Y_MIN), $pos1->subtractVector($place)->down(World::Y_MIN));
+		return new self($pos2->diff($pos1), $pos1->diff(new BlockVector(0, World::Y_MIN, 0)), $pos1->diff($place)->down(World::Y_MIN));
 	}
 
 	/**
@@ -41,7 +48,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public function getNeededChunks(): array
 	{
-		return $this->getNonEmptyChunks($this->getPos1()->addVector($this->getPoint()), $this->getPos2()->addVector($this->getPoint()));
+		return $this->getNonEmptyChunks($this->getPos1()->offset($this->getPoint()), $this->getPos2()->offset($this->getPoint()));
 	}
 
 	/**
@@ -51,7 +58,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public function asShapeConstructors(Closure $closure, SelectionContext $context): Generator
 	{
-		yield new CubicConstructor($closure, $this->getPos1()->addVector($this->getPoint()), $this->getPos2()->addVector($this->getPoint()));
+		yield new CubicConstructor($closure, $this->getPos1()->offset($this->getPoint()), $this->getPos2()->offset($this->getPoint()));
 	}
 
 	/**
@@ -62,37 +69,37 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	{
 		$min = VectorUtils::getChunkPosition($chunk);
 		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		return $this->getTiles(Vector3::maxComponents($this->getPos1(), $min->subtractVector($this->getPoint())), Vector3::minComponents($this->getPos2(), $max->subtractVector($this->getPoint())));
+		return $this->getTiles(BlockVector::maxComponents($this->getPos1(), $min->offset($this->getPoint()->negate())), BlockVector::minComponents($this->getPos2(), $max->offset($this->getPoint()->negate())));
 	}
 
 	/**
-	 * @return Vector3
+	 * @return BlockOffsetVector
 	 */
-	public function getPoint(): Vector3
+	public function getPoint(): BlockOffsetVector
 	{
 		return $this->point;
 	}
 
 	/**
-	 * @param Vector3 $point
+	 * @param BlockOffsetVector $point
 	 */
-	public function setPoint(Vector3 $point): void
+	public function setPoint(BlockOffsetVector $point): void
 	{
 		$this->point = $point;
 	}
 
 	/**
-	 * @return Vector3
+	 * @return BlockOffsetVector
 	 */
-	public function getWorldOffset(): Vector3
+	public function getWorldOffset(): BlockOffsetVector
 	{
 		return $this->offset;
 	}
 
 	/**
-	 * @param Vector3 $offset
+	 * @param BlockOffsetVector $offset
 	 */
-	public function setWorldOffset(Vector3 $offset): void
+	public function setWorldOffset(BlockOffsetVector $offset): void
 	{
 		$this->offset = $offset;
 	}
@@ -104,8 +111,8 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	{
 		parent::putData($stream);
 
-		$stream->putVector($this->point);
-		$stream->putVector($this->offset);
+		$stream->putBlockVector($this->point);
+		$stream->putBlockVector($this->offset);
 	}
 
 	/**
@@ -115,13 +122,13 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	{
 		parent::parseData($stream);
 
-		$this->point = $stream->getVector();
-		$this->offset = $stream->getVector();
+		$this->point = $stream->getOffsetVector();
+		$this->offset = $stream->getOffsetVector();
 	}
 
 	public function createSafeClone(): DynamicBlockListSelection
 	{
-		$clone = new self($this->getPos2(), $this->getWorldOffset(), $this->getPoint());
+		$clone = new self($this->getPos2()->diff(new BlockVector(0, World::Y_MIN, 0)), $this->getWorldOffset(), $this->getPoint());
 		foreach ($this->getManager()->getChunks() as $hash => $chunk) {
 			$clone->getManager()->setChunk($hash, $chunk);
 		}

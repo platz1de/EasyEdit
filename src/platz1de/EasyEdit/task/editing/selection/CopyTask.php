@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -16,7 +17,6 @@ use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
-use pocketmine\math\Vector3;
 
 class CopyTask extends SelectionEditTask
 {
@@ -24,10 +24,10 @@ class CopyTask extends SelectionEditTask
 
 	/**
 	 * @param Selection             $selection
-	 * @param Vector3               $position
+	 * @param OffGridBlockVector    $position
 	 * @param SelectionContext|null $context
 	 */
-	public function __construct(Selection $selection, private Vector3 $position, ?SelectionContext $context = null)
+	public function __construct(Selection $selection, private OffGridBlockVector $position, ?SelectionContext $context = null)
 	{
 		parent::__construct($selection, $context);
 	}
@@ -78,9 +78,9 @@ class CopyTask extends SelectionEditTask
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$result = $this->result;
-		$ox = $result->getWorldOffset()->getFloorX();
-		$oy = $result->getWorldOffset()->getFloorY();
-		$oz = $result->getWorldOffset()->getFloorZ();
+		$ox = $result->getWorldOffset()->x;
+		$oy = $result->getWorldOffset()->y;
+		$oz = $result->getWorldOffset()->z;
 		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
@@ -89,13 +89,13 @@ class CopyTask extends SelectionEditTask
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putVector($this->position);
+		$stream->putBlockVector($this->position);
 		parent::putData($stream);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->position = $stream->getVector();
+		$this->position = $stream->getOffGridBlockVector();
 		parent::parseData($stream);
 	}
 

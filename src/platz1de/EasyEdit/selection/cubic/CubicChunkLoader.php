@@ -15,13 +15,8 @@ trait CubicChunkLoader
 		$start = $this->getPos1();
 		$end = $this->getPos2();
 
-		//if ($this instanceof Patterned) {
-		//	$start = $start->subtract(1, 1, 1);
-		//	$end = $end->add(1, 1, 1);
-		//}
-
-		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
-			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
+		for ($x = $start->x >> 4; $x <= $end->x >> 4; $x++) {
+			for ($z = $start->z >> 4; $z <= $end->z >> 4; $z++) {
 				$chunks[] = World::chunkHash($x, $z);
 			}
 		}

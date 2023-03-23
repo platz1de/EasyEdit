@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\block\BlockType;
 use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
@@ -60,7 +61,7 @@ class CommandFlagCollection
 		return $flag->getArgument();
 	}
 
-	public function getVectorFlag(string $name): Vector3
+	public function getVectorFlag(string $name): OffGridBlockVector
 	{
 		$flag = $this->flags[$name];
 		if (!$flag instanceof VectorCommandFlag) {

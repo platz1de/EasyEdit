@@ -2,29 +2,25 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\math\Vector3;
-use pocketmine\world\Position;
 
 class DynamicStoredPasteTask extends ExecutableTask
 {
-	private string $world;
-	private Vector3 $position;
 	private DynamicPasteTask $executor;
 
 	/**
 	 * @param StoredSelectionIdentifier $saveId
-	 * @param Position                  $position
+	 * @param string                    $world
+	 * @param OffGridBlockVector        $position
 	 * @param bool                      $keep
 	 * @param int                       $mode
 	 */
-	public function __construct(private StoredSelectionIdentifier $saveId, Position $position, private bool $keep, private int $mode = DynamicPasteTask::MODE_REPLACE_ALL)
+	public function __construct(private StoredSelectionIdentifier $saveId, private string $world, private OffGridBlockVector $position, private bool $keep, private int $mode = DynamicPasteTask::MODE_REPLACE_ALL)
 	{
-		$this->world = $position->getWorld()->getFolderName();
-		$this->position = $position->asVector3();
 		parent::__construct();
 	}
 
@@ -55,7 +51,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	{
 		$stream->putString($this->saveId->fastSerialize());
 		$stream->putString($this->world);
-		$stream->putVector($this->position);
+		$stream->putBlockVector($this->position);
 		$stream->putBool($this->keep);
 		$stream->putInt($this->mode);
 	}
@@ -64,7 +60,7 @@ class DynamicStoredPasteTask extends ExecutableTask
 	{
 		$this->saveId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 		$this->world = $stream->getString();
-		$this->position = $stream->getVector();
+		$this->position = $stream->getOffGridBlockVector();
 		$this->keep = $stream->getBool();
 		$this->mode = $stream->getInt();
 	}

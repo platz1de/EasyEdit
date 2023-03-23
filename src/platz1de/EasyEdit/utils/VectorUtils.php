@@ -78,27 +78,27 @@ class VectorUtils
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $y
-	 * @param int     $z
-	 * @param Vector3 $min
-	 * @param Vector3 $max
+	 * @param int         $x
+	 * @param int         $y
+	 * @param int         $z
+	 * @param BlockVector $min
+	 * @param BlockVector $max
 	 */
-	public static function adjustBoundaries(int $x, int $y, int $z, Vector3 $min, Vector3 $max): void
+	public static function adjustBoundaries(int $x, int $y, int $z, BlockVector $min, BlockVector $max): void
 	{
-		if ($x < $min->getX()) {
+		if ($x < $min->x) {
 			$min->x = $x;
-		} elseif ($x > $max->getX()) {
+		} elseif ($x > $max->x) {
 			$max->x = $x;
 		}
-		if ($y < $min->getY()) {
+		if ($y < $min->x) {
 			$min->y = $y;
-		} elseif ($y > $max->getY()) {
+		} elseif ($y > $max->x) {
 			$max->y = $y;
 		}
-		if ($z < $min->getZ()) {
+		if ($z < $min->x) {
 			$min->z = $z;
-		} elseif ($z > $max->getZ()) {
+		} elseif ($z > $max->x) {
 			$max->z = $z;
 		}
 	}

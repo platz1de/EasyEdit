@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\world;
 
-use pocketmine\math\Vector3;
+use platz1de\EasyEdit\math\BlockVector;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\Limits;
 use pocketmine\world\format\SubChunk;
@@ -135,15 +135,15 @@ class ChunkController
 	/**
 	 * @return int[]
 	 */
-	public function collectPalette(Vector3 $pos1, Vector3 $pos2): array
+	public function collectPalette(BlockVector $pos1, BlockVector $pos2): array
 	{
 		$palette = [];
-		$pos1 = $pos1->divide(16)->floor();
-		$pos2 = $pos2->divide(16)->floor();
-		for ($x = $pos1->getFloorX(); $x <= $pos2->getFloorX(); $x++) {
-			for ($z = $pos1->getFloorZ(); $z <= $pos2->getFloorZ(); $z++) {
+		$pos1 = $pos1->toChunk();
+		$pos2 = $pos2->toChunk();
+		for ($x = $pos1->x; $x <= $pos2->x; $x++) {
+			for ($z = $pos1->z; $z <= $pos2->z; $z++) {
 				$chunk = $this->world->getChunk(World::chunkHash($x, $z));
-				for ($y = $pos1->getFloorY(); $y <= $pos2->getFloorY(); $y++) {
+				for ($y = $pos1->y; $y <= $pos2->y; $y++) {
 					$subChunk = $chunk->getChunk()->getSubChunk($y);
 					$p = $subChunk->getBlockLayers();
 					if ($p !== []) {

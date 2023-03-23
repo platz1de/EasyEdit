@@ -4,11 +4,11 @@ namespace platz1de\EasyEdit\command\flags;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
-use pocketmine\math\Vector3;
 
 /**
- * @extends ValuedCommandFlag<Vector3>
+ * @extends ValuedCommandFlag<OffGridBlockVector>
  */
 class VectorCommandFlag extends ValuedCommandFlag
 {
@@ -24,7 +24,7 @@ class VectorCommandFlag extends ValuedCommandFlag
 		if (count($vector) !== 3) {
 			throw new InvalidUsageException($command);
 		}
-		$this->setArgument(new Vector3((int) $vector[0], (int) $vector[1], (int) $vector[2]));
+		$this->setArgument(new OffGridBlockVector((int) $vector[0], (int) $vector[1], (int) $vector[2]));
 		return $this;
 	}
 }

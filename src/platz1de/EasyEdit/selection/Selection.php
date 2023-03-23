@@ -4,36 +4,37 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\VectorUtils;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
-use pocketmine\math\Vector3;
+use pocketmine\math\Axis;
 
 abstract class Selection
 {
 	use ReferencedWorldHolder;
 
-	protected Vector3 $pos1;
-	protected Vector3 $pos2;
-	protected Vector3 $selected1;
-	protected Vector3 $selected2;
+	protected BlockVector $pos1;
+	protected BlockVector $pos2;
+	protected BlockVector $selected1;
+	protected BlockVector $selected2;
 
 	/**
 	 * Selection constructor.
-	 * @param string       $world
-	 * @param Vector3|null $pos1
-	 * @param Vector3|null $pos2
+	 * @param string           $world
+	 * @param BlockVector|null $pos1
+	 * @param BlockVector|null $pos2
 	 */
-	public function __construct(string $world, ?Vector3 $pos1, ?Vector3 $pos2)
+	public function __construct(string $world, ?BlockVector $pos1, ?BlockVector $pos2)
 	{
 		$this->world = $world;
 
 		if ($pos1 !== null) {
-			$this->pos1 = clone($this->selected1 = $pos1->floor());
+			$this->pos1 = clone($this->selected1 = $pos1);
 		}
 		if ($pos2 !== null) {
-			$this->pos2 = clone($this->selected2 = $pos2->floor());
+			$this->pos2 = clone($this->selected2 = $pos2);
 		}
 
 		$this->update();
@@ -44,25 +45,44 @@ abstract class Selection
 	 */
 	abstract public function getNeededChunks(): array;
 
-	public function getPos1(): Vector3
+	/**
+	 * @return BlockVector
+	 */
+	public function getPos1(): BlockVector
 	{
 		return $this->pos1;
 	}
 
 	/**
-	 * @return Vector3
+	 * @return BlockVector
 	 */
-	public function getSize(): Vector3
+	public function getPos2(): BlockVector
 	{
-		return $this->getPos2()->subtractVector($this->getPos1())->add(1, 1, 1);
+		return $this->pos2;
 	}
 
 	/**
-	 * @return Vector3
+	 * @return BlockOffsetVector
 	 */
-	public function getBottomCenter(): Vector3
+	public function getSize(): BlockOffsetVector
 	{
-		return $this->getPos1()->addVector($this->getPos2())->divide(2)->withComponents(null, $this->getPos1()->getY(), null);
+		return $this->getPos2()->diff($this->getPos1())->cubicSize();
+	}
+
+	/**
+	 * @return BlockVector
+	 */
+	public function getCenter(): BlockVector
+	{
+		return new BlockVector(floor(($this->getPos1()->x + $this->getPos2()->x) / 2), floor(($this->getPos1()->y + $this->getPos2()->y) / 2), floor(($this->getPos1()->z + $this->getPos2()->z) / 2));
+	}
+
+	/**
+	 * @return BlockVector
+	 */
+	public function getBottomCenter(): BlockVector
+	{
+		return $this->getCenter()->setComponent(Axis::Y, $this->getPos1()->y);
 	}
 
 	/**
@@ -87,16 +107,16 @@ abstract class Selection
 	protected function update(): void
 	{
 		if ($this->isValid()) {
-			$pos = $this->pos1;
-			$this->pos1 = VectorUtils::enforceHeight(Vector3::minComponents($this->pos1, $this->pos2));
-			$this->pos2 = VectorUtils::enforceHeight(Vector3::maxComponents($pos, $this->pos2));
+			$temp = $this->pos1;
+			$this->pos1 = BlockVector::minComponents($this->pos1, $this->pos2);
+			$this->pos2 = BlockVector::maxComponents($temp, $this->pos2);
 		}
 	}
 
 	/**
-	 * @param Vector3 $pos1
+	 * @param BlockVector $pos1
 	 */
-	public function setPos1(Vector3 $pos1): void
+	public function setPos1(BlockVector $pos1): void
 	{
 		$this->pos1 = clone($this->selected1 = $pos1);
 		if (isset($this->selected2)) {
@@ -107,9 +127,9 @@ abstract class Selection
 	}
 
 	/**
-	 * @param Vector3 $pos2
+	 * @param BlockVector $pos2
 	 */
-	public function setPos2(Vector3 $pos2): void
+	public function setPos2(BlockVector $pos2): void
 	{
 		if (isset($this->selected1)) {
 			$this->pos1 = clone($this->selected1);
@@ -120,20 +140,12 @@ abstract class Selection
 	}
 
 	/**
-	 * @return Vector3
-	 */
-	public function getPos2(): Vector3
-	{
-		return $this->pos2;
-	}
-
-	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putVector($this->pos1);
-		$stream->putVector($this->pos2);
+		$stream->putBlockVector($this->pos1);
+		$stream->putBlockVector($this->pos2);
 	}
 
 	/**
@@ -141,8 +153,8 @@ abstract class Selection
 	 */
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->pos1 = $stream->getVector();
-		$this->pos2 = $stream->getVector();
+		$this->pos1 = $stream->getBlockVector();
+		$this->pos2 = $stream->getBlockVector();
 	}
 
 	/**

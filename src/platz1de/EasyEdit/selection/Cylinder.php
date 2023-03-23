@@ -4,36 +4,27 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\constructor\CylindricalConstructor;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\constructor\SingleBlockConstructor;
 use platz1de\EasyEdit\selection\constructor\TubeConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\math\Vector3;
 
-class Cylinder extends Selection implements Patterned
+class Cylinder extends Selection
 {
 	use CubicChunkLoader;
 
-	private Vector3 $point;
-	private float $radius;
-	private int $height;
-
 	/**
-	 * @param string  $world
-	 * @param Vector3 $point
-	 * @param float   $radius
-	 * @param int     $height
-	 * @return Cylinder
+	 * @param string             $world
+	 * @param OffGridBlockVector $point
+	 * @param float              $radius
+	 * @param int                $height
 	 */
-	public static function aroundPoint(string $world, Vector3 $point, float $radius, int $height): Cylinder
+	public function __construct(string $world, private OffGridBlockVector $point, private float $radius, private int $height)
 	{
-		$cylinder = new Cylinder($world, $point->subtract($radius, 0, $radius), $point->add($radius, $height - 1, $radius));
-		$cylinder->setPoint($point);
-		$cylinder->setRadius($radius);
-		$cylinder->setHeight($height);
-		return $cylinder;
+		parent::__construct($world, $point->add(-$radius, 0, -$radius)->forceIntoGrid(), $point->add($radius, $height - 1, $radius)->forceIntoGrid());
 	}
 
 	/**
@@ -60,24 +51,24 @@ class Cylinder extends Selection implements Patterned
 				yield new TubeConstructor($closure, $this->getPoint(), $this->getRadius(), $this->getHeight(), $context->getSideThickness());
 			}
 
-			if ($context->includesCenter()) {
-				yield new SingleBlockConstructor($closure, $this->getPoint());
+			if ($context->includesCenter() && $this->getPoint()->isInGrid()) {
+				yield new SingleBlockConstructor($closure, $this->getPoint()->forceIntoGrid());
 			}
 		}
 	}
 
 	/**
-	 * @param Vector3 $point
+	 * @param OffGridBlockVector $point
 	 */
-	public function setPoint(Vector3 $point): void
+	public function setPoint(OffGridBlockVector $point): void
 	{
 		$this->point = $point;
 	}
 
 	/**
-	 * @return Vector3
+	 * @return OffGridBlockVector
 	 */
-	public function getPoint(): Vector3
+	public function getPoint(): OffGridBlockVector
 	{
 		return $this->point;
 	}
@@ -121,7 +112,7 @@ class Cylinder extends Selection implements Patterned
 	{
 		parent::putData($stream);
 
-		$stream->putVector($this->point);
+		$stream->putBlockVector($this->point);
 		$stream->putFloat($this->radius);
 		$stream->putInt($this->height);
 	}
@@ -133,9 +124,8 @@ class Cylinder extends Selection implements Patterned
 	{
 		parent::parseData($stream);
 
-		$this->point = $stream->getVector();
+		$this->point = $stream->getOffGridBlockVector();
 		$this->radius = $stream->getFloat();
 		$this->height = $stream->getInt();
 	}
-
 }

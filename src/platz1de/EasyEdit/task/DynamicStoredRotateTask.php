@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
-use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
@@ -12,7 +12,6 @@ use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
-use pocketmine\math\Vector3;
 use pocketmine\utils\InternetException;
 use RuntimeException;
 
@@ -54,14 +53,23 @@ class DynamicStoredRotateTask extends ExecutableTask
 			return;
 		}
 
-		$rotated = new DynamicBlockListSelection(new Vector3($selection->getPos2()->getZ(), $selection->getPos2()->getY(), $selection->getPos2()->getX()), $selection->getWorldOffset(), new Vector3(-$selection->getPos2()->getZ() - $selection->getPoint()->getZ(), $selection->getPoint()->getY(), $selection->getPoint()->getX()));
-		$selection->setPoint(Vector3::zero());
-		$selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $rotated, $map): void {
+		$rotated = $selection->createSafeClone();
+		$rotated->free();
+		$rotated->setPoint(new BlockOffsetVector(-$selection->getPos2()->z - $selection->getPoint()->z, $selection->getPoint()->y, $selection->getPoint()->x));
+		$selection->setPoint(BlockOffsetVector::zero());
+		$dz = $selection->getPos2()->z;
+		$constructors = $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dz, $selection, $rotated, $map): void {
 			$block = $selection->getIterator()->getBlock($x, $y, $z);
-			$rotated->addBlock($selection->getPos2()->getFloorZ() - $z, $y, $x, $map[$block] ?? throw new RuntimeException("Missing block $block"));
+			$rotated->addBlock($dz - $z, $y, $x, $map[$block] ?? throw new RuntimeException("Missing block $block"));
 		}, SelectionContext::full());
+		//TODO: add possibility to response to requests
+		foreach ($selection->getNeededChunks() as $chunk) {
+			foreach ($constructors as $constructor) {
+				$constructor->moveTo($chunk);
+			}
+		}
 		foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
-			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->getFloorZ()));
+			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->z));
 		}
 		StorageModule::forceStore($this->saveId, $rotated);
 		$this->sendOutputPacket(new MessageSendData("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())]));

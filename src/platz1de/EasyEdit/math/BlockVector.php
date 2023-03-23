@@ -14,7 +14,7 @@ class BlockVector extends BaseVector
 		$y = min(max($y, World::Y_MIN), World::Y_MAX - 1);
 	}
 
-	public function diff(BlockVector $other): BlockOffsetVector
+	public function diff(BlockVector|OffGridBlockVector $other): BlockOffsetVector
 	{
 		return new BlockOffsetVector($this->x - $other->x, $this->y - $other->y, $this->z - $other->z);
 	}
@@ -46,5 +46,19 @@ class BlockVector extends BaseVector
 		$chunkX = ($chunkX << 4) + 15;
 		$chunkZ = ($chunkZ << 4) + 15;
 		return new BlockVector(min($chunkX, $this->x), $this->y, min($chunkZ, $this->z));
+	}
+
+	/**
+	 * Not really a block, but we really don't need another class just for like 2 usages, it's always in-bounds anyway
+	 * @return BlockVector
+	 */
+	public function toChunk(): BlockVector
+	{
+		return new BlockVector($this->x >> 4, $this->y >> 4, $this->z >> 4);
+	}
+
+	public function getChunkHash(): int
+	{
+		return World::chunkHash($this->x >> 4, $this->z >> 4);
 	}
 }

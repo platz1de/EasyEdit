@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\brush;
 
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
@@ -15,7 +16,6 @@ use platz1de\EasyEdit\task\editing\selection\SmoothTask;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
-use pocketmine\world\Position;
 use Throwable;
 
 class BrushHandler
@@ -41,19 +41,21 @@ class BrushHandler
 		}
 		if ($target !== null) {
 			$session = SessionManager::get($player);
+			$point = OffGridBlockVector::fromVector($target->getPosition());
+			$world = $player->getWorld()->getFolderName();
 			try {
 				switch (self::nameToIdentifier($brush->getString("brushType", ""))) {
 					case self::BRUSH_SPHERE:
-						$session->runTask(new SetTask(Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
+						$session->runTask(new SetTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
 						break;
 					case self::BRUSH_SMOOTH:
-						$session->runTask(new SmoothTask(Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0))));
+						$session->runTask(new SmoothTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0))));
 						break;
 					case self::BRUSH_NATURALIZE:
-						$session->runTask(new SetTask(Sphere::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0)), new NaturalizePattern(PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))));
+						$session->runTask(new SetTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0)), new NaturalizePattern(PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))));
 						break;
 					case self::BRUSH_CYLINDER:
-						$session->runTask(new SetTask(Cylinder::aroundPoint($player->getWorld()->getFolderName(), $target->getPosition(), $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
+						$session->runTask(new SetTask(new Cylinder($world, $point, $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
 						break;
 					case self::BRUSH_PASTE:
 						$clipboard = SessionManager::get($player)->getClipboard();
@@ -61,7 +63,7 @@ class BrushHandler
 							$session->sendMessage("no-clipboard");
 							return;
 						}
-						$session->runTask(new DynamicStoredPasteTask($clipboard, Position::fromObject($target->getPosition()->up(), $target->getPosition()->getWorld()), true, $brush->getByte("isInsert", 0)));
+						$session->runTask(new DynamicStoredPasteTask($clipboard, $world, $point->up(), true, $brush->getByte("isInsert", 0)));
 				}
 			} catch (ParseError $e) {
 				$session->sendMessage("pattern-invalid", ["{message}" => $e->getMessage()]);

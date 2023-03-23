@@ -9,7 +9,7 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use pocketmine\math\Facing;
 
-class Cube extends Selection implements Patterned
+class Cube extends Selection
 {
 	use CubicChunkLoader;
 

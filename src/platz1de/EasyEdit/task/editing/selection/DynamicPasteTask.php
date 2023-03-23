@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
 use InvalidArgumentException;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -16,7 +17,6 @@ use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
-use pocketmine\math\Vector3;
 
 class DynamicPasteTask extends SelectionEditTask
 {
@@ -35,12 +35,12 @@ class DynamicPasteTask extends SelectionEditTask
 	/**
 	 * @param string                    $world
 	 * @param DynamicBlockListSelection $selection
-	 * @param Vector3                   $position
+	 * @param OffGridBlockVector        $position
 	 * @param int                       $mode
 	 */
-	public function __construct(string $world, DynamicBlockListSelection $selection, Vector3 $position, private int $mode = self::MODE_REPLACE_ALL)
+	public function __construct(string $world, DynamicBlockListSelection $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
-		$selection->setPoint($selection->getPoint()->addVector($position));
+		$selection->setPoint($position->offset($selection->getPoint())->diff(OffGridBlockVector::zero()));
 		parent::__construct($selection);
 		$this->world = $world;
 	}
@@ -63,7 +63,7 @@ class DynamicPasteTask extends SelectionEditTask
 
 		$place = $this->selection->getPoint();
 		foreach ($this->selection->getOffsetTiles($chunk) as $tile) {
-			$handler->addTile(TileUtils::offsetCompound($tile, $place->getFloorX(), $place->getFloorY(), $place->getFloorZ()));
+			$handler->addTile(TileUtils::offsetCompound($tile, $place->x, $place->y, $place->z));
 		}
 	}
 
@@ -75,9 +75,9 @@ class DynamicPasteTask extends SelectionEditTask
 	{
 		$selection = $this->selection;
 		$place = $selection->getPoint();
-		$ox = $place->getFloorX();
-		$oy = $place->getFloorY();
-		$oz = $place->getFloorZ();
+		$ox = $place->x;
+		$oy = $place->y;
+		$oz = $place->z;
 		$ignore = HeightMapCache::getIgnore();
 		yield from match ($this->mode) {
 			self::MODE_REPLACE_ALL => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $selection): void {
@@ -113,7 +113,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->addVector($this->selection->getPoint()), $this->selection->getPos2()->addVector($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->offset($this->selection->getPoint()), $this->selection->getPos2()->offset($this->selection->getPoint()));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

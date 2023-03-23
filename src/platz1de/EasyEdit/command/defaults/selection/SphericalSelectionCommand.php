@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\command\defaults\selection;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FloatCommandFlag;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\Session;
@@ -30,7 +31,7 @@ abstract class SphericalSelectionCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		if ($flags->hasFlag("radius")) {
-			$this->processSelection($session, Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius")));
+			$this->processSelection($session, new Sphere($session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getFloatFlag("radius")));
 		} else {
 			$this->processSelection($session, $session->getSelection());
 		}

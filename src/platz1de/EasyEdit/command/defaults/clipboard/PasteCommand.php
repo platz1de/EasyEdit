@@ -2,15 +2,12 @@
 
 namespace platz1de\EasyEdit\command\defaults\clipboard;
 
-use Generator;
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
-use platz1de\EasyEdit\command\flags\FacingCommandFlag;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
-use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
@@ -28,7 +25,7 @@ class PasteCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new DynamicStoredPasteTask($session->getClipboard(), $session->asPlayer()->getPosition(), true, $flags->getIntFlag("mode")));
+		$session->runTask(new DynamicStoredPasteTask($session->getClipboard(), $session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), true, $flags->getIntFlag("mode")));
 	}
 
 	/**

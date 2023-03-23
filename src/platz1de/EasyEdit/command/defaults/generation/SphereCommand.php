@@ -9,6 +9,7 @@ use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\Session;
@@ -28,7 +29,7 @@ class SphereCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		$pattern = $flags->hasFlag("hollow") ? new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")]) : $flags->getPatternFlag("pattern");
-		$session->runTask(new SetTask(Sphere::aroundPoint($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $flags->getFloatFlag("radius")), $pattern));
+		$session->runTask(new SetTask(new Sphere($session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getFloatFlag("radius")), $pattern));
 	}
 
 	/**

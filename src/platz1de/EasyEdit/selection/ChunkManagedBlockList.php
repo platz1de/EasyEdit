@@ -2,14 +2,13 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use BadMethodCallException;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\data\bedrock\block\BlockStateData;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 abstract class ChunkManagedBlockList extends BlockListSelection
@@ -19,15 +18,15 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 
 	/**
 	 * BlockListSelection constructor.
-	 * @param string  $world
-	 * @param Vector3 $pos1
-	 * @param Vector3 $pos2
+	 * @param string      $world
+	 * @param BlockVector $pos1
+	 * @param BlockVector $pos2
 	 */
-	public function __construct(string $world, Vector3 $pos1, Vector3 $pos2)
+	public function __construct(string $world, BlockVector $pos1, BlockVector $pos2)
 	{
 		parent::__construct($world, $pos1, $pos2);
 		$this->manager = new ReferencedChunkManager($world);
-		$this->getManager()->loadBetween($this->pos1, $this->pos2);
+		$this->getManager()->loadBetween($pos1, $pos2);
 		$this->iterator = new ChunkController($this->manager);
 	}
 
@@ -70,15 +69,15 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	}
 
 	/**
-	 * @param Vector3 $start
-	 * @param Vector3 $end
+	 * @param BlockVector $start
+	 * @param BlockVector $end
 	 * @return int[]
 	 */
-	protected function getNonEmptyChunks(Vector3 $start, Vector3 $end): array
+	protected function getNonEmptyChunks(BlockVector $start, BlockVector $end): array
 	{
 		$chunks = [];
-		for ($x = $start->getX() >> 4; $x <= $end->getX() >> 4; $x++) {
-			for ($z = $start->getZ() >> 4; $z <= $end->getZ() >> 4; $z++) {
+		for ($x = $start->x >> 4; $x <= $end->x >> 4; $x++) {
+			for ($z = $start->z >> 4; $z <= $end->z >> 4; $z++) {
 				$chunk = World::chunkHash($x, $z);
 				if (!$this->manager->getChunk($chunk)->isEmpty()) {
 					$chunks[] = $chunk;

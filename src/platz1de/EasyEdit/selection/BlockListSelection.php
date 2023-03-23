@@ -3,9 +3,9 @@
 namespace platz1de\EasyEdit\selection;
 
 use Generator;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
 
@@ -36,11 +36,11 @@ abstract class BlockListSelection extends Selection
 	}
 
 	/**
-	 * @param Vector3 $min
-	 * @param Vector3 $max
+	 * @param BlockVector $min
+	 * @param BlockVector $max
 	 * @return Generator<CompoundTag>
 	 */
-	public function getTiles(Vector3 $min, Vector3 $max): Generator
+	public function getTiles(BlockVector $min, BlockVector $max): Generator
 	{
 		foreach ($this->tiles as $hash => $tile) {
 			World::getBlockXYZ($hash, $x, $y, $z);

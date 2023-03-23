@@ -9,12 +9,12 @@ use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
-use pocketmine\math\Vector3;
 
 class CubeCommand extends SimpleFlagArgumentCommand
 {
@@ -31,8 +31,9 @@ class CubeCommand extends SimpleFlagArgumentCommand
 	{
 		$pattern = $flags->hasFlag("hollow") ? new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")]) : $flags->getPatternFlag("pattern");
 		$size = $flags->getFloatFlag("size") - 1;
-		$offset = new Vector3($size / 2, $size / 2, $size / 2);
-		$session->runTask(new SetTask(new Cube($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition()->addVector($offset), $session->asPlayer()->getPosition()->subtractVector($offset)), $pattern));
+		$offsetMax = new BlockOffsetVector(ceil($size / 2), ceil($size / 2), ceil($size / 2));
+		$offsetMin = new BlockOffsetVector(floor($size / 2), floor($size / 2), floor($size / 2));
+		$session->runTask(new SetTask(new Cube($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMax), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMin->negate())), $pattern));
 	}
 
 	/**

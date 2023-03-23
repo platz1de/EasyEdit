@@ -9,6 +9,7 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\stack\StackTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
@@ -26,7 +27,7 @@ class StackCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new StackTask($session->getCube(), $flags->getVectorFlag("vector"), $flags->hasFlag("insert")));
+		$session->runTask(new StackTask($session->getCube(), $flags->getVectorFlag("vector")->diff(OffGridBlockVector::zero()), $flags->hasFlag("insert")));
 	}
 
 	/**

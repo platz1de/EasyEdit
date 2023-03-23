@@ -7,7 +7,6 @@ use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\utils\VectorUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector2;
@@ -58,17 +57,17 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		$size = $this->selection->getSize();
 		//We are guaranteed to have a size bigger than one chunk (at least 8 actually)
 		if ($this->axis === Axis::X) {
-			$offsetMin = MixedUtils::positiveModulo(($x << 4) - $min->getFloorX(), $size->getFloorX());
-			$offsetMax = MixedUtils::positiveModulo(($x << 4) - $min->getFloorX() + 15, $size->getFloorX());
+			$offsetMin = MixedUtils::positiveModulo(($x << 4) - $min->x, $size->y);
+			$offsetMax = MixedUtils::positiveModulo(($x << 4) - $min->x + 15, $size->y);
 		} else {
-			$offsetMin = MixedUtils::positiveModulo(($z << 4) - $min->getFloorZ(), $size->getFloorZ());
-			$offsetMax = MixedUtils::positiveModulo(($z << 4) - $min->getFloorZ() + 15, $size->getFloorZ());
+			$offsetMin = MixedUtils::positiveModulo(($z << 4) - $min->z, $size->z);
+			$offsetMax = MixedUtils::positiveModulo(($z << 4) - $min->z + 15, $size->z);
 		}
 		if ($offsetMin < $offsetMax) {
 			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), 15);
 		} else {
 			//Jump from end to start of origin
-			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), (int) VectorUtils::getVectorAxis($size, $this->axis) - $offsetMin - 1);
+			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), $size->getComponent($this->axis) - $offsetMin - 1);
 			$this->orderGroupChunk($chunk, (new Vector2($x << 4, $z << 4))->add($this->axis === Axis::X ? $size->x - $offsetMin : 0, $this->axis === Axis::Z ? $size->z - $offsetMin : 0), $offsetMax);
 		}
 		return true;
@@ -84,12 +83,12 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		$size = $this->selection->getSize();
 		$min = $this->selection->getPos1();
 		if ($this->axis === Axis::X) {
-			$minX = ($min->x + MixedUtils::positiveModulo($start->getFloorX() - $min->getFloorX(), $size->getFloorX())) >> 4;
-			$maxX = ($min->x + MixedUtils::positiveModulo($start->getFloorX() + $offset - $min->getFloorX(), $size->getFloorX())) >> 4;
+			$minX = ($min->x + MixedUtils::positiveModulo($start->getFloorX() - $min->x, $size->x)) >> 4;
+			$maxX = ($min->x + MixedUtils::positiveModulo($start->getFloorX() + $offset - $min->x, $size->x)) >> 4;
 			$minZ = $maxZ = $start->y >> 4;
 		} else {
-			$minZ = ($min->z + MixedUtils::positiveModulo($start->getFloorY() - $min->getFloorZ(), $size->getFloorZ())) >> 4;
-			$maxZ = ($min->z + MixedUtils::positiveModulo($start->getFloorY() + $offset - $min->getFloorZ(), $size->getFloorZ())) >> 4;
+			$minZ = ($min->z + MixedUtils::positiveModulo($start->getFloorY() - $min->z, $size->z)) >> 4;
+			$maxZ = ($min->z + MixedUtils::positiveModulo($start->getFloorY() + $offset - $min->z, $size->z)) >> 4;
 			$minX = $maxX = $start->x >> 4;
 		}
 		if ($minX === $maxX && $minZ === $maxZ && World::chunkHash($minX, $minZ) === $chunk) {

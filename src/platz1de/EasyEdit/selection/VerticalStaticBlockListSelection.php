@@ -2,17 +2,15 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
-use pocketmine\world\World;
+use pocketmine\math\Axis;
 
 class VerticalStaticBlockListSelection extends StaticBlockListSelection
 {
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void
 	{
 		parent::addBlock($x, $y, $z, $id, $overwrite);
-		$this->pos1->withComponents(null, min($y, $this->pos1->y), null);
-		$this->pos2->withComponents(null, max($y, $this->pos2->y), null);
+		$this->pos1 = $this->pos1->setComponent(Axis::Y, min($y, $this->pos1->y));
+		$this->pos2 = $this->pos2->setComponent(Axis::Y, max($y, $this->pos2->y));
 	}
 
 	//NOTE: this selection is split into static block lists

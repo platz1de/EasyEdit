@@ -3,6 +3,8 @@
 namespace platz1de\EasyEdit\task\editing\selection\move;
 
 use Generator;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
@@ -13,7 +15,6 @@ use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class MoveTask extends SelectionEditTask
@@ -21,10 +22,10 @@ class MoveTask extends SelectionEditTask
 	use SettingNotifier;
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $direction
+	 * @param Selection         $selection
+	 * @param BlockOffsetVector $direction
 	 */
-	public function __construct(Selection $selection, private Vector3 $direction)
+	public function __construct(Selection $selection, private BlockOffsetVector $direction)
 	{
 		parent::__construct($selection);
 	}
@@ -43,9 +44,9 @@ class MoveTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$dx = $this->direction->getFloorX();
-		$dy = $this->direction->getFloorY();
-		$dz = $this->direction->getFloorZ();
+		$dx = $this->direction->x;
+		$dy = $this->direction->y;
+		$dz = $this->direction->z;
 		//TODO: change order of iteration to optimize performance
 		$air = VanillaBlocks::AIR()->getStateId();
 		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $air): void {
@@ -58,12 +59,12 @@ class MoveTask extends SelectionEditTask
 
 	protected function sortChunks(array $chunks): array
 	{
-		if ($this->direction->getFloorX() === 0 && $this->direction->getFloorZ() !== 0) {
+		if ($this->direction->x === 0 && $this->direction->z !== 0) {
 			$z = array_map(static function (int $c): int {
 				World::getXZ($c, $x, $z);
 				return $z;
 			}, $chunks);
-			array_multisort($z, $this->direction->getFloorZ() > 0 ? SORT_DESC : SORT_ASC, $chunks);
+			array_multisort($z, $this->direction->z > 0 ? SORT_DESC : SORT_ASC, $chunks);
 			return $chunks;
 		}
 		$x = array_map(static function (int $c): int {
@@ -74,7 +75,7 @@ class MoveTask extends SelectionEditTask
 			World::getXZ($c, $x, $z);
 			return $z;
 		}, $chunks);
-		array_multisort($x, $this->direction->getFloorX() > 0 ? SORT_DESC : SORT_ASC, $z, $this->direction->getFloorZ() > 0 ? SORT_DESC : SORT_ASC, $chunks);
+		array_multisort($x, $this->direction->x > 0 ? SORT_DESC : SORT_ASC, $z, $this->direction->z > 0 ? SORT_DESC : SORT_ASC, $chunks);
 		return $chunks;
 	}
 
@@ -88,18 +89,18 @@ class MoveTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), Vector3::minComponents($this->getSelection()->getPos1(), $this->getSelection()->getPos1()->addVector($this->direction)), Vector3::maxComponents($this->getSelection()->getPos2(), $this->getSelection()->getPos2()->addVector($this->direction)));
+		return new StaticBlockListSelection($this->getWorld(), BlockVector::minComponents($this->getSelection()->getPos1(), $this->getSelection()->getPos1()->offset($this->direction)), BlockVector::maxComponents($this->getSelection()->getPos2(), $this->getSelection()->getPos2()->offset($this->direction)));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putVector($this->direction);
+		$stream->putBlockVector($this->direction);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->direction = $stream->getVector();
+		$this->direction = $stream->getOffsetVector();
 	}
 }

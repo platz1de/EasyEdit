@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
-use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;

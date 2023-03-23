@@ -5,8 +5,8 @@ namespace platz1de\EasyEdit\selection;
 use BadMethodCallException;
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
-use pocketmine\math\Vector3;
 
 /**
  * Used for tasks that don't produce changes by default
@@ -15,7 +15,7 @@ class NonSavingBlockListSelection extends BlockListSelection
 {
 	public function __construct()
 	{
-		parent::__construct("", Vector3::zero(), Vector3::zero());
+		parent::__construct("", BlockVector::zero(), BlockVector::zero());
 	}
 
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void

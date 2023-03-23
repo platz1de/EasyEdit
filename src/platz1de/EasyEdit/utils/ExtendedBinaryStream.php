@@ -2,6 +2,10 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\math\BaseVector;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\SessionIdentifier;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNbtSerializer;
@@ -33,6 +37,7 @@ class ExtendedBinaryStream extends BinaryStream
 	 */
 	public function putVector(Vector3 $vector): void
 	{
+		//TODO: Remove...
 		$this->putInt($vector->getFloorX());
 		$this->putInt($vector->getFloorY());
 		$this->putInt($vector->getFloorZ());
@@ -44,6 +49,28 @@ class ExtendedBinaryStream extends BinaryStream
 	public function getVector(): Vector3
 	{
 		return new Vector3($this->getInt(), $this->getInt(), $this->getInt());
+	}
+
+	public function putBlockVector(BaseVector $vector): void
+	{
+		$this->putInt($vector->x);
+		$this->putInt($vector->y);
+		$this->putInt($vector->z);
+	}
+
+	public function getBlockVector(): BlockVector
+	{
+		return new BlockVector($this->getInt(), $this->getInt(), $this->getInt());
+	}
+
+	public function getOffGridBlockVector(): OffGridBlockVector
+	{
+		return new OffGridBlockVector($this->getInt(), $this->getInt(), $this->getInt());
+	}
+
+	public function getOffsetVector(): BlockOffsetVector
+	{
+		return new BlockOffsetVector($this->getInt(), $this->getInt(), $this->getInt());
 	}
 
 	/**
@@ -69,7 +96,7 @@ class ExtendedBinaryStream extends BinaryStream
 	{
 		$this->putInt(count($compounds));
 		foreach ($compounds as $hash => $compound) {
-			$this->putInt($hash);
+			$this->putLong($hash);
 			$this->putCompound($compound);
 		}
 	}
@@ -82,7 +109,7 @@ class ExtendedBinaryStream extends BinaryStream
 		$compounds = [];
 		$count = $this->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			$compounds[$this->getInt()] = $this->getCompound();
+			$compounds[$this->getLong()] = $this->getCompound();
 		}
 		return $compounds;
 	}

@@ -2,13 +2,12 @@
 
 namespace platz1de\EasyEdit\task\editing\selection\move;
 
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
-use platz1de\EasyEdit\utils\VectorUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -33,11 +32,11 @@ class MovingChunkHandler extends GroupedChunkHandler
 	private int $last;
 
 	/**
-	 * @param string    $world
-	 * @param Selection $selection
-	 * @param Vector3   $direction
+	 * @param string            $world
+	 * @param Selection         $selection
+	 * @param BlockOffsetVector $direction
 	 */
-	public function __construct(string $world, private Selection $selection, private Vector3 $direction)
+	public function __construct(string $world, private Selection $selection, private BlockOffsetVector $direction)
 	{
 		parent::__construct($world);
 	}
@@ -51,8 +50,8 @@ class MovingChunkHandler extends GroupedChunkHandler
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
 		$this->queue[] = $chunk;
 		$this->groupRequest[$chunk] = [$chunk => $chunk];
-		$min = Vector3::maxComponents($this->selection->getPos1(), VectorUtils::getChunkPosition($chunk))->addVector($this->direction);
-		$max = Vector3::minComponents($this->selection->getPos2(), VectorUtils::getChunkPosition($chunk)->add(15, 0, 15))->addVector($this->direction);
+		$min = $this->selection->getPos1()->forceIntoChunkStart($chunk)->offset($this->direction);
+		$max = $this->selection->getPos2()->forceIntoChunkEnd($chunk)->offset($this->direction);
 		for ($x = $min->x >> 4; $x <= $max->x >> 4; $x++) {
 			for ($z = $min->z >> 4; $z <= $max->z >> 4; $z++) {
 				$c = World::chunkHash($x, $z);

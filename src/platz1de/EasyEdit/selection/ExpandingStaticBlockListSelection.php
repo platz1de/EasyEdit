@@ -2,20 +2,20 @@
 
 namespace platz1de\EasyEdit\selection;
 
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\utils\VectorUtils;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class ExpandingStaticBlockListSelection extends StaticBlockListSelection
 {
 	/**
-	 * @param string  $world
-	 * @param Vector3 $pos
+	 * @param string      $world
+	 * @param BlockVector $pos
 	 */
-	public function __construct(string $world, Vector3 $pos)
+	public function __construct(string $world, BlockVector $pos)
 	{
 		parent::__construct($world, $pos, $pos);
-		$this->getManager()->loadIfNeeded(World::chunkHash($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4));
+		$this->getManager()->loadIfNeeded($pos->getChunkHash());
 	}
 
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void

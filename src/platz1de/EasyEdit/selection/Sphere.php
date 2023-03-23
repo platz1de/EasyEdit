@@ -4,6 +4,8 @@ namespace platz1de\EasyEdit\selection;
 
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\constructor\HollowSphericalConstructor;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\constructor\SingleBlockConstructor;
@@ -11,27 +13,19 @@ use platz1de\EasyEdit\selection\constructor\SphericalConstructor;
 use platz1de\EasyEdit\selection\constructor\TubeConstructor;
 use platz1de\EasyEdit\selection\cubic\CubicChunkLoader;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\math\Vector3;
 
-class Sphere extends Selection implements Patterned
+class Sphere extends Selection
 {
 	use CubicChunkLoader;
 
-	private Vector3 $point;
-	private float $radius;
-
 	/**
-	 * @param string  $world
-	 * @param Vector3 $point
-	 * @param float   $radius
-	 * @return Sphere
+	 * @param string             $world
+	 * @param OffGridBlockVector $point
+	 * @param float              $radius
 	 */
-	public static function aroundPoint(string $world, Vector3 $point, float $radius): Sphere
+	public function __construct(string $world, private OffGridBlockVector $point, private float $radius)
 	{
-		$sphere = new Sphere($world, $point->subtract($radius, $radius, $radius), $point->add($radius, $radius, $radius));
-		$sphere->setPoint($point);
-		$sphere->setRadius($radius);
-		return $sphere;
+		parent::__construct($world, $point->offset(new BlockOffsetVector(-$radius, -$radius, -$radius))->forceIntoGrid(), $point->offset(new BlockOffsetVector($radius, $radius, $radius))->forceIntoGrid());
 	}
 
 	/**
@@ -58,24 +52,24 @@ class Sphere extends Selection implements Patterned
 				yield new TubeConstructor($closure, $this->getPoint()->down((int) $this->getRadius()), $this->getRadius(), (int) $this->getRadius() * 2 + 1, $context->getSideThickness());
 			}
 
-			if ($context->includesCenter()) {
-				yield new SingleBlockConstructor($closure, $this->getPoint());
+			if ($context->includesCenter() && $this->point->isInGrid()) {
+				yield new SingleBlockConstructor($closure, $this->getPoint()->forceIntoGrid());
 			}
 		}
 	}
 
 	/**
-	 * @param Vector3 $point
+	 * @param OffGridBlockVector $point
 	 */
-	public function setPoint(Vector3 $point): void
+	public function setPoint(OffGridBlockVector $point): void
 	{
 		$this->point = $point;
 	}
 
 	/**
-	 * @return Vector3
+	 * @return OffGridBlockVector
 	 */
-	public function getPoint(): Vector3
+	public function getPoint(): OffGridBlockVector
 	{
 		return $this->point;
 	}
@@ -103,7 +97,7 @@ class Sphere extends Selection implements Patterned
 	{
 		parent::putData($stream);
 
-		$stream->putVector($this->point);
+		$stream->putBlockVector($this->point);
 		$stream->putFloat($this->radius);
 	}
 
@@ -114,7 +108,7 @@ class Sphere extends Selection implements Patterned
 	{
 		parent::parseData($stream);
 
-		$this->point = $stream->getVector();
+		$this->point = $stream->getOffGridBlockVector();
 		$this->radius = $stream->getFloat();
 	}
 }

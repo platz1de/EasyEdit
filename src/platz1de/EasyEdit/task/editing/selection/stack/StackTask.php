@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\selection\stack;
 
 use Generator;
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
@@ -15,7 +16,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\math\Axis;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -27,11 +27,11 @@ class StackTask extends SelectionEditTask
 	private Selection $original;
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $direction
-	 * @param bool      $insert
+	 * @param Selection         $selection
+	 * @param BlockOffsetVector $direction
+	 * @param bool              $insert
 	 */
-	public function __construct(Selection $selection, private Vector3 $direction, private bool $insert = false)
+	public function __construct(Selection $selection, private BlockOffsetVector $direction, private bool $insert = false)
 	{
 		parent::__construct($selection);
 	}
@@ -57,14 +57,14 @@ class StackTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$originalSize = $this->original->getPos2()->subtractVector($this->original->getPos1())->add(1, 1, 1);
-		$sizeX = $originalSize->getFloorX();
-		$sizeY = $originalSize->getFloorY();
-		$sizeZ = $originalSize->getFloorZ();
+		$originalSize = $this->original->getSize();
+		$sizeX = $originalSize->x;
+		$sizeY = $originalSize->y;
+		$sizeZ = $originalSize->z;
 		$start = $this->original->getPos1();
-		$startX = $start->getFloorX();
-		$startY = $start->getFloorY();
-		$startZ = $start->getFloorZ();
+		$startX = $start->x;
+		$startY = $start->y;
+		$startZ = $start->z;
 		if (!$this->selection instanceof StackingHelper) {
 			throw new UnexpectedValueException("Selection is not a StackingHelper");
 		}
@@ -102,13 +102,13 @@ class StackTask extends SelectionEditTask
 
 	protected function sortChunks(array $chunks): array
 	{
-		if ($this->direction->getFloorX() !== 0) {
+		if ($this->direction->x !== 0) {
 			usort($chunks, static function (int $a, int $b): int {
 				World::getXZ($a, $aX, $aZ);
 				World::getXZ($b, $bX, $bZ);
 				return $aZ - $bZ;
 			});
-		} else if ($this->direction->getFloorZ() !== 0) {
+		} else if ($this->direction->z !== 0) {
 			usort($chunks, static function (int $a, int $b): int {
 				World::getXZ($a, $aX, $aZ);
 				World::getXZ($b, $bX, $bZ);
@@ -122,14 +122,14 @@ class StackTask extends SelectionEditTask
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putVector($this->direction);
+		$stream->putBlockVector($this->direction);
 		$stream->putBool($this->insert);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->direction = $stream->getVector();
+		$this->direction = $stream->getOffsetVector();
 		$this->insert = $stream->getBool();
 	}
 }

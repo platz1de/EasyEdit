@@ -2,6 +2,8 @@
 
 namespace platz1de\EasyEdit\task\benchmark;
 
+use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cube;
@@ -13,7 +15,6 @@ use platz1de\EasyEdit\thread\output\BenchmarkCallbackData;
 use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class BenchmarkExecutor extends ExecutableTask
@@ -35,10 +36,10 @@ class BenchmarkExecutor extends ExecutableTask
 	{
 		$results = [];
 
-		$pos = new Vector3(0, World::Y_MIN, 0);
+		$pos = new OffGridBlockVector(0, World::Y_MIN, 0);
 
 		//10x10 Chunk cube
-		$testCube = new Cube($this->world, new Vector3(0, World::Y_MIN, 0), new Vector3(159, World::Y_MAX - 1, 159));
+		$testCube = new Cube($this->world, new BlockVector(0, World::Y_MIN, 0), new BlockVector(159, World::Y_MAX - 1, 159));
 
 		//Task #1 - set static
 		$start = microtime(true);

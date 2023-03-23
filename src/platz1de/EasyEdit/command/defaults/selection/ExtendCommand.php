@@ -9,6 +9,8 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\math\Vector3;
@@ -32,14 +34,14 @@ class ExtendCommand extends EasyEditCommand
 		$pos2 = $selection->getPos2();
 
 		if ($flags->hasFlag("vertical")) {
-			$selection->setPos1(new Vector3($pos1->getX(), World::Y_MIN, $pos1->getZ()));
-			$selection->setPos2(new Vector3($pos2->getX(), World::Y_MAX - 1, $pos2->getZ()));
+			$selection->setPos1(new BlockVector($pos1->x, World::Y_MIN, $pos1->z));
+			$selection->setPos2(new BlockVector($pos2->x, World::Y_MAX - 1, $pos2->z));
 			$session->updateSelectionHighlight();
 			return;
 		}
 
-		$selection->setPos1($pos1->addVector($flags->getVectorFlag("min")));
-		$selection->setPos2($pos2->addVector($flags->getVectorFlag("max")));
+		$selection->setPos1($pos1->offset($flags->getVectorFlag("min")->diff(OffGridBlockVector::zero())));
+		$selection->setPos2($pos2->offset($flags->getVectorFlag("max")->diff(OffGridBlockVector::zero())));
 		$session->updateSelectionHighlight();
 	}
 

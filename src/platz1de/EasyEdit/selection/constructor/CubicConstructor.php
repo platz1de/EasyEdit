@@ -22,7 +22,7 @@ class CubicConstructor extends ShapeConstructor
 
 	public function getBlockCount(): int
 	{
-		return $this->max->diff($this->min)->cubicArea();
+		return $this->max->diff($this->min)->cubicVolume();
 	}
 
 	public function moveTo(int $chunk): void
@@ -57,9 +57,9 @@ class CubicConstructor extends ShapeConstructor
 	{
 		$axis = Facing::axis($side);
 		if (Facing::isPositive($side)) {
-			$min = $min->addComponent($axis, $max->getComponent($axis) - $min->getComponent($axis) + 1 - $thickness);
+			$min = $min->setComponent($axis, $max->getComponent($axis) + 1 - $thickness);
 		} else {
-			$max = $max->addComponent($axis, $min->getComponent($axis) - $max->getComponent($axis) - 1 + $thickness);
+			$max = $max->setComponent($axis, $min->getComponent($axis) - 1 + $thickness);
 		}
 		return new self($closure, $min, $max);
 	}

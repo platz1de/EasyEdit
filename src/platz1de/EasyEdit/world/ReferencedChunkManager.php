@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\world;
 
 use Closure;
-use pocketmine\math\Vector3;
+use platz1de\EasyEdit\math\BlockVector;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -57,13 +57,13 @@ class ReferencedChunkManager
 	}
 
 	/**
-	 * @param Vector3 $pos1
-	 * @param Vector3 $pos2
+	 * @param BlockVector $pos1
+	 * @param BlockVector $pos2
 	 */
-	public function loadBetween(Vector3 $pos1, Vector3 $pos2): void
+	public function loadBetween(BlockVector $pos1, BlockVector $pos2): void
 	{
-		for ($x = $pos1->getX() >> 4; $x <= $pos2->getX() >> 4; $x++) {
-			for ($z = $pos1->getZ() >> 4; $z <= $pos2->getZ() >> 4; $z++) {
+		for ($x = $pos1->x >> 4; $x <= $pos2->y >> 4; $x++) {
+			for ($z = $pos1->z >> 4; $z <= $pos2->z >> 4; $z++) {
 				$this->setChunk(World::chunkHash($x, $z), ChunkInformation::empty());
 			}
 		}

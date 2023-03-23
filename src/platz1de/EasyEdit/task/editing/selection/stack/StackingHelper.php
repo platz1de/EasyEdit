@@ -5,14 +5,13 @@ namespace platz1de\EasyEdit\task\editing\selection\stack;
 use BadMethodCallException;
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\constructor\StackedConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
-use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Axis;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class StackingHelper extends Selection
@@ -22,28 +21,28 @@ class StackingHelper extends Selection
 	private int $amount;
 
 	/**
-	 * @param Selection $selection
-	 * @param Vector3   $direction
+	 * @param Selection         $selection
+	 * @param BlockOffsetVector $direction
 	 */
-	public function __construct(Selection $selection, Vector3 $direction)
+	public function __construct(Selection $selection, BlockOffsetVector $direction)
 	{
 		if ($selection instanceof self) {
 			throw new BadMethodCallException("Cannot stack a stacked selection");
 		}
 		$this->parent = $selection;
-		if ($direction->getFloorY() !== 0) {
+		if ($direction->y !== 0) {
 			$this->axis = Axis::Y;
-		} elseif ($direction->getFloorX() !== 0) {
+		} elseif ($direction->x !== 0) {
 			$this->axis = Axis::X;
 		} else {
 			$this->axis = Axis::Z;
 		}
-		$this->amount = (int) floor(VectorUtils::getVectorAxis($direction, $this->axis));
-		$offset = (int) floor(VectorUtils::getVectorAxis($selection->getSize(), $this->axis));
+		$this->amount = $direction->getComponent($this->axis);
+		$offset = $selection->getSize()->getComponent($this->axis);
 		if ($this->amount > 0) {
-			parent::__construct($selection->getWorldName(), $selection->getPos1()->getSide($this->axis << 1 | 1, $offset), $selection->getPos2()->getSide($this->axis << 1 | 1, $offset * $this->amount));
+			parent::__construct($selection->getWorldName(), $selection->getPos1()->addComponent($this->axis, $offset), $selection->getPos2()->addComponent($this->axis, $offset * $this->amount));
 		} else {
-			parent::__construct($selection->getWorldName(), $selection->getPos1()->getSide($this->axis << 1, $offset * -$this->amount), $selection->getPos2()->getSide($this->axis << 1, $offset));
+			parent::__construct($selection->getWorldName(), $selection->getPos1()->addComponent($this->axis, $offset * $this->amount), $selection->getPos2()->addComponent($this->axis, -$offset));
 		}
 	}
 
@@ -59,18 +58,16 @@ class StackingHelper extends Selection
 		$size = $this->parent->getSize();
 		$min = $this->parent->getPos1();
 		$max = $this->parent->getPos2();
-		$offset = VectorUtils::getVectorAxis($size, $this->axis);
-		$offsetVector = $this->axis === Axis::X ? new Vector3($offset, 0, 0) : new Vector3(0, 0, $offset);
 		if ($this->amount > 0) {
-			$min = $min->addVector($offsetVector);
-			$max = $max->addVector($offsetVector->multiply($this->amount));
+			$min = $min->addComponent($this->axis, $size->getComponent($this->axis));
+			$max = $max->addComponent($this->axis, $size->getComponent($this->axis) * $this->amount);
 		} else {
-			$min = $min->subtractVector($offsetVector->multiply(-$this->amount));
-			$max = $max->subtractVector($offsetVector);
+			$min = $min->addComponent($this->axis, $size->getComponent($this->axis) * $this->amount);
+			$max = $max->addComponent($this->axis, -$size->getComponent($this->axis));
 		}
 		$chunks = [];
-		for ($x = $min->getFloorX() >> 4; $x <= $max->getFloorX() >> 4; $x++) {
-			for ($z = $min->getFloorZ() >> 4; $z <= $max->getFloorZ() >> 4; $z++) {
+		for ($x = $min->x >> 4; $x <= $max->x >> 4; $x++) {
+			for ($z = $min->z >> 4; $z <= $max->z >> 4; $z++) {
 				$chunks[] = World::chunkHash($x, $z);
 			}
 		}
@@ -92,7 +89,7 @@ class StackingHelper extends Selection
 	 */
 	public function isCopying(): bool
 	{
-		return $this->axis !== Axis::Y && VectorUtils::getVectorAxis($this->parent->getSize(), $this->axis) > ChunkRequestManager::MAX_REQUEST * 8;
+		return $this->axis !== Axis::Y && $this->parent->getSize()->getComponent($this->axis) > ChunkRequestManager::MAX_REQUEST * 8;
 	}
 
 	/**

@@ -2,13 +2,12 @@
 
 namespace platz1de\EasyEdit\selection;
 
-use BadMethodCallException;
 use Closure;
 use Generator;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\constructor\BinaryStreamConstructor;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 /**
@@ -28,16 +27,8 @@ class BinaryBlockListStream extends BlockListSelection
 	 */
 	public function __construct(string $world)
 	{
-		parent::__construct($world, Vector3::zero(), Vector3::zero());
+		parent::__construct($world, BlockVector::zero(), BlockVector::zero());
 		$this->blocks = new ExtendedBinaryStream();
-	}
-
-	/**
-	 * @param string $world
-	 */
-	public function setWorld(string $world): void
-	{
-		$this->world = $world;
 	}
 
 	public function addBlock(int $x, int $y, int $z, int $id, bool $overwrite = true): void
