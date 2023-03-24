@@ -58,7 +58,7 @@ class CylindricalConstructor extends ShapeConstructor
 	 * @param float              $thickness
 	 * @param int                $height
 	 * @param Closure            $closure
-	 * @return Generator
+	 * @return Generator<ShapeConstructor>
 	 */
 	public static function hollowAround(OffGridBlockVector $position, float $radius, float $thickness, int $height, Closure $closure): Generator
 	{

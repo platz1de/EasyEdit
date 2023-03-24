@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\expanding\DrainTask;
 
@@ -23,7 +24,7 @@ class DrainCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new DrainTask($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition()->asVector3()));
+		$session->runTask(new DrainTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())));
 	}
 
 	/**

@@ -25,9 +25,9 @@ class DrainTask extends ExpandingTask
 	{
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
-		$startX = $this->start->getFloorX();
-		$startY = $this->start->getFloorY();
-		$startZ = $this->start->getFloorZ();
+		$startX = $this->start->x;
+		$startY = $this->start->y;
+		$startZ = $this->start->z;
 		$this->loader->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$limit = ConfigManager::getFillDistance();
 		$air = VanillaBlocks::AIR()->getStateId();

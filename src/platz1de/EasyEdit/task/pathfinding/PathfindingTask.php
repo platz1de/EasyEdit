@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\pathfinding;
 
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
@@ -12,7 +13,6 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class PathfindingTask extends ExpandingTask
@@ -21,12 +21,12 @@ class PathfindingTask extends ExpandingTask
 
 	/**
 	 * @param string      $world
-	 * @param Vector3     $start
-	 * @param Vector3     $end
+	 * @param BlockVector $start
+	 * @param BlockVector $end
 	 * @param bool        $allowDiagonal
 	 * @param StaticBlock $block
 	 */
-	public function __construct(string $world, Vector3 $start, private Vector3 $end, private bool $allowDiagonal, private StaticBlock $block)
+	public function __construct(string $world, BlockVector $start, private BlockVector $end, private bool $allowDiagonal, private StaticBlock $block)
 	{
 		parent::__construct($world, $start);
 	}
@@ -45,12 +45,12 @@ class PathfindingTask extends ExpandingTask
 		//TODO: unload chunks after a set amount
 		$limit = ConfigManager::getPathfindingMax();
 
-		$startX = $this->start->getFloorX();
-		$startY = $this->start->getFloorY();
-		$startZ = $this->start->getFloorZ();
-		$endX = $this->end->getFloorX();
-		$endY = $this->end->getFloorY();
-		$endZ = $this->end->getFloorZ();
+		$startX = $this->start->x;
+		$startY = $this->start->y;
+		$startZ = $this->start->z;
+		$endX = $this->end->x;
+		$endY = $this->end->y;
+		$endZ = $this->end->z;
 		$air = VanillaBlocks::AIR()->getStateId();
 
 		$open->insert(new Node($startX, $startY, $startZ, null, $endX, $endY, $endZ));
@@ -106,7 +106,7 @@ class PathfindingTask extends ExpandingTask
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putVector($this->end);
+		$stream->putBlockVector($this->end);
 		$stream->putBool($this->allowDiagonal);
 		$stream->putInt($this->block->get());
 	}
@@ -114,7 +114,7 @@ class PathfindingTask extends ExpandingTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->end = $stream->getVector();
+		$this->end = $stream->getBlockVector();
 		$this->allowDiagonal = $stream->getBool();
 		$this->block = new StaticBlock($stream->getInt());
 	}

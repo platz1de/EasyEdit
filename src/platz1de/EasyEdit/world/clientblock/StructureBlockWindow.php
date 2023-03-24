@@ -2,9 +2,9 @@
 
 namespace platz1de\EasyEdit\world\clientblock;
 
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\utils\PacketUtils;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
-use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\InventoryManager;
 use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
@@ -17,7 +17,7 @@ class StructureBlockWindow extends ClientSideBlock
 
 	private CompoundBlock $block;
 
-	public function __construct(Player $player, Vector3 $pos1, Vector3 $pos2)
+	public function __construct(Player $player, BlockVector $pos1, BlockVector $pos2)
 	{
 		$this->block = Registry::WINDOW_BLOCK();
 		$x = $player->getPosition()->getFloorX();
@@ -28,12 +28,12 @@ class StructureBlockWindow extends ClientSideBlock
 
 		$this->block->position($player->getWorld(), $x, $y, $z);
 		$this->block->getData()
-			->setInt("xStructureOffset", $pos1->getFloorX() - $x)
-			->setInt("yStructureOffset", $pos1->getFloorY() - $y)
-			->setInt("zStructureOffset", $pos1->getFloorZ() - $z)
-			->setInt("xStructureSize", $pos2->getFloorX() - $pos1->getFloorX() + 1)
-			->setInt("yStructureSize", $pos2->getFloorY() - $pos1->getFloorY() + 1)
-			->setInt("zStructureSize", $pos2->getFloorZ() - $pos1->getFloorZ() + 1);
+			->setInt("xStructureOffset", $pos1->x - $x)
+			->setInt("yStructureOffset", $pos1->y - $y)
+			->setInt("zStructureOffset", $pos1->z - $z)
+			->setInt("xStructureSize", $pos2->x - $pos1->x + 1)
+			->setInt("yStructureSize", $pos2->y - $pos1->y + 1)
+			->setInt("zStructureSize", $pos2->z - $pos1->z + 1);
 
 		parent::__construct();
 	}

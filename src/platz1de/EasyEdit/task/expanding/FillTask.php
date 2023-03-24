@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\expanding;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
@@ -21,11 +22,11 @@ class FillTask extends ExpandingTask
 
 	/**
 	 * @param string      $world
-	 * @param Vector3     $start
+	 * @param BlockVector $start
 	 * @param int         $direction
 	 * @param StaticBlock $block
 	 */
-	public function __construct(string $world, Vector3 $start, private int $direction, private StaticBlock $block)
+	public function __construct(string $world, BlockVector $start, private int $direction, private StaticBlock $block)
 	{
 		parent::__construct($world, $start);
 	}
@@ -44,9 +45,9 @@ class FillTask extends ExpandingTask
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$id = $this->block->get();
-		$startX = $this->start->getFloorX();
-		$startY = $this->start->getFloorY();
-		$startZ = $this->start->getFloorZ();
+		$startX = $this->start->x;
+		$startY = $this->start->y;
+		$startZ = $this->start->z;
 		$validate = match ($this->direction) {
 			Facing::DOWN => static function (Vector3 $pos) use ($startY) {
 				return $pos->getFloorY() <= $startY;

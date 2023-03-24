@@ -4,10 +4,8 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
-use platz1de\EasyEdit\command\exception\PatternParseException;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\parser\ParseError;
-use platz1de\EasyEdit\pattern\parser\PatternParser;
-use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -56,9 +54,9 @@ class ArgumentParser
 	 * @param string|null $args1
 	 * @param string|null $args2
 	 * @param int|null    $amount
-	 * @return Vector3
+	 * @return OffGridBlockVector
 	 */
-	public static function parseDirectionVector(Session $session, string $args1 = null, string $args2 = null, int &$amount = null): Vector3
+	public static function parseDirectionVector(Session $session, string $args1 = null, string $args2 = null, int &$amount = null): OffGridBlockVector
 	{
 		$amount = 1;
 		if (is_numeric($args1)) {
@@ -70,7 +68,7 @@ class ArgumentParser
 				$amount = (int) $args2;
 			}
 		}
-		return Vector3::zero()->getSide(self::parseFacing($session, $direction), $amount);
+		return OffGridBlockVector::zero()->getSide(self::parseFacing($session, $direction), $amount);
 	}
 
 	/**

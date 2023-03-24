@@ -62,7 +62,7 @@ class ReferencedChunkManager
 	 */
 	public function loadBetween(BlockVector $pos1, BlockVector $pos2): void
 	{
-		for ($x = $pos1->x >> 4; $x <= $pos2->y >> 4; $x++) {
+		for ($x = $pos1->x >> 4; $x <= $pos2->x >> 4; $x++) {
 			for ($z = $pos1->z >> 4; $z <= $pos2->z >> 4; $z++) {
 				$this->setChunk(World::chunkHash($x, $z), ChunkInformation::empty());
 			}

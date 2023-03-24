@@ -9,7 +9,7 @@ use pocketmine\world\World;
  */
 class BlockVector extends BaseVector
 {
-	protected function validate(&$x, &$y, &$z): void
+	protected function validate(int &$x, int &$y, int &$z): void
 	{
 		$y = min(max($y, World::Y_MIN), World::Y_MAX - 1);
 	}
@@ -60,5 +60,10 @@ class BlockVector extends BaseVector
 	public function getChunkHash(): int
 	{
 		return World::chunkHash($this->x >> 4, $this->z >> 4);
+	}
+
+	public function offGrid(): OffGridBlockVector
+	{
+		return new OffGridBlockVector($this->x, $this->y, $this->z);
 	}
 }

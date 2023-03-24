@@ -18,10 +18,13 @@ class PasteBlockStatesTask extends ExpandingTask
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
 		$states = BlockStateTranslationManager::requestRuntimeId([], true, true);
+		if ($states === false) {
+			return; //cancelled
+		}
 		$count = count($states);
-		$x = $this->start->getFloorX();
-		$y = $this->start->getFloorY();
-		$z = $this->start->getFloorZ();
+		$x = $this->start->x;
+		$y = $this->start->y;
+		$z = $this->start->z;
 
 		$i = 0;
 		foreach ($states as $id) {

@@ -72,9 +72,17 @@ abstract class Selection
 	/**
 	 * @return BlockVector
 	 */
-	public function getCenter(): BlockVector
+	public function getFloorCenter(): BlockVector
 	{
-		return new BlockVector(floor(($this->getPos1()->x + $this->getPos2()->x) / 2), floor(($this->getPos1()->y + $this->getPos2()->y) / 2), floor(($this->getPos1()->z + $this->getPos2()->z) / 2));
+		return new BlockVector((int) floor(($this->getPos1()->x + $this->getPos2()->x) / 2), (int) floor(($this->getPos1()->y + $this->getPos2()->y) / 2), (int) floor(($this->getPos1()->z + $this->getPos2()->z) / 2));
+	}
+
+	/**
+	 * @return BlockVector
+	 */
+	public function getCeilCenter(): BlockVector
+	{
+		return new BlockVector((int) ceil(($this->getPos1()->x + $this->getPos2()->x) / 2), (int) ceil(($this->getPos1()->y + $this->getPos2()->y) / 2), (int) ceil(($this->getPos1()->z + $this->getPos2()->z) / 2));
 	}
 
 	/**
@@ -82,7 +90,7 @@ abstract class Selection
 	 */
 	public function getBottomCenter(): BlockVector
 	{
-		return $this->getCenter()->setComponent(Axis::Y, $this->getPos1()->y);
+		return $this->getFloorCenter()->setComponent(Axis::Y, $this->getPos1()->y);
 	}
 
 	/**

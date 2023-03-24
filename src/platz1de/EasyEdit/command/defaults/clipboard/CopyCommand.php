@@ -8,6 +8,7 @@ use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use platz1de\EasyEdit\task\editing\selection\CutTask;
@@ -42,8 +43,8 @@ class CopyCommand extends SimpleFlagArgumentCommand
 	public function getKnownFlags(Session $session): array
 	{
 		return [
-			"center" => VectorCommandFlag::with($session->getSelection()->getBottomCenter(), "relative", [], "c"),
-			"position" => VectorCommandFlag::default($session->asPlayer()->getPosition(), "relative", [], "p"),
+			"center" => VectorCommandFlag::with($session->getSelection()->getBottomCenter()->offGrid(), "relative", [], "c"),
+			"position" => VectorCommandFlag::default(OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), "relative", [], "p"),
 			"remove" => new SingularCommandFlag("remove", [], "r")
 		];
 	}

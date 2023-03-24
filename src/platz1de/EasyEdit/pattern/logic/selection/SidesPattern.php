@@ -37,13 +37,13 @@ class SidesPattern extends Pattern
 			$min = $selection->getPos1();
 			$max = $selection->getPos2();
 
-			return ($x - $min->getX() + 1) <= $this->thickness || ($max->getX() - $x + 1) <= $this->thickness || ($y - $min->getY() + 1) <= $this->thickness || ($max->getY() - $y + 1) <= $this->thickness || ($z - $min->getZ() + 1) <= $this->thickness || ($max->getZ() - $z + 1) <= $this->thickness;
+			return ($x - $min->x + 1) <= $this->thickness || ($max->x - $x + 1) <= $this->thickness || ($y - $min->y + 1) <= $this->thickness || ($max->y - $y + 1) <= $this->thickness || ($z - $min->z + 1) <= $this->thickness || ($max->z - $z + 1) <= $this->thickness;
 		}
 		if ($selection instanceof Cylinder) {
-			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $this->thickness) ** 2) || ($y - $selection->getPos1()->getY() + 1) <= $this->thickness || ($selection->getPos2()->getY() - $y + 1) <= $this->thickness;
+			return (($x - $selection->getPoint()->x) ** 2) + (($z - $selection->getPoint()->z) ** 2) > (($selection->getRadius() - $this->thickness) ** 2) || ($y - $selection->getPos1()->y + 1) <= $this->thickness || ($selection->getPos2()->y - $y + 1) <= $this->thickness;
 		}
 		if ($selection instanceof Sphere) {
-			return (($x - $selection->getPoint()->getFloorX()) ** 2) + (($y - $selection->getPoint()->getFloorY()) ** 2) + (($z - $selection->getPoint()->getFloorZ()) ** 2) > (($selection->getRadius() - $this->thickness) ** 2) || ($y - $selection->getPos1()->getY() + 1) <= $this->thickness || ($selection->getPos2()->getY() - $y + 1) <= $this->thickness;
+			return (($x - $selection->getPoint()->x) ** 2) + (($y - $selection->getPoint()->y) ** 2) + (($z - $selection->getPoint()->z) ** 2) > (($selection->getRadius() - $this->thickness) ** 2) || ($y - $selection->getPos1()->y + 1) <= $this->thickness || ($selection->getPos2()->y - $y + 1) <= $this->thickness;
 		}
 		throw new ParseError("Sides pattern does not support selection of type " . $selection::class);
 	}

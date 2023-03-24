@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\math;
 
 use InvalidArgumentException;
 use pocketmine\math\Axis;
+use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 
 abstract class BaseVector
@@ -22,15 +23,15 @@ abstract class BaseVector
 		$this->z = $z;
 	}
 
-	abstract protected function validate(&$x, &$y, &$z): void;
+	abstract protected function validate(int &$x, int &$y, int &$z): void;
 
 	/**
 	 * @param Vector3 $vector
 	 * @return static
 	 */
-	public static function fromVector(Vector3 $vector): self
+	public static function fromVector(Vector3 $vector): static
 	{
-		return new static($vector->x, $vector->y, $vector->z);
+		return new static($vector->getFloorX(), $vector->getFloorY(), $vector->getFloorZ());
 	}
 
 	public function toVector(): Vector3
@@ -41,7 +42,7 @@ abstract class BaseVector
 	/**
 	 * @return static
 	 */
-	public static function zero(): self
+	public static function zero(): static
 	{
 		//TODO: Reuse this like pmmp, when php 8.1 is mandatory
 		return new static(0, 0, 0);
@@ -87,12 +88,17 @@ abstract class BaseVector
 		};
 	}
 
+	public function getSide(int $side, int $step = 1): static
+	{
+		return $this->addComponent(Facing::axis($side), Facing::isPositive($side) ? $step : -$step);
+	}
+
 	/**
 	 * @param static $a
 	 * @param static $b
 	 * @return static
 	 */
-	public static function minComponents(self $a, self $b): self
+	public static function minComponents(self $a, self $b): static
 	{
 		return new static(min($a->x, $b->x), min($a->y, $b->y), min($a->z, $b->z));
 	}
@@ -102,22 +108,36 @@ abstract class BaseVector
 	 * @param static $b
 	 * @return static
 	 */
-	public static function maxComponents(self $a, self $b): self
+	public static function maxComponents(self $a, self $b): static
 	{
 		return new static(max($a->x, $b->x), max($a->y, $b->y), max($a->z, $b->z));
 	}
 
-	public function add(int $x, int $y, int $z): self
+	/**
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @return static
+	 */
+	public function add(int $x, int $y, int $z): static
 	{
 		return new static($this->x + $x, $this->y + $y, $this->z + $z);
 	}
 
-	public function up(int $amount = 1): self
+	/**
+	 * @param int $amount
+	 * @return static
+	 */
+	public function up(int $amount = 1): static
 	{
 		return $this->addComponent(Axis::Y, $amount);
 	}
 
-	public function down(int $amount = 1): self
+	/**
+	 * @param int $amount
+	 * @return static
+	 */
+	public function down(int $amount = 1): static
 	{
 		return $this->addComponent(Axis::Y, -$amount);
 	}

@@ -4,6 +4,8 @@ namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\convert\TileConvertor;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -13,7 +15,6 @@ use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\data\bedrock\block\BlockStateData;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -51,10 +52,10 @@ class SpongeSchematic extends SchematicType
 			throw new InternetException("Couldn't load needed data files");
 		}
 		$version = $nbt->getInt(self::FORMAT_VERSION, 1);
-		$offset = Vector3::zero();
+		$offset = BlockOffsetVector::zero();
 		$metaData = $nbt->getCompoundTag(self::METADATA);
 		if ($metaData !== null) {
-			$offset = new Vector3($metaData->getInt(McEditSchematic::OFFSET_X, 0), $metaData->getInt(McEditSchematic::OFFSET_Y, 0), $metaData->getInt(McEditSchematic::OFFSET_Z, 0));
+			$offset = new BlockOffsetVector($metaData->getInt(McEditSchematic::OFFSET_X, 0), $metaData->getInt(McEditSchematic::OFFSET_Y, 0), $metaData->getInt(McEditSchematic::OFFSET_Z, 0));
 		}
 		//TODO: check why this is behaving weird (offsets seem to be wrong)
 		/*else {
@@ -68,8 +69,8 @@ class SpongeSchematic extends SchematicType
 		$ySize = $nbt->getShort(self::TAG_HEIGHT);
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
 		$target->setPoint($offset->down(World::Y_MIN));
-		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
-		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
+		$target->setPos1(new BlockVector(0, World::Y_MIN, 0));
+		$target->setPos2(new BlockVector($xSize, World::Y_MIN + $ySize, $zSize));
 		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
 
 		switch ($version) {
@@ -155,14 +156,14 @@ class SpongeSchematic extends SchematicType
 		$nbt->setInt(self::FORMAT_VERSION, 2);
 		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
-		$metaData->setInt(McEditSchematic::OFFSET_X, $target->getPoint()->getFloorX());
-		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->getFloorY() - World::Y_MIN);
-		$metaData->setInt(McEditSchematic::OFFSET_Z, $target->getPoint()->getFloorZ());
+		$metaData->setInt(McEditSchematic::OFFSET_X, $target->getPoint()->x);
+		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->y - World::Y_MIN);
+		$metaData->setInt(McEditSchematic::OFFSET_Z, $target->getPoint()->z);
 		$nbt->setTag(self::METADATA, $metaData);
 		//$nbt->setIntArray("Offset", [-$target->getPoint()->getFloorX(), -$target->getPoint()->getFloorY(), -$target->getPoint()->getFloorZ()]);
-		$xSize = $target->getSize()->getFloorX();
-		$ySize = $target->getSize()->getFloorY();
-		$zSize = $target->getSize()->getFloorZ();
+		$xSize = $target->getSize()->x;
+		$ySize = $target->getSize()->y;
+		$zSize = $target->getSize()->z;
 		$nbt->setShort(self::TAG_WIDTH, $xSize);
 		$nbt->setShort(self::TAG_HEIGHT, $ySize);
 		$nbt->setShort(self::TAG_LENGTH, $zSize);
@@ -246,7 +247,7 @@ class SpongeSchematic extends SchematicType
 				$tile = $tiles->next();
 				$id = $tile->getString(self::ENTITY_ID);
 				$pos = $tile->getIntArray(self::ENTITY_POSITION);
-				$position = new Vector3($pos[0], $pos[1] + World::Y_MIN, $pos[2]);
+				$position = new BlockVector($pos[0], $pos[1] + World::Y_MIN, $pos[2]);
 				if ($version === 3) {
 					$data = $tile->getCompoundTag(self::ENTITY_EXTRA_DATA) ?? new CompoundTag();
 				} else {
@@ -254,10 +255,10 @@ class SpongeSchematic extends SchematicType
 					$data = $tile;
 				}
 				$data->setString(Tile::TAG_ID, $id);
-				$data->setInt(Tile::TAG_X, $position->getFloorX());
-				$data->setInt(Tile::TAG_Y, $position->getFloorY());
-				$data->setInt(Tile::TAG_Z, $position->getFloorZ());
-				$tileData[World::blockHash($position->getFloorX(), $position->getFloorY(), $position->getFloorZ())] = $data;
+				$data->setInt(Tile::TAG_X, $position->x);
+				$data->setInt(Tile::TAG_Y, $position->y);
+				$data->setInt(Tile::TAG_Z, $position->z);
+				$tileData[World::blockHash($position->x, $position->y, $position->z)] = $data;
 			}
 		} catch (Throwable $e) {
 			throw new UnexpectedValueException("Schematic contains malformed tiles: " . $e->getMessage());

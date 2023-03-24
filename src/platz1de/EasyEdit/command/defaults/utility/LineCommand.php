@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use Generator;
 use InvalidArgumentException;
-use platz1de\EasyEdit\command\exception\PatternParseException;
 use platz1de\EasyEdit\command\flags\BlockCommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
@@ -12,13 +11,12 @@ use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
-use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\LineTask;
 use platz1de\EasyEdit\task\pathfinding\PathfindingTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
 
@@ -39,17 +37,17 @@ class LineCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$target = ArgumentParser::parseCoordinates($session, $flags->getStringFlag("x"), $flags->getStringFlag("y"), $flags->getStringFlag("z"));
+		$target = BlockVector::fromVector(ArgumentParser::parseCoordinates($session, $flags->getStringFlag("x"), $flags->getStringFlag("y"), $flags->getStringFlag("z")));
 
 		switch ($flags->getIntFlag("mode")) {
 			case self::MODE_LINE:
-				$session->runTask(new LineTask($session->asPlayer()->getPosition(), $target, $flags->getStaticBlockFlag("block")));
+				$session->runTask(new LineTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, $flags->getStaticBlockFlag("block")));
 				break;
 			case self::MODE_PATH:
-				$session->runTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, true, $flags->getStaticBlockFlag("block")));
+				$session->runTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, true, $flags->getStaticBlockFlag("block")));
 				break;
 			case self::MODE_SOLID_PATH:
-				$session->runTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), $session->asPlayer()->getPosition(), $target, false, $flags->getStaticBlockFlag("block")));
+				$session->runTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, false, $flags->getStaticBlockFlag("block")));
 				break;
 			default:
 				throw new InvalidArgumentException("Invalid line mode");

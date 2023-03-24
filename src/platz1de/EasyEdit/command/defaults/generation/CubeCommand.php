@@ -31,8 +31,8 @@ class CubeCommand extends SimpleFlagArgumentCommand
 	{
 		$pattern = $flags->hasFlag("hollow") ? new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")]) : $flags->getPatternFlag("pattern");
 		$size = $flags->getFloatFlag("size") - 1;
-		$offsetMax = new BlockOffsetVector(ceil($size / 2), ceil($size / 2), ceil($size / 2));
-		$offsetMin = new BlockOffsetVector(floor($size / 2), floor($size / 2), floor($size / 2));
+		$offsetMax = new BlockOffsetVector((int) ceil($size / 2), (int) ceil($size / 2), (int) ceil($size / 2));
+		$offsetMin = new BlockOffsetVector((int) floor($size / 2), (int) floor($size / 2), (int) floor($size / 2));
 		$session->runTask(new SetTask(new Cube($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMax), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMin->negate())), $pattern));
 	}
 

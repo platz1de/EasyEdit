@@ -24,7 +24,7 @@ class Cylinder extends Selection
 	 */
 	public function __construct(string $world, private OffGridBlockVector $point, private float $radius, private int $height)
 	{
-		parent::__construct($world, $point->add(-$radius, 0, -$radius)->forceIntoGrid(), $point->add($radius, $height - 1, $radius)->forceIntoGrid());
+		parent::__construct($world, $point->add((int) -ceil($radius), 0, (int) -ceil($radius))->forceIntoGrid(), $point->add((int) ceil($radius), $height - 1, (int) ceil($radius))->forceIntoGrid());
 	}
 
 	/**

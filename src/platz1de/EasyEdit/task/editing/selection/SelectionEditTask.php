@@ -15,7 +15,6 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\VectorUtils;
 
 abstract class SelectionEditTask extends EditTask
 {
@@ -44,7 +43,7 @@ abstract class SelectionEditTask extends EditTask
 		$chunks = $this->sortChunks($this->selection->getNeededChunks());
 		$this->totalChunks = count($chunks);
 		$this->chunksLeft = count($chunks);
-		$fastSet = VectorUtils::product($this->selection->getSize()) < ConfigManager::getFastSetMax();
+		$fastSet = $this->selection->getSize()->volume() < ConfigManager::getFastSetMax();
 		$this->prepare($fastSet);
 		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
 		foreach ($chunks as $chunk) {

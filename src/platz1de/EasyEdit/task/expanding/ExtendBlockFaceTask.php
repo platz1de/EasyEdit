@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -18,11 +19,11 @@ class ExtendBlockFaceTask extends ExpandingTask
 	use SettingNotifier;
 
 	/**
-	 * @param string  $world
-	 * @param Vector3 $block
-	 * @param int     $face
+	 * @param string      $world
+	 * @param BlockVector $block
+	 * @param int         $face
 	 */
-	public function __construct(string $world, Vector3 $block, private int $face)
+	public function __construct(string $world, BlockVector $block, private int $face)
 	{
 		parent::__construct($world, $block);
 	}
@@ -33,8 +34,8 @@ class ExtendBlockFaceTask extends ExpandingTask
 	 */
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
-		$target = $handler->getBlock($this->start->getFloorX(), $this->start->getFloorY(), $this->start->getFloorZ());
-		$offset = $this->start->subtractVector($start = $this->start->getSide($this->face));
+		$target = $handler->getBlock($this->start->x, $this->start->y, $this->start->z);
+		$offset = $this->start->diff($start = $this->start->getSide($this->face));
 		$ignore = HeightMapCache::getIgnore();
 		if (($k = array_search($target, $ignore, true)) !== false) {
 			unset($ignore[$k]);
@@ -42,15 +43,15 @@ class ExtendBlockFaceTask extends ExpandingTask
 
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
-		$offsetX = $offset->getFloorX();
-		$offsetY = $offset->getFloorY();
-		$offsetZ = $offset->getFloorZ();
+		$offsetX = $offset->x;
+		$offsetY = $offset->y;
+		$offsetZ = $offset->z;
 		$limit = ConfigManager::getFillDistance();
-		$this->loader->registerRequestedChunks(World::chunkHash($start->getFloorX() >> 4, $start->getFloorZ() >> 4));
-		$this->loader->registerRequestedChunks(World::chunkHash(($start->getFloorX() + $offsetX) >> 4, ($start->getFloorZ() + $offsetZ) >> 4));
+		$this->loader->registerRequestedChunks(World::chunkHash($start->x >> 4, $start->z >> 4));
+		$this->loader->registerRequestedChunks(World::chunkHash(($start->x + $offsetX) >> 4, ($start->z + $offsetZ) >> 4));
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
-		$queue->insert(World::blockHash($start->getFloorX(), $start->getFloorY(), $start->getFloorZ()), 0);
+		$queue->insert(World::blockHash($start->x, $start->y, $start->z), 0);
 		while (!$queue->isEmpty()) {
 			/** @var array{data: int, priority: int} $current */
 			$current = $queue->extract();

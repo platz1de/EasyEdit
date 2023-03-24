@@ -9,7 +9,7 @@ use pocketmine\world\World;
  */
 class OffGridBlockVector extends BaseVector
 {
-	protected function validate(&$x, &$y, &$z): void
+	protected function validate(int &$x, int &$y, int &$z): void
 	{
 		//Nope
 	}

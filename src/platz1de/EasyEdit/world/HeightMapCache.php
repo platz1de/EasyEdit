@@ -41,10 +41,10 @@ class HeightMapCache
 	public static function load(ChunkController $iterator, Selection $selection): void
 	{
 		if (!self::$loaded) {
-			$min = $selection->getPos1()->subtract(1, 1, 1);
-			$max = $selection->getPos2()->add(1, 1, 1);
-			for ($x = $min->getFloorX(); $x <= $max->getX(); $x++) {
-				for ($z = $min->getFloorZ(); $z <= $max->getZ(); $z++) {
+			$min = $selection->getPos1();
+			$max = $selection->getPos2();
+			for ($x = $min->x; $x <= $max->x; $x++) {
+				for ($z = $min->z; $z <= $max->z; $z++) {
 					$y = World::Y_MAX - 1;
 					while ($y > World::Y_MIN) {
 						while ($y >= World::Y_MIN && in_array($iterator->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, self::$ignore, true)) {

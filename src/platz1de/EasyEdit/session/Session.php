@@ -7,6 +7,7 @@ use platz1de\EasyEdit\command\exception\NoClipboardException;
 use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
 use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
@@ -188,7 +189,7 @@ class Session
 	public function selectPos1(Position $position): void
 	{
 		$this->createSelectionInWorld($position->getWorld()->getFolderName());
-		$this->selection->setPos1($position->floor());
+		$this->selection->setPos1(BlockVector::fromVector($position));
 		$this->updateSelectionHighlight();
 
 		$this->sendMessage("selected-pos1", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
@@ -200,7 +201,7 @@ class Session
 	public function selectPos2(Position $position): void
 	{
 		$this->createSelectionInWorld($position->getWorld()->getFolderName());
-		$this->selection->setPos2($position->floor());
+		$this->selection->setPos2(BlockVector::fromVector($position));
 		$this->updateSelectionHighlight();
 
 		$this->sendMessage("selected-pos2", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);

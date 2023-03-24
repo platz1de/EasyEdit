@@ -6,7 +6,7 @@ use pocketmine\world\World;
 
 class BlockOffsetVector extends BaseVector
 {
-	protected function validate(&$x, &$y, &$z): void
+	protected function validate(int &$x, int &$y, int &$z): void
 	{
 		$y = min(max($y, World::Y_MIN - World::Y_MAX + 1), World::Y_MAX - 1 - World::Y_MIN);
 	}
@@ -14,6 +14,11 @@ class BlockOffsetVector extends BaseVector
 	public function cubicVolume(): int
 	{
 		return (abs($this->x) + 1) * (abs($this->y) + 1) * (abs($this->z) + 1);
+	}
+
+	public function volume(): int
+	{
+		return abs($this->x) * abs($this->y) * abs($this->z);
 	}
 
 	public function cubicSize(): BlockOffsetVector

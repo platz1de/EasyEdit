@@ -30,14 +30,14 @@ class CenterPattern extends Pattern
 			$min = $selection->getPos1();
 			$max = $selection->getPos2();
 
-			$xPos = ($min->getX() + $max->getX()) / 2;
-			$yPos = ($min->getY() + $max->getY()) / 2;
-			$zPos = ($min->getZ() + $max->getZ()) / 2;
+			$xPos = ($min->x + $max->x) / 2;
+			$yPos = ($min->y + $max->y) / 2;
+			$zPos = ($min->z + $max->z) / 2;
 
 			return floor($xPos) <= $x && $x <= ceil($xPos) && floor($yPos) <= $y && $y <= ceil($yPos) && floor($zPos) <= $z && $z <= ceil($zPos);
 		}
 		if ($selection instanceof Cylinder || $selection instanceof Sphere) {
-			return $x === $selection->getPoint()->getFloorX() && $y === $selection->getPoint()->getFloorY() && $z === $selection->getPoint()->getFloorZ();
+			return $x === $selection->getPoint()->x && $y === $selection->getPoint()->y && $z === $selection->getPoint()->z;
 		}
 		throw new ParseError("Center pattern does not support selection of type " . $selection::class);
 	}

@@ -3,9 +3,10 @@
 namespace platz1de\EasyEdit\schematic\type;
 
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
+use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\InternetException;
 use pocketmine\world\World;
@@ -27,9 +28,9 @@ class McEditSchematic extends SchematicType
 		$xSize = $nbt->getShort(self::TAG_WIDTH);
 		$ySize = $nbt->getShort(self::TAG_HEIGHT);
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
-		$target->setPoint(new Vector3($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0), $nbt->getInt(self::OFFSET_Z, 0)));
-		$target->setPos1(new Vector3(0, World::Y_MIN, 0));
-		$target->setPos2(new Vector3($xSize, World::Y_MIN + $ySize, $zSize));
+		$target->setPoint(new BlockOffsetVector($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0), $nbt->getInt(self::OFFSET_Z, 0)));
+		$target->setPos1(new BlockVector(0, World::Y_MIN, 0));
+		$target->setPos2(new BlockVector($xSize, World::Y_MIN + $ySize, $zSize));
 		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
 
 		//"AddBlocks" allows ids over 255

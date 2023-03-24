@@ -13,7 +13,6 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 class ExtendCommand extends EasyEditCommand
@@ -72,17 +71,17 @@ class ExtendCommand extends EasyEditCommand
 		}
 		if (!$flags->hasFlag("min") && !$flags->hasFlag("max")) {
 			$offset = ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null, $count);
-			if ($count < 0 xor $offset->abs()->equals($offset)) {
+			if ($count < 0 xor ($offset->x > 0 && $offset->y > 0 && $offset->z > 0)) {
 				yield VectorCommandFlag::with($offset, "max");
 			} else {
 				yield VectorCommandFlag::with($offset, "min");
 			}
 		}
 		if (!$flags->hasFlag("min")) {
-			yield VectorCommandFlag::with(Vector3::zero(), "min");
+			yield VectorCommandFlag::with(OffGridBlockVector::zero(), "min");
 		}
 		if (!$flags->hasFlag("max")) {
-			yield VectorCommandFlag::with(Vector3::zero(), "max");
+			yield VectorCommandFlag::with(OffGridBlockVector::zero(), "max");
 		}
 	}
 }

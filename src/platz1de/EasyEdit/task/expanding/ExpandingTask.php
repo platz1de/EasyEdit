@@ -2,13 +2,13 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
 abstract class ExpandingTask extends EditTask
@@ -17,10 +17,10 @@ abstract class ExpandingTask extends EditTask
 	protected ManagedChunkHandler $loader;
 
 	/**
-	 * @param string  $world
-	 * @param Vector3 $start
+	 * @param string      $world
+	 * @param BlockVector $start
 	 */
-	public function __construct(string $world, protected Vector3 $start)
+	public function __construct(string $world, protected BlockVector $start)
 	{
 		parent::__construct($world);
 	}
@@ -32,7 +32,7 @@ abstract class ExpandingTask extends EditTask
 		$this->handler->setManager($manager = new ReferencedChunkManager($this->world));
 		$this->loader = new ManagedChunkHandler($this->handler);
 		ChunkRequestManager::setHandler($this->loader);
-		if (!$this->loader->request(World::chunkHash($this->start->getFloorX() >> 4, $this->start->getFloorZ() >> 4))) {
+		if (!$this->loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4))) {
 			$this->finalize();
 			return;
 		}
@@ -69,12 +69,12 @@ abstract class ExpandingTask extends EditTask
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putVector($this->start);
+		$stream->putBlockVector($this->start);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->start = $stream->getVector();
+		$this->start = $stream->getBlockVector();
 	}
 }

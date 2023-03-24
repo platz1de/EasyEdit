@@ -70,7 +70,7 @@ class CubicConstructor extends ShapeConstructor
 	 * @param int[]       $sides
 	 * @param int         $thickness
 	 * @param Closure     $closure
-	 * @return Generator
+	 * @return Generator<CubicConstructor>
 	 */
 	public static function forSides(BlockVector $min, BlockVector $max, array $sides, int $thickness, Closure $closure): Generator
 	{

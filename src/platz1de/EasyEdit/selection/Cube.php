@@ -31,17 +31,17 @@ class Cube extends Selection
 
 		if ($context->includesFilling()) {
 			//This can also make the selection larger (1x1 -> -3x-3), so we are not allowed to actually check for the smaller/larger position
-			yield new CubicConstructor($closure, $this->getPos1()->add(1, 1, 1), $this->getPos2()->subtract(1, 1, 1));
+			yield new CubicConstructor($closure, $this->getPos1()->add(1, 1, 1), $this->getPos2()->add(-1, -1, -1));
 		}
 
 		if ($context->includesAllSides()) {
-			yield from CubicConstructor::forSides($this->getPos1(), $this->getPos2(), Facing::ALL, $context->getSideThickness(), $closure);
+			yield from CubicConstructor::forSides($this->getPos1(), $this->getPos2(), Facing::ALL, (int) $context->getSideThickness(), $closure);
 		} elseif ($context->includesWalls()) {
-			yield from CubicConstructor::forSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, $context->getSideThickness(), $closure);
+			yield from CubicConstructor::forSides($this->getPos1(), $this->getPos2(), Facing::HORIZONTAL, (int) $context->getSideThickness(), $closure);
 		}
 
 		if ($context->includesCenter()) {
-			yield new CubicConstructor($closure, $this->getPos1()->addVector($this->getPos2())->divide(2)->floor(), $this->getPos1()->addVector($this->getPos2())->divide(2)->ceil());
+			yield new CubicConstructor($closure, $this->getFloorCenter(), $this->getCeilCenter());
 		}
 	}
 }

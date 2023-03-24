@@ -25,7 +25,7 @@ class Sphere extends Selection
 	 */
 	public function __construct(string $world, private OffGridBlockVector $point, private float $radius)
 	{
-		parent::__construct($world, $point->offset(new BlockOffsetVector(-$radius, -$radius, -$radius))->forceIntoGrid(), $point->offset(new BlockOffsetVector($radius, $radius, $radius))->forceIntoGrid());
+		parent::__construct($world, $point->offset(new BlockOffsetVector((int) -ceil($radius), (int) -ceil($radius), (int) -ceil($radius)))->forceIntoGrid(), $point->offset(new BlockOffsetVector((int) ceil($radius), (int) ceil($radius), (int) ceil($radius)))->forceIntoGrid());
 	}
 
 	/**
