@@ -11,7 +11,6 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\world\World;
 
 class PacketUtils
@@ -23,18 +22,16 @@ class PacketUtils
 	 */
 	public static function sendFakeBlock(Player $player, Block $block, bool $ignoreData = false): void
 	{
-		$packets = [UpdateBlockPacket::create(
+		$player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
 			BlockPosition::fromVector3($block->getPosition()),
 			RuntimeBlockMapping::getInstance()->toRuntimeId($block->getStateId()),
 			UpdateBlockPacket::FLAG_NETWORK,
 			UpdateBlockPacket::DATA_LAYER_NORMAL
-		)];
+		));
 
 		if (!$ignoreData && $block instanceof CompoundBlock) {
-			$packets[] = BlockActorDataPacket::create(BlockPosition::fromVector3($block->getPosition()), new CacheableNbt($block->getData()));
+			$player->getNetworkSession()->sendDataPacket(BlockActorDataPacket::create(BlockPosition::fromVector3($block->getPosition()), new CacheableNbt($block->getData())));
 		}
-
-		Server::getInstance()->broadcastPackets([$player], $packets);
 	}
 
 	/**
@@ -44,6 +41,8 @@ class PacketUtils
 	 */
 	public static function resendBlock(Vector3 $vector, World $world, Player $player): void
 	{
-		Server::getInstance()->broadcastPackets([$player], $world->createBlockUpdatePackets([$vector]));
+		foreach ($world->createBlockUpdatePackets([$vector]) as $packet) {
+			$player->getNetworkSession()->sendDataPacket($packet);
+		}
 	}
 }
