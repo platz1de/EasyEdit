@@ -8,8 +8,10 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\schematic\SchematicSaveTask;
+use platz1de\EasyEdit\utils\MixedUtils;
 
 class SaveSchematicCommand extends SimpleFlagArgumentCommand
 {
@@ -29,7 +31,12 @@ class SaveSchematicCommand extends SimpleFlagArgumentCommand
 			throw new InvalidUsageException($this);
 		}
 
-		$session->runTask(new SchematicSaveTask($session->getClipboard(), $schematicName));
+		$session->runTask(new SchematicSaveTask($session->getClipboard(), $schematicName))->then(function (SelectionManipulationResult $result) use ($schematicName, $session): void {
+			if ($result->getChanged() === 0) {
+				return;
+			}
+			$session->sendMessage("schematic-created", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getChanged()), "{name}" => basename($schematicName)]);
+		});
 	}
 
 	/**

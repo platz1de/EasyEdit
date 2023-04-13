@@ -21,6 +21,7 @@ no-future: "Không có gì để làm lại"
 
 no-task: "Hiện không có tác vụ nào đang chạy"
 task-cancelled: "Tác vụ hiện tại đã bị hủy"
+task-cancelled-self: "Your task was cancelled"
 
 #Args: {usage}
 wrong-usage: "Sử dụng lệnh không đúng:\n{usage}"

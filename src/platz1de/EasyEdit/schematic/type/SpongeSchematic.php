@@ -9,6 +9,7 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
@@ -46,6 +47,11 @@ class SpongeSchematic extends SchematicType
 	public const ENTITY_ID = "Id"; //also used for tile entities
 	public const ENTITY_EXTRA_DATA = "Data"; //also used for tile entities
 
+	/**
+	 * @param CompoundTag               $nbt
+	 * @param DynamicBlockListSelection $target
+	 * @throws CancelException
+	 */
 	public static function readIntoSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
 		if (!BlockStateConvertor::isAvailable()) {
@@ -117,9 +123,6 @@ class SpongeSchematic extends SchematicType
 		}
 
 		$palette = BlockStateTranslationManager::requestRuntimeId($javaPalette);
-		if ($palette === false) {
-			return; //cancelled
-		}
 
 		if ($tiles instanceof AbstractListTag && $tiles->getTagType() === NBT::TAG_Compound) {
 			$tileData = self::loadTileData($tiles, $version);
@@ -148,6 +151,11 @@ class SpongeSchematic extends SchematicType
 		//TODO: entities
 	}
 
+	/**
+	 * @param CompoundTag               $nbt
+	 * @param DynamicBlockListSelection $target
+	 * @throws CancelException
+	 */
 	public static function writeFromSelection(CompoundTag $nbt, DynamicBlockListSelection $target): void
 	{
 		if (!BlockStateConvertor::isAvailable()) {
@@ -183,12 +191,9 @@ class SpongeSchematic extends SchematicType
 
 		$yMax = $ySize + World::Y_MIN;
 
-		$translation = $target->requestBlockStates();
-		if ($translation === false) {
-			return; //cancelled
-		}
+		$translation = [];
 		/** @var BlockStateData $state */
-		foreach ($translation as $id => $state) {
+		foreach ($target->requestBlockStates() as $id => $state) {
 			$translation[$id] = BlockParser::toStateString(BlockStateConvertor::bedrockToJava($state));
 		}
 

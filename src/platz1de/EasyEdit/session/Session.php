@@ -8,6 +8,9 @@ use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\command\exception\WrongSelectionTypeException;
 use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\result\EditTaskResult;
+use platz1de\EasyEdit\result\TaskResult;
+use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
@@ -17,6 +20,7 @@ use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 use platz1de\EasyEdit\utils\MessageComponent;
 use platz1de\EasyEdit\utils\MessageCompound;
 use platz1de\EasyEdit\utils\Messages;
+use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
 use platz1de\EasyEdit\world\clientblock\StructureBlockOutline;
 use pocketmine\player\Player;
@@ -77,11 +81,36 @@ class Session
 	}
 
 	/**
-	 * @param ExecutableTask $task
+	 * @template T of TaskResult
+	 * @param ExecutableTask<T> $task
+	 * @return TaskResultPromise<T>
 	 */
-	public function runTask(ExecutableTask $task): void
+	public function runTask(ExecutableTask $task): TaskResultPromise
 	{
-		EditHandler::runPlayerTask($this, $task);
+		EditHandler::affiliateTask($this, $task->getTaskId());
+		return $task->run()
+			->onCancel(fn() => $this->sendMessage("task-cancelled-self"))
+			->onFail(fn(string $message) => $this->sendMessage("task-crash", ["{message}" => $message]));
+	}
+
+	/**
+	 * @param ExecutableTask<EditTaskResult> $task
+	 */
+	public function runSettingTask(ExecutableTask $task): void
+	{
+		$this->runEditTask("blocks-set", $task);
+	}
+
+	/**
+	 * @param string                         $message
+	 * @param ExecutableTask<EditTaskResult> $task
+	 */
+	public function runEditTask(string $message, ExecutableTask $task): void
+	{
+		$this->runTask($task)->then(function (EditTaskResult $result) use ($message) {
+			$this->sendMessage($message, ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+			$this->addToHistory($result->getSelection(), false);
+		});
 	}
 
 	/**
@@ -91,6 +120,9 @@ class Session
 	 */
 	public function addToHistory(StoredSelectionIdentifier $id, bool $fromUndo): void
 	{
+		if (!$id->isValid()) {
+			return;
+		}
 		if ($fromUndo) {
 			$this->future->unshift($id);
 		} else {
@@ -124,7 +156,10 @@ class Session
 	public function undoStep(Session $executor): void
 	{
 		if ($this->canUndo()) {
-			$executor->runTask(new StaticStoredPasteTask($this->past->shift(), false, true));
+			$executor->runTask(new StaticStoredPasteTask($this->past->shift(), false))->then(function (EditTaskResult $result) {
+				$this->sendMessage("blocks-pasted", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+				$this->addToHistory($result->getSelection(), true);
+			});
 		}
 	}
 
@@ -134,7 +169,7 @@ class Session
 	public function redoStep(Session $executor): void
 	{
 		if ($this->canRedo()) {
-			$executor->runTask(new StaticStoredPasteTask($this->future->shift(), false));
+			$executor->runEditTask("blocks-pasted", new StaticStoredPasteTask($this->future->shift(), false));
 		}
 	}
 
@@ -154,6 +189,9 @@ class Session
 	 */
 	public function setClipboard(StoredSelectionIdentifier $id): void
 	{
+		if (!$id->isValid()) {
+			return;
+		}
 		if ($this->clipboard->isValid()) {
 			CleanStorageTask::from([$this->clipboard]);
 		}

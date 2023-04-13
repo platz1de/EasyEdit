@@ -45,9 +45,8 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 
 	/**
 	 * @param int $chunk
-	 * @return true
 	 */
-	public function request(int $chunk): bool
+	public function request(int $chunk): void
 	{
 		$this->waiting[$chunk] = 0;
 		$this->groups[$chunk] = [];
@@ -70,7 +69,6 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), $size->getComponent($this->axis) - $offsetMin - 1);
 			$this->orderGroupChunk($chunk, (new Vector2($x << 4, $z << 4))->add($this->axis === Axis::X ? $size->x - $offsetMin : 0, $this->axis === Axis::Z ? $size->z - $offsetMin : 0), $offsetMax);
 		}
-		return true;
 	}
 
 	/**

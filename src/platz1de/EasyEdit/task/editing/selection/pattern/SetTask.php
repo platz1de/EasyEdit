@@ -9,7 +9,6 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\VerticalStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
@@ -19,7 +18,6 @@ class SetTask extends PatternedEditTask
 	use CubicStaticUndo {
 		CubicStaticUndo::createUndoBlockList as private getDefaultBlockList;
 	}
-	use SettingNotifier;
 
 	/**
 	 * @return string

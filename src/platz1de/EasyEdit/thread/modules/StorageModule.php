@@ -11,6 +11,10 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
 use UnexpectedValueException;
 
+/**
+ * Important Notice: EVERY case of unused selection identifiers (e.g. as output of a task) must be unregistered!
+ * This will otherwise lead to memory leaks by keeping the selection in memory forever.
+ */
 class StorageModule
 {
 	/**

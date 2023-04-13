@@ -4,18 +4,20 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Axis;
 use pocketmine\utils\InternetException;
 use UnexpectedValueException;
 
+/**
+ * @extends ExecutableTask<SelectionManipulationResult>
+ */
 class DynamicStoredFlipTask extends ExecutableTask
 {
 	/**
@@ -35,7 +37,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		return "dynamic_storage_flip";
 	}
 
-	public function execute(): void
+	public function executeInternal(): SelectionManipulationResult
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
@@ -43,11 +45,8 @@ class DynamicStoredFlipTask extends ExecutableTask
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 
-		$palette = $selection->requestBlockStates();
-		if ($palette === false) {
-			return;
-		}
-		foreach ($palette as $key => $state) {
+		$palette = [];
+		foreach ($selection->requestBlockStates() as $key => $state) {
 			$palette[$key] = BlockRotationManipulator::flip($this->axis, $state);
 		}
 		$map = BlockStateTranslationManager::requestRuntimeId($palette);
@@ -85,7 +84,13 @@ class DynamicStoredFlipTask extends ExecutableTask
 			$flipped->addTile(TileUtils::flipCompound($this->axis, $tile, $selection->getPos2()->getComponent($this->axis)));
 		}
 		StorageModule::forceStore($this->saveId, $flipped);
-		$this->sendOutputPacket(new MessageSendData("blocks-flipped", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($flipped->getIterator()->getWrittenBlockCount())]));
+		return new SelectionManipulationResult($flipped->getIterator()->getWrittenBlockCount(), microtime(true) - $start);
+	}
+
+	public function attemptRecovery(): SelectionManipulationResult
+	{
+		//TODO: splitting
+		return new SelectionManipulationResult(0, 0);
 	}
 
 	public function getProgress(): float

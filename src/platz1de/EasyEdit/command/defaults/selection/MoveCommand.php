@@ -26,7 +26,7 @@ class MoveCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new MoveTask($session->getSelection(), $flags->getVectorFlag("vector")->diff(OffGridBlockVector::zero())));
+		$session->runSettingTask(new MoveTask($session->getSelection(), $flags->getVectorFlag("vector")->diff(OffGridBlockVector::zero())));
 	}
 
 	/**

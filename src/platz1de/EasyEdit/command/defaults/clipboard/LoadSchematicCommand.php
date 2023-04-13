@@ -9,9 +9,11 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\schematic\SchematicLoadTask;
+use platz1de\EasyEdit\utils\MixedUtils;
 
 class LoadSchematicCommand extends EasyEditCommand
 {
@@ -32,7 +34,10 @@ class LoadSchematicCommand extends EasyEditCommand
 			return;
 		}
 
-		$session->runTask(new SchematicLoadTask(EasyEdit::getSchematicPath() . $schematicName));
+		$session->runTask(new SchematicLoadTask(EasyEdit::getSchematicPath() . $schematicName))->then(function (EditTaskResult $result) use ($session) {
+			$session->sendMessage("blocks-copied", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+			$session->setClipboard($result->getSelection());
+		});
 	}
 
 	/**

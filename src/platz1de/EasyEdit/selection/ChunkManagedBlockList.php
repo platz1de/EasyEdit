@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\selection;
 
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
@@ -53,9 +54,10 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	}
 
 	/**
-	 * @return BlockStateData[]|false
+	 * @return BlockStateData[]
+	 * @throws CancelException
 	 */
-	public function requestBlockStates(): array|false
+	public function requestBlockStates(): array
 	{
 		return BlockStateTranslationManager::requestBlockState($this->iterator->collectPalette($this->pos1, $this->pos2));
 	}

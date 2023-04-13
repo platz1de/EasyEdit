@@ -2,8 +2,8 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ConfigManager;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
@@ -15,11 +15,10 @@ use SplPriorityQueue;
 
 class DrainTask extends ExpandingTask
 {
-	use SettingNotifier;
-
 	/**
 	 * @param EditTaskHandler $handler
 	 * @param int             $chunk
+	 * @throws CancelException
 	 */
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{
@@ -43,9 +42,7 @@ class DrainTask extends ExpandingTask
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$this->updateProgress(-$current["priority"], $limit);
-			if (!$this->loader->checkRuntimeChunk($chunk)) {
-				return;
-			}
+			$this->loader->checkRuntimeChunk($chunk);
 			$res = $handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS;
 			if ($res !== BlockTypeIds::WATER && $res !== BlockTypeIds::LAVA) {
 				$this->loader->checkUnload($handler, $chunk);

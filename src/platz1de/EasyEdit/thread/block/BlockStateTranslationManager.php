@@ -4,8 +4,8 @@ namespace platz1de\EasyEdit\thread\block;
 
 use InvalidArgumentException;
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\ThreadData;
 use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\data\bedrock\block\BlockStateSerializeException;
@@ -25,20 +25,18 @@ class BlockStateTranslationManager
 	 * @param BlockStateData[] $states
 	 * @param bool             $suppress Suppress invalid block state exceptions
 	 * @param bool             $full     Return full block state data
-	 * @return int[]|false
+	 * @return int[]
+	 * @throws CancelException
 	 */
-	public static function requestRuntimeId(array $states, bool $suppress = false, bool $full = false): array|false
+	public static function requestRuntimeId(array $states, bool $suppress = false, bool $full = false): array
 	{
 		self::$request = null;
 		EditThread::getInstance()->sendOutput(new BlockRequestData($states, true, $suppress, $full));
 		while (self::waitingForResponse()) {
 			EditThread::getInstance()->waitForData();
 		}
-		/** @var BlockInputData|null $request */
+		/** @var BlockInputData $request */
 		$request = self::$request;
-		if ($request === null) {
-			return false;
-		}
 		if (!$request->isRuntime()) {
 			throw new BlockStateSerializeException("Expected runtime id, got block state");
 		}
@@ -50,20 +48,18 @@ class BlockStateTranslationManager
 
 	/**
 	 * @param int[] $ids
-	 * @return BlockStateData[]|false
+	 * @return BlockStateData[]
+	 * @throws CancelException
 	 */
-	public static function requestBlockState(array $ids): array|false
+	public static function requestBlockState(array $ids): array
 	{
 		self::$request = null;
 		EditThread::getInstance()->sendOutput(new BlockRequestData($ids, false));
 		while (self::waitingForResponse()) {
 			EditThread::getInstance()->waitForData();
 		}
-		/** @var BlockInputData|null $request */
+		/** @var BlockInputData $request */
 		$request = self::$request;
-		if ($request === null) {
-			return false;
-		}
 		if ($request->isRuntime()) {
 			throw new BlockStateSerializeException("Expected block state, got runtime id");
 		}
@@ -83,7 +79,7 @@ class BlockStateTranslationManager
 	 */
 	private static function waitingForResponse(): bool
 	{
-		return self::$request === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution();
+		return self::$request === null;
 	}
 
 	private const MAX_PER_TICK = 250;

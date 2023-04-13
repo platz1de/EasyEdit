@@ -43,9 +43,8 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 
 	/**
 	 * @param int $chunk
-	 * @return true
 	 */
-	public function request(int $chunk): bool
+	public function request(int $chunk): void
 	{
 		World::getXZ($chunk, $x, $z);
 		if ($this->axis === Axis::X) {
@@ -73,7 +72,6 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 		}
 		$this->waiting[$this->current]++;
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $this->current));
-		return true;
 	}
 
 	/**

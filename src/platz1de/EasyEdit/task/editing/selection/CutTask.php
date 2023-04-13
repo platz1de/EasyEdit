@@ -4,20 +4,19 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
 use platz1de\EasyEdit\math\OffGridBlockVector;
+use platz1de\EasyEdit\result\CuttingTaskResult;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
-use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
-use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\block\VanillaBlocks;
 
+//TODO: Remove EditTask inheritance
 class CutTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
@@ -41,13 +40,15 @@ class CutTask extends SelectionEditTask
 		return "cut";
 	}
 
-	public function execute(): void
+	protected function toTaskResult(): CuttingTaskResult
+	{
+		return new CuttingTaskResult($this->totalBlocks, $this->totalTime, StorageModule::store($this->undo), StorageModule::store($this->result));
+	}
+
+	public function executeInternal(): EditTaskResult
 	{
 		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
-		parent::execute();
-		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->result)));
-		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->undo), false));
-		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
+		return parent::executeInternal();
 	}
 
 	/**
@@ -67,15 +68,6 @@ class CutTask extends SelectionEditTask
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
 			$handler->changeBlock($x, $y, $z, $id);
 		}, $this->context);
-	}
-
-	/**
-	 * @param string $time
-	 * @param string $changed
-	 */
-	public function notifyUser(string $time, string $changed): void
-	{
-		$this->sendOutputPacket(new MessageSendData("blocks-cut", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

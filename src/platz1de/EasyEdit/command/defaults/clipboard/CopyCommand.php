@@ -9,9 +9,13 @@ use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\OffGridBlockVector;
+use platz1de\EasyEdit\result\CuttingTaskResult;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use platz1de\EasyEdit\task\editing\selection\CutTask;
+use platz1de\EasyEdit\utils\MixedUtils;
+use RuntimeException;
 
 class CopyCommand extends SimpleFlagArgumentCommand
 {
@@ -30,9 +34,19 @@ class CopyCommand extends SimpleFlagArgumentCommand
 			if (!$this->testPermission($session->asPlayer(), KnownPermissions::PERMISSION_EDIT)) {
 				return;
 			}
-			$session->runTask(new CutTask($session->getSelection(), $flags->getVectorFlag("relative")));
+			$session->runTask(new CutTask($session->getSelection(), $flags->getVectorFlag("relative")))->then(function (EditTaskResult $result) use ($session) {
+				if (!$result instanceof CuttingTaskResult) {
+					throw new RuntimeException("Expected CuttingTaskResult");
+				}
+				$session->sendMessage("blocks-cut", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+				$session->addToHistory($result->getSelection(), false);
+				$session->setClipboard($result->getClipboard());
+			});
 		} else {
-			$session->runTask(new CopyTask($session->getSelection(), $flags->getVectorFlag("relative")));
+			$session->runTask(new CopyTask($session->getSelection(), $flags->getVectorFlag("relative")))->then(function (EditTaskResult $result) use ($session) {
+				$session->sendMessage("blocks-copied", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+				$session->setClipboard($result->getSelection());
+			});
 		}
 	}
 

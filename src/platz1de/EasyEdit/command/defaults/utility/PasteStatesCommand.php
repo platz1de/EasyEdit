@@ -24,7 +24,7 @@ class PasteStatesCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new PasteBlockStatesTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())));
+		$session->runSettingTask(new PasteBlockStatesTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())));
 	}
 
 	/**

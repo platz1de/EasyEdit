@@ -27,7 +27,7 @@ class StackCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new StackTask($session->getCube(), $flags->getVectorFlag("vector")->diff(OffGridBlockVector::zero()), $flags->hasFlag("insert")));
+		$session->runSettingTask(new StackTask($session->getCube(), $flags->getVectorFlag("vector")->diff(OffGridBlockVector::zero()), $flags->hasFlag("insert")));
 	}
 
 	/**

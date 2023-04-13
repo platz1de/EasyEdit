@@ -8,14 +8,12 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\world\World;
 
 class StaticPasteTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
-	use PastingNotifier;
 
 	/**
 	 * @var StaticBlockListSelection

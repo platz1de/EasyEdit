@@ -24,7 +24,7 @@ class DrainCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new DrainTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())));
+		$session->runSettingTask(new DrainTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())));
 	}
 
 	/**

@@ -46,16 +46,16 @@ class BrushHandler
 			try {
 				switch (self::nameToIdentifier($brush->getString("brushType", ""))) {
 					case self::BRUSH_SPHERE:
-						$session->runTask(new SetTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
+						$session->runSettingTask(new SetTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
 						break;
 					case self::BRUSH_SMOOTH:
-						$session->runTask(new SmoothTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0))));
+						$session->runSettingTask(new SmoothTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0))));
 						break;
 					case self::BRUSH_NATURALIZE:
-						$session->runTask(new SetTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0)), new NaturalizePattern(PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))));
+						$session->runSettingTask(new SetTask(new Sphere($world, $point, $brush->getFloat("brushSize", 0)), new NaturalizePattern(PatternParser::parseInternal($brush->getString("topBlock", "grass")), PatternParser::parseInternal($brush->getString("middleBlock", "dirt")), PatternParser::parseInternal($brush->getString("bottomBlock", "stone")))));
 						break;
 					case self::BRUSH_CYLINDER:
-						$session->runTask(new SetTask(new Cylinder($world, $point, $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
+						$session->runSettingTask(new SetTask(new Cylinder($world, $point, $brush->getFloat("brushSize", 0), $brush->getShort("brushHeight", 0)), PatternParser::parseInternal($brush->getString("brushPattern", "stone"))));
 						break;
 					case self::BRUSH_PASTE:
 						$clipboard = SessionManager::get($player)->getClipboard();
@@ -63,7 +63,7 @@ class BrushHandler
 							$session->sendMessage("no-clipboard");
 							return;
 						}
-						$session->runTask(new DynamicStoredPasteTask($clipboard, $world, $point->up(), true, $brush->getByte("isInsert", 0)));
+						$session->runSettingTask(new DynamicStoredPasteTask($clipboard, $world, $point->up(), true, $brush->getByte("isInsert", 0)));
 				}
 			} catch (ParseError $e) {
 				$session->sendMessage("pattern-invalid", ["{message}" => $e->getMessage()]);

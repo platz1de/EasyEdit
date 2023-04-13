@@ -8,12 +8,9 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 
 class StreamPasteTask extends SelectionEditTask
 {
-	use PastingNotifier;
-
 	/**
 	 * @var BinaryBlockListStream
 	 */

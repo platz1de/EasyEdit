@@ -27,7 +27,7 @@ abstract class AliasedPatternCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new SetTask($session->getSelection(), $this->parsePattern($session, $flags)));
+		$session->runSettingTask(new SetTask($session->getSelection(), $this->parsePattern($session, $flags)));
 	}
 
 	/**

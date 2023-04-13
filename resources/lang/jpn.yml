@@ -21,6 +21,7 @@ no-future: "やり直すものがありません"
 
 no-task: "現在タスクは実行されていません"
 task-cancelled: "現在実行中のタスクはキャンセルされました"
+task-cancelled-self: "Your task was cancelled"
 
 #Args: {usage}
 wrong-usage: "コマンドの使用方法が間違っています:\n{usage}"

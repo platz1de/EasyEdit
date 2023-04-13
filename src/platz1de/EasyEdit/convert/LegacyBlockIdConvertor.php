@@ -34,11 +34,7 @@ class LegacyBlockIdConvertor
 				$conversionMap[((int) $javaId[0]) << self::METADATA_BITS | ((int) $javaId[1])] = BlockParser::fromStateString($bedrockState, $version);
 			}
 
-			$result = BlockStateTranslationManager::requestRuntimeId($conversionMap, true);
-			if ($result === false) {
-				return;
-			}
-			self::$conversionFrom = $result;
+			self::$conversionFrom = BlockStateTranslationManager::requestRuntimeId($conversionMap, true);
 
 			self::$available = true;
 		} catch (Throwable $e) {

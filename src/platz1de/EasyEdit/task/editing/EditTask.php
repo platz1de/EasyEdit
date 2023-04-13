@@ -2,19 +2,21 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
-use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 
+/**
+ * @extends ExecutableTask<EditTaskResult>
+ */
 abstract class EditTask extends ExecutableTask
 {
 	protected BlockListSelection $undo;
@@ -40,8 +42,9 @@ abstract class EditTask extends ExecutableTask
 	/**
 	 * @param int                $chunk
 	 * @param ChunkInformation[] $chunkInformation
+	 * @throws CancelException
 	 */
-	public function run(int $chunk, array $chunkInformation): void
+	protected function runEdit(int $chunk, array $chunkInformation): void
 	{
 		$start = microtime(true);
 
@@ -59,31 +62,25 @@ abstract class EditTask extends ExecutableTask
 		$this->totalTime += microtime(true) - $start;
 		$this->totalBlocks += $this->handler->getChangedBlockCount();
 
-		$this->sendOutputPacket(new ResultingChunkData($this->world, $this->filterChunks($this->handler->getResult()->getChunks()), $this->handler->prepareAllInjectionData()));
+		EditThread::getInstance()->sendOutput(new ResultingChunkData($this->world, $this->filterChunks($this->handler->getResult()->getChunks()), $this->handler->prepareAllInjectionData()));
 	}
 
-	public function finalize(): void
+	protected function toTaskResult(): EditTaskResult
 	{
-		if (!$this->useDefaultHandler()) {
-			return;
-		}
-		$changeId = StorageModule::store($this->undo);
-		$this->sendOutputPacket(new HistoryCacheData($changeId, false));
-		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
-		ChunkRequestManager::clear();
+		return new EditTaskResult($this->totalBlocks, $this->totalTime, StorageModule::store($this->undo));
+	}
+
+	public function attemptRecovery(): EditTaskResult
+	{
+		return $this->toTaskResult();
 	}
 
 	/**
 	 * @param EditTaskHandler $handler
 	 * @param int             $chunk
+	 * @throws CancelException
 	 */
 	abstract public function executeEdit(EditTaskHandler $handler, int $chunk): void;
-
-	/**
-	 * @param string $time
-	 * @param string $changed
-	 */
-	abstract public function notifyUser(string $time, string $changed): void;
 
 	/**
 	 * Filters actually edited chunks
@@ -121,29 +118,5 @@ abstract class EditTask extends ExecutableTask
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->world = $stream->getString();
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getTotalTime(): float
-	{
-		return $this->totalTime;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getTotalBlocks(): int
-	{
-		return $this->totalBlocks;
-	}
-
-	/**
-	 * @return BlockListSelection
-	 */
-	public function getUndo(): BlockListSelection
-	{
-		return $this->undo;
 	}
 }

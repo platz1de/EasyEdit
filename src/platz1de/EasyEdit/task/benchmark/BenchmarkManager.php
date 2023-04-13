@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\benchmark;
 
 use Closure;
 use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\result\BenchmarkTaskResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\MixedUtils;
 use pocketmine\scheduler\TaskHandler;
@@ -40,7 +41,11 @@ class BenchmarkManager
 
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		$session->runTask(new BenchmarkExecutor($name));
+		$session->runTask(new BenchmarkExecutor($name))->then(static function (BenchmarkTaskResult $results): void {
+			self::benchmarkCallback($results->getWorld(), $results->getResults());
+		})->update(static function (int $progress) use ($session): void {
+			$session->sendMessage("benchmark-progress", ["{done}" => (string) $progress, "{total}" => "4"]);
+		});
 	}
 
 	/**

@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing\selection\stack;
 
 use Generator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
@@ -11,7 +12,6 @@ use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
 use platz1de\EasyEdit\task\editing\SingleChunkHandler;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
@@ -22,7 +22,6 @@ use UnexpectedValueException;
 class StackTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
-	use SettingNotifier;
 
 	private Selection $original;
 
@@ -36,11 +35,11 @@ class StackTask extends SelectionEditTask
 		parent::__construct($selection);
 	}
 
-	public function execute(): void
+	public function executeInternal(): EditTaskResult
 	{
 		$this->original = $this->selection;
 		$this->selection = new StackingHelper($this->selection, $this->direction);
-		parent::execute();
+		return parent::executeInternal();
 	}
 
 	/**

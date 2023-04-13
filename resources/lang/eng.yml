@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2023-02-19
+#Last updated at: 2023-04-10
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -21,6 +21,7 @@ no-future: "Nothing to redo"
 
 no-task: "No task is currently running"
 task-cancelled: "Current task was cancelled"
+task-cancelled-self: "Your task was cancelled"
 
 #Args: {usage}
 wrong-usage: "Wrong command usage:\n{usage}"

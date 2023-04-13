@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
 use platz1de\EasyEdit\math\OffGridBlockVector;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -12,10 +13,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\session\ClipboardCacheData;
-use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 
 class CopyTask extends SelectionEditTask
@@ -32,18 +30,15 @@ class CopyTask extends SelectionEditTask
 		parent::__construct($selection, $context);
 	}
 
-	public function execute(): void
+	public function executeInternal(): EditTaskResult
 	{
-		$handle = $this->useDefaultHandler();
-		if (!$handle) {
-			$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
-			parent::execute();
-			$this->totalBlocks = $this->result->getBlockCount();
-			return;
-		}
-		$this->executeAssociated($this, false); //this calls this method again, but without the default handler
-		$this->sendOutputPacket(new ClipboardCacheData(StorageModule::store($this->result)));
-		$this->notifyUser((string) round($this->totalTime, 2), MixedUtils::humanReadable($this->totalBlocks));
+		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
+		return parent::executeInternal();
+	}
+
+	protected function toTaskResult(): EditTaskResult
+	{
+		return new EditTaskResult($this->result->getBlockCount(), $this->totalTime, StorageModule::store($this->result));
 	}
 
 	/**
@@ -60,15 +55,6 @@ class CopyTask extends SelectionEditTask
 	public function createUndoBlockList(): BlockListSelection
 	{
 		return new NonSavingBlockListSelection();
-	}
-
-	/**
-	 * @param string $time
-	 * @param string $changed
-	 */
-	public function notifyUser(string $time, string $changed): void
-	{
-		$this->sendOutputPacket(new MessageSendData("blocks-copied", ["{time}" => $time, "{changed}" => $changed]));
 	}
 
 	/**

@@ -1,7 +1,7 @@
 #If you want to help translate EasyEdit head over to
 #https://github.com/platz1de/EasyEdit/tree/dev/resources/lang/TRANSLATE.md
 
-message-version: "2.1.8" #Please don't change this manually
+message-version: "2.1.9" #Please don't change this manually
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -22,6 +22,7 @@ no-future: "Nothing to redo"
 
 no-task: "No task is currently running"
 task-cancelled: "Current task was cancelled"
+task-cancelled-self: "Your task was cancelled"
 
 #Args: {usage}
 wrong-usage: "Wrong command usage:\n{usage}"

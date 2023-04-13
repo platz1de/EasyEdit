@@ -6,19 +6,26 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
+use platz1de\EasyEdit\result\BenchmarkTaskResult;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\editing\selection\CopyTask;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\output\BenchmarkCallbackData;
-use platz1de\EasyEdit\thread\output\session\MessageSendData;
+use platz1de\EasyEdit\thread\output\TaskNotifyData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
 
+/**
+ * @extends ExecutableTask<BenchmarkTaskResult>
+ */
 class BenchmarkExecutor extends ExecutableTask
 {
+	/**
+	 * @var array{string, float, int, float}[]
+	 */
+	private array $results = [];
 	private SetTask $setSimpleBenchmark;
 	private SetTask $setComplexBenchmark;
 	private CopyTask $copyBenchmark;
@@ -32,9 +39,9 @@ class BenchmarkExecutor extends ExecutableTask
 		parent::__construct();
 	}
 
-	public function execute(): void
+	public function executeInternal(): BenchmarkTaskResult
 	{
-		$results = [];
+		$this->results = [];
 
 		$pos = new OffGridBlockVector(0, World::Y_MIN, 0);
 
@@ -44,33 +51,38 @@ class BenchmarkExecutor extends ExecutableTask
 		//Task #1 - set static
 		$start = microtime(true);
 		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
-		$this->setSimpleBenchmark->executeAssociated($this, false);
-		$results[] = ["set static", $this->setSimpleBenchmark->getTotalTime(), $this->setSimpleBenchmark->getTotalBlocks(), microtime(true) - $start];
-		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => "1", "{total}" => "4"]));
+		$res = $this->setSimpleBenchmark->executeInternal();
+		$this->results[] = ["set static", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->sendOutputPacket(new TaskNotifyData(1));
 
 		//Task #2 - set complex
 		$start = microtime(true);
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
-		$this->setComplexBenchmark->executeAssociated($this, false);
-		$results[] = ["set complex", $this->setComplexBenchmark->getTotalTime(), $this->setComplexBenchmark->getTotalBlocks(), microtime(true) - $start];
-		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => "2", "{total}" => "4"]));
+		$this->setComplexBenchmark->executeInternal();
+		$this->results[] = ["set complex", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->sendOutputPacket(new TaskNotifyData(2));
 
 		//Task #3 - copy
 		$start = microtime(true);
 		$this->copyBenchmark = new CopyTask($testCube, $pos);
-		$this->copyBenchmark->executeAssociated($this, false);
-		$results[] = ["copy", $this->copyBenchmark->getTotalTime(), $this->copyBenchmark->getTotalBlocks(), microtime(true) - $start];
-		$this->sendOutputPacket(new MessageSendData("benchmark-progress", ["{done}" => "3", "{total}" => "4"]));
+		$res = $this->copyBenchmark->executeInternal(); //TODO: Don't save the selection (literal memory leak)
+		$this->results[] = ["copy", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->sendOutputPacket(new TaskNotifyData(3));
 
 		//Task #4 - paste
 		$start = microtime(true);
 		$this->pasteBenchmark = new DynamicPasteTask($this->world, $this->copyBenchmark->getResult(), $pos);
-		$this->pasteBenchmark->executeAssociated($this, false);
-		$results[] = ["paste", $this->pasteBenchmark->getTotalTime(), $this->pasteBenchmark->getTotalBlocks(), microtime(true) - $start];
+		$this->pasteBenchmark->executeInternal();
+		$this->results[] = ["paste", $res->getTime(), $res->getAffected(), microtime(true) - $start];
 
-		$this->sendOutputPacket(new BenchmarkCallbackData($this->world, $results));
+		return new BenchmarkTaskResult($this->world, $this->results);
+	}
+
+	public function attemptRecovery(): BenchmarkTaskResult
+	{
+		return new BenchmarkTaskResult($this->world, $this->results);
 	}
 
 	public function getProgress(): float

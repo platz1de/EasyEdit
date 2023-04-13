@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\thread;
 
+use platz1de\EasyEdit\result\TaskResult;
 use platz1de\EasyEdit\task\ExecutableTask;
 
 /**
@@ -10,13 +11,13 @@ use platz1de\EasyEdit\task\ExecutableTask;
 class ThreadData
 {
 	/**
-	 * @var ExecutableTask[]
+	 * @var ExecutableTask<TaskResult>[]
 	 */
 	private static array $tasks = [];
 	private static bool $stop = false;
 
 	/**
-	 * @return ExecutableTask|null
+	 * @return ExecutableTask<TaskResult>|null
 	 */
 	public static function getNextTask(): ?ExecutableTask
 	{
@@ -32,7 +33,7 @@ class ThreadData
 	}
 
 	/**
-	 * @param ExecutableTask $task
+	 * @param ExecutableTask<TaskResult> $task
 	 */
 	public static function addTask(ExecutableTask $task): void
 	{
@@ -47,9 +48,9 @@ class ThreadData
 	/**
 	 * @return bool
 	 */
-	public static function canExecute(): bool
+	public static function requiresCancel(): bool
 	{
-		return !self::$stop;
+		return self::$stop;
 	}
 
 	public static function clear(): void

@@ -2,21 +2,20 @@
 
 namespace platz1de\EasyEdit\handler;
 
-use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\result\TaskResult;
+use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
-use platz1de\EasyEdit\thread\output\session\SessionOutputData;
+use platz1de\EasyEdit\thread\output\TaskNotifyData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
-use pocketmine\promise\Promise;
-use pocketmine\promise\PromiseResolver;
 use UnexpectedValueException;
 
 class EditHandler
 {
 	/**
-	 * @var PromiseResolver<TaskResultData>[]
+	 * @var TaskResultPromise<TaskResult>[]
 	 */
 	private static array $promises = [];
 	/**
@@ -25,26 +24,26 @@ class EditHandler
 	private static array $executors = [];
 
 	/**
-	 * @param Session        $executor
-	 * @param ExecutableTask $task
-	 * @return Promise<TaskResultData>
+	 * @param Session $executor
+	 * @param int     $task
 	 */
-	public static function runPlayerTask(Session $executor, ExecutableTask $task): Promise
+	public static function affiliateTask(Session $executor, int $task): void
 	{
-		self::$executors[$task->getTaskId()] = $executor;
-		return self::runTask($task);
+		self::$executors[$task] = $executor;
 	}
 
 	/**
-	 * @param ExecutableTask $task
-	 * @return Promise<TaskResultData>
+	 * @template T of TaskResult
+	 * @param ExecutableTask<T> $task
+	 * @return TaskResultPromise<T>
 	 */
-	public static function runTask(ExecutableTask $task): Promise
+	public static function runTask(ExecutableTask $task): TaskResultPromise
 	{
-		$promise = new PromiseResolver();
+		/** @phpstan-var TaskResultPromise<T> $promise */
+		$promise = new TaskResultPromise();
 		self::$promises[$task->getTaskId()] = $promise;
 		TaskInputData::fromTask($task);
-		return $promise->getPromise();
+		return $promise;
 	}
 
 	/**
@@ -57,19 +56,22 @@ class EditHandler
 		}
 		$promise = self::$promises[$result->getTaskId()];
 		unset(self::$promises[$result->getTaskId()], self::$executors[$result->getTaskId()]);
-		$promise->resolve($result);
+		if (!$result->isSuccess()) {
+			$message = $result->getMessage();
+			$message === null ? $promise->cancel() : $promise->reject($message);
+		}
+		$promise->resolve($result->getPayload()); //Note that this will always get called, even if the task was cancelled / rejected
 	}
 
 	/**
-	 * @param SessionOutputData $data
+	 * @param TaskNotifyData $result
 	 */
-	public static function processSessionOutput(SessionOutputData $data): void
+	public static function notify(TaskNotifyData $result): void
 	{
-		if (!isset(self::$executors[$data->getTaskId()])) {
-			EasyEdit::getInstance()->getLogger()->error("Received output for invalid task " . $data->getTaskId());
-			return;
+		if (!isset(self::$promises[$result->getTaskId()])) {
+			throw new UnexpectedValueException("Task with id " . $result->getTaskId() . " not found");
 		}
-		$data->handleSession(self::$executors[$data->getTaskId()]);
+		self::$promises[$result->getTaskId()]->notify($result->getPayload());
 	}
 
 	/**

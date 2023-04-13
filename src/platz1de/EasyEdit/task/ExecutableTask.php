@@ -3,16 +3,21 @@
 namespace platz1de\EasyEdit\task;
 
 use InvalidArgumentException;
+use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\result\TaskResult;
+use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use Thread;
 
+/**
+ * @template T of TaskResult
+ */
 abstract class ExecutableTask
 {
 	private static int $id = 0;
 	private int $taskId;
-	private bool $defaultHandler = true;
 
 	public function __construct()
 	{
@@ -20,17 +25,25 @@ abstract class ExecutableTask
 	}
 
 	/**
-	 * @param ExecutableTask $task
-	 * @param bool           $useDefaultHandler
+	 * @return TaskResultPromise<T>
 	 */
-	public function executeAssociated(ExecutableTask $task, bool $useDefaultHandler = true): void
+	public function run(): TaskResultPromise
 	{
-		$this->taskId = $task->getTaskId();
-		$this->defaultHandler = $useDefaultHandler;
-		$this->execute();
+		return EditHandler::runTask($this);
 	}
 
-	abstract public function execute(): void;
+	/**
+	 * @return T
+	 * @throws CancelException
+	 * @internal
+	 */
+	abstract public function executeInternal(): TaskResult;
+
+	/**
+	 * @return T
+	 * @internal Attempt to recover from cancellation or a crash (e.g. saving undo data)
+	 */
+	abstract public function attemptRecovery(): TaskResult;
 
 	/**
 	 * @param ExtendedBinaryStream $stream
@@ -70,12 +83,12 @@ abstract class ExecutableTask
 
 	/**
 	 * @param string $data
-	 * @return ExecutableTask
+	 * @return ExecutableTask<TaskResult>
 	 */
 	public static function fastDeserialize(string $data): ExecutableTask
 	{
 		$stream = new ExtendedBinaryStream($data);
-		/** @var ExecutableTask $task */
+		/** @var ExecutableTask<TaskResult> $task */
 		$task = igbinary_unserialize($stream->getString());
 		$task->parseData($stream);
 		return $task;
@@ -113,13 +126,5 @@ abstract class ExecutableTask
 	public function getTaskId(): int
 	{
 		return $this->taskId;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function useDefaultHandler(): bool
-	{
-		return $this->defaultHandler;
 	}
 }

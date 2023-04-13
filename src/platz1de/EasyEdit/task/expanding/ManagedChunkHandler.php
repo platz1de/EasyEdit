@@ -2,13 +2,13 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
-use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\world\ChunkInformation;
 use UnexpectedValueException;
 
@@ -26,29 +26,35 @@ class ManagedChunkHandler implements ChunkHandler
 
 	public function __construct(private EditTaskHandler $handler) {}
 
-	public function request(int $chunk): bool
+	/**
+	 * @param int $chunk
+	 * @throws CancelException
+	 */
+	public function request(int $chunk): void
 	{
 		$manager = $this->handler->getOrigin()->getManager();
 		try {
 			$manager->getChunk($chunk);
 			EditThread::getInstance()->debug("Requested chunk is already loaded");
-			return true;
+			return;
 		} catch (UnexpectedValueException) {
 		}
 		ChunkRequestManager::addRequest(new ChunkRequest($manager->getWorldName(), $chunk));
-		while ($this->current === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+		while ($this->current === null) {
+			EditThread::getInstance()->checkExecution();
 			EditThread::getInstance()->waitForData();
 		}
-		if ($this->current === null) {
-			return false;
-		}
-		$manager->setChunk($chunk, $this->current);
-		$this->handler->getResult()->setChunk($chunk, clone $this->current);
+		/**
+		 * PhpStan somehow expects null here (sadly doesn't seem to support the while loop above as a check)
+		 * @phpstan-var ChunkInformation $c
+		 */
+		$c = $this->current;
+		$manager->setChunk($chunk, $c);
+		$this->handler->getResult()->setChunk($chunk, clone $c);
 		$this->current = null;
 		//TODO: Hack to prevent chunk cap
 		//Currently expanding selections expand in every direction, which means that the chunk cap is reached very quickly
 		ChunkRequestManager::markAsDone();
-		return true;
 	}
 
 	public function handleInput(int $chunk, ChunkInformation $data, ?int $payload): void
@@ -64,17 +70,14 @@ class ManagedChunkHandler implements ChunkHandler
 
 	/**
 	 * @param int $chunk
-	 * @return bool
+	 * @throws CancelException
 	 */
-	public function checkRuntimeChunk(int $chunk): bool
+	public function checkRuntimeChunk(int $chunk): void
 	{
 		if (!isset($this->loaded[$chunk])) {
 			$this->loaded[$chunk] = true;
-			if (!$this->request($chunk)) {
-				return false;
-			}
+			$this->request($chunk);
 		}
-		return true;
 	}
 
 	/**

@@ -23,7 +23,7 @@ class SetCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern")));
+		$session->runSettingTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern")));
 	}
 
 	/**

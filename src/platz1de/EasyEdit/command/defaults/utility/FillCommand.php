@@ -28,7 +28,7 @@ class FillCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new FillTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getIntFlag("direction"), $flags->getStaticBlockFlag("block")));
+		$session->runSettingTask(new FillTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getIntFlag("direction"), $flags->getStaticBlockFlag("block")));
 	}
 
 	/**

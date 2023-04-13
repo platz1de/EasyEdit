@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\task\expanding;
 
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -16,8 +16,6 @@ use SplPriorityQueue;
 
 class ExtendBlockFaceTask extends ExpandingTask
 {
-	use SettingNotifier;
-
 	/**
 	 * @param string      $world
 	 * @param BlockVector $block
@@ -31,6 +29,7 @@ class ExtendBlockFaceTask extends ExpandingTask
 	/**
 	 * @param EditTaskHandler $handler
 	 * @param int             $chunk
+	 * @throws CancelException
 	 */
 	public function executeEdit(EditTaskHandler $handler, int $chunk): void
 	{

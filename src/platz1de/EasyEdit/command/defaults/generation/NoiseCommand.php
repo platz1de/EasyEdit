@@ -23,7 +23,7 @@ class NoiseCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new Noise3DTask($session->getSelection()));
+		$session->runSettingTask(new Noise3DTask($session->getSelection()));
 	}
 
 	/**

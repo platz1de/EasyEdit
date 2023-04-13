@@ -7,8 +7,10 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FacingCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredFlipTask;
+use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\math\Facing;
 
@@ -25,7 +27,9 @@ class FlipCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new DynamicStoredFlipTask($session->getClipboard(), Facing::axis($flags->getIntFlag("direction"))));
+		$session->runTask(new DynamicStoredFlipTask($session->getClipboard(), Facing::axis($flags->getIntFlag("direction"))))->then(function (SelectionManipulationResult $result) use ($session) {
+			$session->sendMessage("blocks-rotated", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getChanged())]);
+		});
 	}
 
 	/**

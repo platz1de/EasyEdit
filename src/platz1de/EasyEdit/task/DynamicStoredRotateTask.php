@@ -4,17 +4,19 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\session\MessageSendData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\utils\InternetException;
 use RuntimeException;
 
+/**
+ * @extends ExecutableTask<SelectionManipulationResult>
+ */
 class DynamicStoredRotateTask extends ExecutableTask
 {
 	/**
@@ -33,7 +35,7 @@ class DynamicStoredRotateTask extends ExecutableTask
 		return "dynamic_storage_rotate";
 	}
 
-	public function execute(): void
+	public function executeInternal(): SelectionManipulationResult
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
@@ -41,17 +43,11 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 
-		$palette = $selection->requestBlockStates();
-		if ($palette === false) {
-			return;
-		}
-		foreach ($palette as $key => $state) {
+		$palette = [];
+		foreach ($selection->requestBlockStates() as $key => $state) {
 			$palette[$key] = BlockRotationManipulator::rotate($state);
 		}
 		$map = BlockStateTranslationManager::requestRuntimeId($palette);
-		if ($map === false) {
-			return;
-		}
 
 		$rotated = $selection->createSafeClone();
 		$rotated->free();
@@ -72,7 +68,13 @@ class DynamicStoredRotateTask extends ExecutableTask
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->z));
 		}
 		StorageModule::forceStore($this->saveId, $rotated);
-		$this->sendOutputPacket(new MessageSendData("blocks-rotated", ["{time}" => (string) round(microtime(true) - $start, 2), "{changed}" => MixedUtils::humanReadable($rotated->getIterator()->getWrittenBlockCount())]));
+		return new SelectionManipulationResult($rotated->getIterator()->getWrittenBlockCount(), microtime(true) - $start);
+	}
+
+	public function attemptRecovery(): SelectionManipulationResult
+	{
+		//TODO: splitting so we can some report time
+		return new SelectionManipulationResult(0, 0);
 	}
 
 	public function getProgress(): float

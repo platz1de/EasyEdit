@@ -3,16 +3,17 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTask;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\SingleChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
@@ -36,7 +37,11 @@ abstract class SelectionEditTask extends EditTask
 		parent::__construct($selection->getWorldName());
 	}
 
-	public function execute(): void
+	/**
+	 * @return EditTaskResult
+	 * @throws CancelException
+	 */
+	public function executeInternal(): EditTaskResult
 	{
 		$handler = $this->getChunkHandler();
 		ChunkRequestManager::setHandler($handler);
@@ -49,10 +54,11 @@ abstract class SelectionEditTask extends EditTask
 		foreach ($chunks as $chunk) {
 			$handler->request($chunk);
 		}
-		while (ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+		while (true) {
+			EditThread::getInstance()->checkExecution();
 			if (($key = $handler->getNextChunk()) !== null) {
 				$this->chunksLeft--;
-				$this->run($key, $handler->getData());
+				$this->runEdit($key, $handler->getData());
 			}
 			if ($this->chunksLeft <= 0) {
 				break;
@@ -63,7 +69,7 @@ abstract class SelectionEditTask extends EditTask
 				EditThread::getInstance()->parseInput();
 			}
 		}
-		$this->finalize();
+		return $this->toTaskResult();
 	}
 
 	/**

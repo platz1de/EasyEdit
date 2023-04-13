@@ -33,7 +33,7 @@ class CubeCommand extends SimpleFlagArgumentCommand
 		$size = $flags->getFloatFlag("size") - 1;
 		$offsetMax = new BlockOffsetVector((int) ceil($size / 2), (int) ceil($size / 2), (int) ceil($size / 2));
 		$offsetMin = new BlockOffsetVector((int) floor($size / 2), (int) floor($size / 2), (int) floor($size / 2));
-		$session->runTask(new SetTask(new Cube($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMax), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMin->negate())), $pattern));
+		$session->runSettingTask(new SetTask(new Cube($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMax), BlockVector::fromVector($session->asPlayer()->getPosition())->offset($offsetMin->negate())), $pattern));
 	}
 
 	/**

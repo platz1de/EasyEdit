@@ -41,13 +41,13 @@ class LineCommand extends SimpleFlagArgumentCommand
 
 		switch ($flags->getIntFlag("mode")) {
 			case self::MODE_LINE:
-				$session->runTask(new LineTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, $flags->getStaticBlockFlag("block")));
+				$session->runSettingTask(new LineTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, $flags->getStaticBlockFlag("block")));
 				break;
 			case self::MODE_PATH:
-				$session->runTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, true, $flags->getStaticBlockFlag("block")));
+				$session->runSettingTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, true, $flags->getStaticBlockFlag("block")));
 				break;
 			case self::MODE_SOLID_PATH:
-				$session->runTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, false, $flags->getStaticBlockFlag("block")));
+				$session->runSettingTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, false, $flags->getStaticBlockFlag("block")));
 				break;
 			default:
 				throw new InvalidArgumentException("Invalid line mode");

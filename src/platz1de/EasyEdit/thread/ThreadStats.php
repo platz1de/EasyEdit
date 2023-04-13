@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\handler\EditHandler;
+use platz1de\EasyEdit\result\TaskResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
@@ -69,6 +70,9 @@ class ThreadStats extends ThreadedBase
 		$this->updateMemory();
 	}
 
+	/**
+	 * @param ExecutableTask<TaskResult> $task
+	 */
 	public function startTask(ExecutableTask $task): void
 	{
 		$name = $task->getTaskName();

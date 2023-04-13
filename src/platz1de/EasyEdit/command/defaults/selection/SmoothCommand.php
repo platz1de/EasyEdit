@@ -23,7 +23,7 @@ class SmoothCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new SmoothTask($session->getSelection()));
+		$session->runSettingTask(new SmoothTask($session->getSelection()));
 	}
 
 	/**

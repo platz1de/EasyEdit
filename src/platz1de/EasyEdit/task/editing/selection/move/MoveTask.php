@@ -12,15 +12,12 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
 
 class MoveTask extends SelectionEditTask
 {
-	use SettingNotifier;
-
 	/**
 	 * @param Selection         $selection
 	 * @param BlockOffsetVector $direction

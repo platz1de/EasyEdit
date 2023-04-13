@@ -7,8 +7,10 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredRotateTask;
+use platz1de\EasyEdit\utils\MixedUtils;
 
 class RotateCommand extends EasyEditCommand
 {
@@ -23,7 +25,9 @@ class RotateCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new DynamicStoredRotateTask($session->getClipboard()));
+		$session->runTask(new DynamicStoredRotateTask($session->getClipboard()))->then(function (SelectionManipulationResult $result) use ($session) {
+			$session->sendMessage("blocks-rotated", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getChanged())]);
+		});
 	}
 
 	/**

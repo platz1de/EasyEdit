@@ -7,7 +7,6 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
@@ -18,7 +17,6 @@ use pocketmine\world\generator\noise\Simplex;
 class Noise3DTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
-	use SettingNotifier;
 
 	private Noise $noise;
 

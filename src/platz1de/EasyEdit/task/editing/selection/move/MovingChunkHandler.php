@@ -43,9 +43,8 @@ class MovingChunkHandler extends GroupedChunkHandler
 
 	/**
 	 * @param int $chunk
-	 * @return true
 	 */
-	public function request(int $chunk): bool
+	public function request(int $chunk): void
 	{
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
 		$this->queue[] = $chunk;
@@ -67,7 +66,6 @@ class MovingChunkHandler extends GroupedChunkHandler
 			}
 		}
 		$this->last = $chunk;
-		return true;
 	}
 
 	/**

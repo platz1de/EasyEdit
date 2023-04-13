@@ -11,7 +11,6 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\type\PastingNotifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -20,8 +19,6 @@ use pocketmine\block\BlockTypeIds;
 
 class DynamicPasteTask extends SelectionEditTask
 {
-	use PastingNotifier;
-
 	public const MODE_REPLACE_ALL = 0; //Replace everything with the selection
 	public const MODE_REPLACE_AIR = 1; //Replace air with the selection
 	public const MODE_ONLY_SOLID = 2; //Only paste solid blocks

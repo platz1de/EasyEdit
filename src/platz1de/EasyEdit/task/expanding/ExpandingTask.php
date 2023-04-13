@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\expanding;
 
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTask;
@@ -25,28 +26,19 @@ abstract class ExpandingTask extends EditTask
 		parent::__construct($world);
 	}
 
-	public function execute(): void
+	public function executeInternal(): EditTaskResult
 	{
 		$this->prepare(true);
 
 		$this->handler->setManager($manager = new ReferencedChunkManager($this->world));
 		$this->loader = new ManagedChunkHandler($this->handler);
 		ChunkRequestManager::setHandler($this->loader);
-		if (!$this->loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4))) {
-			$this->finalize();
-			return;
-		}
+		$this->loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4));
 
-		$this->run(-1, $manager->getChunks());
+		$this->runEdit(-1, $manager->getChunks());
 
-		$this->finalize();
+		return $this->toTaskResult();
 	}
-
-	/**
-	 * @param string $time
-	 * @param string $changed
-	 */
-	abstract public function notifyUser(string $time, string $changed): void;
 
 	/**
 	 * @return BlockListSelection

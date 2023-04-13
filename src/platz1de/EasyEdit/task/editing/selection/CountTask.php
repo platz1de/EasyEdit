@@ -3,20 +3,24 @@
 namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
+use platz1de\EasyEdit\result\CountingTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\thread\output\session\MessageSendData;
-use platz1de\EasyEdit\utils\BlockParser;
-use platz1de\EasyEdit\utils\MixedUtils;
 
+//TODO: Pull this out of EditTask (move selection logic in underlying classes)
 class CountTask extends SelectionEditTask
 {
 	/**
 	 * @var int[]
 	 */
 	private array $counted = [];
+
+	protected function toTaskResult(): CountingTaskResult
+	{
+		return new CountingTaskResult($this->counted, $this->totalTime);
+	}
 
 	/**
 	 * @return string
@@ -32,20 +36,6 @@ class CountTask extends SelectionEditTask
 	public function createUndoBlockList(): BlockListSelection
 	{
 		return new NonSavingBlockListSelection();
-	}
-
-	/**
-	 * @param string $time
-	 * @param string $changed
-	 */
-	public function notifyUser(string $time, string $changed): void
-	{
-		arsort($this->counted);
-		$blocks = [];
-		foreach ($this->counted as $block => $count) {
-			$blocks[] = BlockParser::runtimeToStateString($block) . ": " . MixedUtils::humanReadable($count);
-		}
-		$this->sendOutputPacket(new MessageSendData("blocks-counted", ["{time}" => $time, "{changed}" => (string) array_sum($this->counted), "{blocks}" => implode("\n", $blocks)]));
 	}
 
 	/**

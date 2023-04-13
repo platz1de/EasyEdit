@@ -3,11 +3,15 @@
 namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\math\OffGridBlockVector;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
+/**
+ * @extends ExecutableTask<EditTaskResult>
+ */
 class DynamicStoredPasteTask extends ExecutableTask
 {
 	private DynamicPasteTask $executor;
@@ -32,14 +36,19 @@ class DynamicStoredPasteTask extends ExecutableTask
 		return "dynamic_storage_paste";
 	}
 
-	public function execute(): void
+	public function executeInternal(): EditTaskResult
 	{
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
 		}
 		$this->executor = new DynamicPasteTask($this->world, $selection, $this->position, $this->mode);
-		$this->executor->executeAssociated($this);
+		return $this->executor->executeInternal();
+	}
+
+	public function attemptRecovery(): EditTaskResult
+	{
+		return $this->executor->attemptRecovery();
 	}
 
 	public function getProgress(): float

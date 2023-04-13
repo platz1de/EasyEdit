@@ -31,7 +31,7 @@ class AliasedContextCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern"), $this->context));
+		$session->runSettingTask(new SetTask($session->getSelection(), $flags->getPatternFlag("pattern"), $this->context));
 	}
 
 	/**

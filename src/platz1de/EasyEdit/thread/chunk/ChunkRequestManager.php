@@ -16,10 +16,11 @@ class ChunkRequestManager
 	 */
 	private static array $queue = [];
 	private static int $currentRequests = 0;
-	private static ?ChunkHandler $handler;
+	private static ?ChunkHandler $handler = null;
 
 	public static function setHandler(ChunkHandler $handler): void
 	{
+		self::clear();
 		self::$handler = $handler;
 	}
 

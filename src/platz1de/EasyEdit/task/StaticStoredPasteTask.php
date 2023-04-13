@@ -2,15 +2,17 @@
 
 namespace platz1de\EasyEdit\task;
 
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\selection\StaticPasteTask;
 use platz1de\EasyEdit\task\editing\selection\StreamPasteTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\thread\output\session\HistoryCacheData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\utils\MixedUtils;
 
+/**
+ * @extends ExecutableTask<EditTaskResult>
+ */
 class StaticStoredPasteTask extends ExecutableTask
 {
 	private StaticPasteTask|StreamPasteTask $executor;
@@ -18,9 +20,8 @@ class StaticStoredPasteTask extends ExecutableTask
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param bool                      $keep
-	 * @param bool                      $isUndo
 	 */
-	public function __construct(private StoredSelectionIdentifier $saveId, private bool $keep, private bool $isUndo = false)
+	public function __construct(private StoredSelectionIdentifier $saveId, private bool $keep)
 	{
 		parent::__construct();
 	}
@@ -33,8 +34,9 @@ class StaticStoredPasteTask extends ExecutableTask
 		return "static_storage_paste";
 	}
 
-	public function execute(): void
+	public function executeInternal(): EditTaskResult
 	{
+		//TODO: remove this
 		$selection = StorageModule::mustGetStatic($this->saveId);
 		if (!$this->keep) {
 			StorageModule::cleanStored($this->saveId);
@@ -45,10 +47,12 @@ class StaticStoredPasteTask extends ExecutableTask
 		} else {
 			$this->executor = new StreamPasteTask($selection);
 		}
-		$this->executor->executeAssociated($this, false);
+		return $this->executor->executeInternal();
+	}
 
-		$this->sendOutputPacket(new HistoryCacheData(StorageModule::store($this->executor->getUndo()), $this->isUndo));
-		$this->executor->notifyUser((string) round($this->executor->getTotalTime(), 2), MixedUtils::humanReadable($this->executor->getTotalBlocks()));
+	public function attemptRecovery(): EditTaskResult
+	{
+		return $this->executor->attemptRecovery();
 	}
 
 	public function getProgress(): float
@@ -60,13 +64,11 @@ class StaticStoredPasteTask extends ExecutableTask
 	{
 		$stream->putString($this->saveId->fastSerialize());
 		$stream->putBool($this->keep);
-		$stream->putBool($this->isUndo);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->saveId = StoredSelectionIdentifier::fastDeserialize($stream->getString());
 		$this->keep = $stream->getBool();
-		$this->isUndo = $stream->getBool();
 	}
 }

@@ -16,12 +16,10 @@ class SingleChunkHandler extends GroupedChunkHandler
 
 	/**
 	 * @param int $chunk
-	 * @return true
 	 */
-	public function request(int $chunk): bool
+	public function request(int $chunk): void
 	{
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk));
-		return true;
 	}
 
 	/**

@@ -30,7 +30,7 @@ class CylinderCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		$pattern = $flags->hasFlag("hollow") ? new SidesPattern($flags->getFloatFlag("thickness"), [$flags->getPatternFlag("pattern")]) : $flags->getPatternFlag("pattern");
-		$session->runTask(new SetTask(new Cylinder($session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getFloatFlag("radius"), $flags->getIntFlag("height")), $pattern));
+		$session->runSettingTask(new SetTask(new Cylinder($session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getFloatFlag("radius"), $flags->getIntFlag("height")), $pattern));
 	}
 
 	/**

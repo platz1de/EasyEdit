@@ -6,10 +6,10 @@
 
 namespace platz1de\EasyEdit\thread;
 
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\OutputData;
-use platz1de\EasyEdit\thread\output\session\CrashReportData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -68,22 +68,15 @@ class EditThread extends Thread
 					ThreadData::clear();
 					$this->stats->startTask($task);
 					$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
-					$task->execute();
-					//TODO
-					$result = new TaskResultData();
-					$result->setTaskId($task->getTaskId());
-					$this->sendOutput($result);
+					$this->sendOutput(new TaskResultData($task->getTaskId(), $task->executeInternal(), true));
 				} catch (Throwable $throwable) {
-					$this->logger->logException($throwable);
-					//TODO: move this to result
-					$crash = new CrashReportData($throwable);
-					$crash->setTaskId($task->getTaskId());
-					$this->sendOutput($crash);
+					if ($throwable instanceof CancelException) {
+						$this->debug("Task " . $task->getTaskName() . ":" . $task->getTaskId() . " was cancelled");
+					} else {
+						$this->logger->logException($throwable);
+					}
+					$this->sendOutput(new TaskResultData($task->getTaskId(), $task->attemptRecovery(), false, $throwable instanceof CancelException ? null : $throwable->getMessage()));
 					ChunkRequestManager::clear();
-					//TODO
-					$result = new TaskResultData();
-					$result->setTaskId($task->getTaskId());
-					$this->sendOutput($result);
 					//throttle a bit to avoid spamming
 					$this->synchronized(function (): void {
 						if ($this->inputData === "" && !$this->isKilled) {
@@ -145,11 +138,13 @@ class EditThread extends Thread
 	}
 
 	/**
-	 * @return bool
+	 * @throws CancelException
 	 */
-	public function allowsExecution(): bool
+	public function checkExecution(): void
 	{
-		return !$this->isKilled;
+		if ($this->isKilled || ThreadData::requiresCancel()) {
+			throw new CancelException();
+		}
 	}
 
 	public function parseInput(): void

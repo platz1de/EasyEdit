@@ -4,12 +4,12 @@ namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\task\editing\type\SettingNotifier;
+use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\math\VoxelRayTrace;
@@ -17,8 +17,6 @@ use pocketmine\world\World;
 
 class LineTask extends EditTask
 {
-	use SettingNotifier;
-
 	/**
 	 * @var BlockVector[]
 	 * These are 48 blocks in the worst case
@@ -36,7 +34,11 @@ class LineTask extends EditTask
 		parent::__construct($world);
 	}
 
-	public function execute(): void
+	/**
+	 * @return EditTaskResult
+	 * @throws CancelException
+	 */
+	public function executeInternal(): EditTaskResult
 	{
 		$chunkHandler = new SingleChunkHandler($this->world);
 		ChunkRequestManager::setHandler($chunkHandler);
@@ -47,31 +49,32 @@ class LineTask extends EditTask
 			if ($current === null) {
 				$current = World::chunkHash($pos->x >> Block::INTERNAL_STATE_DATA_BITS, $pos->z >> Block::INTERNAL_STATE_DATA_BITS);
 			} elseif ($current !== ($c = World::chunkHash($pos->x >> Block::INTERNAL_STATE_DATA_BITS, $pos->z >> Block::INTERNAL_STATE_DATA_BITS))) {
-				if (!$this->executePart($chunkHandler, $current)) {
-					return;
-				}
+				$this->executePart($chunkHandler, $current);
 				$this->blocks = [];
 				$current = $c;
 			}
 			$this->blocks[] = BlockVector::fromVector($pos);
 		}
-		if ($current !== null && !$this->executePart($chunkHandler, $current)) {
-			return;
+		if ($current !== null) {
+			$this->executePart($chunkHandler, $current);
 		}
-		$this->finalize();
+		return $this->toTaskResult();
 	}
 
-	private function executePart(SingleChunkHandler $handler, int $chunk): bool
+	/**
+	 * @param SingleChunkHandler $handler
+	 * @param int                $chunk
+	 * @return void
+	 * @throws CancelException
+	 */
+	private function executePart(SingleChunkHandler $handler, int $chunk): void
 	{
 		$handler->request($chunk);
-		while ($handler->getNextChunk() === null && ThreadData::canExecute() && EditThread::getInstance()->allowsExecution()) {
+		while ($handler->getNextChunk() === null) {
+			EditThread::getInstance()->checkExecution();
 			EditThread::getInstance()->waitForData();
 		}
-		if ($handler->getNextChunk() === null) {
-			return false;
-		}
-		$this->run($chunk, $handler->getData());
-		return true;
+		$this->runEdit($chunk, $handler->getData());
 	}
 
 	/**

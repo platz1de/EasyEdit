@@ -6,7 +6,7 @@ use platz1de\EasyEdit\world\ChunkInformation;
 
 interface ChunkHandler
 {
-	public function request(int $chunk): bool;
+	public function request(int $chunk): void;
 
 	/**
 	 * @param int              $chunk
