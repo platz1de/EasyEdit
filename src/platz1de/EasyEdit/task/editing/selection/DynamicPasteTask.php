@@ -8,9 +8,11 @@ use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -30,13 +32,14 @@ class DynamicPasteTask extends SelectionEditTask
 	protected Selection $selection;
 
 	/**
-	 * @param string                    $world
-	 * @param DynamicBlockListSelection $selection
-	 * @param OffGridBlockVector        $position
-	 * @param int                       $mode
+	 * @param string              $world
+	 * @param SelectionIdentifier $selection
+	 * @param OffGridBlockVector  $position
+	 * @param int                 $mode
 	 */
-	public function __construct(string $world, DynamicBlockListSelection $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
+	public function __construct(string $world, SelectionIdentifier $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
+		$selection = StorageModule::mustGetDynamic($selection);
 		$selection->setPoint($position->offset($selection->getPoint())->diff(OffGridBlockVector::zero()));
 		parent::__construct($selection);
 		$this->world = $world;

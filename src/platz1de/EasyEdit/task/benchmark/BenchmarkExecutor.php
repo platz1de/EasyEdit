@@ -60,7 +60,7 @@ class BenchmarkExecutor extends ExecutableTask
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
-		$this->setComplexBenchmark->executeInternal();
+		$res = $this->setComplexBenchmark->executeInternal();
 		$this->results[] = ["set complex", $res->getTime(), $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(2));
 
@@ -73,8 +73,8 @@ class BenchmarkExecutor extends ExecutableTask
 
 		//Task #4 - paste
 		$start = microtime(true);
-		$this->pasteBenchmark = new DynamicPasteTask($this->world, $this->copyBenchmark->getResult(), $pos);
-		$this->pasteBenchmark->executeInternal();
+		$this->pasteBenchmark = new DynamicPasteTask($this->world, $res->getSelection(), $pos);
+		$res = $this->pasteBenchmark->executeInternal();
 		$this->results[] = ["paste", $res->getTime(), $res->getAffected(), microtime(true) - $start];
 
 		return new BenchmarkTaskResult($this->world, $this->results);

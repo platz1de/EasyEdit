@@ -4,12 +4,15 @@ namespace platz1de\EasyEdit\selection;
 
 use Generator;
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
 
-abstract class BlockListSelection extends Selection
+abstract class BlockListSelection extends Selection implements SelectionIdentifier
 {
 	/**
 	 * @var CompoundTag[]
@@ -51,6 +54,11 @@ abstract class BlockListSelection extends Selection
 	}
 
 	abstract public function getBlockCount(): int;
+
+	public function toIdentifier(): StoredSelectionIdentifier
+	{
+		return StorageModule::store($this);
+	}
 
 	/**
 	 * @param ExtendedBinaryStream $stream

@@ -84,12 +84,4 @@ class CopyTask extends SelectionEditTask
 		$this->position = $stream->getOffGridBlockVector();
 		parent::parseData($stream);
 	}
-
-	/**
-	 * @return DynamicBlockListSelection
-	 */
-	public function getResult(): DynamicBlockListSelection
-	{
-		return $this->result;
-	}
 }

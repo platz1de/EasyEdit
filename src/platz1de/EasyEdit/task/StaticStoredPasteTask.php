@@ -4,10 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\selection\StaticPasteTask;
-use platz1de\EasyEdit\task\editing\selection\StreamPasteTask;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 /**
@@ -15,7 +12,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
  */
 class StaticStoredPasteTask extends ExecutableTask
 {
-	private StaticPasteTask|StreamPasteTask $executor;
+	private StaticPasteTask $executor;
 
 	/**
 	 * @param StoredSelectionIdentifier $saveId
@@ -36,17 +33,7 @@ class StaticStoredPasteTask extends ExecutableTask
 
 	public function executeInternal(): EditTaskResult
 	{
-		//TODO: remove this
-		$selection = StorageModule::mustGetStatic($this->saveId);
-		if (!$this->keep) {
-			StorageModule::cleanStored($this->saveId);
-		}
-
-		if ($selection instanceof StaticBlockListSelection) {
-			$this->executor = new StaticPasteTask($selection);
-		} else {
-			$this->executor = new StreamPasteTask($selection);
-		}
+		$this->executor = new StaticPasteTask($this->saveId);
 		return $this->executor->executeInternal();
 	}
 

@@ -25,7 +25,7 @@ class PasteCommand extends SimpleFlagArgumentCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$session->runEditTask("blocks-pasted", new DynamicStoredPasteTask($session->getClipboard(), $session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), true, $flags->getIntFlag("mode")));
+		$session->runEditTask("blocks-pasted", new DynamicStoredPasteTask($session->getClipboard(), $session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getIntFlag("mode")));
 	}
 
 	/**

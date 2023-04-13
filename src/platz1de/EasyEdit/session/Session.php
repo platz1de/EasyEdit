@@ -12,6 +12,7 @@ use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\result\TaskResult;
 use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\selection\Cube;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\ExecutableTask;
@@ -114,12 +115,12 @@ class Session
 	}
 
 	/**
-	 * @param StoredSelectionIdentifier $id
-	 * @param bool                      $fromUndo
-	 * @return void
+	 * @param SelectionIdentifier $id
+	 * @param bool                $fromUndo
 	 */
-	public function addToHistory(StoredSelectionIdentifier $id, bool $fromUndo): void
+	public function addToHistory(SelectionIdentifier $id, bool $fromUndo): void
 	{
+		$id = $id->toIdentifier();
 		if (!$id->isValid()) {
 			return;
 		}
@@ -185,10 +186,11 @@ class Session
 	}
 
 	/**
-	 * @param StoredSelectionIdentifier $id
+	 * @param SelectionIdentifier $id
 	 */
-	public function setClipboard(StoredSelectionIdentifier $id): void
+	public function setClipboard(SelectionIdentifier $id): void
 	{
+		$id = $id->toIdentifier();
 		if (!$id->isValid()) {
 			return;
 		}

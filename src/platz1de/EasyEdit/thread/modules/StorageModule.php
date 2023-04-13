@@ -5,10 +5,13 @@ namespace platz1de\EasyEdit\thread\modules;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\input\task\InsertStorageTask;
+use Thread;
 use UnexpectedValueException;
 
 /**
@@ -32,10 +35,15 @@ class StorageModule
 		if ($selection instanceof NonSavingBlockListSelection) {
 			return StoredSelectionIdentifier::invalid();
 		}
-		$id = self::$storageSlot++;
-		self::$storage[$id] = $selection;
-		$identifier = new StoredSelectionIdentifier($id, $selection::class);
-		EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
+		if (Thread::getCurrentThread() instanceof EditThread) {
+			$id = ++self::$storageSlot;
+			self::$storage[$id] = $selection;
+			$identifier = new StoredSelectionIdentifier($id);
+			EditThread::getInstance()->getStats()->updateStorage(count(self::$storage));
+			return $identifier;
+		}
+		$identifier = new StoredSelectionIdentifier(--self::$storageSlot);
+		InsertStorageTask::from($identifier, $selection);
 		return $identifier;
 	}
 
@@ -45,15 +53,26 @@ class StorageModule
 	 */
 	public static function getStored(StoredSelectionIdentifier $id): BlockListSelection
 	{
+		if ($id->isOneTime()) {
+			$return = self::$storage[$id->getMagicId()];
+			self::cleanStored($id);
+			return $return;
+		}
 		return self::$storage[$id->getMagicId()]->createSafeClone();
 	}
 
 	/**
-	 * @param StoredSelectionIdentifier $id
+	 * @param SelectionIdentifier $id
 	 * @return StaticBlockListSelection|BinaryBlockListStream
 	 */
-	public static function mustGetStatic(StoredSelectionIdentifier $id): StaticBlockListSelection|BinaryBlockListStream
+	public static function mustGetStatic(SelectionIdentifier $id): StaticBlockListSelection|BinaryBlockListStream
 	{
+		if (!$id instanceof StoredSelectionIdentifier) {
+			if ($id instanceof StaticBlockListSelection || $id instanceof BinaryBlockListStream) {
+				return $id;
+			}
+			throw new UnexpectedValueException("Invalid selection of type " . $id::class . ", expected " . StaticBlockListSelection::class . " or " . BinaryBlockListStream::class);
+		}
 		$selection = self::getStored($id);
 		if ($selection instanceof StaticBlockListSelection || $selection instanceof BinaryBlockListStream) {
 			return $selection;
@@ -62,11 +81,17 @@ class StorageModule
 	}
 
 	/**
-	 * @param StoredSelectionIdentifier $id
+	 * @param SelectionIdentifier $id
 	 * @return DynamicBlockListSelection
 	 */
-	public static function mustGetDynamic(StoredSelectionIdentifier $id): DynamicBlockListSelection
+	public static function mustGetDynamic(SelectionIdentifier $id): DynamicBlockListSelection
 	{
+		if (!$id instanceof StoredSelectionIdentifier) {
+			if ($id instanceof DynamicBlockListSelection) {
+				return $id;
+			}
+			throw new UnexpectedValueException("Invalid selection of type " . $id::class . ", expected " . DynamicBlockListSelection::class);
+		}
 		$selection = self::getStored($id);
 		if ($selection instanceof DynamicBlockListSelection) {
 			return $selection;

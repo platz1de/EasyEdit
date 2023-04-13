@@ -41,7 +41,7 @@ abstract class TaskResult
 	}
 
 	/**
-	 * @return array{int}
+	 * @return array{}
 	 */
 	public function __serialize(): array
 	{

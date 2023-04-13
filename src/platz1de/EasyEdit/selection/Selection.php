@@ -178,12 +178,12 @@ abstract class Selection
 
 	/**
 	 * @param string $data
-	 * @return Selection
+	 * @return static
 	 */
-	public static function fastDeserialize(string $data): Selection
+	public static function fastDeserialize(string $data): static
 	{
 		$stream = new ExtendedBinaryStream($data);
-		/** @var Selection $selection */
+		/** @var static $selection */
 		$selection = igbinary_unserialize($stream->getString());
 		$selection->parseData($stream);
 		return $selection;

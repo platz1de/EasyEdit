@@ -2,22 +2,24 @@
 
 namespace platz1de\EasyEdit\result;
 
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class EditTaskResult extends TaskResult
 {
 	/**
-	 * @param int                       $affected
-	 * @param float                     $time      TODO: Remove this
-	 * @param StoredSelectionIdentifier $selection Might be invalid, can be history or clipboard depending on the task
+	 * @param int                 $affected
+	 * @param float               $time      TODO: Remove this
+	 * @param SelectionIdentifier $selection Might be invalid, can be history or clipboard depending on the task
 	 */
-	public function __construct(private int $affected, private float $time, private StoredSelectionIdentifier $selection) {}
+	public function __construct(private int $affected, private float $time, private SelectionIdentifier $selection) {}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt($this->affected);
 		$stream->putFloat($this->time);
+		$this->selection = $this->selection->toIdentifier();
 		if ($this->selection->isValid()) {
 			$stream->putBool(true);
 			$stream->putString($this->selection->fastSerialize());
@@ -54,9 +56,9 @@ class EditTaskResult extends TaskResult
 	}
 
 	/**
-	 * @return StoredSelectionIdentifier
+	 * @return SelectionIdentifier
 	 */
-	public function getSelection(): StoredSelectionIdentifier
+	public function getSelection(): SelectionIdentifier
 	{
 		return $this->selection;
 	}

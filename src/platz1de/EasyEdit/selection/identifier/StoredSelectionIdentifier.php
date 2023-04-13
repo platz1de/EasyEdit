@@ -4,36 +4,44 @@ namespace platz1de\EasyEdit\selection\identifier;
 
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
-class StoredSelectionIdentifier
+class StoredSelectionIdentifier implements SelectionIdentifier
 {
+	private bool $delete = false;
+
 	/**
-	 * @param int    $id
-	 * @param string $type
+	 * @param int $id
 	 */
-	public function __construct(private int $id, private string $type) {}
+	public function __construct(private int $id) {}
 
 	public static function invalid(): StoredSelectionIdentifier
 	{
-		return new self(-1, self::class);
+		return new self(0);
 	}
 
 	public function isValid(): bool
 	{
-		return $this->id >= 0;
+		return $this->id !== 0;
+	}
+
+	public function toIdentifier(): StoredSelectionIdentifier
+	{
+		return $this;
 	}
 
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putInt($this->id);
-		$stream->putString($this->type);
+		$stream->putBool($this->delete);
 		return $stream->getBuffer();
 	}
 
 	public static function fastDeserialize(string $data): StoredSelectionIdentifier
 	{
 		$stream = new ExtendedBinaryStream($data);
-		return new StoredSelectionIdentifier($stream->getInt(), $stream->getString());
+		$id = new StoredSelectionIdentifier($stream->getInt());
+		$id->delete = $stream->getBool();
+		return $id;
 	}
 
 	/**
@@ -44,11 +52,17 @@ class StoredSelectionIdentifier
 		return $this->id;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getType(): string
+	public function markForDeletion(): StoredSelectionIdentifier
 	{
-		return $this->type;
+		$this->delete = true;
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isOneTime(): bool
+	{
+		return $this->delete;
 	}
 }

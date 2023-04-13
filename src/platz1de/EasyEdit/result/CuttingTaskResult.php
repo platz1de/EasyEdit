@@ -2,18 +2,19 @@
 
 namespace platz1de\EasyEdit\result;
 
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class CuttingTaskResult extends EditTaskResult
 {
 	/**
-	 * @param int                       $affected
-	 * @param float                     $time
-	 * @param StoredSelectionIdentifier $selection
-	 * @param StoredSelectionIdentifier $clipboard
+	 * @param int                 $affected
+	 * @param float               $time
+	 * @param SelectionIdentifier $selection
+	 * @param SelectionIdentifier $clipboard
 	 */
-	public function __construct(int $affected, float $time, StoredSelectionIdentifier $selection, private StoredSelectionIdentifier $clipboard)
+	public function __construct(int $affected, float $time, SelectionIdentifier $selection, private SelectionIdentifier $clipboard)
 	{
 		parent::__construct($affected, $time, $selection);
 	}
@@ -21,7 +22,7 @@ class CuttingTaskResult extends EditTaskResult
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putString($this->clipboard->fastSerialize());
+		$stream->putString($this->clipboard->toIdentifier()->fastSerialize());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -31,9 +32,9 @@ class CuttingTaskResult extends EditTaskResult
 	}
 
 	/**
-	 * @return StoredSelectionIdentifier
+	 * @return SelectionIdentifier
 	 */
-	public function getClipboard(): StoredSelectionIdentifier
+	public function getClipboard(): SelectionIdentifier
 	{
 		return $this->clipboard;
 	}
