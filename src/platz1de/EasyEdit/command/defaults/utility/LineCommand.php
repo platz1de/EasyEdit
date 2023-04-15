@@ -13,8 +13,9 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
+use platz1de\EasyEdit\selection\LinearSelection;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\LineTask;
+use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
 use platz1de\EasyEdit\task\pathfinding\PathfindingTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\block\utils\DyeColor;
@@ -41,7 +42,7 @@ class LineCommand extends SimpleFlagArgumentCommand
 
 		switch ($flags->getIntFlag("mode")) {
 			case self::MODE_LINE:
-				$session->runSettingTask(new LineTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, $flags->getStaticBlockFlag("block")));
+				$session->runSettingTask(new SetTask(new LinearSelection($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target), $flags->getStaticBlockFlag("block")));
 				break;
 			case self::MODE_PATH:
 				$session->runSettingTask(new PathfindingTask($session->asPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($session->asPlayer()->getPosition()), $target, true, $flags->getStaticBlockFlag("block")));

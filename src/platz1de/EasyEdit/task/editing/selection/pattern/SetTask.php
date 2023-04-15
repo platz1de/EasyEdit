@@ -4,8 +4,10 @@ namespace platz1de\EasyEdit\task\editing\selection\pattern;
 
 use Generator;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
+use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\LinearSelection;
 use platz1de\EasyEdit\selection\VerticalStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
@@ -52,6 +54,12 @@ class SetTask extends PatternedEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return $this->getPattern()->contains(GravityPattern::class) ? new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2()) : $this->getDefaultBlockList();
+		if ($this->selection instanceof LinearSelection) {
+			return new BinaryBlockListStream($this->getWorld());
+		}
+		if ($this->getPattern()->contains(GravityPattern::class)) {
+			return new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
+		}
+		return $this->getDefaultBlockList();
 	}
 }
