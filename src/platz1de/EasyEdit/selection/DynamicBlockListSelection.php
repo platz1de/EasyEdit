@@ -13,6 +13,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class DynamicBlockListSelection extends ChunkManagedBlockList
 {
@@ -48,7 +49,25 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	public function getNeededChunks(): array
 	{
-		return $this->getNonEmptyChunks($this->getPos1()->offset($this->getPoint()), $this->getPos2()->offset($this->getPoint()));
+		$chunks = [];
+		$offsets = [[-$this->point->x, -$this->point->z], [15 - $this->point->x, -$this->point->z], [-$this->point->x, 15 - $this->point->z], [15 - $this->point->x, 15 - $this->point->z]];
+		$start = $this->getPos1()->offset($this->getPoint());
+		$end = $this->getPos2()->offset($this->getPoint());
+		for ($x = $start->x >> 4; $x <= $end->x >> 4; $x++) {
+			for ($z = $start->z >> 4; $z <= $end->z >> 4; $z++) {
+				for ($i = 0; $i < 4; $i++) {
+					try {
+						if (!$this->manager->getChunk(World::chunkHash((($x << 4) + $offsets[$i][0]) >> 4, (($z << 4) + $offsets[$i][1]) >> 4))->isEmpty()) {
+							$chunks[] = World::chunkHash($x, $z);
+							continue 2;
+						}
+					} catch (UnexpectedValueException) {
+						continue;
+					}
+				}
+			}
+		}
+		return $chunks;
 	}
 
 	/**

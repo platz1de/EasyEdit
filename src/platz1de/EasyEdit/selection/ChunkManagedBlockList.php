@@ -14,7 +14,7 @@ use pocketmine\world\World;
 
 abstract class ChunkManagedBlockList extends BlockListSelection
 {
-	private ReferencedChunkManager $manager;
+	protected ReferencedChunkManager $manager;
 	private ChunkController $iterator;
 
 	/**
@@ -67,19 +67,9 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 	 */
 	public function getNeededChunks(): array
 	{
-		return $this->getNonEmptyChunks($this->pos1, $this->pos2);
-	}
-
-	/**
-	 * @param BlockVector $start
-	 * @param BlockVector $end
-	 * @return int[]
-	 */
-	protected function getNonEmptyChunks(BlockVector $start, BlockVector $end): array
-	{
 		$chunks = [];
-		for ($x = $start->x >> 4; $x <= $end->x >> 4; $x++) {
-			for ($z = $start->z >> 4; $z <= $end->z >> 4; $z++) {
+		for ($x = $this->pos1->x >> 4; $x <= $this->pos2->x >> 4; $x++) {
+			for ($z = $this->pos1->z >> 4; $z <= $this->pos2->z >> 4; $z++) {
 				$chunk = World::chunkHash($x, $z);
 				if (!$this->manager->getChunk($chunk)->isEmpty()) {
 					$chunks[] = $chunk;
