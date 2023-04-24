@@ -37,7 +37,7 @@ class CompoundBlock extends Opaque
 		parent::__clone();
 	}
 
-	protected function describeType(RuntimeDataDescriber $w): void
+	public function describeType(RuntimeDataDescriber $w): void
 	{
 		$w->int((int) ceil(log($this->typeLength, 2)), $this->type);
 		if ($this->type > $this->typeLength) {
