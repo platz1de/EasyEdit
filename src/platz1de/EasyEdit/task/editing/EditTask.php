@@ -35,8 +35,7 @@ abstract class EditTask extends ExecutableTask
 	public function prepare(bool $fastSet): void
 	{
 		$this->undo = $this->createUndoBlockList();
-		$this->handler = new EditTaskHandler($this->undo, $fastSet);
-		EditThread::getInstance()->debug("Preparing Task " . $this->getTaskName() . ":" . $this->getTaskId() . "; Using fast-set: " . ($fastSet ? "true" : "false"));
+		$this->handler = new EditTaskHandler($this->world, $this->undo, $fastSet);
 	}
 
 	/**
@@ -48,11 +47,9 @@ abstract class EditTask extends ExecutableTask
 	{
 		$start = microtime(true);
 
-		$manager = new ReferencedChunkManager($this->world);
 		foreach ($chunkInformation as $key => $information) {
-			$manager->setChunk($key, $information);
+			$this->handler->setChunk($key, $information);
 		}
-		$this->handler->setManager($manager);
 
 		HeightMapCache::prepare();
 
@@ -62,7 +59,7 @@ abstract class EditTask extends ExecutableTask
 		$this->totalTime += microtime(true) - $start;
 		$this->totalBlocks += $this->handler->getChangedBlockCount();
 
-		EditThread::getInstance()->sendOutput(new ResultingChunkData($this->world, $this->filterChunks($this->handler->getResult()->getChunks()), $this->handler->prepareAllInjectionData()));
+		$this->handler->finish();
 	}
 
 	protected function toTaskResult(): EditTaskResult
@@ -81,21 +78,6 @@ abstract class EditTask extends ExecutableTask
 	 * @throws CancelException
 	 */
 	abstract public function executeEdit(EditTaskHandler $handler, int $chunk): void;
-
-	/**
-	 * Filters actually edited chunks
-	 * @param ChunkInformation[] $chunks
-	 * @return ChunkInformation[]
-	 */
-	public function filterChunks(array $chunks): array
-	{
-		foreach ($chunks as $hash => $chunk) {
-			if (!$chunk->wasUsed()) {
-				unset($chunks[$hash]);
-			}
-		}
-		return $chunks;
-	}
 
 	/**
 	 * @return BlockListSelection

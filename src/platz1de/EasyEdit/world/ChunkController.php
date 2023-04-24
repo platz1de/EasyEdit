@@ -10,8 +10,6 @@ use pocketmine\world\World;
 
 class ChunkController
 {
-	private ReferencedChunkManager $world;
-
 	private int $writeCount = 0;
 	private int $readCount = 0;
 
@@ -22,21 +20,11 @@ class ChunkController
 	protected int $currentY;
 	protected int $currentZ;
 
-	final public function __construct(?ReferencedChunkManager $world)
-	{
-		if ($world !== null) {
-			$this->world = $world;
-		}
-	}
+	final public function __construct(private ReferencedChunkManager $world) {}
 
-	public static function empty(): static
+	public function reset(): void
 	{
-		return new static(null);
-	}
-
-	public function reset(ReferencedChunkManager $world): void
-	{
-		$this->world = $world;
+		$this->world->cleanChunks();
 		$this->writeCount = 0;
 		$this->readCount = 0;
 		unset($this->currentChunk, $this->currentSubChunk);

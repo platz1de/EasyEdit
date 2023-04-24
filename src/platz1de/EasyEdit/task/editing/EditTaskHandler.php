@@ -3,10 +3,13 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\blockupdate\InjectingData;
 use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
 use platz1de\EasyEdit\world\ChunkController;
+use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
@@ -20,21 +23,21 @@ class EditTaskHandler
 	 * @param BlockListSelection $changes Saves made changes, used for undoing
 	 * @param bool               $isFastSet
 	 */
-	public function __construct(protected BlockListSelection $changes, bool $isFastSet)
+	public function __construct(string $world, protected BlockListSelection $changes, bool $isFastSet)
 	{
 		//TODO: Never use changes as result (eg. copy)
-		$this->origin = ChunkController::empty();
+		$this->origin = new ChunkController(new ReferencedChunkManager($world));
 		if ($isFastSet) {
-			$this->result = InjectingSubChunkController::empty();
+			$this->result = new InjectingSubChunkController(new ReferencedChunkManager($world));
 		} else {
-			$this->result = ChunkController::empty();
+			$this->result = new ChunkController(new ReferencedChunkManager($world));
 		}
 	}
 
-	public function setManager(ReferencedChunkManager $manager): void
+	public function setChunk(int $key, ChunkInformation $chunk): void
 	{
-		$this->origin->reset($manager);
-		$this->result->reset(clone $manager);
+		$this->origin->getManager()->setChunk($key, $chunk);
+		$this->result->getManager()->setChunk($key, $chunk);
 	}
 
 	/**
@@ -78,17 +81,24 @@ class EditTaskHandler
 		return $this->result->getManager();
 	}
 
-	/**
-	 * @return string[]
-	 */
-	public function prepareAllInjectionData(): array
+	public function finish(): void
 	{
-		if (!$this->result instanceof InjectingSubChunkController) {
-			return [];
+		$send = $this->result->getManager()->getChunks();
+		foreach ($send as $hash => $chunk) {
+			if (!$chunk->wasUsed()) {
+				unset($send[$hash]);
+			}
 		}
-		return array_map(static function (InjectingData $injection) {
-			return $injection->toProtocol();
-		}, $this->result->getInjections());
+		if (!$this->result instanceof InjectingSubChunkController) {
+			$injections = [];
+		} else {
+			$injections = array_map(static function (InjectingData $injection) {
+				return $injection->toProtocol();
+			}, $this->result->getInjections());
+		}
+		EditThread::getInstance()->sendOutput(new ResultingChunkData($this->result->getManager()->getWorldName(), $send, $injections));
+		$this->origin->reset();
+		$this->result->reset();
 	}
 
 	/**

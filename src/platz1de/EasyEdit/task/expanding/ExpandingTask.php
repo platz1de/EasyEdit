@@ -30,12 +30,11 @@ abstract class ExpandingTask extends EditTask
 	{
 		$this->prepare(true);
 
-		$this->handler->setManager($manager = new ReferencedChunkManager($this->world));
 		$this->loader = new ManagedChunkHandler($this->handler);
 		ChunkRequestManager::setHandler($this->loader);
 		$this->loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4));
 
-		$this->runEdit(-1, $manager->getChunks());
+		$this->runEdit(-1, []);
 
 		return $this->toTaskResult();
 	}
