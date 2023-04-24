@@ -24,6 +24,4 @@ class ExpandingStaticBlockListSelection extends StaticBlockListSelection
 		$this->getManager()->loadIfNeeded(World::chunkHash($x >> 4, $z >> 4));
 		parent::addBlock($x, $y, $z, $id, $overwrite);
 	}
-
-	//NOTE: this selection is split into static block lists
 }

@@ -91,14 +91,14 @@ class VectorUtils
 		} elseif ($x > $max->x) {
 			$max->x = $x;
 		}
-		if ($y < $min->x) {
+		if ($y < $min->y) {
 			$min->y = $y;
-		} elseif ($y > $max->x) {
+		} elseif ($y > $max->y) {
 			$max->y = $y;
 		}
-		if ($z < $min->x) {
+		if ($z < $min->z) {
 			$min->z = $z;
-		} elseif ($z > $max->x) {
+		} elseif ($z > $max->z) {
 			$max->z = $z;
 		}
 	}
