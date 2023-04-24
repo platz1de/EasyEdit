@@ -1,24 +1,46 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection\pattern;
+namespace platz1de\EasyEdit\task\editing\selection;
 
 use Generator;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
+use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\LinearSelection;
+use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\VerticalStaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
 
-class SetTask extends PatternedEditTask
+class SetTask extends SelectionEditTask
 {
 	use CubicStaticUndo {
 		CubicStaticUndo::createUndoBlockList as private getDefaultBlockList;
+	}
+
+	protected Pattern $pattern;
+
+	/**
+	 * @param Selection             $selection
+	 * @param Pattern               $pattern
+	 * @param SelectionContext|null $context
+	 */
+	public function __construct(Selection $selection, Pattern $pattern, ?SelectionContext $context = null)
+	{
+		$pattern = PatternWrapper::wrap([$pattern]);
+		$this->pattern = $pattern;
+		if ($context === null) {
+			$context = $pattern->getSelectionContext();
+		}
+		parent::__construct($selection, $context);
 	}
 
 	/**
@@ -36,7 +58,7 @@ class SetTask extends PatternedEditTask
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$selection = $this->selection;
-		$pattern = $this->getPattern();
+		$pattern = $this->pattern;
 		$updateHeightMap = $pattern->contains(GravityPattern::class);
 		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($updateHeightMap, $pattern, $selection, $handler): void {
 			$block = $pattern->getFor($x, $y, $z, $handler->getOrigin(), $selection);
@@ -57,9 +79,21 @@ class SetTask extends PatternedEditTask
 		if ($this->selection instanceof LinearSelection) {
 			return new BinaryBlockListStream($this->getWorld());
 		}
-		if ($this->getPattern()->contains(GravityPattern::class)) {
+		if ($this->pattern->contains(GravityPattern::class)) {
 			return new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 		}
 		return $this->getDefaultBlockList();
+	}
+
+	public function putData(ExtendedBinaryStream $stream): void
+	{
+		parent::putData($stream);
+		$stream->putString($this->pattern->fastSerialize());
+	}
+
+	public function parseData(ExtendedBinaryStream $stream): void
+	{
+		parent::parseData($stream);
+		$this->pattern = Pattern::fastDeserialize($stream->getString());
 	}
 }

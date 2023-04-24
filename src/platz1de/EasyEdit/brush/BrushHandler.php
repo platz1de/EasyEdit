@@ -11,7 +11,7 @@ use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
-use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
+use platz1de\EasyEdit\task\editing\selection\SetTask;
 use platz1de\EasyEdit\task\editing\selection\SmoothTask;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\nbt\tag\CompoundTag;

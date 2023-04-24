@@ -8,7 +8,7 @@ use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\pattern\SetTask;
+use platz1de\EasyEdit\task\editing\selection\SetTask;
 
 class SetCommand extends SimpleFlagArgumentCommand
 {
