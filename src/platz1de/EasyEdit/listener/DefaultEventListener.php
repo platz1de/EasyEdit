@@ -20,6 +20,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\Axe;
 use pocketmine\item\BlazeRod;
 use pocketmine\item\Shovel;
@@ -34,7 +35,10 @@ class DefaultEventListener implements Listener
 {
 	use ToggleableEventListener;
 
-	private static float $cooldown = 0;
+	/**
+	 * @var array<string, float>
+	 */
+	private static array $cooldown = [];
 	private const CREATIVE_REACH = 5;
 
 	/**
@@ -51,7 +55,7 @@ class DefaultEventListener implements Listener
 			BlockInfoTool::display(SessionManager::get($event->getPlayer()), $event->getBlock());
 		}
 
-		self::$cooldown = microtime(true) + ConfigManager::getToolCooldown();
+		self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] = microtime(true) + ConfigManager::getToolCooldown();
 	}
 
 	/**
@@ -60,8 +64,8 @@ class DefaultEventListener implements Listener
 	public function onInteract(PlayerInteractEvent $event): void
 	{
 		if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
-			if (self::$cooldown < microtime(true)) {
-				self::$cooldown = microtime(true) + ConfigManager::getToolCooldown();
+			if ((self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] ?? .0) < microtime(true)) {
+				self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] = microtime(true) + ConfigManager::getToolCooldown();
 			} else {
 				return;
 			}
@@ -111,7 +115,7 @@ class DefaultEventListener implements Listener
 						//HACK: Touch control sends Itemuse when starting to break a block
 						//This gets triggered when breaking a block which isn't focused
 						EasyEdit::getInstance()->getScheduler()->scheduleTask(new ClosureTask(function () use ($target, $event): void {
-							if (self::$cooldown < microtime(true)) {
+							if ((self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] ?? .0) < microtime(true)) {
 								SessionManager::get($event->getPlayer())->selectPos2($target->getPosition());
 							}
 						}));
@@ -146,5 +150,10 @@ class DefaultEventListener implements Listener
 	public function onMove(PlayerMoveEvent $event): void
 	{
 		ClientSideBlockManager::updateAll($event->getPlayer());
+	}
+
+	public function onQuit(PlayerQuitEvent $event): void
+	{
+		unset(self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()]);
 	}
 }
