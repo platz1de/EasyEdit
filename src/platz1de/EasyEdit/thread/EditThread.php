@@ -9,6 +9,7 @@ use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\thread\Thread;
 use ThreadedLogger;
 use Throwable;
@@ -48,6 +49,8 @@ class EditThread extends Thread
 	public function onRun(): void
 	{
 		gc_enable();
+
+		RuntimeBlockMapping::getInstance(); //TODO: Remove "fest" setting when we finally can execute this in the main thread
 
 		$this->getLogger()->debug("Started EditThread");
 
