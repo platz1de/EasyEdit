@@ -35,7 +35,7 @@ class SaveSchematicCommand extends SimpleFlagArgumentCommand
 			if ($result->getChanged() === 0) {
 				return;
 			}
-			$session->sendMessage("schematic-created", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getChanged()), "{name}" => basename($schematicName)]);
+			$session->sendMessage("schematic-created", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getChanged()), "{name}" => basename($schematicName)]);
 		});
 	}
 

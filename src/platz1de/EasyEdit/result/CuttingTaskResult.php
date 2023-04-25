@@ -10,13 +10,12 @@ class CuttingTaskResult extends EditTaskResult
 {
 	/**
 	 * @param int                 $affected
-	 * @param float               $time
 	 * @param SelectionIdentifier $selection
 	 * @param SelectionIdentifier $clipboard
 	 */
-	public function __construct(int $affected, float $time, SelectionIdentifier $selection, private SelectionIdentifier $clipboard)
+	public function __construct(int $affected, SelectionIdentifier $selection, private SelectionIdentifier $clipboard)
 	{
-		parent::__construct($affected, $time, $selection);
+		parent::__construct($affected, $selection);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

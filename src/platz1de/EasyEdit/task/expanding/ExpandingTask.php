@@ -23,7 +23,6 @@ abstract class ExpandingTask extends ExecutableTask
 {
 	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
-	private float $time = 0;
 	private float $progress = 0; //worst case scenario
 
 	/**
@@ -37,8 +36,6 @@ abstract class ExpandingTask extends ExecutableTask
 
 	public function executeInternal(): EditTaskResult
 	{
-		$start = microtime(true);
-
 		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->world, $this->undo, true);
 		$loader = new ManagedChunkHandler($this->handler);
@@ -48,9 +45,7 @@ abstract class ExpandingTask extends ExecutableTask
 		HeightMapCache::prepare();
 
 		$this->executeEdit($this->handler, $loader);
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
-
-		$this->time = microtime(true) - $start;
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
 
 		$this->handler->finish();
 
@@ -59,7 +54,7 @@ abstract class ExpandingTask extends ExecutableTask
 
 	protected function toTaskResult(): EditTaskResult
 	{
-		return new EditTaskResult($this->handler->getChangedBlockCount(), $this->time, StorageModule::store($this->undo));
+		return new EditTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo));
 	}
 
 	public function attemptRecovery(): EditTaskResult

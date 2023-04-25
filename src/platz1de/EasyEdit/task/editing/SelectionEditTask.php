@@ -25,7 +25,6 @@ abstract class SelectionEditTask extends ExecutableTask
 	protected SelectionContext $context;
 	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
-	protected float $totalTime = 0;
 	private int $totalChunks;
 	private int $chunksLeft;
 	/**
@@ -54,8 +53,6 @@ abstract class SelectionEditTask extends ExecutableTask
 	 */
 	public function executeInternal(): EditTaskResult
 	{
-		$start = microtime(true);
-
 		$handler = $this->getChunkHandler();
 		ChunkRequestManager::setHandler($handler);
 		$chunks = $this->sortChunks($this->selection->getNeededChunks());
@@ -94,14 +91,13 @@ abstract class SelectionEditTask extends ExecutableTask
 			}
 		}
 
-		$this->totalTime = microtime(true) - $start;
-		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . $this->totalTime . "s, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
 		return $this->toTaskResult();
 	}
 
 	protected function toTaskResult(): EditTaskResult
 	{
-		return new EditTaskResult($this->handler->getChangedBlockCount(), $this->totalTime, StorageModule::store($this->undo));
+		return new EditTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo));
 	}
 
 	public function attemptRecovery(): EditTaskResult

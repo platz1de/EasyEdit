@@ -33,15 +33,14 @@ class SchematicSaveTask extends ExecutableTask
 
 	public function executeInternal(): SelectionManipulationResult
 	{
-		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		SchematicFileAdapter::createFromSelection($this->schematicPath, $selection);
-		return new SelectionManipulationResult($selection->getIterator()->getReadBlockCount(), microtime(true) - $start);
+		return new SelectionManipulationResult($selection->getIterator()->getReadBlockCount());
 	}
 
 	public function attemptRecovery(): SelectionManipulationResult
 	{
-		return new SelectionManipulationResult(0, 0);
+		return new SelectionManipulationResult(0);
 	}
 
 	public function getProgress(): float

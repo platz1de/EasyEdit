@@ -109,7 +109,7 @@ class Session
 	public function runEditTask(string $message, ExecutableTask $task): void
 	{
 		$this->runTask($task)->then(function (EditTaskResult $result) use ($message) {
-			$this->sendMessage($message, ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+			$this->sendMessage($message, ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 			$this->addToHistory($result->getSelection(), false);
 		});
 	}
@@ -158,7 +158,7 @@ class Session
 	{
 		if ($this->canUndo()) {
 			$executor->runTask(new StaticStoredPasteTask($this->past->shift(), false))->then(function (EditTaskResult $result) {
-				$this->sendMessage("blocks-pasted", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+				$this->sendMessage("blocks-pasted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 				$this->addToHistory($result->getSelection(), true);
 			});
 		}

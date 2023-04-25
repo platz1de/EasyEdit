@@ -41,8 +41,8 @@ class BenchmarkCommand extends EasyEditCommand
 				$resultMsg->addComponent(new MessageComponent("benchmark-result", [
 					"{task}" => (string) ($i + 1),
 					"{name}" => (string) $result[0],
-					"{time}" => (string) round($result[3], 2),
-					"{blocks}" => MixedUtils::humanReadable($result[2])
+					"{time}" => (string) round($result[2], 2),
+					"{blocks}" => MixedUtils::humanReadable($result[1])
 				]));
 			}
 			SessionManager::get($executor)->sendMessage("benchmark-finished", [

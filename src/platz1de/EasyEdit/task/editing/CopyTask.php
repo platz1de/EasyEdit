@@ -37,7 +37,7 @@ class CopyTask extends SelectionEditTask
 
 	protected function toTaskResult(): EditTaskResult
 	{
-		return new EditTaskResult($this->result->getBlockCount(), $this->totalTime, StorageModule::store($this->result));
+		return new EditTaskResult($this->result->getBlockCount(), StorageModule::store($this->result));
 	}
 
 	/**

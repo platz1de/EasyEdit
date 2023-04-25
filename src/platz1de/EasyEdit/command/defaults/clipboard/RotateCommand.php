@@ -26,7 +26,7 @@ class RotateCommand extends EasyEditCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		$session->runTask(new DynamicStoredRotateTask($session->getClipboard()))->then(function (SelectionManipulationResult $result) use ($session) {
-			$session->sendMessage("blocks-rotated", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getChanged())]);
+			$session->sendMessage("blocks-rotated", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getChanged())]);
 		});
 	}
 

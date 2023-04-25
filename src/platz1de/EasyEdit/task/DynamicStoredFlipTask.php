@@ -42,7 +42,6 @@ class DynamicStoredFlipTask extends ExecutableTask
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
 		}
-		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 
 		$palette = [];
@@ -84,13 +83,13 @@ class DynamicStoredFlipTask extends ExecutableTask
 			$flipped->addTile(TileUtils::flipCompound($this->axis, $tile, $selection->getPos2()->getComponent($this->axis)));
 		}
 		StorageModule::forceStore($this->saveId, $flipped);
-		return new SelectionManipulationResult($flipped->getIterator()->getWrittenBlockCount(), microtime(true) - $start);
+		return new SelectionManipulationResult($flipped->getIterator()->getWrittenBlockCount());
 	}
 
 	public function attemptRecovery(): SelectionManipulationResult
 	{
 		//TODO: splitting
-		return new SelectionManipulationResult(0, 0);
+		return new SelectionManipulationResult(0);
 	}
 
 	public function getProgress(): float

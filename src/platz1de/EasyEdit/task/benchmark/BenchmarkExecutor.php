@@ -23,7 +23,7 @@ use pocketmine\world\World;
 class BenchmarkExecutor extends ExecutableTask
 {
 	/**
-	 * @var array{string, float, int, float}[]
+	 * @var array{string, int, float}[]
 	 */
 	private array $results = [];
 	private SetTask $setSimpleBenchmark;
@@ -52,7 +52,7 @@ class BenchmarkExecutor extends ExecutableTask
 		$start = microtime(true);
 		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
 		$res = $this->setSimpleBenchmark->executeInternal();
-		$this->results[] = ["set static", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->results[] = ["set static", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(1));
 
 		//Task #2 - set complex
@@ -61,21 +61,21 @@ class BenchmarkExecutor extends ExecutableTask
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
 		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
 		$res = $this->setComplexBenchmark->executeInternal();
-		$this->results[] = ["set complex", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->results[] = ["set complex", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(2));
 
 		//Task #3 - copy
 		$start = microtime(true);
 		$this->copyBenchmark = new CopyTask($testCube, $pos);
 		$res = $this->copyBenchmark->executeInternal(); //TODO: Don't save the selection (literal memory leak)
-		$this->results[] = ["copy", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->results[] = ["copy", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(3));
 
 		//Task #4 - paste
 		$start = microtime(true);
 		$this->pasteBenchmark = new DynamicPasteTask($this->world, $res->getSelection(), $pos);
 		$res = $this->pasteBenchmark->executeInternal();
-		$this->results[] = ["paste", $res->getTime(), $res->getAffected(), microtime(true) - $start];
+		$this->results[] = ["paste", $res->getAffected(), microtime(true) - $start];
 
 		return new BenchmarkTaskResult($this->world, $this->results);
 	}

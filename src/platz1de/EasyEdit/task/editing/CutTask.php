@@ -41,7 +41,7 @@ class CutTask extends SelectionEditTask
 
 	protected function toTaskResult(): CuttingTaskResult
 	{
-		return new CuttingTaskResult($this->handler->getChangedBlockCount(), $this->totalTime, StorageModule::store($this->undo), StorageModule::store($this->result));
+		return new CuttingTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo), StorageModule::store($this->result));
 	}
 
 	public function executeInternal(): EditTaskResult

@@ -7,21 +7,18 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 class SelectionManipulationResult extends TaskResult
 {
 	/**
-	 * @param int   $changed
-	 * @param float $time TODO: Remove this
+	 * @param int $changed
 	 */
-	public function __construct(private int $changed, private float $time) {}
+	public function __construct(private int $changed) {}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt($this->changed);
-		$stream->putFloat($this->time);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->changed = $stream->getInt();
-		$this->time = $stream->getFloat();
 	}
 
 	/**
@@ -30,13 +27,5 @@ class SelectionManipulationResult extends TaskResult
 	public function getChanged(): int
 	{
 		return $this->changed;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getTime(): float
-	{
-		return $this->time;
 	}
 }

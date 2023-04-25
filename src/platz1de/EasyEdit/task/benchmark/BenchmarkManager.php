@@ -50,7 +50,7 @@ class BenchmarkManager
 
 	/**
 	 * @param string                                  $worldName
-	 * @param array<array{string, float, int, float}> $results
+	 * @param array<array{string, int, float}> $results
 	 * @internal
 	 */
 	public static function benchmarkCallback(string $worldName, array $results): void
@@ -62,7 +62,7 @@ class BenchmarkManager
 		 */
 		$benchmark = self::$task->getTask();
 		$time = array_sum(array_map(static function (array $dat): float {
-			return $dat[3];
+			return $dat[2];
 		}, $results));
 		$closure = self::$closure;
 		$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);

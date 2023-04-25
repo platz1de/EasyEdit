@@ -33,7 +33,7 @@ class CountCommand extends SphericalSelectionCommand
 			foreach ($result->getBlocks() as $block => $count) {
 				$blocks[] = BlockParser::runtimeToStateString($block) . ": " . MixedUtils::humanReadable($count);
 			}
-			$session->sendMessage("blocks-counted", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected()), "{blocks}" => implode("\n", $blocks)]);
+			$session->sendMessage("blocks-counted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected()), "{blocks}" => implode("\n", $blocks)]);
 		});
 	}
 }

@@ -33,16 +33,15 @@ class SchematicLoadTask extends ExecutableTask
 
 	public function executeInternal(): EditTaskResult
 	{
-		$start = microtime(true);
 		$selection = DynamicBlockListSelection::empty();
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
 		$changeId = StorageModule::store($selection);
-		return new EditTaskResult($selection->getIterator()->getWrittenBlockCount(), microtime(true) - $start, $changeId);
+		return new EditTaskResult($selection->getIterator()->getWrittenBlockCount(), $changeId);
 	}
 
 	public function attemptRecovery(): EditTaskResult
 	{
-		return new EditTaskResult(0, 0, StoredSelectionIdentifier::invalid());
+		return new EditTaskResult(0, StoredSelectionIdentifier::invalid());
 	}
 
 	public function getProgress(): float

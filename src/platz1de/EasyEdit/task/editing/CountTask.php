@@ -18,7 +18,7 @@ class CountTask extends SelectionEditTask
 
 	protected function toTaskResult(): CountingTaskResult
 	{
-		return new CountingTaskResult($this->counted, $this->totalTime);
+		return new CountingTaskResult($this->counted);
 	}
 
 	/**

@@ -38,13 +38,13 @@ class CopyCommand extends SimpleFlagArgumentCommand
 				if (!$result instanceof CuttingTaskResult) {
 					throw new RuntimeException("Expected CuttingTaskResult");
 				}
-				$session->sendMessage("blocks-cut", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+				$session->sendMessage("blocks-cut", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 				$session->addToHistory($result->getSelection(), false);
 				$session->setClipboard($result->getClipboard());
 			});
 		} else {
 			$session->runTask(new CopyTask($session->getSelection(), $flags->getVectorFlag("relative")))->then(function (EditTaskResult $result) use ($session) {
-				$session->sendMessage("blocks-copied", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+				$session->sendMessage("blocks-copied", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 				$session->setClipboard($result->getSelection());
 			});
 		}

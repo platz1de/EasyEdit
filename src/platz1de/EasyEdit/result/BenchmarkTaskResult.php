@@ -8,7 +8,7 @@ class BenchmarkTaskResult extends TaskResult
 {
 	/**
 	 * @param string                             $world
-	 * @param array{string, float, int, float}[] $results
+	 * @param array{string, int, float}[] $results
 	 */
 	public function __construct(private string $world, private array $results) {}
 
@@ -19,9 +19,8 @@ class BenchmarkTaskResult extends TaskResult
 		$stream->putInt(count($this->results));
 		foreach ($this->results as $result) {
 			$stream->putString($result[0]);
-			$stream->putFloat($result[1]);
-			$stream->putInt($result[2]);
-			$stream->putFloat($result[3]);
+			$stream->putInt($result[1]);
+			$stream->putFloat($result[2]);
 		}
 	}
 
@@ -32,7 +31,7 @@ class BenchmarkTaskResult extends TaskResult
 		$count = $stream->getInt();
 		$this->results = [];
 		for ($i = 0; $i < $count; $i++) {
-			$this->results[] = [$stream->getString(), $stream->getFloat(), $stream->getInt(), $stream->getFloat()];
+			$this->results[] = [$stream->getString(), $stream->getInt(), $stream->getFloat()];
 		}
 	}
 
@@ -45,7 +44,7 @@ class BenchmarkTaskResult extends TaskResult
 	}
 
 	/**
-	 * @return array{string, float, int, float}[]
+	 * @return array{string, int, float}[]
 	 */
 	public function getResults(): array
 	{

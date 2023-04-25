@@ -40,7 +40,6 @@ class DynamicStoredRotateTask extends ExecutableTask
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
 		}
-		$start = microtime(true);
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 
 		$palette = [];
@@ -68,13 +67,13 @@ class DynamicStoredRotateTask extends ExecutableTask
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->z));
 		}
 		StorageModule::forceStore($this->saveId, $rotated);
-		return new SelectionManipulationResult($rotated->getIterator()->getWrittenBlockCount(), microtime(true) - $start);
+		return new SelectionManipulationResult($rotated->getIterator()->getWrittenBlockCount());
 	}
 
 	public function attemptRecovery(): SelectionManipulationResult
 	{
 		//TODO: splitting so we can some report time
-		return new SelectionManipulationResult(0, 0);
+		return new SelectionManipulationResult(0);
 	}
 
 	public function getProgress(): float

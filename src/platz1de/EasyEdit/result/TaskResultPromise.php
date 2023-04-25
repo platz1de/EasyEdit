@@ -36,6 +36,12 @@ class TaskResultPromise
 	 */
 	private TaskResult $result;
 	private string $message;
+	private float $startTime;
+
+	public function __construct()
+	{
+		$this->startTime = microtime(true);
+	}
 
 	/**
 	 * Called whenever the task is finished (successfully or not, data might be empty)
@@ -100,6 +106,7 @@ class TaskResultPromise
 	 */
 	public function resolve(TaskResult $result): void
 	{
+		$result->enrichWithTime(microtime(true) - $this->startTime);
 		$this->status = self::STATUS_SUCCESS;
 		$this->result = $result;
 		foreach ($this->finish as $callback) {

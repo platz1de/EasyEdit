@@ -35,7 +35,7 @@ class LoadSchematicCommand extends EasyEditCommand
 		}
 
 		$session->runTask(new SchematicLoadTask(EasyEdit::getSchematicPath() . $schematicName))->then(function (EditTaskResult $result) use ($session) {
-			$session->sendMessage("blocks-copied", ["{time}" => (string) round($result->getTime(), 2), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
+			$session->sendMessage("blocks-copied", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 			$session->setClipboard($result->getSelection());
 		});
 	}

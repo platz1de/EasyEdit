@@ -9,12 +9,11 @@ class CountingTaskResult extends EditTaskResult
 {
 	/**
 	 * @param array<int, int> $blocks
-	 * @param float           $time
 	 */
-	public function __construct(private array $blocks, float $time)
+	public function __construct(private array $blocks)
 	{
 		arsort($this->blocks);
-		parent::__construct(array_sum($blocks), $time, StoredSelectionIdentifier::invalid());
+		parent::__construct(array_sum($blocks), StoredSelectionIdentifier::invalid());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
