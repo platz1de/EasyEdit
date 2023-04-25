@@ -110,7 +110,7 @@ class Session
 	{
 		$this->runTask($task)->then(function (EditTaskResult $result) use ($message) {
 			$this->sendMessage($message, ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
-			$this->addToHistory($result->getSelection(), false);
+			$this->addToHistory($result->getSelection());
 		});
 	}
 
@@ -118,21 +118,29 @@ class Session
 	 * @param SelectionIdentifier $id
 	 * @param bool                $fromUndo
 	 */
-	public function addToHistory(SelectionIdentifier $id, bool $fromUndo): void
+	public function addToHistory(SelectionIdentifier $id): void
 	{
 		$id = $id->toIdentifier();
 		if (!$id->isValid()) {
 			return;
 		}
-		if ($fromUndo) {
-			$this->future->unshift($id);
-		} else {
-			$this->past->unshift($id);
-			if (!$this->future->isEmpty()) {
-				CleanStorageTask::from(iterator_to_array($this->future, false));
-				$this->future = new SplStack();
-			}
+		$this->past->unshift($id);
+		if (!$this->future->isEmpty()) {
+			CleanStorageTask::from(iterator_to_array($this->future, false));
+			$this->future = new SplStack();
 		}
+	}
+
+	/**
+	 * @param SelectionIdentifier $id
+	 */
+	public function addToFuture(SelectionIdentifier $id): void
+	{
+		$id = $id->toIdentifier();
+		if (!$id->isValid()) {
+			return;
+		}
+		$this->future->unshift($id);
 	}
 
 	/**
@@ -159,7 +167,7 @@ class Session
 		if ($this->canUndo()) {
 			$executor->runTask(new StaticStoredPasteTask($this->past->shift(), false))->then(function (EditTaskResult $result) {
 				$this->sendMessage("blocks-pasted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
-				$this->addToHistory($result->getSelection(), true);
+				$this->addToFuture($result->getSelection());
 			});
 		}
 	}

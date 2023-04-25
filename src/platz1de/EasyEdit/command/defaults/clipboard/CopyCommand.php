@@ -39,7 +39,7 @@ class CopyCommand extends SimpleFlagArgumentCommand
 					throw new RuntimeException("Expected CuttingTaskResult");
 				}
 				$session->sendMessage("blocks-cut", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
-				$session->addToHistory($result->getSelection(), false);
+				$session->addToHistory($result->getSelection());
 				$session->setClipboard($result->getClipboard());
 			});
 		} else {
