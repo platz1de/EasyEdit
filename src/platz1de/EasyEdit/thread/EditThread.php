@@ -1,8 +1,4 @@
 <?php
-/**
- * pthreads returns null for undefined properties, so we have to use normal ones
- * @noinspection PhpMissingFieldTypeInspection
- */
 
 namespace platz1de\EasyEdit\thread;
 
@@ -22,14 +18,20 @@ class EditThread extends Thread
 	/**
 	 * @var ThreadedLogger
 	 */
-	private $logger;
+	private ThreadedLogger $logger;
 	/**
 	 * @var ThreadStats
 	 */
-	private $stats;
+	private ThreadStats $stats;
 	private static EditThread $instance;
-	private string $inputData = "";
-	private string $outputData = "";
+
+	/**
+	 * Note: pthreads handling of strings is a bit weird
+	 * Properties for some reason just stop working when main thread accesses them before the thread is ready
+	 * As this only applies to strings, we just unset them whenever they were accessed
+	 */
+	private string $inputData;
+	private string $outputData;
 
 	/**
 	 * EditThread constructor.
@@ -59,7 +61,7 @@ class EditThread extends Thread
 			$task = ThreadData::getNextTask();
 			if ($task === null) {
 				$this->synchronized(function (): void {
-					if ($this->inputData === "" && !$this->isKilled) {
+					if (!isset($this->inputData) && !$this->isKilled) {
 						$this->wait();
 					}
 				});
@@ -79,7 +81,7 @@ class EditThread extends Thread
 					ChunkRequestManager::clear();
 					//throttle a bit to avoid spamming
 					$this->synchronized(function (): void {
-						if ($this->inputData === "" && !$this->isKilled) {
+						if (!isset($this->inputData) && !$this->isKilled) {
 							$this->wait(10 * 1000 * 1000);
 						}
 					});
@@ -91,7 +93,7 @@ class EditThread extends Thread
 	public function waitForData(): void
 	{
 		$this->synchronized(function (): void {
-			if ($this->inputData === "" && !$this->isKilled) {
+			if (!isset($this->inputData) && !$this->isKilled) {
 				$this->wait();
 			}
 		});
@@ -149,11 +151,11 @@ class EditThread extends Thread
 
 	public function parseInput(): void
 	{
-		if ($this->inputData !== "") {
-			$input = "";
-			$this->synchronized(function () use (&$input): void {
+		if (isset($this->inputData)) {
+			$input = $this->synchronized(function (): string {
 				$input = $this->inputData;
-				$this->inputData = "";
+				unset($this->inputData);
+				return $input;
 			});
 			$stream = new ExtendedBinaryStream($input);
 
@@ -167,11 +169,11 @@ class EditThread extends Thread
 
 	public function parseOutput(): void
 	{
-		if ($this->outputData !== "") {
-			$output = "";
-			$this->synchronized(function () use (&$output): void {
+		if (isset($this->outputData)) {
+			$output = $this->synchronized(function (): string {
 				$output = $this->outputData;
-				$this->outputData = "";
+				unset($this->outputData);
+				return $output;
 			});
 			$stream = new ExtendedBinaryStream($output);
 
@@ -191,13 +193,13 @@ class EditThread extends Thread
 	{
 		$this->stats->preProcessInput($data);
 		$add = $data->fastSerialize();
-		$this->synchronized(function () use ($add): void {
-			$stream = new ExtendedBinaryStream($this->inputData);
+		$this->synchronized(function (string $add): void {
+			$stream = new ExtendedBinaryStream($this->inputData ?? "");
 			$stream->putString($add);
 			$this->inputData = $stream->getBuffer();
 
 			$this->notify();
-		});
+		}, $add);
 	}
 
 	/**
@@ -208,11 +210,11 @@ class EditThread extends Thread
 	{
 		$this->stats->preProcessOutput($data);
 		$add = $data->fastSerialize();
-		$this->synchronized(function () use ($add): void {
-			$stream = new ExtendedBinaryStream($this->outputData);
+		$this->synchronized(function (string $add): void {
+			$stream = new ExtendedBinaryStream($this->outputData ?? "");
 			$stream->putString($add);
 			$this->outputData = $stream->getBuffer();
-		});
+		}, $add);
 	}
 
 	public function quit(): void
