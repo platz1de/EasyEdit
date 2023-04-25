@@ -1,35 +1,43 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
 use platz1de\EasyEdit\math\OffGridBlockVector;
-use platz1de\EasyEdit\result\CuttingTaskResult;
 use platz1de\EasyEdit\result\EditTaskResult;
+use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
+use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
-use pocketmine\block\VanillaBlocks;
 
-//TODO: Remove EditTask inheritance
-class CutTask extends SelectionEditTask
+class CopyTask extends SelectionEditTask
 {
-	use CubicStaticUndo;
-
 	private DynamicBlockListSelection $result;
 
 	/**
-	 * @param Selection          $selection
-	 * @param OffGridBlockVector $position
+	 * @param Selection             $selection
+	 * @param OffGridBlockVector    $position
+	 * @param SelectionContext|null $context
 	 */
-	public function __construct(Selection $selection, private OffGridBlockVector $position)
+	public function __construct(Selection $selection, private OffGridBlockVector $position, ?SelectionContext $context = null)
 	{
-		parent::__construct($selection);
+		parent::__construct($selection, $context);
+	}
+
+	public function executeInternal(): EditTaskResult
+	{
+		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
+		return parent::executeInternal();
+	}
+
+	protected function toTaskResult(): EditTaskResult
+	{
+		return new EditTaskResult($this->result->getBlockCount(), $this->totalTime, StorageModule::store($this->result));
 	}
 
 	/**
@@ -37,18 +45,15 @@ class CutTask extends SelectionEditTask
 	 */
 	public function getTaskName(): string
 	{
-		return "cut";
+		return "copy";
 	}
 
-	protected function toTaskResult(): CuttingTaskResult
+	/**
+	 * @return BlockListSelection
+	 */
+	public function createUndoBlockList(): BlockListSelection
 	{
-		return new CuttingTaskResult($this->totalBlocks, $this->totalTime, StorageModule::store($this->undo), StorageModule::store($this->result));
-	}
-
-	public function executeInternal(): EditTaskResult
-	{
-		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
-		return parent::executeInternal();
+		return new NonSavingBlockListSelection();
 	}
 
 	/**
@@ -58,15 +63,12 @@ class CutTask extends SelectionEditTask
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
 		$result = $this->result;
-		$id = VanillaBlocks::AIR()->getStateId();
 		$ox = $result->getWorldOffset()->x;
 		$oy = $result->getWorldOffset()->y;
 		$oz = $result->getWorldOffset()->z;
-
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($id, $handler, $result, $ox, $oy, $oz): void {
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
-			$handler->changeBlock($x, $y, $z, $id);
 		}, $this->context);
 	}
 

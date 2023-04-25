@@ -15,7 +15,7 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\LinearSelection;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\SetTask;
+use platz1de\EasyEdit\task\editing\SetTask;
 use platz1de\EasyEdit\task\pathfinding\PathfindingTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\block\utils\DyeColor;

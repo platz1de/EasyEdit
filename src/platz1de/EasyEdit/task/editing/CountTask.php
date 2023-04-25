@@ -1,13 +1,12 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
 use platz1de\EasyEdit\result\CountingTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
-use platz1de\EasyEdit\task\editing\EditTaskHandler;
 
 //TODO: Pull this out of EditTask (move selection logic in underlying classes)
 class CountTask extends SelectionEditTask
@@ -39,7 +38,7 @@ class CountTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param EditTaskhandler $handler
+	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator

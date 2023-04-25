@@ -16,18 +16,18 @@ use SplPriorityQueue;
 class DrainTask extends ExpandingTask
 {
 	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
 	 * @throws CancelException
 	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	public function executeEdit(EditTaskHandler $handler, ManagedChunkHandler $loader): void
 	{
 		$queue = new SplPriorityQueue();
 		$scheduled = [];
 		$startX = $this->start->x;
 		$startY = $this->start->y;
 		$startZ = $this->start->z;
-		$this->loader->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
+		$loader->registerRequestedChunks(World::chunkHash($startX >> 4, $startZ >> 4));
 		$limit = ConfigManager::getFillDistance();
 		$air = VanillaBlocks::AIR()->getStateId();
 
@@ -42,10 +42,10 @@ class DrainTask extends ExpandingTask
 			World::getBlockXYZ($current["data"], $x, $y, $z);
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$this->updateProgress(-$current["priority"], $limit);
-			$this->loader->checkRuntimeChunk($chunk);
+			$loader->checkRuntimeChunk($chunk);
 			$res = $handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS;
 			if ($res !== BlockTypeIds::WATER && $res !== BlockTypeIds::LAVA) {
-				$this->loader->checkUnload($handler, $chunk);
+				$loader->checkUnload($handler, $chunk);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $air);
@@ -53,11 +53,11 @@ class DrainTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					$this->loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			$this->loader->checkUnload($handler, $chunk);
+			$loader->checkUnload($handler, $chunk);
 		}
 	}
 

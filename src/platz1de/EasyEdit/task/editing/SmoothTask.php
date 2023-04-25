@@ -1,11 +1,10 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
-use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;

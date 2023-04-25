@@ -27,11 +27,11 @@ class ExtendBlockFaceTask extends ExpandingTask
 	}
 
 	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
 	 * @throws CancelException
 	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	public function executeEdit(EditTaskHandler $handler, ManagedChunkHandler $loader): void
 	{
 		$target = $handler->getBlock($this->start->x, $this->start->y, $this->start->z);
 		$offset = $this->start->diff($start = $this->start->getSide($this->face));
@@ -46,8 +46,8 @@ class ExtendBlockFaceTask extends ExpandingTask
 		$offsetY = $offset->y;
 		$offsetZ = $offset->z;
 		$limit = ConfigManager::getFillDistance();
-		$this->loader->registerRequestedChunks(World::chunkHash($start->x >> 4, $start->z >> 4));
-		$this->loader->registerRequestedChunks(World::chunkHash(($start->x + $offsetX) >> 4, ($start->z + $offsetZ) >> 4));
+		$loader->registerRequestedChunks(World::chunkHash($start->x >> 4, $start->z >> 4));
+		$loader->registerRequestedChunks(World::chunkHash(($start->x + $offsetX) >> 4, ($start->z + $offsetZ) >> 4));
 
 		$queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
 		$queue->insert(World::blockHash($start->x, $start->y, $start->z), 0);
@@ -61,11 +61,11 @@ class ExtendBlockFaceTask extends ExpandingTask
 			$chunk = World::chunkHash($x >> 4, $z >> 4);
 			$c = World::chunkHash(($x + $offsetX) >> 4, ($z + $offsetZ) >> 4);
 			$this->updateProgress(-$current["priority"], $limit);
-			$this->loader->checkRuntimeChunk($chunk);
-			$this->loader->checkRuntimeChunk($c);
+			$loader->checkRuntimeChunk($chunk);
+			$loader->checkRuntimeChunk($c);
 			if ($handler->getBlock($x + $offsetX, $y + $offsetY, $z + $offsetZ) !== $target || !in_array($handler->getResultingBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
-				$this->loader->checkUnload($handler, $chunk);
-				$this->loader->checkUnload($handler, $c);
+				$loader->checkUnload($handler, $chunk);
+				$loader->checkUnload($handler, $c);
 				continue;
 			}
 			$handler->changeBlock($x, $y, $z, $target);
@@ -76,13 +76,13 @@ class ExtendBlockFaceTask extends ExpandingTask
 				$side = (new Vector3($x, $y, $z))->getSide($facing);
 				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
 					$scheduled[$hash] = true;
-					$this->loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
-					$this->loader->registerRequestedChunks(World::chunkHash(($side->getFloorX() + $offsetX) >> 4, ($side->getFloorZ() + $offsetZ) >> 4));
+					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$loader->registerRequestedChunks(World::chunkHash(($side->getFloorX() + $offsetX) >> 4, ($side->getFloorZ() + $offsetZ) >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}
-			$this->loader->checkUnload($handler, $chunk);
-			$this->loader->checkUnload($handler, $c);
+			$loader->checkUnload($handler, $chunk);
+			$loader->checkUnload($handler, $c);
 		}
 	}
 

@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\task;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
+use platz1de\EasyEdit\task\editing\DynamicPasteTask;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 /**

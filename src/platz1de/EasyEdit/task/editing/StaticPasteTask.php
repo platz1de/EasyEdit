@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
@@ -9,8 +9,7 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\world\World;
@@ -57,7 +56,7 @@ class StaticPasteTask extends SelectionEditTask
 	}
 
 	/**
-	 * @param EditTaskhandler $handler
+	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator

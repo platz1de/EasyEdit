@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection\stack;
+namespace platz1de\EasyEdit\task\editing\stack;
 
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;

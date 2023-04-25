@@ -8,7 +8,7 @@ use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\Noise3DTask;
+use platz1de\EasyEdit\task\editing\Noise3DTask;
 
 class NoiseCommand extends EasyEditCommand
 {

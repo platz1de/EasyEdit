@@ -10,7 +10,7 @@ use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
-use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
+use platz1de\EasyEdit\task\editing\DynamicPasteTask;
 
 class PasteCommand extends SimpleFlagArgumentCommand
 {

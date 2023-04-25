@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\expanding\ExpandingTask;
+use platz1de\EasyEdit\task\expanding\ManagedChunkHandler;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -30,11 +31,11 @@ class PathfindingTask extends ExpandingTask
 	}
 
 	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
 	 * @throws CancelException
 	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	public function executeEdit(EditTaskHandler $handler, ManagedChunkHandler $loader): void
 	{
 		$open = new NodeHeap();
 		/** @var Node[] $collection */
@@ -60,7 +61,7 @@ class PathfindingTask extends ExpandingTask
 			$closed[$current->hash] = $current->parentHash;
 			$chunk = World::chunkHash($current->x >> 4, $current->z >> 4);
 			$this->updateProgress($checked, $limit);
-			$this->loader->checkRuntimeChunk($chunk);
+			$loader->checkRuntimeChunk($chunk);
 			if ($current->equals($endX, $endY, $endZ)) {
 				$hash = $current->hash;
 				while (isset($closed[$hash])) {

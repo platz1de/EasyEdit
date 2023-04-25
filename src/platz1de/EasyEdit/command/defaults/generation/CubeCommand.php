@@ -14,7 +14,7 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\SetTask;
+use platz1de\EasyEdit\task\editing\SetTask;
 
 class CubeCommand extends SimpleFlagArgumentCommand
 {

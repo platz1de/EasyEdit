@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection;
+namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
@@ -13,8 +13,7 @@ use platz1de\EasyEdit\selection\LinearSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\VerticalStaticBlockListSelection;
-use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;

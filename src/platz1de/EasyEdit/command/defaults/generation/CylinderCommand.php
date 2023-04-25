@@ -14,7 +14,7 @@ use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\SetTask;
+use platz1de\EasyEdit\task\editing\SetTask;
 
 class CylinderCommand extends SimpleFlagArgumentCommand
 {

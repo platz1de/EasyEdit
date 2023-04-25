@@ -6,45 +6,80 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
-use platz1de\EasyEdit\task\editing\EditTask;
+use platz1de\EasyEdit\task\CancelException;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\world\ReferencedChunkManager;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\world\World;
 
-abstract class ExpandingTask extends EditTask
+/**
+ * @extends ExecutableTask<EditTaskResult>
+ */
+abstract class ExpandingTask extends ExecutableTask
 {
+	protected BlockListSelection $undo;
+	protected EditTaskHandler $handler;
+	private float $time = 0;
 	private float $progress = 0; //worst case scenario
-	protected ManagedChunkHandler $loader;
 
 	/**
 	 * @param string      $world
 	 * @param BlockVector $start
 	 */
-	public function __construct(string $world, protected BlockVector $start)
+	public function __construct(private string $world, protected BlockVector $start)
 	{
-		parent::__construct($world);
+		parent::__construct();
 	}
 
 	public function executeInternal(): EditTaskResult
 	{
-		$this->prepare(true);
+		$start = microtime(true);
 
-		$this->loader = new ManagedChunkHandler($this->handler);
-		ChunkRequestManager::setHandler($this->loader);
-		$this->loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4));
+		$this->undo = $this->createUndoBlockList();
+		$this->handler = new EditTaskHandler($this->world, $this->undo, true);
+		$loader = new ManagedChunkHandler($this->handler);
+		ChunkRequestManager::setHandler($loader);
+		$loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4));
 
-		$this->runEdit(-1, []);
+		HeightMapCache::prepare();
+
+		$this->executeEdit($this->handler, $loader);
+		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful in " . (microtime(true) - $start) . "s, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
+
+		$this->time = microtime(true) - $start;
+
+		$this->handler->finish();
 
 		return $this->toTaskResult();
 	}
+
+	protected function toTaskResult(): EditTaskResult
+	{
+		return new EditTaskResult($this->handler->getChangedBlockCount(), $this->time, StorageModule::store($this->undo));
+	}
+
+	public function attemptRecovery(): EditTaskResult
+	{
+		return $this->toTaskResult();
+	}
+
+	/**
+	 * @param EditTaskHandler     $handler
+	 * @param ManagedChunkHandler $loader
+	 * @throws CancelException
+	 */
+	abstract public function executeEdit(EditTaskHandler $handler, ManagedChunkHandler $loader): void;
 
 	/**
 	 * @return BlockListSelection
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new ExpandingStaticBlockListSelection($this->getWorld(), $this->start);
+		return new ExpandingStaticBlockListSelection($this->world, $this->start);
 	}
 
 	public function updateProgress(int $current, int $max): void
@@ -59,13 +94,21 @@ abstract class ExpandingTask extends EditTask
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		parent::putData($stream);
+		$stream->putString($this->world);
 		$stream->putBlockVector($this->start);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		parent::parseData($stream);
+		$this->world = $stream->getString();
 		$this->start = $stream->getBlockVector();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getWorld(): string
+	{
+		return $this->world;
 	}
 }

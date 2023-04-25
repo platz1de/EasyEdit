@@ -11,7 +11,7 @@ use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\stack\StackTask;
+use platz1de\EasyEdit\task\editing\stack\StackTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 
 class StackCommand extends EasyEditCommand

@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection\move;
+namespace platz1de\EasyEdit\task\editing\move;
 
 use Generator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
@@ -11,7 +11,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
-use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
+use platz1de\EasyEdit\task\editing\SelectionEditTask;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;

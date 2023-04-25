@@ -1,6 +1,6 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection\move;
+namespace platz1de\EasyEdit\task\editing\move;
 
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\Selection;

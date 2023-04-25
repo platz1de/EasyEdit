@@ -10,7 +10,7 @@ use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\move\MoveTask;
+use platz1de\EasyEdit\task\editing\move\MoveTask;
 use platz1de\EasyEdit\utils\ArgumentParser;
 
 class MoveCommand extends EasyEditCommand

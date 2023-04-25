@@ -12,8 +12,8 @@ use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\result\CuttingTaskResult;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\CopyTask;
-use platz1de\EasyEdit\task\editing\selection\CutTask;
+use platz1de\EasyEdit\task\editing\CopyTask;
+use platz1de\EasyEdit\task\editing\CutTask;
 use platz1de\EasyEdit\utils\MixedUtils;
 use RuntimeException;
 

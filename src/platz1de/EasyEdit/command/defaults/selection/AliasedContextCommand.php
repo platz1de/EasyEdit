@@ -10,7 +10,7 @@ use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\SetTask;
+use platz1de\EasyEdit\task\editing\SetTask;
 use pocketmine\block\VanillaBlocks;
 
 class AliasedContextCommand extends SimpleFlagArgumentCommand

@@ -48,7 +48,7 @@ use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\task\editing\selection\DynamicPasteTask;
+use platz1de\EasyEdit\task\editing\DynamicPasteTask;
 use platz1de\EasyEdit\thread\EditAdapter;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ConfigManager;

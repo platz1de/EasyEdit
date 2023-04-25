@@ -8,7 +8,7 @@ use platz1de\EasyEdit\result\CountingTaskResult;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\session\Session;
-use platz1de\EasyEdit\task\editing\selection\CountTask;
+use platz1de\EasyEdit\task\editing\CountTask;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\MixedUtils;
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\selection\stack;
+namespace platz1de\EasyEdit\task\editing\stack;
 
 use Generator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
-use platz1de\EasyEdit\task\editing\selection\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\task\editing\selection\SelectionEditTask;
+use platz1de\EasyEdit\task\editing\SelectionEditTask;
 use platz1de\EasyEdit\task\editing\SingleChunkHandler;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;

@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
-use platz1de\EasyEdit\task\editing\selection\StaticPasteTask;
+use platz1de\EasyEdit\task\editing\StaticPasteTask;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 /**
