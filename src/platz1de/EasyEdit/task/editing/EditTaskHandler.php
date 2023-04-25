@@ -37,7 +37,7 @@ class EditTaskHandler
 	public function setChunk(int $key, ChunkInformation $chunk): void
 	{
 		$this->origin->getManager()->setChunk($key, $chunk);
-		$this->result->getManager()->setChunk($key, $chunk);
+		$this->result->getManager()->setChunk($key, clone $chunk);
 	}
 
 	/**
