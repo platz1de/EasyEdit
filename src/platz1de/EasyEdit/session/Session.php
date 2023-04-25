@@ -165,7 +165,7 @@ class Session
 	public function undoStep(Session $executor): void
 	{
 		if ($this->canUndo()) {
-			$executor->runTask(new StaticStoredPasteTask($this->past->shift(), false))->then(function (EditTaskResult $result) {
+			$executor->runTask(new StaticStoredPasteTask($this->past->shift()->markForDeletion(), false))->then(function (EditTaskResult $result) {
 				$this->sendMessage("blocks-pasted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 				$this->addToFuture($result->getSelection());
 			});
@@ -178,7 +178,7 @@ class Session
 	public function redoStep(Session $executor): void
 	{
 		if ($this->canRedo()) {
-			$executor->runEditTask("blocks-pasted", new StaticStoredPasteTask($this->future->shift(), false));
+			$executor->runEditTask("blocks-pasted", new StaticStoredPasteTask($this->future->shift()->markForDeletion(), false));
 		}
 	}
 
