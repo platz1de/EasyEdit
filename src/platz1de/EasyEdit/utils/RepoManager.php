@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\thread\EditThread;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\plugin\DiskResourceProvider;
 use pocketmine\utils\InternetException;
 use UnexpectedValueException;
@@ -16,25 +17,34 @@ class RepoManager
 	 */
 	private static array $repoData;
 	private static bool $available = false;
+	private static string $cacheVersion = "";
 	private static int $version = 0;
 
 	public static function init(string $repo): void
 	{
 		if ($repo !== "") {
 			try {
-				self::$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
+				/** @var array<string, array<string, string>> $repoData */
+				$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
 				self::$available = true;
-				if (!isset(self::$repoData["state-version"]) || !is_int(self::$repoData["state-version"])) {
-					throw new UnexpectedValueException("Repo data does not contain a state version");
+
+				$current = BlockStateData::current("dummy", [])->getVersionAsString();
+				if (isset($repoData[$current])) {
+					self::$repoData = $repoData[$current];
+					self::$version = BlockStateData::CURRENT_VERSION;
+				} else {
+					self::$repoData = $repoData["latest"];
+					self::$version = (int) self::$repoData["state-version"];
+					EditThread::getInstance()->getLogger()->notice("Couldn't find data for this pocketmine version, using latest (" . (new BlockStateData("dummy", [], self::$version))->getVersionAsString() . ")");
 				}
-				self::$version = self::$repoData["state-version"];
+
 				if (ConfigManager::useCache()) {
-					$version = self::$repoData["version"];
+					self::$cacheVersion = $repoData["version"];
 					$cache = scandir(ConfigManager::getCachePath());
 					if ($cache !== false) {
 						foreach (array_diff($cache, ['.', '..']) as $file) {
 							//only delete files that are known to us
-							if (str_starts_with($file, self::CACHE_PREFIX) && !str_ends_with($file, "_" . $version . ".json")) {
+							if (str_starts_with($file, self::CACHE_PREFIX) && !str_ends_with($file, "_" . self::$cacheVersion . ".json")) {
 								EditThread::getInstance()->getLogger()->debug("Deleting old cache file " . $file);
 								unlink(ConfigManager::getCachePath() . $file);
 							}
@@ -56,7 +66,7 @@ class RepoManager
 	{
 		if (self::$available) {
 			if (ConfigManager::useCache()) {
-				$cache = self::CACHE_PREFIX . $file . "_" . self::$repoData["version"] . ".json";
+				$cache = self::CACHE_PREFIX . $file . "_" . self::$cacheVersion . ".json";
 				if (is_file(ConfigManager::getCachePath() . $cache)) {
 					try {
 						return MixedUtils::decodeJson((string) file_get_contents(ConfigManager::getCachePath() . $cache), $depth);
@@ -71,8 +81,8 @@ class RepoManager
 				if (is_string($url)) {
 					$data = MixedUtils::downloadData($url);
 					if (ConfigManager::useCache()) {
-						EditThread::getInstance()->getLogger()->debug("Caching " . $file . " to " . ConfigManager::getCachePath() . self::CACHE_PREFIX . $file . "_" . self::$repoData["version"] . ".json");
-						file_put_contents(ConfigManager::getCachePath() . self::CACHE_PREFIX . $file . "_" . self::$repoData["version"] . ".json", $data);
+						EditThread::getInstance()->getLogger()->debug("Caching " . $file . " to " . ConfigManager::getCachePath() . self::CACHE_PREFIX . $file . "_" . self::$cacheVersion . ".json");
+						file_put_contents(ConfigManager::getCachePath() . self::CACHE_PREFIX . $file . "_" . self::$cacheVersion . ".json", $data);
 					}
 					return MixedUtils::decodeJson($data, $depth);
 				}

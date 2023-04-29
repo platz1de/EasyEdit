@@ -25,6 +25,9 @@ use platz1de\EasyEdit\pattern\PatternConstruct;
 use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\pattern\type\AxisArgumentWrapper;
 use platz1de\EasyEdit\utils\BlockParser;
+use pocketmine\block\Leaves;
+use pocketmine\block\RuntimeBlockStateRegistry;
+use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
 use pocketmine\player\Player;
 
 class PatternParser
@@ -63,13 +66,16 @@ class PatternParser
 	public static function parseInternal(string $pattern): Pattern
 	{
 		if (!(bool) preg_match("/[^()]*(?:\((?R)\)(?R))?[^()]*/", $pattern, $test) || $test[0] !== $pattern) {
-			throw new ParseError("Pattern contains incomplete brackets");
+			throw new ParseError("Pattern contains incomplete round brackets");
 		}
-		//basically magic
-		preg_match_all("/(?:\((?:[^()]+|(?R))+\)|[^(),\s]+)+/", $pattern, $matches);
+		if (!(bool) preg_match("/[^\[\]]*(?:\[(?R)](?R))?[^\[\]]*/", $pattern, $test) || $test[0] !== $pattern) {
+			throw new ParseError("Pattern contains incomplete square brackets");
+		}
+		//basically magic (splitting at every comma that is not inside any type of brackets)
+		preg_match_all("/(?:\((?:[^()]+|(?R))+\)|\[(?:[^\[\]]+|(?R))+]|[^\[\](),\s]+)+/", $pattern, $matches);
 		$pieces = [];
 		foreach ($matches[0] as $piece) {
-			$pieces[] = self::parseLogical($piece);
+			$pieces[] = self::parseLogical(trim($piece));
 		}
 		return PatternWrapper::wrap($pieces);
 	}
@@ -85,7 +91,7 @@ class PatternParser
 		$pieces = [];
 		try {
 			foreach ($matches[0] as $piece) {
-				$pieces[] = self::parsePiece($piece);
+				$pieces[] = self::parsePiece(trim($piece));
 			}
 		} catch (ParseError $exception) {
 			throw new ParseError('Failed to parse piece "' . $pattern . '"' . PHP_EOL . " - " . $exception->getMessage(), false);
@@ -117,11 +123,11 @@ class PatternParser
 		//blocks have priority
 		try {
 			$invert = false; //this would be always false
-			$pattern = new StaticBlock(BlockParser::getRuntime($patternString));
-		} catch (ParseError) {
+			$pattern = new StaticBlock(self::getRuntimeId($patternString));
+		} catch (UnsupportedBlockStateException) { //parser errors are passed down
 			//This still allows old syntax, starting with #
 			//I have no idea what phpstorm is doing here
-			//TODO: find a better expression without things phpstorm doesn't like
+			//TODO: find a better expression without things phpstorm doesn't like (https://youtrack.jetbrains.com/issue/WI-60136)
 			/** @noinspection all */
 			if (!((bool) preg_match("/#?([^()]*)(?:\(((?:(?R))+)\))?/", $patternString, $matches))) {
 				throw new ParseError($patternString . " does not follow pattern rules");
@@ -131,6 +137,7 @@ class PatternParser
 				$matches[1] = substr($matches[1], 1);
 			}
 
+			$matches[1] = trim($matches[1]);
 			if ($matches[1] === "") {
 				$pattern = self::parseInternal($matches[2]);
 			} else {
@@ -181,8 +188,20 @@ class PatternParser
 			return new SolidBlock();
 		}
 
-		return new StaticBlock(BlockParser::getRuntime($string));
+		return new StaticBlock(self::getRuntimeId($string));
 
 		//return new DynamicBlock(BlockParser::parseBlockIdentifier($string));
+	}
+
+	private static function getRuntimeId(string $string): int
+	{
+		$id = BlockParser::getRuntime($string);
+		$block = RuntimeBlockStateRegistry::getInstance()->fromStateId($id);
+		if ($block instanceof Leaves && !str_contains($string, "persistence") && !str_contains($string, "persistent_bit")) {
+			$block->setNoDecay(true);
+		} else {
+			return $id; //No need to recalculate
+		}
+		return $block->getStateId();
 	}
 }

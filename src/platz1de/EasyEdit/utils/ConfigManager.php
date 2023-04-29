@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\convert\BedrockStatePreprocessor;
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\convert\ItemConvertor;
@@ -18,7 +19,7 @@ use UnexpectedValueException;
 
 class ConfigManager
 {
-	private const CONFIG_VERSION = "3.0.0";
+	private const CONFIG_VERSION = "3.0.1";
 
 	/**
 	 * @var int[]
@@ -44,6 +45,7 @@ class ConfigManager
 
 		Messages::load(strtolower(self::mustGetString($config, "language", "auto")));
 
+		//TODO: change most about this
 		self::$terrainIgnored = array_map(static function (string $block): int {
 			return BlockParser::getRuntime($block) >> Block::INTERNAL_STATE_DATA_BITS;
 		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
@@ -65,7 +67,7 @@ class ConfigManager
 
 		self::$downloadData = self::mustGetBool($config, "download-data", false);
 		self::$cacheData = self::mustGetBool($config, "cache-data", false);
-		self::$dataRepo = self::mustGetString($config, "data-repo", "");
+		self::$dataRepo = self::mustGetString($config, "data-source", "");
 
 		if (self::$cacheData && !is_dir(EasyEdit::getCachePath()) && !mkdir(EasyEdit::getCachePath(), 0777, true) && !is_dir(EasyEdit::getCachePath())) {
 			throw new AssumptionFailedError("Failed to create cache directory");
@@ -272,6 +274,7 @@ class ConfigManager
 		RepoManager::init(self::$dataRepo);
 		HeightMapCache::setIgnore(self::$terrainIgnored);
 		LegacyBlockIdConvertor::load();
+		BedrockStatePreprocessor::load();
 		BlockStateConvertor::load();
 		BlockRotationManipulator::load();
 		ItemConvertor::load();

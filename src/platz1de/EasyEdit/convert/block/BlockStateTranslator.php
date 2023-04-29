@@ -58,11 +58,10 @@ abstract class BlockStateTranslator
 						continue;
 					}
 					EditThread::getInstance()->debug("State $stateName is $stateValue, but should be one of " . implode(", ", $this->values[$stateName]));
-					unset($states[$stateName]);
 				} else {
 					EditThread::getInstance()->debug("Unknown state $stateName");
-					unset($states[$stateName]);
 				}
+				unset($states[$stateName]);
 			}
 		}
 		foreach ($this->defaults as $stateName => $stateValue) {

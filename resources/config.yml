@@ -1,4 +1,4 @@
-config-version: "3.0.0" #Please don't change this manually
+config-version: "3.0.1" #Please don't change this manually
 
 #Used language
 #Available:
@@ -53,6 +53,6 @@ cache-data: true
 
 #Better don't change this, the following is mainly for transparency
 #Conversion data source, requires specific Format
-#for more information see https://github.com/platz1de/EasyEdit-Data/tree/format-v3.0
+#For more information see https://github.com/platz1de/EasyEdit-Data/tree/format-v3.1
 #If you want to use your own data, the simplest way is to fork the data repository and modify some values
-data-repo: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v3.0/dataRepo.json"
+data-source: "https://raw.githubusercontent.com/platz1de/EasyEdit-Data/format-v3.1/dataRepo.json"
