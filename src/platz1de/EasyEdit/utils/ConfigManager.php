@@ -278,7 +278,7 @@ class ConfigManager
 		BlockStateConvertor::load();
 		BlockRotationManipulator::load();
 		ItemConvertor::load();
-		TileConvertor::load();
+		TileConvertor::load(RepoManager::getVersion());
 	}
 
 	private static function loadConfig(): Config

@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\convert;
 
 use InvalidArgumentException;
+use platz1de\EasyEdit\convert\tile\BannerTileConvertor;
 use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
@@ -73,7 +74,7 @@ class TileConvertor
 		//some of these aren't actually part of pmmp yet, but plugins might use them
 		if ($extraData !== null) {
 			foreach ($extraData->getValue() as $key => $value) {
-				if ($key === Tile::TAG_ID) {
+				if ($key === Tile::TAG_ID || $key === self::PREPROCESSED_TYPE) {
 					continue;
 				}
 				$tile->setTag($key, $value);
@@ -129,7 +130,7 @@ class TileConvertor
 		return null;
 	}
 
-	public static function load(): void
+	public static function load(int $version): void
 	{
 		/**
 		 * @var TileConvertorPiece $convertor
@@ -140,11 +141,26 @@ class TileConvertor
 					 new ContainerTileConvertor("Dropper", "minecraft:dropper"),
 					 new ContainerTileConvertor("Hopper", "minecraft:hopper"),
 					 new ContainerTileConvertor("ShulkerBox", "minecraft:shulker_box"), //TODO: facing
-					 new SignConvertor("Sign", "minecraft:sign"),
+					 new SignConvertor("Sign", "minecraft:sign")
 				 ] as $convertor) {
 			foreach ($convertor->getIdentifiers() as $identifier) {
 				self::$convertors[$identifier] = $convertor;
 			}
+		}
+
+		if ($version >= 18042891) { //Initial support for extra tile data (1.19.80.11)
+			/**
+			 * @var TileConvertorPiece $convertor
+			 */
+			foreach ([
+						 new BannerTileConvertor("Banner", "minecraft:banner")
+					 ] as $convertor) {
+				foreach ($convertor->getIdentifiers() as $identifier) {
+					self::$convertors[$identifier] = $convertor;
+				}
+			}
+		} else {
+			EditThread::getInstance()->getLogger()->debug("Extra tile data not supported");
 		}
 	}
 

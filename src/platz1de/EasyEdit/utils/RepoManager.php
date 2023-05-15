@@ -28,7 +28,7 @@ class RepoManager
 				$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
 				self::$available = true;
 
-				$current = BlockStateData::current("dummy", [])->getVersionAsString();
+				$current = BlockStateData::current("dummy", [])->getVersionAsString() . " sdsad";
 				if (isset($repoData[$current])) {
 					self::$repoData = $repoData[$current];
 					self::$version = BlockStateData::CURRENT_VERSION;
@@ -61,7 +61,7 @@ class RepoManager
 
 	/**
 	 * @param string $file
-	 * @param int $depth
+	 * @param int    $depth
 	 * @return array<string, mixed>
 	 */
 	public static function getJson(string $file, int $depth): array
@@ -71,7 +71,7 @@ class RepoManager
 				$cache = self::CACHE_PREFIX . $file . "_" . self::$cacheVersion . ".json";
 				if (is_file(ConfigManager::getCachePath() . $cache)) {
 					try {
-						return MixedUtils::decodeJson((string)file_get_contents(ConfigManager::getCachePath() . $cache), $depth);
+						return MixedUtils::decodeJson((string) file_get_contents(ConfigManager::getCachePath() . $cache), $depth);
 					} catch (InternetException $e) {
 						EditThread::getInstance()->getLogger()->warning("Failed to read cache " . $cache . ": " . $e->getMessage());
 						unlink(ConfigManager::getCachePath() . $cache);
