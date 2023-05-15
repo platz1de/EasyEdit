@@ -71,4 +71,6 @@ abstract class BlockStateTranslator
 		}
 		return new BlockStateData($state->getName(), $states, $state->getVersion());
 	}
+
+	abstract public function removeTileData(BlockStateData $state): BlockStateData;
 }

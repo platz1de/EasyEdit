@@ -33,6 +33,14 @@ class SimpleStateTranslator extends BlockStateTranslator
 	 * @var array<string, string>
 	 */
 	private array $renamedStates = [];
+	/**
+	 * @var array<string, Tag>
+	 */
+	private array $extraTileData = [];
+	/**
+	 * @var string[]
+	 */
+	private array $removedTileData = [];
 
 	/**
 	 * @param array<string, mixed> $data
@@ -83,11 +91,39 @@ class SimpleStateTranslator extends BlockStateTranslator
 			}
 			$this->renamedStates[$old] = $new;
 		}
+
+		if (isset($data["tile_extra"])) {
+			if (!is_array($data["tile_extra"])) {
+				throw new UnexpectedValueException("tile_extra must be an array");
+			}
+			if (array_keys($data["tile_extra"]) === range(0, count($data["tile_extra"]) - 1)) {
+				$this->removedTileData = $data["tile_extra"];
+			} else {
+				foreach ($data["tile_extra"] as $key => $value) {
+					$this->extraTileData[$key] = BlockParser::tagFromStringValue($value);
+				}
+			}
+		}
 	}
 
 	public function translate(BlockStateData $state): BlockStateData
 	{
+		$state = $this->applyDefaultTileData($state);
 		return new BlockStateData($this->targetState ?? $state->getName(), $this->process($state->getStates()), RepoManager::getVersion());
+	}
+
+	protected function applyDefaultTileData(BlockStateData $data): BlockStateData
+	{
+		if ($this->extraTileData === []) {
+			return $data;
+		}
+		$states = $data->getStates();
+		foreach ($this->extraTileData as $state => $value) {
+			if (!isset($states[$state])) {
+				$states[$state] = clone $value;
+			}
+		}
+		return new BlockStateData($data->getName(), $states, $data->getVersion());
 	}
 
 	/**
@@ -133,5 +169,20 @@ class SimpleStateTranslator extends BlockStateTranslator
 		}
 
 		return $states;
+	}
+
+	public function removeTileData(BlockStateData $state): BlockStateData
+	{
+		if ($this->removedTileData === []) {
+			return $state;
+		}
+		$states = $state->getStates();
+		foreach ($this->removedTileData as $stateName) {
+			if (!isset($states[$stateName])) {
+				throw new UnexpectedValueException("State $stateName to remove does not exist");
+			}
+			unset($states[$stateName]);
+		}
+		return new BlockStateData($state->getName(), $states, $state->getVersion());
 	}
 }

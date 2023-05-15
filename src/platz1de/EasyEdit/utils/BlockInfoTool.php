@@ -7,7 +7,7 @@ use platz1de\EasyEdit\convert\TileConvertor;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\block\Block;
 use pocketmine\block\tile\Tile;
-use pocketmine\world\format\io\GlobalBlockStateHandlers;
+use pocketmine\data\bedrock\block\BlockStateData;
 
 class BlockInfoTool
 {
@@ -18,11 +18,12 @@ class BlockInfoTool
 	public static function display(Session $session, Block $block): void
 	{
 		$state = BlockParser::blockToStateString($block);
-		$java = BlockParser::toStateString(BlockStateConvertor::bedrockToJava(GlobalBlockStateHandlers::getSerializer()->serializeBlock($block)));
+		$java = $state;
 		if (($t = $block->getPosition()->getWorld()->getTile($block->getPosition())) instanceof Tile) {
 			$tile = $t->saveNBT();
 			TileConvertor::toJava($tile, $java);
 		}
+		$java = BlockParser::toStateString(BlockStateConvertor::bedrockToJava(BlockParser::fromStateString($java, BlockStateData::CURRENT_VERSION)));
 		$session->sendMessage("block-info", [
 			"{state}" => $state,
 			"{id}" => (string) $block->getTypeId(),

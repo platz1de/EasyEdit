@@ -7,11 +7,11 @@ use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
-use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\block\tile\Tile;
+use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\tag\CompoundTag;
 use Throwable;
 
@@ -118,12 +118,11 @@ class TileConvertor
 	}
 
 	/**
-	 * @param string $name
+	 * @param BlockStateData $state
 	 * @return CompoundTag|null
 	 */
-	public static function preprocessTileState(string $name): ?CompoundTag
+	public static function preprocessTileState(BlockStateData $state): ?CompoundTag
 	{
-		$state = BlockParser::fromStateString($name, RepoManager::getVersion());
 		if (isset(self::$convertors[$state->getName()])) {
 			return self::$convertors[$state->getName()]->preprocessTileState($state)?->setString(self::PREPROCESSED_TYPE, self::$convertors[$state->getName()]::class);
 		}
@@ -136,13 +135,13 @@ class TileConvertor
 		 * @var TileConvertorPiece $convertor
 		 */
 		foreach ([
-			         new ChestTileConvertor("Chest", "minecraft:chest", "minecraft:trapped_chest"),
-			         new ContainerTileConvertor("Dispenser", "minecraft:dispenser"),
-			         new ContainerTileConvertor("Dropper", "minecraft:dropper"),
-			         new ContainerTileConvertor("Hopper", "minecraft:hopper"),
-			         new ContainerTileConvertor("ShulkerBox", "minecraft:shulker_box"), //TODO: facing
-			         new SignConvertor("Sign", "minecraft:sign"),
-		         ] as $convertor) {
+					 new ChestTileConvertor("Chest", "minecraft:chest", "minecraft:trapped_chest"),
+					 new ContainerTileConvertor("Dispenser", "minecraft:dispenser"),
+					 new ContainerTileConvertor("Dropper", "minecraft:dropper"),
+					 new ContainerTileConvertor("Hopper", "minecraft:hopper"),
+					 new ContainerTileConvertor("ShulkerBox", "minecraft:shulker_box"), //TODO: facing
+					 new SignConvertor("Sign", "minecraft:sign"),
+				 ] as $convertor) {
 			foreach ($convertor->getIdentifiers() as $identifier) {
 				self::$convertors[$identifier] = $convertor;
 			}

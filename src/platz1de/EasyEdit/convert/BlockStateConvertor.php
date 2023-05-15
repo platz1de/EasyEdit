@@ -11,6 +11,7 @@ use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
+use pocketmine\nbt\tag\CompoundTag;
 use Throwable;
 use UnexpectedValueException;
 
@@ -76,11 +77,12 @@ class BlockStateConvertor
 	}
 
 	/**
-	 * @param BlockStateData $state
-	 * @param bool           $strict
+	 * @param BlockStateData   $state
+	 * @param bool             $strict
+	 * @param CompoundTag|null $compound
 	 * @return BlockStateData
 	 */
-	public static function javaToBedrock(BlockStateData $state, bool $strict = false): BlockStateData
+	public static function javaToBedrock(BlockStateData $state, bool $strict = false, ?CompoundTag &$compound = null): BlockStateData
 	{
 		$converter = self::$convertorsJTB[$state->getName()] ?? null;
 		if ($converter === null) {
@@ -92,7 +94,9 @@ class BlockStateConvertor
 		}
 		$state = $converter->applyDefaults($state);
 		try {
-			return $converter->translate($state);
+			$res = $converter->translate($state);
+			$compound = TileConvertor::preprocessTileState($res);
+			return $converter->removeTileData($res);
 		} catch (Throwable $e) {
 			if ($strict) {
 				throw new UnexpectedValueException($e->getMessage(), 0, $e);

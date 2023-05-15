@@ -113,8 +113,8 @@ class SpongeSchematic extends SchematicType
 		foreach ($paletteData->getValue() as $name => $id) {
 			//TODO: Use version of sponge to update states (java state upgrades needed)
 			try {
-				$javaPalette[$id->getValue()] = BlockStateConvertor::javaToBedrock(BlockParser::fromStateString($name, RepoManager::getVersion()));
-				$tilePalette[$id->getValue()] = TileConvertor::preprocessTileState($name);
+				$javaPalette[$id->getValue()] = BlockStateConvertor::javaToBedrock(BlockParser::fromStateString($name, RepoManager::getVersion()), false, $compound);
+				$tilePalette[$id->getValue()] = $compound;
 			} catch (Throwable $e) {
 				EditThread::getInstance()->debug("Failed to convert block state $name: " . $e->getMessage());
 				$javaPalette[$id->getValue()] = GlobalBlockStateHandlers::getUnknownBlockStateData();
@@ -194,7 +194,7 @@ class SpongeSchematic extends SchematicType
 		$translation = [];
 		/** @var BlockStateData $state */
 		foreach ($target->requestBlockStates() as $id => $state) {
-			$translation[$id] = BlockParser::toStateString(BlockStateConvertor::bedrockToJava($state));
+			$translation[$id] = BlockParser::toStateString($state);
 		}
 
 		for ($y = World::Y_MIN; $y < $yMax; ++$y) {
@@ -219,7 +219,7 @@ class SpongeSchematic extends SchematicType
 		$paletteData = new CompoundTag();
 		/** @var string $id */
 		foreach ($palette as $id => $index) {
-			$paletteData->setInt($id, $index);
+			$paletteData->setInt(BlockParser::toStateString(BlockStateConvertor::bedrockToJava(BlockParser::fromStateString($id, BlockStateData::CURRENT_VERSION))), $index);
 		}
 
 		//TODO: switch back to v3 whenever java WorldEdit finally supports it

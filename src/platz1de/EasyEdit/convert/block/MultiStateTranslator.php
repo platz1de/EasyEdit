@@ -107,6 +107,8 @@ class MultiStateTranslator extends SimpleStateTranslator
 
 	public function translate(BlockStateData $state): BlockStateData
 	{
+		$state = $this->applyDefaultTileData($state);
+
 		$states = $state->getStates();
 		$states = $this->process($states);
 

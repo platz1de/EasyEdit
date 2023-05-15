@@ -54,7 +54,7 @@ class BlockItemConvertor extends ItemConvertorPiece
 			if ($tileName !== null) {
 				$blockEntity->setString(Tile::TAG_ID, $tileName); //temporary, so that the tile can be converted
 
-				$pre = TileConvertor::preprocessTileState(BlockParser::toStateString($data));
+				$pre = TileConvertor::preprocessTileState($data);
 				TileConvertor::toBedrock($blockEntity, $pre);
 
 				$blockEntity->removeTag(Tile::TAG_ID);
