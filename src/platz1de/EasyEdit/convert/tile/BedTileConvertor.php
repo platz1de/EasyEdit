@@ -41,7 +41,7 @@ class BedTileConvertor extends TileConvertorPiece
 		$color = $tile->getInt(Bed::TAG_COLOR, -1);
 		$javaColor = DyeColorIdMap::getInstance()->fromId($color)?->name();
 		if ($javaColor === null) {
-			return null;
+			throw new UnexpectedValueException("Invalid color: " . $color);
 		}
 		$states = $state->getStates();
 		$states[self::INTERNAL_TAG_COLOR] = new StringTag($javaColor);

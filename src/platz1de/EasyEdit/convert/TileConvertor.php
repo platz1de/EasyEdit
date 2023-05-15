@@ -7,6 +7,7 @@ use platz1de\EasyEdit\convert\tile\BannerTileConvertor;
 use platz1de\EasyEdit\convert\tile\BedTileConvertor;
 use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
+use platz1de\EasyEdit\convert\tile\MobHeadTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
 use platz1de\EasyEdit\thread\EditThread;
@@ -155,7 +156,8 @@ class TileConvertor
 			 */
 			foreach ([
 						 new BannerTileConvertor("Banner", "minecraft:banner"),
-						 new BedTileConvertor("Bed", "minecraft:bed")
+						 new BedTileConvertor("Bed", "minecraft:bed"),
+						 new MobHeadTileConvertor("Skull", "minecraft:skull")
 					 ] as $convertor) {
 				foreach ($convertor->getIdentifiers() as $identifier) {
 					self::$convertors[$identifier] = $convertor;
