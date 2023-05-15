@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\convert;
 
 use InvalidArgumentException;
 use platz1de\EasyEdit\convert\tile\BannerTileConvertor;
+use platz1de\EasyEdit\convert\tile\BedTileConvertor;
 use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
@@ -153,7 +154,8 @@ class TileConvertor
 			 * @var TileConvertorPiece $convertor
 			 */
 			foreach ([
-						 new BannerTileConvertor("Banner", "minecraft:banner")
+						 new BannerTileConvertor("Banner", "minecraft:banner"),
+						 new BedTileConvertor("Bed", "minecraft:bed")
 					 ] as $convertor) {
 				foreach ($convertor->getIdentifiers() as $identifier) {
 					self::$convertors[$identifier] = $convertor;
