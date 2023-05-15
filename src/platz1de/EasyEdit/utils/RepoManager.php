@@ -39,7 +39,9 @@ class RepoManager
 				}
 
 				if (ConfigManager::useCache()) {
-					self::$cacheVersion = $repoData["version"];
+					/** @var string $ver */
+					$ver = $repoData["version"];
+					self::$cacheVersion = $ver . "-" . (new BlockStateData("dummy", [], self::$version))->getVersionAsString();
 					$cache = scandir(ConfigManager::getCachePath());
 					if ($cache !== false) {
 						foreach (array_diff($cache, ['.', '..']) as $file) {
@@ -59,7 +61,7 @@ class RepoManager
 
 	/**
 	 * @param string $file
-	 * @param int    $depth
+	 * @param int $depth
 	 * @return array<string, mixed>
 	 */
 	public static function getJson(string $file, int $depth): array
@@ -69,7 +71,7 @@ class RepoManager
 				$cache = self::CACHE_PREFIX . $file . "_" . self::$cacheVersion . ".json";
 				if (is_file(ConfigManager::getCachePath() . $cache)) {
 					try {
-						return MixedUtils::decodeJson((string) file_get_contents(ConfigManager::getCachePath() . $cache), $depth);
+						return MixedUtils::decodeJson((string)file_get_contents(ConfigManager::getCachePath() . $cache), $depth);
 					} catch (InternetException $e) {
 						EditThread::getInstance()->getLogger()->warning("Failed to read cache " . $cache . ": " . $e->getMessage());
 						unlink(ConfigManager::getCachePath() . $cache);
