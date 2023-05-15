@@ -125,16 +125,17 @@ class BlockParser
 	 */
 	public static function fromStateString(string $block, int $version): BlockStateData
 	{
-		if (preg_match("/^([a-z\d_:]+)(?:\[([a-z\d_=,]*)])?$/", strtolower($block), $matches) === 1) {
+		if (preg_match("/^([a-z\d_:]+)(?:\[((?:[a-z\d_=:,]*|(?&r))+)])?$(?(DEFINE)(?<r>\[(?:[a-z\d_=,:]*|(?R))+]))/", strtolower($block), $matches) === 1) {
 			$block = $matches[1];
 			if (!isset($matches[2]) || $matches[2] === "") {
 				return new BlockStateData($block, [], $version);
 			}
 			$states = [];
-			foreach (explode(",", $matches[2]) as $state) {
-				$state = explode("=", $state);
-				if (count($state) === 2) {
-					$states[$state[0]] = self::tagFromStringValue($state[1]);
+			preg_match_all("/([^,\[]+|(?&r))+(?(DEFINE)(?<r>\[(?:[a-z\d_=,:]*|(?1))+]))/", $matches[2], $statesData);
+			foreach ($statesData[0] as $state) {
+				preg_match_all("/([^=\[]+|(?&r))+(?(DEFINE)(?<r>\[(?:[a-z\d_=,:]*|(?1))+]))/", $state, $stateData);
+				if (count($stateData[0]) === 2) {
+					$states[$stateData[0][0]] = self::tagFromStringValue($stateData[0][1]);
 				} else {
 					throw new InvalidArgumentException("Invalid state argument " . $block);
 				}

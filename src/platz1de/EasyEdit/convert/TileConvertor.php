@@ -7,6 +7,7 @@ use platz1de\EasyEdit\convert\tile\BannerTileConvertor;
 use platz1de\EasyEdit\convert\tile\BedTileConvertor;
 use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
+use platz1de\EasyEdit\convert\tile\FlowerPotTileConvertor;
 use platz1de\EasyEdit\convert\tile\MobHeadTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
@@ -26,7 +27,6 @@ class TileConvertor
 	 * TODO: Add all the tiles underneath
 	 * Beehive
 	 * Bee Nest
-	 * Banners
 	 * Furnace
 	 * Brewing Stand
 	 * Barrel
@@ -49,15 +49,12 @@ class TileConvertor
 	 * Jigsaw Block
 	 * Nether Reactor Core
 	 * Daylight Sensor
-	 * Flower Pot (blockstate in java)
 	 * Redstone Comparator
-	 * Bed
 	 * Cauldron (blockstate in java)
 	 * Conduit
 	 * Bell
 	 * Lodestone (compass contains coordinates in java, shared id in bedrock)
 	 * Chiseled Bookshelf (1.20)
-	 * Skull
 	 *
 	 * Item Frame (entity in java)
 	 */
@@ -157,7 +154,8 @@ class TileConvertor
 			foreach ([
 						 new BannerTileConvertor("Banner", "minecraft:banner"),
 						 new BedTileConvertor("Bed", "minecraft:bed"),
-						 new MobHeadTileConvertor("Skull", "minecraft:skull")
+						 new MobHeadTileConvertor("Skull", "minecraft:skull"),
+						 new FlowerPotTileConvertor("FlowerPot", "minecraft:flower_pot")
 					 ] as $convertor) {
 				foreach ($convertor->getIdentifiers() as $identifier) {
 					self::$convertors[$identifier] = $convertor;
