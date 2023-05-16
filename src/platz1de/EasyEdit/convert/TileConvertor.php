@@ -10,7 +10,9 @@ use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
 use platz1de\EasyEdit\convert\tile\CopyingTileConvertor;
 use platz1de\EasyEdit\convert\tile\FlowerPotTileConvertor;
 use platz1de\EasyEdit\convert\tile\FurnaceTileConvertor;
+use platz1de\EasyEdit\convert\tile\JukeboxTileConvertor;
 use platz1de\EasyEdit\convert\tile\MobHeadTileConvertor;
+use platz1de\EasyEdit\convert\tile\NoteBlockTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
 use platz1de\EasyEdit\thread\EditThread;
@@ -36,7 +38,6 @@ class TileConvertor
 	 * Lectern
 	 * Beacon
 	 * Spawner
-	 * Note Block (blockstate in java)
 	 * Piston -> Moving Piston
 	 * Jukebox
 	 * Enchanting Table
@@ -103,15 +104,16 @@ class TileConvertor
 			EditThread::getInstance()->debug("Found unknown tile " . $tile->getString(Tile::TAG_ID));
 			return false;
 		}
+		$converter = self::$convertors[$tile->getString(Tile::TAG_ID)];
 		try {
-			$newState = self::$convertors[$tile->getString(Tile::TAG_ID)]->toJava($tile, BlockParser::fromStateString($state, RepoManager::getVersion()));
+			$newState = $converter->toJava($tile, BlockParser::fromStateString($state, RepoManager::getVersion()));
 			if ($newState !== null) {
 				$state = BlockParser::toStateString($newState);
 			}
 		} catch (Throwable $exception) {
 			EditThread::getInstance()->debug("Found malformed tile " . $tile->getString(Tile::TAG_ID) . ": " . $exception->getMessage());
 		}
-		return true;
+		return $converter->hasJavaCounterpart();
 	}
 
 	/**
@@ -142,7 +144,9 @@ class TileConvertor
 					 new CopyingTileConvertor("DaylightDetector", "minecraft:daylight_detector"),
 					 new FurnaceTileConvertor("Furnace", "minecraft:furnace"),
 					 new FurnaceTileConvertor("BlastFurnace", "minecraft:blast_furnace"),
-					 new FurnaceTileConvertor("Smoker", "minecraft:smoker")
+					 new FurnaceTileConvertor("Smoker", "minecraft:smoker"),
+					 new NoteBlockTileConvertor("Music", "minecraft:noteblock"),
+					 new JukeboxTileConvertor("Jukebox", "RecordPlayer", "minecraft:jukebox")
 				 ] as $convertor) {
 			foreach ($convertor->getIdentifiers() as $identifier) {
 				self::$convertors[$identifier] = $convertor;

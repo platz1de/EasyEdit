@@ -25,10 +25,9 @@ class FlowerPotTileConvertor extends TileConvertorPiece
 			->setTag(self::TAG_PLANT_BLOCK, BlockParser::fromStateString($type->getValue(), RepoManager::getVersion())->toNbt());
 	}
 
-	public function toBedrock(CompoundTag $tile): void { }
-
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
+		parent::toJava($tile, $state);
 		$type = $tile->getCompoundTag(self::TAG_PLANT_BLOCK);
 		if ($type === null) {
 			$javaType = self::INTERNAL_TYPE_EMPTY;
@@ -38,5 +37,10 @@ class FlowerPotTileConvertor extends TileConvertorPiece
 		$states = $state->getStates();
 		$states[self::INTERNAL_TAG_TYPE] = new StringTag($javaType);
 		return new BlockStateData($state->getName(), $states, $state->getVersion());
+	}
+
+	public function hasJavaCounterpart(): bool
+	{
+		return false;
 	}
 }

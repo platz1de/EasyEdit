@@ -24,6 +24,7 @@ class SignConvertor extends TileConvertorPiece
 
 	public function toBedrock(CompoundTag $tile): void
 	{
+		parent::toBedrock($tile);
 		$lines = [];
 		for ($i = 1; $i <= 4; $i++) {
 			$tag = sprintf(Sign::TAG_TEXT_LINE, $i);
@@ -64,6 +65,7 @@ class SignConvertor extends TileConvertorPiece
 
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
+		parent::toJava($tile, $state);
 		for ($i = 1; $i <= 4; $i++) {
 			$tag = sprintf(Sign::TAG_TEXT_LINE, $i);
 			$line = $tile->getString($tag);

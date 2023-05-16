@@ -34,10 +34,9 @@ class BedTileConvertor extends TileConvertorPiece
 			->setInt(Bed::TAG_COLOR, DyeColorIdMap::getInstance()->toId($color));
 	}
 
-	public function toBedrock(CompoundTag $tile): void { }
-
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
+		parent::toJava($tile, $state);
 		$color = $tile->getInt(Bed::TAG_COLOR, -1);
 		$javaColor = DyeColorIdMap::getInstance()->fromId($color)?->name();
 		if ($javaColor === null) {

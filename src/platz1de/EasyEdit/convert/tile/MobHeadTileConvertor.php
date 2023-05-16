@@ -50,11 +50,13 @@ class MobHeadTileConvertor extends TileConvertorPiece
 
 	public function toBedrock(CompoundTag $tile): void
 	{
+		parent::toBedrock($tile);
 		$tile->removeTag(self::JAVA_UNSUPPORTED_TAG_OWNER, self::JAVA_UNSUPPORTED_TAG_EXTRA_TYPE);
 	}
 
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
+		parent::toJava($tile, $state);
 		$type = $tile->getByte(self::TAG_SKULL_TYPE, -1);
 		$javaSkullType = SkullType::fromMagicNumber($type)->name();
 		$states = $state->getStates();

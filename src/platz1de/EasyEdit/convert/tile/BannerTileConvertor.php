@@ -37,12 +37,14 @@ class BannerTileConvertor extends TileConvertorPiece
 
 	public function toBedrock(CompoundTag $tile): void
 	{
+		parent::toBedrock($tile);
 		//TODO: apparently there is a integer to indicate the banner type (ominous / normal), not supported by pmmp though
 		$tile->removeTag(self::JAVA_UNSUPPORTED_CUSTOM_NAME);
 	}
 
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
+		parent::toJava($tile, $state);
 		$color = $tile->getInt(Banner::TAG_BASE, -1);
 		$javaColor = DyeColorIdMap::getInstance()->fromInvertedId($color)?->name();
 		if ($javaColor === null) {

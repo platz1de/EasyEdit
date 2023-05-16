@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\convert\tile;
 
+use pocketmine\block\tile\Tile;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -20,9 +21,16 @@ abstract class TileConvertorPiece
 
 	abstract public function preprocessTileState(BlockStateData $state): ?CompoundTag;
 
-	abstract public function toBedrock(CompoundTag $tile): void;
+	public function toBedrock(CompoundTag $tile): void
+	{
+		$tile->setString(Tile::TAG_ID, $this->javaName);
+	}
 
-	abstract public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData;
+	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
+	{
+		$tile->setString(Tile::TAG_ID, $this->bedrockName);
+		return null;
+	}
 
 	/**
 	 * @return string[]
@@ -34,5 +42,10 @@ abstract class TileConvertorPiece
 			$names[] = $this->javaName;
 		}
 		return $names;
+	}
+
+	public function hasJavaCounterpart(): bool
+	{
+		return true;
 	}
 }

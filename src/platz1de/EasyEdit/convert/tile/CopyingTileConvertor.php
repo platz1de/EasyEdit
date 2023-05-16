@@ -11,11 +11,4 @@ class CopyingTileConvertor extends TileConvertorPiece
 	{
 		return null;
 	}
-
-	public function toBedrock(CompoundTag $tile): void { }
-
-	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
-	{
-		return null;
-	}
 }

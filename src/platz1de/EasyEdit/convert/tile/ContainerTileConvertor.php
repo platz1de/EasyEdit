@@ -5,7 +5,6 @@ namespace platz1de\EasyEdit\convert\tile;
 use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use pocketmine\block\tile\Container;
-use pocketmine\block\tile\Tile;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -24,7 +23,7 @@ class ContainerTileConvertor extends TileConvertorPiece
 
 	public function toBedrock(CompoundTag $tile): void
 	{
-		$tile->setString(Tile::TAG_ID, $this->bedrockName);
+		parent::toBedrock($tile);
 		$items = $tile->getTag(Container::TAG_ITEMS);
 		if (!$items instanceof AbstractListTag) {
 			return;
@@ -45,7 +44,7 @@ class ContainerTileConvertor extends TileConvertorPiece
 
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
-		$tile->setString(Tile::TAG_ID, $this->javaName);
+		parent::toJava($tile, $state);
 		$items = $tile->getListTag(Container::TAG_ITEMS);
 		if ($items === null) {
 			return null;
