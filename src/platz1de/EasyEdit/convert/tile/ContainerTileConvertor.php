@@ -14,6 +14,7 @@ use UnexpectedValueException;
 
 //TODO: LootTables (according to the wiki java seed uses a long while bedrock uses an int, no idea whether this is correct though)
 //TODO: Test color codes of lock items (might need conversion)
+//TODO: Custom names seem to be a json component in java, but a string in bedrock
 class ContainerTileConvertor extends TileConvertorPiece
 {
 	public function preprocessTileState(BlockStateData $state): ?CompoundTag

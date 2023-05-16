@@ -7,7 +7,9 @@ use platz1de\EasyEdit\convert\tile\BannerTileConvertor;
 use platz1de\EasyEdit\convert\tile\BedTileConvertor;
 use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
+use platz1de\EasyEdit\convert\tile\CopyingTileConvertor;
 use platz1de\EasyEdit\convert\tile\FlowerPotTileConvertor;
+use platz1de\EasyEdit\convert\tile\FurnaceTileConvertor;
 use platz1de\EasyEdit\convert\tile\MobHeadTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
@@ -27,11 +29,8 @@ class TileConvertor
 	 * TODO: Add all the tiles underneath
 	 * Beehive
 	 * Bee Nest
-	 * Furnace
 	 * Brewing Stand
 	 * Barrel
-	 * Smoker
-	 * Blast Furnace
 	 * Campfire
 	 * Soul Campfire
 	 * Lectern
@@ -48,8 +47,6 @@ class TileConvertor
 	 * Structure Block
 	 * Jigsaw Block
 	 * Nether Reactor Core
-	 * Daylight Sensor
-	 * Redstone Comparator
 	 * Cauldron (blockstate in java)
 	 * Conduit
 	 * Bell
@@ -140,7 +137,12 @@ class TileConvertor
 					 new ContainerTileConvertor("Dropper", "minecraft:dropper"),
 					 new ContainerTileConvertor("Hopper", "minecraft:hopper"),
 					 new ContainerTileConvertor("ShulkerBox", "minecraft:shulker_box"), //TODO: facing
-					 new SignConvertor("Sign", "minecraft:sign")
+					 new SignConvertor("Sign", "minecraft:sign"),
+					 new CopyingTileConvertor("Comparator", "minecraft:comparator"),
+					 new CopyingTileConvertor("DaylightDetector", "minecraft:daylight_detector"),
+					 new FurnaceTileConvertor("Furnace", "minecraft:furnace"),
+					 new FurnaceTileConvertor("BlastFurnace", "minecraft:blast_furnace"),
+					 new FurnaceTileConvertor("Smoker", "minecraft:smoker")
 				 ] as $convertor) {
 			foreach ($convertor->getIdentifiers() as $identifier) {
 				self::$convertors[$identifier] = $convertor;
