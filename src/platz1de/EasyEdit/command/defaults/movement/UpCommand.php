@@ -9,6 +9,7 @@ use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\block\Air;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\world\World;
 
 class UpCommand extends SimpleFlagArgumentCommand
 {
@@ -24,9 +25,11 @@ class UpCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		$player = $session->asPlayer();
-		$player->teleport($player->getPosition()->up($flags->getIntFlag("amount")));
-		if ($player->getWorld()->getBlock($player->getPosition()->floor()->down()) instanceof Air) {
-			$player->getWorld()->setBlock($player->getPosition()->floor()->down(), VanillaBlocks::GLASS());
+		$pos = $player->getPosition()->up($flags->getIntFlag("amount"));
+		$pos->y = min(max($pos->y, World::Y_MIN + 1), World::Y_MAX);
+		$player->teleport($pos);
+		if ($player->getWorld()->getBlock($pos->floor()->down()) instanceof Air) {
+			$player->getWorld()->setBlock($pos->floor()->down(), VanillaBlocks::GLASS());
 		}
 	}
 
