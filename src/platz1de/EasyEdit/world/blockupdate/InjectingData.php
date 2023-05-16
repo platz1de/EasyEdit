@@ -2,8 +2,7 @@
 
 namespace platz1de\EasyEdit\world\blockupdate;
 
-use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
+use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
@@ -18,7 +17,7 @@ class InjectingData
 	public function __construct(int $x, int $y, int $z)
 	{
 		$this->position = new BlockPosition($x, $y, $z);
-		$this->injection = PacketSerializer::encoder(new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary()));
+		$this->injection = PacketSerializer::encoder(new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()));
 	}
 
 	public function writeBlock(int $x, int $y, int $z, int $id): void
@@ -27,7 +26,7 @@ class InjectingData
 		$this->injection->putVarInt($x);
 		$this->injection->putUnsignedVarInt(Binary::unsignInt($y));
 		$this->injection->putVarInt($z);
-		$this->injection->putUnsignedVarInt(RuntimeBlockMapping::getInstance()->toRuntimeId($id));
+		$this->injection->putUnsignedVarInt(TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($id));
 		$this->injection->putUnsignedVarInt(2); //network flag
 		$this->injection->putUnsignedVarLong(-1); //we don't have any actors
 		$this->injection->putUnsignedVarInt(0); //not synced
@@ -35,7 +34,7 @@ class InjectingData
 
 	public function toProtocol(): string
 	{
-		$serializer = PacketSerializer::encoder(new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary()));
+		$serializer = PacketSerializer::encoder(new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()));
 		$serializer->putBlockPosition($this->position);
 		$serializer->putUnsignedVarInt($this->blockCount);
 		$serializer->put($this->injection->getBuffer());

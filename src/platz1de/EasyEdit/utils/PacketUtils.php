@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\utils;
 use platz1de\EasyEdit\world\clientblock\CompoundBlock;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
+use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\BlockActorDataPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
@@ -24,7 +24,7 @@ class PacketUtils
 	{
 		$player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
 			BlockPosition::fromVector3($block->getPosition()),
-			RuntimeBlockMapping::getInstance()->toRuntimeId($block->getStateId()),
+			TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($block->getStateId()),
 			UpdateBlockPacket::FLAG_NETWORK,
 			UpdateBlockPacket::DATA_LAYER_NORMAL
 		));
