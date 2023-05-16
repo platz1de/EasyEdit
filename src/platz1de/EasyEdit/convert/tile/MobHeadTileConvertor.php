@@ -3,7 +3,6 @@
 namespace platz1de\EasyEdit\convert\tile;
 
 use InvalidArgumentException;
-use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\SkullType;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\tag\CompoundTag;
@@ -39,7 +38,7 @@ class MobHeadTileConvertor extends TileConvertorPiece
 			/**
 			 * @var SkullType $skullType
 			 */
-			$skullType = DyeColor::__callStatic($javaSkullType, []);
+			$skullType = SkullType::__callStatic($javaSkullType, []);
 		} catch (InvalidArgumentException) {
 			throw new UnexpectedValueException("Invalid skull type: " . $javaSkullType);
 		}
