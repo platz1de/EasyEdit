@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\convert;
 use InvalidArgumentException;
 use platz1de\EasyEdit\convert\tile\BannerTileConvertor;
 use platz1de\EasyEdit\convert\tile\BedTileConvertor;
+use platz1de\EasyEdit\convert\tile\BellTileConvertor;
 use platz1de\EasyEdit\convert\tile\ChestTileConvertor;
 use platz1de\EasyEdit\convert\tile\ContainerTileConvertor;
 use platz1de\EasyEdit\convert\tile\CopyingTileConvertor;
@@ -13,6 +14,7 @@ use platz1de\EasyEdit\convert\tile\FurnaceTileConvertor;
 use platz1de\EasyEdit\convert\tile\JukeboxTileConvertor;
 use platz1de\EasyEdit\convert\tile\MobHeadTileConvertor;
 use platz1de\EasyEdit\convert\tile\NoteBlockTileConvertor;
+use platz1de\EasyEdit\convert\tile\ShulkerBoxTileConvertor;
 use platz1de\EasyEdit\convert\tile\SignConvertor;
 use platz1de\EasyEdit\convert\tile\TileConvertorPiece;
 use platz1de\EasyEdit\thread\EditThread;
@@ -32,14 +34,12 @@ class TileConvertor
 	 * Beehive
 	 * Bee Nest
 	 * Brewing Stand
-	 * Barrel
 	 * Campfire
 	 * Soul Campfire
 	 * Lectern
 	 * Beacon
 	 * Spawner
 	 * Piston -> Moving Piston
-	 * Jukebox
 	 * Enchanting Table
 	 * End Portal
 	 * Ender Chest
@@ -50,7 +50,6 @@ class TileConvertor
 	 * Nether Reactor Core
 	 * Cauldron (blockstate in java)
 	 * Conduit
-	 * Bell
 	 * Lodestone (compass contains coordinates in java, shared id in bedrock)
 	 * Chiseled Bookshelf (1.20)
 	 *
@@ -138,7 +137,8 @@ class TileConvertor
 					 new ContainerTileConvertor("Dispenser", "minecraft:dispenser"),
 					 new ContainerTileConvertor("Dropper", "minecraft:dropper"),
 					 new ContainerTileConvertor("Hopper", "minecraft:hopper"),
-					 new ContainerTileConvertor("ShulkerBox", "minecraft:shulker_box"), //TODO: facing
+					 new ContainerTileConvertor("Barrel", "minecraft:barrel"),
+					 new ShulkerBoxTileConvertor("ShulkerBox", "minecraft:shulker_box"),
 					 new SignConvertor("Sign", "minecraft:sign"),
 					 new CopyingTileConvertor("Comparator", "minecraft:comparator"),
 					 new CopyingTileConvertor("DaylightDetector", "minecraft:daylight_detector"),
@@ -146,7 +146,8 @@ class TileConvertor
 					 new FurnaceTileConvertor("BlastFurnace", "minecraft:blast_furnace"),
 					 new FurnaceTileConvertor("Smoker", "minecraft:smoker"),
 					 new NoteBlockTileConvertor("Music", "minecraft:noteblock"),
-					 new JukeboxTileConvertor("Jukebox", "RecordPlayer", "minecraft:jukebox")
+					 new JukeboxTileConvertor("Jukebox", "RecordPlayer", "minecraft:jukebox"),
+					 new BellTileConvertor("Bell", "minecraft:bell")
 				 ] as $convertor) {
 			foreach ($convertor->getIdentifiers() as $identifier) {
 				self::$convertors[$identifier] = $convertor;
