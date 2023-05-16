@@ -28,7 +28,7 @@ class RepoManager
 				$repoData = MixedUtils::decodeJson(MixedUtils::downloadData($repo), 4); //leave room for more complex structures later on
 				self::$available = true;
 
-				$current = BlockStateData::current("dummy", [])->getVersionAsString() . " sdsad";
+				$current = BlockStateData::current("dummy", [])->getVersionAsString();
 				if (isset($repoData[$current])) {
 					self::$repoData = $repoData[$current];
 					self::$version = BlockStateData::CURRENT_VERSION;
