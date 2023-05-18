@@ -8,23 +8,33 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
 use pocketmine\block\Block;
 
-class StaticBlock extends BlockType
+/** Ignores Damage */
+class BlockGroup extends BlockType
 {
+	private bool $invert = false;
+
 	/**
-	 * @param int $id
+	 * @param int[] $ids
 	 */
-	public function __construct(private int $id)
+	public function __construct(private array $ids)
 	{
 		parent::__construct();
 	}
 
 	/**
-	 * @param Block $block
-	 * @return StaticBlock
+	 * @param int[] $ids
+	 * @return self
 	 */
-	public static function from(Block $block): StaticBlock
+	public static function inverted(array $ids): self
 	{
-		return new self($block->getStateId());
+		$instance = new self($ids);
+		$instance->invert = true;
+		return $instance;
+	}
+
+	public function equals(int $fullBlock): bool
+	{
+		return in_array($fullBlock >> Block::INTERNAL_STATE_DATA_BITS, $this->ids, true) !== $this->invert;
 	}
 
 	/**
@@ -37,32 +47,8 @@ class StaticBlock extends BlockType
 	 */
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
-		return $this->id;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function get(): int
-	{
-		return $this->id;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getTypeId(): int
-	{
-		return $this->id >> Block::INTERNAL_STATE_DATA_BITS;
-	}
-
-	/**
-	 * @param int $fullBlock
-	 * @return bool
-	 */
-	public function equals(int $fullBlock): bool
-	{
-		return $fullBlock === $this->id;
+		//TODO: use all alvailable ids
+		return array_rand(array_flip($this->ids)) << Block::INTERNAL_STATE_DATA_BITS;
 	}
 
 	/**
@@ -75,11 +61,17 @@ class StaticBlock extends BlockType
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putInt($this->id);
+		$stream->putInt(count($this->ids));
+		foreach ($this->ids as $id) {
+			$stream->putInt($id);
+		}
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->id = $stream->getInt();
+		$this->ids = [];
+		for ($i = $stream->getInt(); $i > 0; $i--) {
+			$this->ids[] = $stream->getInt();
+		}
 	}
 }

@@ -2,8 +2,9 @@
 
 namespace platz1de\EasyEdit\pattern\parser;
 
+use platz1de\EasyEdit\convert\BlockTagManager;
+use platz1de\EasyEdit\pattern\block\BlockGroup;
 use platz1de\EasyEdit\pattern\block\BlockType;
-use platz1de\EasyEdit\pattern\block\SolidBlock;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
@@ -25,6 +26,7 @@ use platz1de\EasyEdit\pattern\PatternConstruct;
 use platz1de\EasyEdit\pattern\PatternWrapper;
 use platz1de\EasyEdit\pattern\type\AxisArgumentWrapper;
 use platz1de\EasyEdit\utils\BlockParser;
+use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Leaves;
 use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
@@ -93,7 +95,7 @@ class PatternParser
 			foreach ($matches[0] as $piece) {
 				$pieces[] = self::parsePiece(trim($piece));
 			}
-		} catch (ParseError $exception) {
+		} catch (ParseError|UnsupportedBlockStateException $exception) {
 			throw new ParseError('Failed to parse piece "' . $pattern . '"' . PHP_EOL . " - " . $exception->getMessage(), false);
 		}
 		return PatternConstruct::wrap($pieces);
@@ -123,7 +125,7 @@ class PatternParser
 		//blocks have priority
 		try {
 			$invert = false; //this would be always false
-			$pattern = new StaticBlock(self::getRuntimeId($patternString));
+			$pattern = self::getBlockType($patternString);
 		} catch (UnsupportedBlockStateException) { //parser errors are passed down
 			//This still allows old syntax, starting with #
 			//I have no idea what phpstorm is doing here
@@ -173,7 +175,7 @@ class PatternParser
 			"center", "middle" => new CenterPattern($children),
 			"gravity" => new GravityPattern($children),
 			"embed", "embeded" => new EmbedPattern(self::getBlockType($args[0] ?? ""), $children),
-			"solid" => new BlockPattern(new SolidBlock(), $children),
+			"solid" => new BlockPattern(BlockGroup::inverted(HeightMapCache::getIgnore()), $children),
 			default => throw new ParseError("Unknown Pattern " . $pattern, true)
 		};
 	}
@@ -185,23 +187,25 @@ class PatternParser
 	public static function getBlockType(string $string): BlockType
 	{
 		if ($string === "solid") {
-			return new SolidBlock();
+			return BlockGroup::inverted(HeightMapCache::getIgnore());
 		}
 
-		return new StaticBlock(self::getRuntimeId($string));
-
-		//return new DynamicBlock(BlockParser::parseBlockIdentifier($string));
-	}
-
-	private static function getRuntimeId(string $string): int
-	{
-		$id = BlockParser::getRuntime($string);
-		$block = RuntimeBlockStateRegistry::getInstance()->fromStateId($id);
-		if ($block instanceof Leaves && !str_contains($string, "persistence") && !str_contains($string, "persistent_bit")) {
-			$block->setNoDecay(true);
-		} else {
-			return $id; //No need to recalculate
+		if (str_starts_with($string, "#")) {
+			return BlockTagManager::getTag(substr($string, 1));
 		}
-		return $block->getStateId();
+
+		try {
+			$id = BlockParser::getRuntime($string);
+			$block = RuntimeBlockStateRegistry::getInstance()->fromStateId($id);
+			if ($block instanceof Leaves && !str_contains($string, "persistence") && !str_contains($string, "persistent_bit")) {
+				$block->setNoDecay(true);
+			} else {
+				return new StaticBlock($id); //No need to recalculate
+			}
+			return new StaticBlock($block->getStateId());
+		} catch (UnsupportedBlockStateException) {
+		}
+
+		return BlockTagManager::getTag($string);
 	}
 }

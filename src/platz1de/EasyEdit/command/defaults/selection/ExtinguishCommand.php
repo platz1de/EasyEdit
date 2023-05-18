@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults\selection;
 
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\pattern\block\DynamicBlock;
+use platz1de\EasyEdit\convert\BlockTagManager;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\selection\Selection;
@@ -25,6 +25,6 @@ class ExtinguishCommand extends SphericalSelectionCommand
 	 */
 	public function processSelection(Session $session, Selection $selection): void
 	{
-		$session->runSettingTask(new SetTask($selection, new BlockPattern(DynamicBlock::from(VanillaBlocks::FIRE()), [StaticBlock::from(VanillaBlocks::AIR())])));
+		$session->runSettingTask(new SetTask($selection, new BlockPattern(BlockTagManager::getTag("fire"), [StaticBlock::from(VanillaBlocks::AIR())])));
 	}
 }

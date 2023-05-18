@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\utils;
 use platz1de\EasyEdit\convert\BedrockStatePreprocessor;
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
+use platz1de\EasyEdit\convert\BlockTagManager;
 use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
 use platz1de\EasyEdit\convert\TileConvertor;
@@ -275,6 +276,7 @@ class ConfigManager
 		HeightMapCache::setIgnore(self::$terrainIgnored);
 		LegacyBlockIdConvertor::load();
 		BedrockStatePreprocessor::load();
+		BlockTagManager::load();
 		BlockStateConvertor::load();
 		BlockRotationManipulator::load();
 		ItemConvertor::load();

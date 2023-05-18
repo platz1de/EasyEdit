@@ -8,6 +8,7 @@ use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\data\bedrock\block\BlockStateData;
+use pocketmine\data\bedrock\block\BlockStateDeserializeException;
 use pocketmine\data\bedrock\block\BlockStateSerializeException;
 use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
@@ -24,7 +25,7 @@ class BlockStateTranslationManager
 	/**
 	 * @param BlockStateData[] $states
 	 * @param bool             $suppress Suppress invalid block state exceptions
-	 * @param bool             $full     Return full block state data
+	 * @param bool             $full Return full block state data
 	 * @return int[]
 	 * @throws CancelException
 	 */
@@ -138,7 +139,7 @@ class BlockStateTranslationManager
 				try {
 					$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
 					self::$done[$key] = GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
-				} catch (UnsupportedBlockStateException $e) {
+				} catch (UnsupportedBlockStateException|BlockStateDeserializeException $e) {
 					if (!self::$suppress) {
 						EditThread::getInstance()->debug($e->getMessage());
 					}

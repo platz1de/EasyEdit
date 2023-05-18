@@ -6,12 +6,12 @@ use platz1de\EasyEdit\command\flags\BlockCommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
-use platz1de\EasyEdit\pattern\block\SolidBlock;
-use platz1de\EasyEdit\pattern\logic\NotPattern;
+use platz1de\EasyEdit\pattern\block\BlockGroup;
 use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
+use platz1de\EasyEdit\world\HeightMapCache;
 
 class OverlayCommand extends AliasedPatternCommand
 {
@@ -27,7 +27,7 @@ class OverlayCommand extends AliasedPatternCommand
 	 */
 	public function parsePattern(Session $session, CommandFlagCollection $flags): Pattern
 	{
-		return new NotPattern(new BlockPattern(new SolidBlock(), [new AbovePattern($flags->getBlockFlag("block"), [$flags->getPatternFlag("pattern")])]));
+		return new BlockPattern(new BlockGroup(HeightMapCache::getIgnore()), [new AbovePattern($flags->getBlockFlag("block"), [$flags->getPatternFlag("pattern")])]);
 	}
 
 	/**
@@ -38,7 +38,7 @@ class OverlayCommand extends AliasedPatternCommand
 	{
 		return [
 			"pattern" => new PatternCommandFlag("pattern", [], "p"),
-			"block" => BlockCommandFlag::default(new SolidBlock(), "block", [], "b"),
+			"block" => BlockCommandFlag::default(BlockGroup::inverted(HeightMapCache::getIgnore()), "block", [], "b"),
 		];
 	}
 }
