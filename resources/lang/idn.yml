@@ -1,0 +1,224 @@
+#Indonesian language file
+#Author: Kylan1940
+#Last updated at: 2023-5-27
+
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
+
+prefix: "§l§aEasy§bEdit §r> "
+
+#Args: {x} {y} {z}
+selected-pos1: "Terpilih posisi pertama pada {x} {y} {z}"
+selected-pos2: "Terpilih posisi kedua pada {x} {y} {z}"
+
+no-selection: "Anda tidak memiliki pilihan aktif"
+no-clipboard: "Anda tidak memiliki salinan aktif"
+
+#Args: {given} {expected}
+wrong-selection: "Pilihan Anda adalah jenis {given}, tetapi {expected} diperlukan"
+
+no-history: "Tidak ada yang perlu dibatalkan"
+no-future: "Tidak ada yang perlu diulang"
+
+no-task: "Tidak ada tugas yang sedang berjalan"
+task-cancelled: "Tugas saat ini dibatalkan"
+task-cancelled-self: "Tugas anda dibatalkan"
+
+#Args: {usage}
+wrong-usage: "Penggunaan perintah yang salah:\n{usage}"
+
+#Args: {usage} {flag}
+unknown-flag: "Flag tidak dikenal {flag}\n{usage}"
+
+#Args: {commands} {start} {end} {total}
+command-list: "Perintah (menampilkan {start} hingga {end} dari {total}):\n{commands}"
+
+#Args: {message}
+task-crash: "§cTugas anda mengalami masalah, harap laporkan ini!\n{message}"
+pattern-invalid: "§cPola yang anda masukkan tidak valid:\n{message}"
+
+#Args: {time} {changed}
+blocks-set: "{changed} block ditetapkan dalam {time} detik"
+blocks-copied: "{changed} block disalin dalam {time} detik"
+blocks-pasted: "{changed} block ditempel dalam {time} detik"
+blocks-rotated: "{changed} block dirotasi dalam {time} detik "
+blocks-flipped: "{changed} block dibalik dalam {time} detik"
+blocks-cut: "{changed} block dipotong dalam {time} detik"
+
+#Args: {time} {changed} {blocks}
+blocks-counted: "{changed} block dihitung dalam {time} detik:\n{blocks}"
+
+#Args: {time} {changed} {name}
+schematic-created: "{changed} block telah disimpan sebagai \"{name}\" dalam {time} detik"
+
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Status EditThread:\nStatus: {status}\nTugas sekarang: {task}\nKemajuan: {progress}\nTugas antrian: {queue}\nPilihan yang disimpan: {storage}\nThread memory: {mem_current}MB ({mem_max}MB)"
+
+benchmark-start: "Memulai benchmark, ini bisa memakan waktu beberapa menit..."
+benchmark-running: "Sudah ada benchmark yang berjalan"
+
+#Args: {done} {total}
+benchmark-progress: "Kemajuan benchmark: {done}/{total}"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "Hasil benchmark anda:\nAverage TPS: {tps_avg} ({load_avg}%)\nMinimal TPS: {tps_min} ({load_max}%)\nExecuted {tasks} tasks dalam {time} detik:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} dalam {time} detik"
+
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava state: {java_state}"
+
+#Args: {schematic} {known}
+unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "Atur posisi pertama"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "Atur posisi kedua"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "Perluas area yang dipilih"
+command-extend-usage:
+  - "//extend [direction] [count]"
+  - "//extend [count] - Perluas area yang dipilih ke arah pandangan anda"
+  - "//extend vertical - Perluas sepenuhnya area yang dipilih secara vertikal"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Ubah area yang dipilih dengan vektor yang diberikan"
+command-set-description: "Tetapkan blok di area yang dipilih"
+command-set-usage: "//set <pattern>"
+command-replace-description: "Ganti blok di area yang dipilih"
+command-replace-usage:
+  - "//replace <block> <pattern>"
+  - "//replace <pattern> - Ganti semua blok padat di area yang dipilih"
+command-overlay-description: "Hamparkan blok di area yang dipilih"
+command-overlay-usage: "//overlay <pattern>"
+command-naturalize-description: "Naturalisasi area yang dipilih"
+command-naturalize-usage: "//naturalize [pattern] [pattern] [pattern]"
+command-smooth-description: "Menghaluskan area yang dipilih"
+command-smooth-usage: "//smooth"
+command-center-description: "Atur blok tengah dari area yang dipilih"
+command-center-usage: "//center [pattern]"
+command-walls-description: "Atur findingdari area yang dipilih"
+command-walls-usage: "//walls [pattern]"
+command-sides-description: "Atur sisi area yang dipilih"
+command-sides-usage: "//sides [pattern]"
+command-move-description: "Pindahkan area yang dipilih"
+command-move-usage:
+  - "//move [direction] [count]"
+  - "//move [count] - Pindahkan area yang dipilih ke arah pandangan anda"
+  - "//move -v <x>,<y>,<z> - Pindahkan area yang dipilih dengan vektor yang diberikan"
+command-stack-description: "Tumpuk area yang dipilih"
+command-stack-usage:
+  - "//stack [direction] [count]"
+  - "//stack [count] - Tumpuk area yang dipilih ke arah pandangan anda"
+command-istack-description: "Tumpuk area yang dipilih tanpa menimpa medan yang ada"
+command-istack-usage:
+  - "//istack [direction] [count]"
+  - "//istack [count] - Tumpuk area yang dipilih ke arah pandangan anda"
+command-count-description: "Hitung blok di area yang dipilih"
+command-count-usage:
+  - "//count"
+  - "//count [radius] - Hitung balok di area sekitar anda"
+command-extinguish-description: "Padamkan api di area yang dipilih"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [radius] - Padamkan api di area sekitar anda"
+command-view-description: "Lihat area yang dipilih"
+command-view-usage: "//view"
+
+
+command-undo-description: "Kembalikan perubahan terbaru anda"
+command-undo-usage:
+  - "//undo [count]"
+  - "//undo <target> [count] - Kembalikan perubahan terbaru dari target"
+command-redo-description: "Ulangi perubahan terbaru anda"
+command-redo-usage:
+  - "//redo [count]"
+  - "//redo <target> [count] - Ulangi perubahan terakhir dari target"
+
+
+command-copy-description: "Salin area yang dipilih"
+command-copy-usage:
+  - "//copy - Salin relatif terhadap pemain"
+  - "//copy -c - Salin relatif ke tengah pemilihan"
+command-cut-description: "Potong area yang dipilih dan salin ke clipboard Anda"
+command-cut-usage:
+  - "//cut - Potong relatif terhadap pemain"
+  - "//cut -c - Potong relatif ke pusat seleksi"
+command-paste-description: "Tempel papan klip"
+command-paste-usage: "//paste"
+command-insert-description: "Sisipkan papan klip"
+command-insert-usage: "//insert"
+command-merge-description: "Gabungkan medan saat ini dengan papan klip"
+command-merge-usage: "//merge"
+command-rpaste-description: "Ganti medan saat ini dengan papan klip"
+command-rpaste-usage: "//rpaste"
+command-rotate-description: "Putar papan klip"
+command-rotate-usage: "//rotate"
+command-flip-description: "Balik papan klip, pencerminan pada posisi yang disalin"
+command-flip-usage:
+  - "//flip [direction]"
+  - "//flip - Balikkan papan klip ke arah pandangan Anda"
+command-loadschematic-description: "Muat skema tersimpan dari disk"
+command-loadschematic-usage: "//loadschematic <schematicName>"
+command-saveschematic-description: "Simpan clipboard Anda sebagai skema ke disk"
+command-saveschematic-usage: "//saveschematic <schematicName>"
+
+
+command-sphere-description: "Menghasilkan sebuah bola"
+command-sphere-usage: "//sphere <radius> <pattern>"
+command-hsphere-description: "Menghasilkan bola berongga"
+command-hsphere-usage: "//hsphere <radius> <pattern> [thickness]"
+command-cylinder-description: "Menghasilkan sebuah silinder"
+command-cylinder-usage: "//cylinder <radius> <height> <pattern>"
+command-hcylinder-description: "Menghasilkan silinder berongga"
+command-hcylinder-usage: "//hcylinder <radius> <height> <pattern> [thickness]"
+command-noise-description: "Menghasilkan menggunakan fungsi kebisingan sederhana"
+command-noise-usage: "//noise"
+command-cube-description: "Menghasilkan kubus"
+command-cube-usage: "//cube <size> <pattern>"
+command-hcube-description: "Menghasilkan kubus berongga"
+command-hcube-usage: "//hcube <size> <pattern> [thickness]"
+
+
+command-commands-description: "Daftar semua perintah EasyEdit"
+command-commands-usage: "//commands [page]"
+command-brush-description: "Buat kuas baru"
+command-brush-usage:
+  - "//brush sphere [radius] [pattern] [gravity] - Buat sikat bulat"
+  - "//brush smooth [radius] - Buat kuas penghalus"
+  - "//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Buat kuas naturalisasi"
+  - "//brush cylinder [radius] [height] [pattern] [gravity] - Buat sikat silinder"
+  - "//brush paste [insert] - Buat kuas tempel"
+command-fill-description: "Isi suatu Area"
+command-fill-usage:
+  - "//fill <block> [direction]"
+  - "//fill <block> - Isi ke arah pandangan anda"
+command-drain-description: "Tiriskan Area"
+command-drain-usage: "//drain"
+command-line-description: "Menghasilkan garis"
+command-line-usage:
+  - "//line <x> <y> <z> [pattern] - Gambar garis lurus ke posisi tertentu"
+  - "//line find <x> <y> <z> [pattern] - Temukan jalur yang valid ke tujuan (lambat)"
+  - "//line solid <x> <y> <z> [pattern] - Temukan jalur yang solid ke tujuan (lambat)"
+command-blockinfo-description: "Dapatkan blockinfo stick"
+command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "Buat builder rod"
+command-builderrod-usage: "//builderrod"
+command-status-description: "Dapatkan status utas pengeditan"
+command-status-usage: "//status"
+command-cancel-description: "Batalkan tugas saat ini"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "Mulai benchmark"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "Rekatkan semua status blok yang diketahui"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "Dapatkan wooden axe"
+command-wand-usage: "//wand"
+
+command-thru-description: "Teleportasi melalui blok"
+command-thru-usage: "//thru"
+command-unstuck-description: "Teleportasi ke lokasi yang aman"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Teleportasi"
+command-up-usage: "//up <amount>"
