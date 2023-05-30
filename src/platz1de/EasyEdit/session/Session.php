@@ -116,7 +116,6 @@ class Session
 
 	/**
 	 * @param SelectionIdentifier $id
-	 * @param bool                $fromUndo
 	 */
 	public function addToHistory(SelectionIdentifier $id): void
 	{

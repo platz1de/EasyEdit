@@ -61,9 +61,15 @@ class LinearConstructor extends ShapeConstructor
 		foreach (VoxelRayTrace::betweenPoints($results[0], $results[1]) as $pos) {
 			if ($pos->x >= $x && $pos->x < $x + 16 && $pos->z >= $z && $pos->z < $z + 16) $closure($pos->x, $pos->y, $pos->z);
 		}
-		var_dump("Done");
 	}
 
+	/**
+	 * @param Vector3[] $results
+	 * @param int       $x
+	 * @param int       $z
+	 * @param float     $t
+	 * @param bool      $isX
+	 */
 	private function checkT(array &$results, int $x, int $z, float $t, bool $isX): void
 	{
 		if ($t < 0 || $t > 1) {

@@ -24,8 +24,8 @@ class MobHeadTileConvertor extends TileConvertorPiece
 	//MobHead constants are private...
 	private const TAG_SKULL_TYPE = "SkullType";
 	private const TAG_ROT = "Rot";
-	private const TAG_MOUTH_MOVING = "MouthMoving"; //unused
-	private const TAG_MOUTH_TICK_COUNT = "MouthTickCount"; //unused
+	//private const TAG_MOUTH_MOVING = "MouthMoving"; //unused
+	//private const TAG_MOUTH_TICK_COUNT = "MouthTickCount"; //unused
 
 	public function preprocessTileState(BlockStateData $state): ?CompoundTag
 	{

@@ -135,7 +135,7 @@ class BlockParser
 			foreach ($statesData[0] as $state) {
 				preg_match_all("/([^=\[]+|(?&r))+(?(DEFINE)(?<r>\[(?:[a-z\d_=,:]*|(?1))+]))/", $state, $stateData);
 				if (count($stateData[0]) === 2) {
-					$states[$stateData[0][0]] = self::tagFromStringValue($stateData[0][1]);
+					$states[(string) $stateData[0][0]] = self::tagFromStringValue($stateData[0][1]);
 				} else {
 					throw new InvalidArgumentException("Invalid state argument " . $block);
 				}
