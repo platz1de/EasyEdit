@@ -12,13 +12,13 @@ use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\thread\output\TaskResultData;
+use pmmp\thread\Thread;
+use pmmp\thread\ThreadSafe;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 use RuntimeException;
-use Thread;
-use ThreadedBase;
 
-class ThreadStats extends ThreadedBase
+class ThreadStats extends ThreadSafe
 {
 	use SingletonTrait;
 

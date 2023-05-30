@@ -10,16 +10,16 @@ use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\network\mcpe\convert\TypeConverter;
+use pocketmine\thread\log\ThreadSafeLogger;
 use pocketmine\thread\Thread;
-use ThreadedLogger;
 use Throwable;
 
 class EditThread extends Thread
 {
 	/**
-	 * @var ThreadedLogger
+	 * @var ThreadSafeLogger
 	 */
-	private ThreadedLogger $logger;
+	private ThreadSafeLogger $logger;
 	/**
 	 * @var ThreadStats
 	 */
@@ -36,9 +36,9 @@ class EditThread extends Thread
 
 	/**
 	 * EditThread constructor.
-	 * @param ThreadedLogger $logger
+	 * @param ThreadSafeLogger $logger
 	 */
-	public function __construct(ThreadedLogger $logger)
+	public function __construct(ThreadSafeLogger $logger)
 	{
 		self::$instance = $this;
 		$this->logger = $logger;
@@ -104,9 +104,9 @@ class EditThread extends Thread
 	}
 
 	/**
-	 * @return ThreadedLogger
+	 * @return ThreadSafeLogger
 	 */
-	public function getLogger(): ThreadedLogger
+	public function getLogger(): ThreadSafeLogger
 	{
 		return $this->logger;
 	}

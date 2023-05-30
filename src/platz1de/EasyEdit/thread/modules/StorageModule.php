@@ -11,7 +11,7 @@ use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\task\InsertStorageTask;
-use Thread;
+use pmmp\thread\Thread;
 use UnexpectedValueException;
 
 /**

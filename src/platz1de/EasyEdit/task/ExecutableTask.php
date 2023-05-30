@@ -9,7 +9,7 @@ use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\OutputData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use Thread;
+use pmmp\thread\Thread;
 
 /**
  * @template T of TaskResult
