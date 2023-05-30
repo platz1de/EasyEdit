@@ -3,8 +3,9 @@
 namespace platz1de\EasyEdit\convert\tile;
 
 use InvalidArgumentException;
-use pocketmine\block\utils\SkullType;
+use pocketmine\block\utils\MobHeadType;
 use pocketmine\data\bedrock\block\BlockStateData;
+use pocketmine\data\bedrock\MobHeadTypeIdMap;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -20,7 +21,7 @@ class MobHeadTileConvertor extends TileConvertorPiece
 	private const JAVA_UNSUPPORTED_TAG_EXTRA_TYPE = "ExtraType";
 	private const JAVA_UNSUPPORTED_TAG_OWNER = "SkullOwner";
 
-	//Skull constants are private...
+	//MobHead constants are private...
 	private const TAG_SKULL_TYPE = "SkullType";
 	private const TAG_ROT = "Rot";
 	private const TAG_MOUTH_MOVING = "MouthMoving"; //unused
@@ -36,14 +37,14 @@ class MobHeadTileConvertor extends TileConvertorPiece
 		$javaSkullType = $type->getValue();
 		try {
 			/**
-			 * @var SkullType $skullType
+			 * @var MobHeadType $skullType
 			 */
-			$skullType = SkullType::__callStatic($javaSkullType, []);
+			$skullType = MobHeadType::__callStatic($javaSkullType, []);
 		} catch (InvalidArgumentException) {
 			throw new UnexpectedValueException("Invalid skull type: " . $javaSkullType);
 		}
 		return CompoundTag::create()
-			->setByte(self::TAG_SKULL_TYPE, $skullType->getMagicNumber())
+			->setByte(self::TAG_SKULL_TYPE, MobHeadTypeIdMap::getInstance()->toId($skullType))
 			->setByte(self::TAG_ROT, $rotation->getValue());
 	}
 
@@ -57,9 +58,12 @@ class MobHeadTileConvertor extends TileConvertorPiece
 	{
 		parent::toJava($tile, $state);
 		$type = $tile->getByte(self::TAG_SKULL_TYPE, -1);
-		$javaSkullType = SkullType::fromMagicNumber($type)->name();
+		$javaSkullType = MobHeadTypeIdMap::getInstance()->fromId($type);
+		if ($javaSkullType === null) {
+			throw new UnexpectedValueException("Invalid skull type: " . $type);
+		}
 		$states = $state->getStates();
-		$states[self::INTERNAL_TAG_TYPE] = new StringTag($javaSkullType);
+		$states[self::INTERNAL_TAG_TYPE] = new StringTag($javaSkullType->name());
 
 		$isOnFloor = match ($states["facing_direction"]->getValue()) {
 			0, 1 => true, //0 shouldn't be used
