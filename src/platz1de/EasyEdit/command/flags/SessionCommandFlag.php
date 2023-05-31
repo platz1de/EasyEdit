@@ -2,8 +2,9 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
+use BadMethodCallException;
 use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\pattern\Pattern;
+use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager;
 
@@ -20,7 +21,11 @@ class SessionCommandFlag extends ValuedCommandFlag
 	 */
 	public function parseArgument(EasyEditCommand $command, Session $session, string $argument): CommandFlag
 	{
-		$this->setArgument(SessionManager::get($argument, false));
+		try {
+			$this->setArgument(SessionManager::get($argument, false));
+		} catch (BadMethodCallException) {
+			throw new InvalidUsageException($command);
+		}
 		return $this;
 	}
 }
