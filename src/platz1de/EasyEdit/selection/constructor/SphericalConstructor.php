@@ -52,6 +52,13 @@ class SphericalConstructor extends ShapeConstructor
 		}
 	}
 
+	public function needsChunk(int $chunk): bool
+	{
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
+		return VectorUtils::checkCollisionCRH($this->center, $this->radius, $min, $max);
+	}
+
 	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
 		return new self($this->closure, $this->center->offset($offset), $this->radius);

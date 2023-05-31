@@ -17,5 +17,12 @@ abstract class ShapeConstructor
 
 	abstract public function moveTo(int $chunk): void;
 
+	/**
+	 * Note: chunk is expected to be requested by appropriate tasks and withing boundaries of the shape
+	 * @param int $chunk
+	 * @return bool
+	 */
+	abstract public function needsChunk(int $chunk): bool;
+
 	abstract public function offset(BlockOffsetVector $offset): self;
 }

@@ -62,8 +62,18 @@ abstract class SelectionEditTask extends ExecutableTask
 		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->world, $this->undo, $fastSet);
 		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
+		$skipped = 0;
 		foreach ($chunks as $chunk) {
-			$handler->request($chunk);
+			if ($handler->shouldRequest($chunk, $this->constructors)) {
+				$handler->request($chunk);
+			} else {
+				$skipped++;
+			}
+		}
+		$this->totalChunks -= $skipped;
+		$this->chunksLeft -= $skipped;
+		if ($skipped > 0) {
+			EditThread::getInstance()->debug("Skipped " . $skipped . " chunks");
 		}
 		while (true) {
 			EditThread::getInstance()->checkExecution();

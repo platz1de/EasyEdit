@@ -6,6 +6,7 @@ use BadMethodCallException;
 use Closure;
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
+use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\utils\Utils;
 use pocketmine\world\World;
 
@@ -45,6 +46,11 @@ class BinaryStreamConstructor extends ShapeConstructor
 			}
 			$closure($x, $y, $z, $this->stream->getInt());
 		}
+	}
+
+	public function needsChunk(int $chunk): bool
+	{
+		return true;
 	}
 
 	public function offset(BlockOffsetVector $offset): ShapeConstructor

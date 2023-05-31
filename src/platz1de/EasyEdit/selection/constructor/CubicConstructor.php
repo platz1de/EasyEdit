@@ -45,6 +45,13 @@ class CubicConstructor extends ShapeConstructor
 		}
 	}
 
+	public function needsChunk(int $chunk): bool
+	{
+		$min = $this->min->forceIntoChunkStart($chunk);
+		$max = $this->max->forceIntoChunkEnd($chunk);
+		return $min->x <= $max->x && $min->y <= $max->y && $min->z <= $max->z;
+	}
+
 	/**
 	 * @param BlockVector $min
 	 * @param BlockVector $max

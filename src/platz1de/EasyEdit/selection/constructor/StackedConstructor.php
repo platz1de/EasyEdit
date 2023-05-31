@@ -51,6 +51,12 @@ class StackedConstructor extends ShapeConstructor
 		}
 	}
 
+	public function needsChunk(int $chunk): bool
+	{
+		//TODO: Add logic here if we ever add a way to stack non-full contexts
+		return true;
+	}
+
 	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
 		throw new BadMethodCallException("Stacked cubes can't be offset");

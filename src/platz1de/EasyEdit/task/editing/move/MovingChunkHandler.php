@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing\move;
 
 use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
@@ -66,6 +67,16 @@ class MovingChunkHandler extends GroupedChunkHandler
 			}
 		}
 		$this->last = $chunk;
+	}
+
+	/**
+	 * @param int                $chunk
+	 * @param ShapeConstructor[] $constructors
+	 * @return bool
+	 */
+	public function shouldRequest(int $chunk, array $constructors): bool
+	{
+		return true; //TODO: Add support for contexts
 	}
 
 	/**

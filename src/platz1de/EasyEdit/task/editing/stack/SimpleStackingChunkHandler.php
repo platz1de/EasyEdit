@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\stack;
 
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
@@ -72,6 +73,16 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 		}
 		$this->waiting[$this->current]++;
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $this->current));
+	}
+
+	/**
+	 * @param int                $chunk
+	 * @param ShapeConstructor[] $constructors
+	 * @return bool
+	 */
+	public function shouldRequest(int $chunk, array $constructors): bool
+	{
+		return true;
 	}
 
 	/**

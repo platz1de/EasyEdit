@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\utils;
 
 use InvalidArgumentException;
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\math\OffGridBlockVector;
 use pocketmine\entity\Location;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
@@ -126,5 +127,30 @@ class VectorUtils
 	{
 		World::getXZ($chunk, $x, $z);
 		return new BlockVector($x << 4, World::Y_MIN, $z << 4);
+	}
+
+	/**
+	 * Collision check between sphere and cuboid on the XZ plane
+	 * @param OffGridBlockVector $center
+	 * @param float              $radius
+	 * @param BlockVector        $min
+	 * @param BlockVector        $max
+	 * @return bool
+	 */
+	public static function checkCollisionCRH(OffGridBlockVector $center, float $radius, BlockVector $min, BlockVector $max): bool
+	{
+		$tx = $center->x;
+		$tz = $center->z;
+		if ($center->x < $min->x) {
+			$tx = $min->x;
+		} elseif ($center->x > $max->x) {
+			$tx = $max->x;
+		}
+		if ($center->z < $min->z) {
+			$tz = $min->z;
+		} elseif ($center->z > $max->z) {
+			$tz = $max->z;
+		}
+		return (($tx - $center->x) ** 2) + (($tz - $center->z) ** 2) <= ($radius ** 2);
 	}
 }

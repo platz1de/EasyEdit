@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\world\ChunkInformation;
@@ -20,6 +21,21 @@ class SingleChunkHandler extends GroupedChunkHandler
 	public function request(int $chunk): void
 	{
 		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk));
+	}
+
+	/**
+	 * @param int                $chunk
+	 * @param ShapeConstructor[] $constructors
+	 * @return bool
+	 */
+	public function shouldRequest(int $chunk, array $constructors): bool
+	{
+		foreach ($constructors as $constructor) {
+			if ($constructor->needsChunk($chunk)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

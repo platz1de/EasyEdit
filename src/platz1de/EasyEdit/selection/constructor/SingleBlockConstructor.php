@@ -5,6 +5,8 @@ namespace platz1de\EasyEdit\selection\constructor;
 use Closure;
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\utils\VectorUtils;
+use pocketmine\world\World;
 
 /**
  * The probably most pointless class in the world
@@ -32,6 +34,12 @@ class SingleBlockConstructor extends ShapeConstructor
 			$closure($this->position->x, $this->position->y, $this->position->z);
 		}
 	}
+
+	public function needsChunk(int $chunk): bool
+	{
+		return $this->position->isInChunk($chunk);
+	}
+
 
 	public function offset(BlockOffsetVector $offset): self
 	{

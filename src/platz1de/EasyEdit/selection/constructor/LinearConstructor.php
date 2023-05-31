@@ -88,6 +88,11 @@ class LinearConstructor extends ShapeConstructor
 		$results[] = new Vector3($this->a * $t + $this->start->x + 0.5, $this->b * $t + $this->start->y + 0.5, $this->c * $t + $this->start->z + 0.5);
 	}
 
+	public function needsChunk(int $chunk): bool
+	{
+		return true;
+	}
+
 	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
 		return new self($this->start->offset($offset), $this->end->offset($offset), $this->closure);

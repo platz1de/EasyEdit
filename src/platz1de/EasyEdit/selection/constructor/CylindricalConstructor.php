@@ -52,6 +52,13 @@ class CylindricalConstructor extends ShapeConstructor
 		}
 	}
 
+	public function needsChunk(int $chunk): bool
+	{
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
+		return VectorUtils::checkCollisionCRH($this->position, $this->radius, $min, $max);
+	}
+
 	/**
 	 * @param OffGridBlockVector $position
 	 * @param float              $radius

@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\stack;
 
+use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
@@ -69,6 +70,16 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 			$this->orderGroupChunk($chunk, new Vector2($x << 4, $z << 4), $size->getComponent($this->axis) - $offsetMin - 1);
 			$this->orderGroupChunk($chunk, (new Vector2($x << 4, $z << 4))->add($this->axis === Axis::X ? $size->x - $offsetMin : 0, $this->axis === Axis::Z ? $size->z - $offsetMin : 0), $offsetMax);
 		}
+	}
+
+	/**
+	 * @param int                $chunk
+	 * @param ShapeConstructor[] $constructors
+	 * @return bool
+	 */
+	public function shouldRequest(int $chunk, array $constructors): bool
+	{
+		return true;
 	}
 
 	/**

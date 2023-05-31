@@ -53,6 +53,19 @@ class TubeConstructor extends CylindricalConstructor
 		}
 	}
 
+	public function needsChunk(int $chunk): bool
+	{
+		$min = VectorUtils::getChunkPosition($chunk);
+		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
+		if (!VectorUtils::checkCollisionCRH($this->position, $this->radius, $min, $max)) {
+			return false; //outside
+		}
+		$posX = $this->position->x;
+		$posZ = $this->position->z;
+		$inner = ($this->radius - $this->thickness) ** 2;
+		return !(($posX - $min->x) ** 2 + ($posZ - $min->z) ** 2 <= $inner && ($posX - $min->x) ** 2 + ($posZ - $max->z) ** 2 <= $inner && ($posX - $max->x) ** 2 + ($posZ - $min->z) ** 2 <= $inner && ($posX - $max->x) ** 2 + ($posZ - $max->z) ** 2 <= $inner);
+	}
+
 	public function offset(BlockOffsetVector $offset): ShapeConstructor
 	{
 		return new self($this->closure, $this->position->offset($offset), $this->radius, $this->height, $this->thickness);
