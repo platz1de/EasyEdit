@@ -14,6 +14,8 @@ use platz1de\EasyEdit\listener\RemapEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
+use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
+use pocketmine\plugin\DisablePluginException;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use UnexpectedValueException;
@@ -47,9 +49,14 @@ class ConfigManager
 		Messages::load(strtolower(self::mustGetString($config, "language", "auto")));
 
 		//TODO: change most about this
-		self::$terrainIgnored = array_map(static function (string $block): int {
-			return BlockParser::getRuntime($block) >> Block::INTERNAL_STATE_DATA_BITS;
-		}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
+		try {
+			self::$terrainIgnored = array_map(static function (string $block): int {
+				return BlockParser::getRuntime($block) >> Block::INTERNAL_STATE_DATA_BITS;
+			}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
+		} catch (UnsupportedBlockStateException $e) {
+			EasyEdit::getInstance()->getLogger()->error("Failed to parse terrain-ignored-blocks: " . $e->getMessage());
+			throw new DisablePluginException(); //Graceful shutdown
+		}
 
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
 
