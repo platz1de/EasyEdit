@@ -13,11 +13,8 @@ use platz1de\EasyEdit\pattern\logic\math\EvenPattern;
 use platz1de\EasyEdit\pattern\logic\math\OddPattern;
 use platz1de\EasyEdit\pattern\logic\NotPattern;
 use platz1de\EasyEdit\pattern\logic\relation\AbovePattern;
-use platz1de\EasyEdit\pattern\logic\relation\AroundPattern;
 use platz1de\EasyEdit\pattern\logic\relation\BelowPattern;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
-use platz1de\EasyEdit\pattern\logic\relation\EmbedPattern;
-use platz1de\EasyEdit\pattern\logic\relation\HorizontalPattern;
 use platz1de\EasyEdit\pattern\logic\selection\CenterPattern;
 use platz1de\EasyEdit\pattern\logic\selection\SidesPattern;
 use platz1de\EasyEdit\pattern\logic\selection\WallPattern;
@@ -167,14 +164,11 @@ class PatternParser
 			"block" => new BlockPattern(self::getBlockType($args[0] ?? ""), $children),
 			"above" => new AbovePattern(self::getBlockType($args[0] ?? ""), $children),
 			"below" => new BelowPattern(self::getBlockType($args[0] ?? ""), $children),
-			"around" => new AroundPattern(self::getBlockType($args[0] ?? ""), $children),
-			"horizontal", "horizon" => new HorizontalPattern(self::getBlockType($args[0] ?? ""), $children),
 			"nat", "naturalized" => new NaturalizePattern($children[0] ?? null, $children[1] ?? null, $children[2] ?? null),
 			"walls", "wall" => new WallPattern((float) ($args[0] ?? 1.0), $children),
 			"sides", "side" => new SidesPattern((float) ($args[0] ?? 1.0), $children),
 			"center", "middle" => new CenterPattern($children),
 			"gravity" => new GravityPattern($children),
-			"embed", "embeded" => new EmbedPattern(self::getBlockType($args[0] ?? ""), $children),
 			"solid" => new BlockPattern(BlockGroup::inverted(HeightMapCache::getIgnore()), $children),
 			default => throw new ParseError("Unknown Pattern " . $pattern, true)
 		};
