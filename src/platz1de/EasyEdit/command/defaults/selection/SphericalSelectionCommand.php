@@ -31,11 +31,11 @@ abstract class SphericalSelectionCommand extends SimpleFlagArgumentCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		if ($flags->hasFlag("radius")) {
-			$this->processSelection($session, new Sphere($session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getFloatFlag("radius")));
+			$this->processSelection($session, new Sphere($session->asPlayer()->getWorld()->getFolderName(), OffGridBlockVector::fromVector($session->asPlayer()->getPosition()), $flags->getFloatFlag("radius")), $flags);
 		} else {
-			$this->processSelection($session, $session->getSelection());
+			$this->processSelection($session, $session->getSelection(), $flags);
 		}
 	}
 
-	abstract public function processSelection(Session $session, Selection $selection): void;
+	abstract public function processSelection(Session $session, Selection $selection, CommandFlagCollection $flags): void;
 }

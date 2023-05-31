@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2023-04-10
+#Last updated at: 2023-05-31
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -118,6 +118,7 @@ command-istack-usage:
 command-count-description: "Count blocks in the selected area"
 command-count-usage:
   - "//count"
+  - "//count -d - Count blocks and show detailed block state information"
   - "//count [radius] - Count blocks in the area around you"
 command-extinguish-description: "Extinguish fire in the selected area"
 command-extinguish-usage:

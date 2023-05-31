@@ -1,6 +1,6 @@
 #Indonesian language file
 #Author: Kylan1940
-#Last updated at: 2023-5-27
+#Last updated at: 2023-5-27 (OUTDATED)
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -118,6 +118,7 @@ command-istack-usage:
 command-count-description: "Hitung blok di area yang dipilih"
 command-count-usage:
   - "//count"
+  - "//count -d - Count blocks and show detailed block state information"
   - "//count [radius] - Hitung balok di area sekitar anda"
 command-extinguish-description: "Padamkan api di area yang dipilih"
 command-extinguish-usage:

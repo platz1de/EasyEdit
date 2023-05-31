@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2023-04-10
+#Last updated at: 2023-05-31
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -117,6 +117,7 @@ command-istack-usage:
 command-count-description: "Zähle Blöcke im ausgewählten Bereich"
 command-count-usage:
   - "//count"
+  - "//count -d - Zähle Blöcke und zeige genaue State-Informationen"
   - "//count [radius] - Zähle Blöcke in der Umgebung"
 command-extinguish-description: "Lösche Feuer im ausgewählten Bereich"
 command-extinguish-usage:

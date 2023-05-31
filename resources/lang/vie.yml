@@ -118,6 +118,7 @@ command-istack-usage:
 command-count-description: "Đếm khối trong khu vực đã chọn"
 command-count-usage:
   - "//count"
+  - "//count -d - Count blocks and show detailed block state information"
   - "//count [bán kính] - Đếm khối trong khu vực xung quanh bạn"
 command-extinguish-description: "Dập lửa trong khu vực đã chọn"
 command-extinguish-usage:

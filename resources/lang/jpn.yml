@@ -118,6 +118,7 @@ command-istack-usage:
 command-count-description: "選択した領域のブロックをカウントする"
 command-count-usage:
   - "//count"
+  - "//count -d - Count blocks and show detailed block state information"
   - "//count [半径] - 指定した半径のブロックをカウントする"
 command-extinguish-description: "選択した領域の消火をする"
 command-extinguish-usage:
