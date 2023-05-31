@@ -48,6 +48,7 @@ abstract class TaskResult
 	{
 		$stream = new ExtendedBinaryStream();
 		$stream->putString(igbinary_serialize($this) ?? "");
+		$stream->putFloat($this->time);
 		$this->putData($stream);
 		return $stream->getBuffer();
 	}
@@ -61,6 +62,7 @@ abstract class TaskResult
 		$stream = new ExtendedBinaryStream($data);
 		/** @var TaskResult $instance */
 		$instance = igbinary_unserialize($stream->getString());
+		$instance->time = $stream->getFloat();
 		$instance->parseData($stream);
 		return $instance;
 	}
