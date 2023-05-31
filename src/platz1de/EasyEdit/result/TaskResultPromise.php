@@ -14,7 +14,7 @@ class TaskResultPromise
 	 */
 	private array $finish = [];
 	/**
-	 * @var array<int, Closure(): void>
+	 * @var array<int, Closure(bool): void>
 	 */
 	private array $cancel = [];
 	/**
@@ -36,6 +36,7 @@ class TaskResultPromise
 	 */
 	private TaskResult $result;
 	private string $message;
+	private bool $cancelSelf;
 	private float $startTime;
 
 	public function __construct()
@@ -60,7 +61,7 @@ class TaskResultPromise
 
 	/**
 	 * Called whenever the task is cancelled
-	 * @param Closure() : void $callback
+	 * @param Closure(bool) : void $callback
 	 * @return TaskResultPromise<T>
 	 */
 	public function onCancel(Closure $callback): self
@@ -68,7 +69,7 @@ class TaskResultPromise
 		if ($this->status === self::STATUS_WAITING) {
 			$this->cancel[] = $callback;
 		} elseif ($this->status === self::STATUS_CANCEL) {
-			$callback();
+			$callback($this->cancelSelf);
 		}
 		return $this;
 	}
@@ -132,11 +133,12 @@ class TaskResultPromise
 	/**
 	 * @internal
 	 */
-	public function cancel(): void
+	public function cancel(bool $isSelf): void
 	{
 		$this->status = self::STATUS_CANCEL;
+		$this->cancelSelf = $isSelf;
 		foreach ($this->cancel as $callback) {
-			$callback();
+			$callback($isSelf);
 		}
 		$this->cancel = [];
 	}

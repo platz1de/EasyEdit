@@ -2,11 +2,14 @@
 
 namespace platz1de\EasyEdit\thread;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\OutputData;
-use platz1de\EasyEdit\thread\output\TaskResultData;
+use platz1de\EasyEdit\thread\output\result\CancelledTaskResultData;
+use platz1de\EasyEdit\thread\output\result\CrashedTaskResultData;
+use platz1de\EasyEdit\thread\output\result\FullTaskResultData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\network\mcpe\convert\TypeConverter;
@@ -73,14 +76,15 @@ class EditThread extends Thread
 					ThreadData::clear();
 					$this->stats->startTask($task);
 					$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
-					$this->sendOutput(new TaskResultData($task->getTaskId(), $task->executeInternal(), true));
+					$this->sendOutput(new FullTaskResultData($task->getTaskId(), $task->executeInternal()));
 				} catch (Throwable $throwable) {
 					if ($throwable instanceof CancelException) {
 						$this->debug("Task " . $task->getTaskName() . ":" . $task->getTaskId() . " was cancelled");
+						$this->sendOutput(new CancelledTaskResultData($task->getTaskId(), $task->attemptRecovery(), ThreadData::getCancelReason()));
 					} else {
 						$this->logger->logException($throwable);
+						$this->sendOutput(new CrashedTaskResultData($task->getTaskId(), $task->attemptRecovery(), $throwable->getMessage()));
 					}
-					$this->sendOutput(new TaskResultData($task->getTaskId(), $task->attemptRecovery(), false, $throwable instanceof CancelException ? null : $throwable->getMessage()));
 					ChunkRequestManager::clear();
 					//throttle a bit to avoid spamming
 					$this->synchronized(function (): void {
@@ -222,7 +226,7 @@ class EditThread extends Thread
 
 	public function quit(): void
 	{
-		ThreadData::requirePause();
+		ThreadData::requirePause(SessionIdentifier::internal("Thread shutdown"));
 		parent::quit();
 	}
 

@@ -11,7 +11,9 @@ use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
-use platz1de\EasyEdit\thread\output\TaskResultData;
+use platz1de\EasyEdit\thread\output\result\CancelledTaskResultData;
+use platz1de\EasyEdit\thread\output\result\FullTaskResultData;
+use platz1de\EasyEdit\thread\output\result\TaskResultData;
 use pmmp\thread\Thread;
 use pmmp\thread\ThreadSafe;
 use pocketmine\utils\SingletonTrait;
@@ -55,17 +57,16 @@ class ThreadStats extends ThreadSafe
 
 	public function preProcessOutput(OutputData $data): void
 	{
-		switch ($data::class) {
-			case TaskResultData::class:
-				$this->synchronized(function (): void {
-					$this->status = self::STATUS_IDLE;
-				});
-				break;
-			case ChunkRequestData::class:
-				$this->synchronized(function (): void {
-					$this->status = self::STATUS_WAITING;
-				});
-				break;
+		$newStatus = null;
+		if ($data instanceof TaskResultData) {
+			$newStatus = self::STATUS_IDLE;
+		} elseif ($data instanceof ChunkRequestData) {
+			$newStatus = self::STATUS_WAITING;
+		}
+		if ($newStatus !== null) {
+			$this->synchronized(function ($status): void {
+				$this->status = $status;
+			}, $newStatus);
 		}
 		$this->updateMemory();
 	}

@@ -8,8 +8,10 @@ use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
+use platz1de\EasyEdit\thread\output\result\CancelledTaskResultData;
+use platz1de\EasyEdit\thread\output\result\CrashedTaskResultData;
+use platz1de\EasyEdit\thread\output\result\TaskResultData;
 use platz1de\EasyEdit\thread\output\TaskNotifyData;
-use platz1de\EasyEdit\thread\output\TaskResultData;
 use UnexpectedValueException;
 
 class EditHandler
@@ -55,10 +57,12 @@ class EditHandler
 			throw new UnexpectedValueException("Task with id " . $result->getTaskId() . " not found");
 		}
 		$promise = self::$promises[$result->getTaskId()];
+		$executor = self::getExecutor($result->getTaskId());
 		unset(self::$promises[$result->getTaskId()], self::$executors[$result->getTaskId()]);
-		if (!$result->isSuccess()) {
-			$message = $result->getMessage();
-			$message === null ? $promise->cancel() : $promise->reject($message);
+		if ($result instanceof CrashedTaskResultData) {
+			$promise->reject($result->getMessage());
+		} else if ($result instanceof CancelledTaskResultData) {
+			$promise->cancel($result->getReason()->getName() === $executor->getName());
 		}
 		$promise->resolve($result->getPayload()); //Note that this will always get called, even if the task was cancelled / rejected
 	}

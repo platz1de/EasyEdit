@@ -28,7 +28,7 @@ class CancelCommand extends EasyEditCommand
 			$session->sendMessage("no-task");
 			return;
 		}
-		CancelTaskData::from();
+		CancelTaskData::from($session->getIdentifier());
 		$session->sendMessage("task-cancelled");
 	}
 

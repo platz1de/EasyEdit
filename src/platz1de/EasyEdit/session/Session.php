@@ -90,7 +90,11 @@ class Session
 	{
 		EditHandler::affiliateTask($this, $task->getTaskId());
 		return $task->run()
-			->onCancel(fn() => $this->sendMessage("task-cancelled-self"))
+			->onCancel(function ($self) {
+				if (!$self) {
+					$this->sendMessage("task-cancelled-self");
+				}
+			})
 			->onFail(fn(string $message) => $this->sendMessage("task-crash", ["{message}" => $message]));
 	}
 

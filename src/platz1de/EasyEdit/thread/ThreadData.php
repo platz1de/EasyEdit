@@ -3,7 +3,9 @@
 namespace platz1de\EasyEdit\thread;
 
 use platz1de\EasyEdit\result\TaskResult;
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
+use RuntimeException;
 
 /**
  * @internal
@@ -15,6 +17,7 @@ class ThreadData
 	 */
 	private static array $tasks = [];
 	private static bool $stop = false;
+	private static ?SessionIdentifier $reason = null;
 
 	/**
 	 * @return ExecutableTask<TaskResult>|null
@@ -40,9 +43,10 @@ class ThreadData
 		self::$tasks[] = $task;
 	}
 
-	public static function requirePause(): void
+	public static function requirePause(SessionIdentifier $identifier): void
 	{
 		self::$stop = true;
+		self::$reason = $identifier;
 	}
 
 	/**
@@ -56,5 +60,17 @@ class ThreadData
 	public static function clear(): void
 	{
 		self::$stop = false;
+		self::$reason = null;
+	}
+
+	/**
+	 * @return SessionIdentifier
+	 */
+	public static function getCancelReason(): SessionIdentifier
+	{
+		if (self::$reason === null) {
+			throw new RuntimeException("No reason for cancel");
+		}
+		return self::$reason;
 	}
 }
