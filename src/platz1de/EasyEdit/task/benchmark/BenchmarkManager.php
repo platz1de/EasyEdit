@@ -16,10 +16,6 @@ use UnexpectedValueException;
 class BenchmarkManager
 {
 	private static bool $running = false;
-	private static int $autoSave;
-	private static TaskHandler $task;
-	private static Closure $closure;
-	private static bool $cleanup;
 
 	/**
 	 * @param Session $session
@@ -31,54 +27,43 @@ class BenchmarkManager
 		if (self::$running) {
 			throw new UnexpectedValueException("Benchmark is already running");
 		}
-		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results): void {}, $closure);
+		Utils::validateCallableSignature(static function (float $tpsAvg, float $tpsMin, float $loadAvg, float $loadMax, int $tasks, float $time, array $results): void { }, $closure);
 
-		self::$closure = $closure;
-		self::$cleanup = $deleteWorldAfter;
 		self::$running = true;
-		self::$autoSave = MixedUtils::setAutoSave(PHP_INT_MAX);
-		self::$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask(new BenchmarkTask(), 1);
+
+		$autoSave = MixedUtils::setAutoSave(PHP_INT_MAX);
+		$benchmark = new BenchmarkTask();
+		$task = EasyEdit::getInstance()->getScheduler()->scheduleRepeatingTask($benchmark, 1);
 
 		$name = "EasyEdit-Benchmark-" . time();
 		Server::getInstance()->getWorldManager()->generateWorld($name, WorldCreationOptions::create(), false);
-		$session->runTask(new BenchmarkExecutor($name))->then(static function (BenchmarkTaskResult $results): void {
-			self::benchmarkCallback($results->getWorld(), $results->getResults());
+		$session->runTask(new BenchmarkExecutor($name))->then(static function (BenchmarkTaskResult $results) use ($benchmark, $task, $closure, $autoSave, $deleteWorldAfter, $name): void {
+			$results = $results->getResults();
+			$task->cancel();
+			$time = array_sum(array_map(static function (array $dat): float {
+				return $dat[2];
+			}, $results));
+			$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);
+
+			if ($deleteWorldAfter) {
+				$world = Server::getInstance()->getWorldManager()->getWorldByName($name);
+				if ($world === null) {
+					EasyEdit::getInstance()->getLogger()->critical("Couldn't clean after benchmark, world " . $name . " doesn't exist");
+					return;
+				}
+				$path = $world->getProvider()->getPath();
+				Server::getInstance()->getWorldManager()->unloadWorld($world);
+				MixedUtils::deleteDir($path);
+			}
+
+			$validate = MixedUtils::setAutoSave($autoSave);
+			if ($validate !== PHP_INT_MAX) {
+				EasyEdit::getInstance()->getLogger()->warning("World auto save interval was changed during benchmark, results may be inaccurate");
+			}
+			self::$running = false;
 		})->update(static function (int $progress) use ($session): void {
 			$session->sendMessage("benchmark-progress", ["{done}" => (string) $progress, "{total}" => "4"]);
 		});
-	}
-
-	/**
-	 * @param string                                  $worldName
-	 * @param array<array{string, int, float}> $results
-	 * @internal
-	 */
-	public static function benchmarkCallback(string $worldName, array $results): void
-	{
-		self::$task->cancel();
-		/**
-		 * @var BenchmarkTask         $benchmark
-		 * @phpstan-var BenchmarkTask $benchmark
-		 */
-		$benchmark = self::$task->getTask();
-		$time = array_sum(array_map(static function (array $dat): float {
-			return $dat[2];
-		}, $results));
-		$closure = self::$closure;
-		$closure($benchmark->getTpsTotal(), $benchmark->getTpsMin(), $benchmark->getLoadTotal(), $benchmark->getLoadMax(), count($results), $time, $results);
-
-		if (self::$cleanup) {
-			$world = Server::getInstance()->getWorldManager()->getWorldByName($worldName);
-			if ($world === null) {
-				throw new UnexpectedValueException("Couldn't clean after benchmark, world " . $worldName . " doesn't exist");
-			}
-			$path = $world->getProvider()->getPath();
-			Server::getInstance()->getWorldManager()->unloadWorld($world);
-			MixedUtils::deleteDir($path);
-		}
-
-		self::$running = false;
-		MixedUtils::setAutoSave(self::$autoSave);
 	}
 
 	/**

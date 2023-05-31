@@ -77,12 +77,12 @@ class BenchmarkExecutor extends ExecutableTask
 		$res = $this->pasteBenchmark->executeInternal();
 		$this->results[] = ["paste", $res->getAffected(), microtime(true) - $start];
 
-		return new BenchmarkTaskResult($this->world, $this->results);
+		return new BenchmarkTaskResult($this->results);
 	}
 
 	public function attemptRecovery(): BenchmarkTaskResult
 	{
-		return new BenchmarkTaskResult($this->world, $this->results);
+		return new BenchmarkTaskResult($this->results);
 	}
 
 	public function getProgress(): float
