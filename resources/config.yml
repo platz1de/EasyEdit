@@ -39,7 +39,7 @@ fill-distance: 100
 pathfinding-max: 1000000
 
 #Blocks which get ignored when calculating terrain height (e.g. when smoothing) or inserting selection
-terrain-ignored-blocks: [ "minecraft:air", "minecraft:wood", "minecraft:wood2", "minecraft:leaves", "minecraft:leaves2", "minecraft:dandelion", "minecraft:poppy", "minecraft:tall_grass", "minecraft:water", "minecraft:lava", "minecraft:snow_layer", "minecraft:carpet", "minecraft:brown_mushroom", "minecraft:red_mushroom" ]
+terrain-ignored-blocks: [ "minecraft:air", "minecraft:wood", "minecraft:wood2", "minecraft:leaves", "minecraft:leaves2", "minecraft:dandelion", "minecraft:poppy", "minecraft:tall_grass", "minecraft:water", "minecraft:lava", "minecraft:snow_layer", "minecraft:carpet", "minecraft:brown_mushroom", "minecraft:red_mushroom", "minecraft:double_plant"]
 
 #Whether to send spammy debug messages into the console
 #requires server to be on debug mode

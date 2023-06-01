@@ -1,13 +1,17 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing;
+namespace platz1de\EasyEdit\task\editing\smooth;
 
 use Generator;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
+use platz1de\EasyEdit\task\editing\SelectionEditTask;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
@@ -35,8 +39,8 @@ class SmoothTask extends SelectionEditTask
 		$currentZ = null;
 		$map = [];
 		$reference = [];
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
-			HeightMapCache::load($handler->getOrigin(), $x >> 4, $z >> 4);
+		$air = VanillaBlocks::AIR()->getStateId();
+		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($air, &$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;
@@ -98,21 +102,21 @@ class SmoothTask extends SelectionEditTask
 						}
 					}
 				}
-				$handler->changeBlock($x, $y, $z, 0);
+				$handler->changeBlock($x, $y, $z, $air);
 				return;
 			}
 
 			$multiplier = ($reference[$y] < $reference[$y + 1]) ? 1 : -1;
 
 			for ($i = 0; $i < 3; $i++) { //search 2 blocks up/downwards
-				if ($map[$y + $multiplier * $i] !== 0) {
+				if ($map[$y + $multiplier * $i] !== $air) {
 					break;
 				}
 			}
 			if (($i ?? 0) === 3) {
 				//no blocks found, setting from neighbours
 				foreach ((new Vector3($x, $y, $z))->sidesAroundAxis(Axis::Y) as $side) {
-					if (($block = $handler->getBlock($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())) !== 0) {
+					if (($block = $handler->getBlock($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())) !== $air) {
 						$handler->changeBlock($x, $y, $z, $block);
 						return;
 					}
@@ -155,6 +159,21 @@ class SmoothTask extends SelectionEditTask
 	}
 
 	/**
+	 * @param EditTaskHandler $handler
+	 * @param int             $chunk
+	 */
+	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	{
+		if ($chunk === -1) {
+			return;
+		}
+		HeightMapCache::loadBetween($handler->getOrigin(), $this->selection->getPos1(), $this->selection->getPos2());
+		foreach ($handler->getOrigin()->getManager()->getChunks() as $c => $_) {
+			parent::executeEdit($handler, $c);
+		}
+	}
+
+	/**
 	 * @param int[] $map
 	 * @return int[]
 	 */
@@ -181,5 +200,28 @@ class SmoothTask extends SelectionEditTask
 			}
 		}
 		return $map;
+	}
+
+	protected function getChunkHandler(): GroupedChunkHandler
+	{
+		return new SmoothingChunkHandler($this->world);
+	}
+
+	protected function sortChunks(array $chunks): array
+	{
+		//Make sure all surrounding chunks are loaded
+		//TODO: Add actual logic to this
+		foreach ($chunks as $chunk) {
+			World::getXZ($chunk, $x, $z);
+			for ($xi = -1; $xi <= 1; $xi++) {
+				for ($zi = -1; $zi <= 1; $zi++) {
+					$h = World::chunkHash($x + $xi, $z + $zi);
+					if (!in_array($h, $chunks, true)) {
+						$chunks[] = $h;
+					}
+				}
+			}
+		}
+		return $chunks;
 	}
 }

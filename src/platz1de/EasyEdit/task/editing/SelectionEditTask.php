@@ -171,7 +171,7 @@ abstract class SelectionEditTask extends ExecutableTask
 	/**
 	 * @return GroupedChunkHandler
 	 */
-	public function getChunkHandler(): GroupedChunkHandler
+	protected function getChunkHandler(): GroupedChunkHandler
 	{
 		return new SingleChunkHandler($this->getWorld());
 	}

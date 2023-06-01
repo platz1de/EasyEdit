@@ -12,7 +12,7 @@ use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\SessionManager;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\SetTask;
-use platz1de\EasyEdit\task\editing\SmoothTask;
+use platz1de\EasyEdit\task\editing\smooth\SmoothTask;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;

@@ -44,6 +44,18 @@ class HeightMapCache
 		if (!self::$loaded) {
 			$min = new BlockVector($cx << 4, 0, $cz << 4);
 			$max = $min->add(15, 0, 15);
+			self::loadBetween($iterator, $min, $max);
+		}
+	}
+
+	/**
+	 * @param ChunkController $iterator
+	 * @param BlockVector     $min
+	 * @param BlockVector     $max
+	 */
+	public static function loadBetween(ChunkController $iterator, BlockVector $min, BlockVector $max): void
+	{
+		if (!self::$loaded) {
 			for ($x = $min->x; $x <= $max->x; $x++) {
 				for ($z = $min->z; $z <= $max->z; $z++) {
 					$y = World::Y_MAX - 1;
