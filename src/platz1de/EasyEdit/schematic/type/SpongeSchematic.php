@@ -165,7 +165,7 @@ class SpongeSchematic extends SchematicType
 		$nbt->setInt(self::UNUSED_DATA_VERSION, 1343); //1.12.2
 		$metaData = new CompoundTag();
 		$metaData->setInt(McEditSchematic::OFFSET_X, $target->getPoint()->x);
-		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->y - World::Y_MIN);
+		$metaData->setInt(McEditSchematic::OFFSET_Y, $target->getPoint()->y + World::Y_MIN);
 		$metaData->setInt(McEditSchematic::OFFSET_Z, $target->getPoint()->z);
 		$nbt->setTag(self::METADATA, $metaData);
 		//$nbt->setIntArray("Offset", [-$target->getPoint()->getFloorX(), -$target->getPoint()->getFloorY(), -$target->getPoint()->getFloorZ()]);
