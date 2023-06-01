@@ -57,15 +57,15 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 			$this->current = $current;
 			$this->sourceOrder[$this->current] = 0;
 			$this->waiting[$this->current] = 0;
-			$min = $this->selection->getPos1();
-			$max = $this->selection->getPos2();
+			$min = $this->selection->getPos1()->toChunk();
+			$max = $this->selection->getPos2()->toChunk();
 			if ($this->axis === Axis::X) {
-				$min->z = $max->z = $current << 4;
+				$min->z = $max->z = $current;
 			} else {
-				$min->x = $max->x = $current << 4;
+				$min->x = $max->x = $current;
 			}
-			for ($resX = $min->x >> 4; $resX <= $max->x >> 4; $resX++) {
-				for ($resZ = $min->z >> 4; $resZ <= $max->z >> 4; $resZ++) {
+			for ($resX = $min->x; $resX <= $max->x; $resX++) {
+				for ($resZ = $min->z; $resZ <= $max->z; $resZ++) {
 					ChunkRequestManager::addRequest(new ChunkRequest($this->world, World::chunkHash($resX, $resZ)));
 					$this->sourceOrder[$this->current]++;
 				}
