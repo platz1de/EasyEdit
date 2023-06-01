@@ -25,7 +25,7 @@ class DynamicBlockListSelection extends ChunkManagedBlockList
 	 */
 	private function __construct(BlockOffsetVector $size, private BlockOffsetVector $offset, private BlockOffsetVector $point)
 	{
-		parent::__construct("", new BlockVector(0, World::Y_MIN, 0), (new BlockVector(0, World::Y_MAX, 0))->offset($size));
+		parent::__construct("", new BlockVector(0, World::Y_MIN, 0), (new BlockVector(0, World::Y_MIN, 0))->offset($size));
 	}
 
 	public static function empty(): self
