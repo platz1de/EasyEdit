@@ -49,11 +49,11 @@ class BenchmarkManager
 				$world = Server::getInstance()->getWorldManager()->getWorldByName($name);
 				if ($world === null) {
 					EasyEdit::getInstance()->getLogger()->critical("Couldn't clean after benchmark, world " . $name . " doesn't exist");
-					return;
+				} else {
+					$path = $world->getProvider()->getPath();
+					Server::getInstance()->getWorldManager()->unloadWorld($world);
+					MixedUtils::deleteDir($path);
 				}
-				$path = $world->getProvider()->getPath();
-				Server::getInstance()->getWorldManager()->unloadWorld($world);
-				MixedUtils::deleteDir($path);
 			}
 
 			$validate = MixedUtils::setAutoSave($autoSave);
