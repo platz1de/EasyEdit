@@ -8,6 +8,7 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\schematic\SchematicSaveTask;
@@ -31,7 +32,7 @@ class SaveSchematicCommand extends SimpleFlagArgumentCommand
 			throw new InvalidUsageException($this);
 		}
 
-		$session->runTask(new SchematicSaveTask($session->getClipboard(), $schematicName))->then(function (SelectionManipulationResult $result) use ($schematicName, $session): void {
+		$session->runTask(new SchematicSaveTask($session->getClipboard(), EasyEdit::getSchematicPath() . $schematicName))->then(function (SelectionManipulationResult $result) use ($schematicName, $session): void {
 			if ($result->getChanged() === 0) {
 				return;
 			}
