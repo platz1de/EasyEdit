@@ -32,6 +32,7 @@ class CommandFlagParser
 			if (str_starts_with($arg, "-")) {
 				if (is_numeric(substr($arg, 1)) || preg_match("/-\d+,-?\d+,-?\d+/", $arg) === 1) {
 					$skip = false;
+					$legacy[] = $arg;
 					continue; //Negative numbers are not flags
 				}
 				if ($skip) {
