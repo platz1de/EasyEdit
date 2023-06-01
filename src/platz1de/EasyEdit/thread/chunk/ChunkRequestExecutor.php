@@ -2,8 +2,10 @@
 
 namespace platz1de\EasyEdit\thread\chunk;
 
+use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\input\ChunkInputData;
+use platz1de\EasyEdit\thread\input\task\CancelTaskData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\ChunkInformation;
@@ -11,6 +13,7 @@ use pocketmine\block\tile\Tile;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\World;
+use Throwable;
 
 class ChunkRequestExecutor
 {
@@ -19,6 +22,14 @@ class ChunkRequestExecutor
 	public function addRequest(ChunkRequest $request): void
 	{
 		World::getXZ($request->getChunk(), $x, $z);
+
+		try {
+			$request->getWorld();
+		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->warning($e->getMessage());
+			CancelTaskData::from(SessionIdentifier::internal("Chunkloading Failed"));
+			return;
+		}
 
 		if ($request->getWorld()->isChunkLoaded($x, $z)) {
 			//We can handle this request right away
@@ -31,6 +42,7 @@ class ChunkRequestExecutor
 				ChunkInputData::from($this->addChunk($request->getWorld(), $x, $z, new ExtendedBinaryStream()), $request->getPayload());
 			},
 			function () use ($x, $z): void {
+				CancelTaskData::from(SessionIdentifier::internal("Chunkloading Failed"));
 				EditThread::getInstance()->getLogger()->warning("Failed to load chunk $x $z");
 			}
 		);

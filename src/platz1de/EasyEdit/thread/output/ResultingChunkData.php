@@ -2,12 +2,14 @@
 
 namespace platz1de\EasyEdit\thread\output;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\world\World;
+use Throwable;
 
 class ResultingChunkData extends OutputData
 {
@@ -34,7 +36,11 @@ class ResultingChunkData extends OutputData
 
 	public function handle(): void
 	{
-		LoaderManager::setChunks($this->getWorld(), $this->getChunks(), $this->getInjections());
+		try {
+			LoaderManager::setChunks($this->getWorld(), $this->getChunks(), $this->getInjections());
+		} catch (Throwable $e) {
+			EasyEdit::getInstance()->getLogger()->error("Error while setting chunks: " . $e->getMessage());
+		}
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
