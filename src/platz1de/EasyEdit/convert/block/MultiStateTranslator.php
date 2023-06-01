@@ -68,7 +68,7 @@ class MultiStateTranslator extends SimpleStateTranslator
 				throw new UnexpectedValueException("Invalid mapping entry $name");
 			}
 			if ($name === "def") {
-				$target["def"] = $state;
+				$target["def"] = new SimpleStateTranslator($state);
 				continue;
 			}
 			$target[$name] = [];
@@ -89,11 +89,16 @@ class MultiStateTranslator extends SimpleStateTranslator
 			throw new UnexpectedValueException("Missing state $state");
 		}
 		$stateValue = BlockParser::tagToStringValue($states[$state]);
-		$next = $current[$stateValue] ?? $current["def"] ?? $this->mapping["def"] ?? null;
+		$next = $current[$stateValue] ?? null;
+		$skip = false;
+		if ($next === null) {
+			$next = $current["def"] ?? $this->mapping["def"] ?? null;
+			$skip = true;
+		}
 		if ($next === null) {
 			throw new UnexpectedValueException("Missing state $stateValue");
 		}
-		if ($left !== []) {
+		if (!$skip && $left !== []) {
 			if (!is_array($next)) {
 				throw new UnexpectedValueException("Invalid state $stateValue");
 			}
