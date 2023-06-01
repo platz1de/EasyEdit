@@ -11,6 +11,7 @@ use platz1de\EasyEdit\world\ChunkInformation;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\world\World;
+use Throwable;
 
 abstract class ChunkManagedBlockList extends BlockListSelection
 {
@@ -71,8 +72,12 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 		for ($x = $this->pos1->x >> 4; $x <= $this->pos2->x >> 4; $x++) {
 			for ($z = $this->pos1->z >> 4; $z <= $this->pos2->z >> 4; $z++) {
 				$chunk = World::chunkHash($x, $z);
-				if (!$this->manager->getChunk($chunk)->isEmpty()) {
-					$chunks[] = $chunk;
+				try {
+					if (!$this->manager->getChunk($chunk)->isEmpty()) {
+						$chunks[] = $chunk;
+					}
+				} catch (Throwable) {
+					// ignore
 				}
 			}
 		}

@@ -34,7 +34,7 @@ Selection:
 | //pos1 [x] [y] [z]                                | Set the first position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
 | //pos2 [x] [y] [z]                                | Set the first position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
 | //extend [direction] [count]<br>//extend vertical | Extend the selected area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
-| //extend --min <x>,<y>,<z> --max <x>,<y>,<z>      | Extend the selected area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
+| //extend --min <x>,<y>,<z> --max <x>,<y>,<z>      | Modify the selected area by the given vectors                | easyedit.select | "Min" and "Max" refer to the corners of the selection                           |
 | //set \<pattern>                                  | Set blocks in the selected area                              | easyedit.edit   |
 | //replace \<block> \<pattern>                     | Replace blocks in the selected area                          | easyedit.edit   |
 | //replace \<pattern>                              | Replace all solid blocks in the selected area                | easyedit.edit   |
@@ -47,7 +47,7 @@ Selection:
 | //move [direction] [count]                        | Move the selected area                                       | easyedit.edit   | Look into the direction you want the selected blocks to move into               |
 | //stack [direction] [count]                       | Stack the selected area                                      | easyedit.edit   | Look into the direction you want the selected blocks to stack into              |
 | //istack [direction] [count]                      | Stack the selected area without overwriting existing terrain | easyedit.edit   |
-| //count [radius]                                  | Count blocks in the selected area                            | easyedit.select |
+| //count [radius] [-d]                             | Count blocks in the selected area                            | easyedit.select |
 | //extinguish [radius]                             | Extinguish fire in the selected area                         | easyedit.edit   | //ext                                                                           |
 | //view                                            | View the selected area                                       | easyedit.select | //show<br>also allows exporting as a 3d model (thank mojang for buggy textures) |
 
@@ -62,23 +62,25 @@ History:
 
 Clipboard:
 
-| Command                          | Description                                         | Permission                            | Aliases/Notice                                                    |
-|----------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------------------------------|
-| //copy [--center]                | Copy the selected area                              | easyedit.clipboard                    |                                                                   |
-| //cut [--center]                 | Cut the selected area and copy it to your clipboard | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
-| //paste                          | Paste the clipboard                                 | easyedit.clipboard easyedit.edit      |                                                                   |
-| //insert                         | Insert the clipboard                                | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
-| //merge                          | Merge current terrain with the clipboard            | easyedit.clipboard easyedit.edit      | Paste only non-air blocks                                         |
-| //rpaste                         | Replace current terrain with the clipboard          | easyedit.clipboard easyedit.edit      | Replace non-air blocks with non-air blocks from the selection     |
-| //rotate                         | Rotate the clipboard                                | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
-| //flip [direction]               | Flip the clipboard, mirroring at copied position    | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
-| //loadschematic \<schematicName> | Load a saved schematic from disk                    | easyedit.readdisk easyedit.clipboard  | //load                                                            |
-| //saveschematic \<schematicName> | Save your clipboard as a schematic to disk          | easyedit.writedisk easyedit.clipboard | //save                                                            |
+| Command                 | Description                                         | Permission                            | Aliases/Notice                                                    |
+|-------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------------------------------|
+| //copy [--center]       | Copy the selected area                              | easyedit.clipboard                    |                                                                   |
+| //cut [--center]        | Cut the selected area and copy it to your clipboard | easyedit.clipboard easyedit.edit      | Copies and replaces with air                                      |
+| //paste                 | Paste the clipboard                                 | easyedit.clipboard easyedit.edit      |                                                                   |
+| //insert                | Insert the clipboard                                | easyedit.clipboard easyedit.edit      | Paste only into air blocks                                        |
+| //merge                 | Merge current terrain with the clipboard            | easyedit.clipboard easyedit.edit      | Paste only non-air blocks                                         |
+| //rpaste                | Replace current terrain with the clipboard          | easyedit.clipboard easyedit.edit      | Replace non-air blocks with non-air blocks from the selection     |
+| //rotate                | Rotate the clipboard                                | easyedit.clipboard                    | Rotates by 90 Degrees                                             |
+| //flip [direction]      | Flip the clipboard, mirroring at copied position    | easyedit.clipboard                    | Flips on axis you look on, always uses selected point as "mirror" |
+| //load \<schematicName> | Load a saved schematic from disk                    | easyedit.readdisk easyedit.clipboard  | //loadschematic                                                   |
+| //save \<schematicName> | Save your clipboard as a schematic to disk          | easyedit.writedisk easyedit.clipboard | //saveschematic                                                   |
 
 Generation:
 
 | Command                                                | Description                            | Permission                      | Aliases/Notice         |
 |--------------------------------------------------------|----------------------------------------|---------------------------------|------------------------|
+| //cube \<size> \<pattern>                              | Generate a cube                        | easyedit.generate easyedit.edit | //cb                   |
+| //hcube \<size> \<pattern> [thickness]                 | Generate a hollow cube                 | easyedit.generate easyedit.edit | //hcb //hollowcube     |
 | //sphere \<radius> \<pattern>                          | Generate a sphere                      | easyedit.generate easyedit.edit | //sph                  |
 | //hsphere \<radius> \<pattern> [thickness]             | Generate a hollow sphere               | easyedit.generate easyedit.edit | //hsph //hollowsphere  |
 | //cylinder \<radius> \<height> \<pattern>              | Generate a cylinder                    | easyedit.generate easyedit.edit | //cy                   |
