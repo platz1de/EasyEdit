@@ -37,7 +37,6 @@ class StackedConstructor extends ShapeConstructor
 		$offsetMin = (int) floor(($min->getComponent($this->axis) - $source) / $size);
 		$offsetMax = (int) floor(($max->getComponent($this->axis) - $source) / $size);
 		if ($this->amount < 0) {
-			[$offsetMin, $offsetMax] = [$offsetMax, $offsetMin];
 			$offsetMin = max($offsetMin, $this->amount);
 			$offsetMax = min($offsetMax, -1);
 		} else {
