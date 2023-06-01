@@ -53,11 +53,12 @@ class Noise3DTask extends SelectionEditTask
 		$size = $selection->getSize();
 		$noise = $this->noise->getFastNoise3D($size->x - 1, $size->y - 1, $size->z - 1, 1, 1, 1, $selection->getPos1()->x, $selection->getPos1()->y, $selection->getPos1()->z);
 		$stone = VanillaBlocks::STONE()->getStateId();
-		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($stone, $selection, $handler, $noise): void {
+		$air = VanillaBlocks::AIR()->getStateId();
+		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($air, $stone, $selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->x][$z - $selection->getPos1()->z][$y - $selection->getPos1()->y] > $this->threshold) {
 				$handler->changeBlock($x, $y, $z, $stone);
 			} else {
-				$handler->changeBlock($x, $y, $z, 0);
+				$handler->changeBlock($x, $y, $z, $air);
 			}
 		}, $this->context);
 	}
