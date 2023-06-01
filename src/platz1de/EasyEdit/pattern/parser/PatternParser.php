@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\pattern\parser;
 
 use platz1de\EasyEdit\convert\BlockTagManager;
-use platz1de\EasyEdit\pattern\block\BlockGroup;
 use platz1de\EasyEdit\pattern\block\BlockType;
+use platz1de\EasyEdit\pattern\block\MaskedBlockGroup;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\pattern\functional\GravityPattern;
 use platz1de\EasyEdit\pattern\functional\NaturalizePattern;
@@ -122,7 +122,7 @@ class PatternParser
 		//blocks have priority
 		try {
 			$invert = false; //this would be always false
-			$pattern = self::getBlockType($patternString);
+			$pattern = self::getBlockType($patternString, false);
 		} catch (UnsupportedBlockStateException) { //parser errors are passed down
 			//This still allows old syntax, starting with #
 			//I have no idea what phpstorm is doing here
@@ -161,31 +161,32 @@ class PatternParser
 			"even" => new EvenPattern(AxisArgumentWrapper::parse($args), $children),
 			"odd" => new OddPattern(AxisArgumentWrapper::parse($args), $children),
 			"divisible" => new DivisiblePattern(AxisArgumentWrapper::parse($args), (int) ($args[0] ?? -1), $children),
-			"block" => new BlockPattern(self::getBlockType($args[0] ?? ""), $children),
-			"above" => new AbovePattern(self::getBlockType($args[0] ?? ""), $children),
-			"below" => new BelowPattern(self::getBlockType($args[0] ?? ""), $children),
+			"block" => new BlockPattern(self::getBlockType($args[0] ?? "", true), $children),
+			"above" => new AbovePattern(self::getBlockType($args[0] ?? "", true), $children),
+			"below" => new BelowPattern(self::getBlockType($args[0] ?? "", true), $children),
 			"nat", "naturalized" => new NaturalizePattern($children[0] ?? null, $children[1] ?? null, $children[2] ?? null),
 			"walls", "wall" => new WallPattern((float) ($args[0] ?? 1.0), $children),
 			"sides", "side" => new SidesPattern((float) ($args[0] ?? 1.0), $children),
 			"center", "middle" => new CenterPattern($children),
 			"gravity" => new GravityPattern($children),
-			"solid" => new BlockPattern(BlockGroup::inverted(HeightMapCache::getIgnore()), $children),
+			"solid" => new BlockPattern(MaskedBlockGroup::inverted(HeightMapCache::getIgnore()), $children),
 			default => throw new ParseError("Unknown Pattern " . $pattern, true)
 		};
 	}
 
 	/**
 	 * @param string $string
+	 * @param bool   $isMask
 	 * @return BlockType
 	 */
-	public static function getBlockType(string $string): BlockType
+	public static function getBlockType(string $string, bool $isMask): BlockType
 	{
-		if ($string === "solid") {
-			return BlockGroup::inverted(HeightMapCache::getIgnore());
+		if ($isMask && $string === "solid") {
+			return MaskedBlockGroup::inverted(HeightMapCache::getIgnore());
 		}
 
 		if (str_starts_with($string, "#")) {
-			return BlockTagManager::getTag(substr($string, 1));
+			return BlockTagManager::getTag(substr($string, 1), $isMask);
 		}
 
 		try {
@@ -200,6 +201,6 @@ class PatternParser
 		} catch (UnsupportedBlockStateException) {
 		}
 
-		return BlockTagManager::getTag($string);
+		return BlockTagManager::getTag($string, $isMask);
 	}
 }

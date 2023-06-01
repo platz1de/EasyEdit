@@ -25,7 +25,7 @@ class BlockCommandFlag extends ValuedCommandFlag
 	public function parseArgument(EasyEditCommand $command, Session $session, string $argument): CommandFlag
 	{
 		try {
-			$this->setArgument(PatternParser::getBlockType($argument));
+			$this->setArgument(PatternParser::getBlockType($argument, true));
 			return $this;
 		} catch (ParseError $exception) {
 			throw new PatternParseException($exception);

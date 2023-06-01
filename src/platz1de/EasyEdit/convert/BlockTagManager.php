@@ -3,12 +3,14 @@
 namespace platz1de\EasyEdit\convert;
 
 use platz1de\EasyEdit\pattern\block\BlockGroup;
+use platz1de\EasyEdit\pattern\block\MaskedBlockGroup;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\block\Block;
+use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
 use Throwable;
 use UnexpectedValueException;
@@ -22,6 +24,10 @@ class BlockTagManager
 	 * @var array<string, int[]>
 	 */
 	private static array $tags;
+	/**
+	 * @var array<string, int[]>
+	 */
+	private static array $tagStates;
 	private static bool $available = false;
 
 	/**
@@ -78,14 +84,18 @@ class BlockTagManager
 
 	/**
 	 * @param string $tag
-	 * @return BlockGroup
+	 * @param bool   $isMask Non-mask tags are only available on the main thread
+	 * @return BlockGroup|MaskedBlockGroup
 	 */
-	public static function getTag(string $tag): BlockGroup
+	public static function getTag(string $tag, bool $isMask): BlockGroup|MaskedBlockGroup
 	{
 		if (!isset(self::$tags[$tag])) {
 			throw new UnsupportedBlockStateException("Unknown block tag $tag");
 		}
-		return new BlockGroup(self::$tags[$tag]);
+		if ($isMask) {
+			return new MaskedBlockGroup(self::$tags[$tag]);
+		}
+		return new BlockGroup(self::$tagStates[$tag]);
 	}
 
 	public static function loadResourceData(string $rawData): void
@@ -100,6 +110,23 @@ class BlockTagManager
 		}
 
 		self::$tags = $data;
+
+		//TODO: just pass the whole states over instead of using hacky ways to translate type id to blocks
+		/** @var Block[] $blocks */
+		$blocks = (function () {
+			/** @noinspection all */
+			return $this->typeIndex;
+		})->call(RuntimeBlockStateRegistry::getInstance());
+		self::$tagStates = [];
+		foreach ($data as $tag => $ids) {
+			$states = [];
+			foreach ($ids as $id) {
+				foreach ($blocks[$id]->generateStatePermutations() as $state) {
+					$states[] = $state->getStateId();
+				}
+			}
+			self::$tagStates[$tag] = $states;
+		}
 
 		self::$available = true;
 	}

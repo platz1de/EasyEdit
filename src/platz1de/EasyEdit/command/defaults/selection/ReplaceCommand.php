@@ -6,7 +6,7 @@ use Generator;
 use platz1de\EasyEdit\command\flags\BlockCommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
-use platz1de\EasyEdit\pattern\block\BlockGroup;
+use platz1de\EasyEdit\pattern\block\MaskedBlockGroup;
 use platz1de\EasyEdit\pattern\logic\relation\BlockPattern;
 use platz1de\EasyEdit\pattern\Pattern;
 use platz1de\EasyEdit\session\Session;
@@ -43,7 +43,7 @@ class ReplaceCommand extends AliasedPatternCommand
 			yield (new BlockCommandFlag("block"))->parseArgument($this, $session, $args[0]);
 			array_shift($args);
 		} else {
-			yield BlockCommandFlag::with(new BlockGroup(HeightMapCache::getIgnore()), "block");
+			yield BlockCommandFlag::with(new MaskedBlockGroup(HeightMapCache::getIgnore()), "block");
 		}
 		yield (new PatternCommandFlag("pattern"))->parseArgument($this, $session, $args[0]);
 	}

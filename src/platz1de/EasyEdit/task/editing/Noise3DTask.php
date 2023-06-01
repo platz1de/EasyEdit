@@ -9,6 +9,7 @@ use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\Random;
 use pocketmine\world\generator\noise\Noise;
 use pocketmine\world\generator\noise\Simplex;
@@ -51,9 +52,10 @@ class Noise3DTask extends SelectionEditTask
 		$selection = $this->selection;
 		$size = $selection->getSize();
 		$noise = $this->noise->getFastNoise3D($size->x - 1, $size->y - 1, $size->z - 1, 1, 1, 1, $selection->getPos1()->x, $selection->getPos1()->y, $selection->getPos1()->z);
-		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($selection, $handler, $noise): void {
+		$stone = VanillaBlocks::STONE()->getStateId();
+		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($stone, $selection, $handler, $noise): void {
 			if ($noise[$x - $selection->getPos1()->x][$z - $selection->getPos1()->z][$y - $selection->getPos1()->y] > $this->threshold) {
-				$handler->changeBlock($x, $y, $z, BlockTypeIds::STONE << Block::INTERNAL_STATE_DATA_BITS);
+				$handler->changeBlock($x, $y, $z, $stone);
 			} else {
 				$handler->changeBlock($x, $y, $z, 0);
 			}

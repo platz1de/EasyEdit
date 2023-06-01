@@ -7,10 +7,13 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ChunkController;
+use pocketmine\block\Block;
 
 /** Ignores Damage */
-class BlockGroup extends BlockType
+class MaskedBlockGroup extends BlockType
 {
+	private bool $invert = false;
+
 	/**
 	 * @param int[] $ids
 	 */
@@ -19,9 +22,20 @@ class BlockGroup extends BlockType
 		parent::__construct();
 	}
 
+	/**
+	 * @param int[] $ids
+	 * @return self
+	 */
+	public static function inverted(array $ids): self
+	{
+		$instance = new self($ids);
+		$instance->invert = true;
+		return $instance;
+	}
+
 	public function equals(int $fullBlock): bool
 	{
-		throw new BadMethodCallException("Can't use BlockGroup for checking");
+		return in_array($fullBlock >> Block::INTERNAL_STATE_DATA_BITS, $this->ids, true) !== $this->invert;
 	}
 
 	/**
@@ -34,7 +48,7 @@ class BlockGroup extends BlockType
 	 */
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
-		return array_rand(array_flip($this->ids));
+		throw new BadMethodCallException("Can't use MaskedBlockGroup for setting");
 	}
 
 	/**
@@ -42,7 +56,7 @@ class BlockGroup extends BlockType
 	 */
 	public function applySelectionContext(SelectionContext $context): void
 	{
-		$context->includeWalls()->includeVerticals()->includeFilling();
+		throw new BadMethodCallException("Can't use MaskedBlockGroup for setting");
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

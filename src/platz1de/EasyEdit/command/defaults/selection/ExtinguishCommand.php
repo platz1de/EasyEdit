@@ -26,6 +26,6 @@ class ExtinguishCommand extends SphericalSelectionCommand
 	 */
 	public function processSelection(Session $session, Selection $selection, CommandFlagCollection $flags): void
 	{
-		$session->runSettingTask(new SetTask($selection, new BlockPattern(BlockTagManager::getTag("fire"), [StaticBlock::from(VanillaBlocks::AIR())])));
+		$session->runSettingTask(new SetTask($selection, new BlockPattern(BlockTagManager::getTag("fire", true), [StaticBlock::from(VanillaBlocks::AIR())])));
 	}
 }
