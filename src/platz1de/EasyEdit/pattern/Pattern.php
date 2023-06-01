@@ -39,20 +39,16 @@ abstract class Pattern
 	 */
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
-		try {
-			if (count($this->pieces) === 1) {
-				if ($this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current) && ($this->pieces[0]->getWeight() === 100 || random_int(1, 100) <= $this->pieces[0]->getWeight())) {
-					return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current);
-				}
-				return -1;
+		if (count($this->pieces) === 1) {
+			if ($this->pieces[0]->isValidAt($x, $y, $z, $iterator, $current) && ($this->pieces[0]->getWeight() === 100 || random_int(1, 100) <= $this->pieces[0]->getWeight())) {
+				return $this->pieces[0]->getFor($x, $y, $z, $iterator, $current);
 			}
-			$sum = array_sum(array_map(static function (Pattern $pattern): int {
-				return $pattern->getWeight();
-			}, $this->pieces));
-			$rand = random_int(0, max($sum, 100));
-		} catch (Exception) {
-			throw new AssumptionFailedError("Failed to generate random integer");
+			return -1;
 		}
+		$sum = array_sum(array_map(static function (Pattern $pattern): int {
+			return $pattern->getWeight();
+		}, $this->pieces));
+		$rand = random_int(0, max($sum, 100));
 
 		foreach ($this->pieces as $piece) {
 			$rand -= $piece->getWeight();

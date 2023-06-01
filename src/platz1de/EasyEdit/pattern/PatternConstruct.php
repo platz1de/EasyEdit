@@ -28,12 +28,8 @@ final class PatternConstruct extends Pattern
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
 		foreach ($this->pieces as $piece) {
-			try {
-				if ($piece->isValidAt($x, $y, $z, $iterator, $current) && ($piece->getWeight() === 100 || random_int(1, 100) <= $piece->getWeight())) {
-					return $piece->getFor($x, $y, $z, $iterator, $current);
-				}
-			} catch (Exception) {
-				throw new AssumptionFailedError("Failed to generate a random integer");
+			if ($piece->isValidAt($x, $y, $z, $iterator, $current) && ($piece->getWeight() === 100 || random_int(1, 100) <= $piece->getWeight())) {
+				return $piece->getFor($x, $y, $z, $iterator, $current);
 			}
 		}
 		return -1;
