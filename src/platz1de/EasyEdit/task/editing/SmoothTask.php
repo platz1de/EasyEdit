@@ -31,12 +31,12 @@ class SmoothTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		HeightMapCache::load($handler->getOrigin(), $this->selection);
 		$currentX = null;
 		$currentZ = null;
 		$map = [];
 		$reference = [];
 		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use (&$currentX, &$currentZ, &$map, &$reference, $handler): void {
+			HeightMapCache::load($handler->getOrigin(), $x >> 4, $z >> 4);
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;

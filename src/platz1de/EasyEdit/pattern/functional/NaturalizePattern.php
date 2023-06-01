@@ -54,7 +54,7 @@ class NaturalizePattern extends Pattern
 	 */
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
-		HeightMapCache::load($iterator, $current);
+		HeightMapCache::load($iterator, $x >> 4, $z >> 4);
 		return match (HeightMapCache::searchAirUpwards($x, $y, $z)) {
 			1 => $this->surface->getFor($x, $y, $z, $iterator, $current),
 			2, 3 => $this->ground->getFor($x, $y, $z, $iterator, $current),

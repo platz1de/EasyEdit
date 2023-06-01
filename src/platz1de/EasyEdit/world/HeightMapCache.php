@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\world;
 
-use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\math\BlockVector;
 use pocketmine\block\Block;
 use pocketmine\world\World;
 
@@ -36,13 +36,14 @@ class HeightMapCache
 
 	/**
 	 * @param ChunkController $iterator
-	 * @param Selection       $selection
+	 * @param int             $cx
+	 * @param int             $cz
 	 */
-	public static function load(ChunkController $iterator, Selection $selection): void
+	public static function load(ChunkController $iterator, int $cx, int $cz): void
 	{
 		if (!self::$loaded) {
-			$min = $selection->getPos1();
-			$max = $selection->getPos2();
+			$min = new BlockVector($cx << 4, 0, $cz << 4);
+			$max = $min->add(15, 0, 15);
 			for ($x = $min->x; $x <= $max->x; $x++) {
 				for ($z = $min->z; $z <= $max->z; $z++) {
 					$y = World::Y_MAX - 1;

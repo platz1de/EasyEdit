@@ -22,7 +22,7 @@ class GravityPattern extends Pattern
 	 */
 	public function getFor(int $x, int &$y, int $z, ChunkController $iterator, Selection $current): int
 	{
-		HeightMapCache::load($iterator, $current);
+		HeightMapCache::load($iterator, $x >> 4, $z >> 4);
 
 		$originalY = $y;
 		if (!HeightMapCache::isSolid($x, $y, $z)) {
