@@ -67,7 +67,6 @@ abstract class ExecutableTask
 		if ($data->checkSend()) {
 			EditThread::getInstance()->sendOutput($data);
 		}
-		EditThread::getInstance()->getStats()->updateProgress($this->getProgress());
 	}
 
 	/**
@@ -114,11 +113,6 @@ abstract class ExecutableTask
 	 * @return string
 	 */
 	abstract public function getTaskName(): string;
-
-	/**
-	 * @return float
-	 */
-	abstract public function getProgress(): float;
 
 	/**
 	 * @return int

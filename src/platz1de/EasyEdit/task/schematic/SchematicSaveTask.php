@@ -43,11 +43,6 @@ class SchematicSaveTask extends ExecutableTask
 		return new SelectionManipulationResult(0);
 	}
 
-	public function getProgress(): float
-	{
-		return 0; //No splitting
-	}
-
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->schematicPath);

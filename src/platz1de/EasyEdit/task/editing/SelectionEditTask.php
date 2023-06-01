@@ -88,6 +88,7 @@ abstract class SelectionEditTask extends ExecutableTask
 
 				$this->executeEdit($this->handler, $key);
 				EditThread::getInstance()->debug("Chunk " . $key . " was edited successful, " . $this->chunksLeft . " chunks left");
+				EditThread::getInstance()->getStats()->updateProgress(($this->totalChunks - $this->chunksLeft) / $this->totalChunks);
 
 				$this->handler->finish();
 			}
@@ -174,11 +175,6 @@ abstract class SelectionEditTask extends ExecutableTask
 	protected function getChunkHandler(): GroupedChunkHandler
 	{
 		return new SingleChunkHandler($this->getWorld());
-	}
-
-	public function getProgress(): float
-	{
-		return ($this->totalChunks - $this->chunksLeft) / $this->totalChunks;
 	}
 
 	/**

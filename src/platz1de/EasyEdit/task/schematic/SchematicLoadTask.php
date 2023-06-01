@@ -44,11 +44,6 @@ class SchematicLoadTask extends ExecutableTask
 		return new EditTaskResult(0, StoredSelectionIdentifier::invalid());
 	}
 
-	public function getProgress(): float
-	{
-		return 0; //No splitting
-	}
-
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->schematicPath);

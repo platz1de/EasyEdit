@@ -45,11 +45,6 @@ class DynamicStoredPasteTask extends ExecutableTask
 		return $this->executor->attemptRecovery();
 	}
 
-	public function getProgress(): float
-	{
-		return $this->executor->getProgress();
-	}
-
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putString($this->saveId->fastSerialize());

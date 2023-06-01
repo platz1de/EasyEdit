@@ -26,10 +26,6 @@ class BenchmarkExecutor extends ExecutableTask
 	 * @var array{string, int, float}[]
 	 */
 	private array $results = [];
-	private SetTask $setSimpleBenchmark;
-	private SetTask $setComplexBenchmark;
-	private CopyTask $copyBenchmark;
-	private DynamicPasteTask $pasteBenchmark;
 
 	/**
 	 * @param string $world
@@ -50,8 +46,7 @@ class BenchmarkExecutor extends ExecutableTask
 
 		//Task #1 - set static
 		$start = microtime(true);
-		$this->setSimpleBenchmark = new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE()));
-		$res = $this->setSimpleBenchmark->executeInternal();
+		$res = (new SetTask($testCube, StaticBlock::from(VanillaBlocks::STONE())))->executeInternal();
 		$this->results[] = ["set static", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(1));
 
@@ -59,22 +54,19 @@ class BenchmarkExecutor extends ExecutableTask
 		$start = microtime(true);
 		//3D-Chess Pattern with stone and dirt
 		$pattern = PatternParser::parseInternal("even;y(even;xz(stone).odd;xz(stone).dirt).even;xz(dirt).odd;xz(dirt).stone");
-		$this->setComplexBenchmark = new SetTask($testCube, $pattern);
-		$res = $this->setComplexBenchmark->executeInternal();
+		$res = (new SetTask($testCube, $pattern))->executeInternal();
 		$this->results[] = ["set complex", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(2));
 
 		//Task #3 - copy
 		$start = microtime(true);
-		$this->copyBenchmark = new CopyTask($testCube, $pos);
-		$res = $this->copyBenchmark->executeInternal(); //TODO: Don't save the selection (literal memory leak)
+		$res = (new CopyTask($testCube, $pos))->executeInternal(); //TODO: Don't save the selection (literal memory leak)
 		$this->results[] = ["copy", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(3));
 
 		//Task #4 - paste
 		$start = microtime(true);
-		$this->pasteBenchmark = new DynamicPasteTask($this->world, $res->getSelection(), $pos);
-		$res = $this->pasteBenchmark->executeInternal();
+		$res = (new DynamicPasteTask($this->world, $res->getSelection(), $pos))->executeInternal();
 		$this->results[] = ["paste", $res->getAffected(), microtime(true) - $start];
 
 		return new BenchmarkTaskResult($this->results);
@@ -83,11 +75,6 @@ class BenchmarkExecutor extends ExecutableTask
 	public function attemptRecovery(): BenchmarkTaskResult
 	{
 		return new BenchmarkTaskResult($this->results);
-	}
-
-	public function getProgress(): float
-	{
-		return ($this->setSimpleBenchmark->getProgress() + (isset($this->setComplexBenchmark) ? $this->setComplexBenchmark->getProgress() : 0) + (isset($this->copyBenchmark) ? $this->copyBenchmark->getProgress() : 0) + (isset($this->pasteBenchmark) ? $this->pasteBenchmark->getProgress() : 0)) / 4;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

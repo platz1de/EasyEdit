@@ -23,7 +23,6 @@ abstract class ExpandingTask extends ExecutableTask
 {
 	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
-	private float $progress = 0; //worst case scenario
 
 	/**
 	 * @param string      $world
@@ -79,12 +78,7 @@ abstract class ExpandingTask extends ExecutableTask
 
 	public function updateProgress(int $current, int $max): void
 	{
-		$this->progress = $current / $max;
-	}
-
-	public function getProgress(): float
-	{
-		return $this->progress; //Unknown
+		EditThread::getInstance()->getStats()->updateProgress($current / $max);
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
