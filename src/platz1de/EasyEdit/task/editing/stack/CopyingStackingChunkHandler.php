@@ -57,8 +57,8 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		$size = $this->selection->getSize();
 		//We are guaranteed to have a size bigger than one chunk (at least 8 actually)
 		if ($this->axis === Axis::X) {
-			$offsetMin = MixedUtils::positiveModulo(($x << 4) - $min->x, $size->y);
-			$offsetMax = MixedUtils::positiveModulo(($x << 4) - $min->x + 15, $size->y);
+			$offsetMin = MixedUtils::positiveModulo(($x << 4) - $min->x, $size->x);
+			$offsetMax = MixedUtils::positiveModulo(($x << 4) - $min->x + 15, $size->x);
 		} else {
 			$offsetMin = MixedUtils::positiveModulo(($z << 4) - $min->z, $size->z);
 			$offsetMax = MixedUtils::positiveModulo(($z << 4) - $min->z + 15, $size->z);
