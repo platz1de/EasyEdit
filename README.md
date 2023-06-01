@@ -4,17 +4,12 @@
 
 Feature-rich WorldEditor for PocketMine-MP
 
-# Note: This branch is already updated to PMMP 5
-
-If you are looking for the current api 4 version, please use the [api4 branch](https://github.com/platz1de/EasyEdit/tree/api4).
-There won't be any further releases till pmmp api 5 finally gets released.
-
 ## Features
 
 - large variety of commands
 - High performance:
     - async editing, allowing the server to run normally while editing in the background
-    - low memory consumption by splitting your actions into multiple smaller edits
+    - low memory consumption by splitting your actions into multiple smaller ones
 - flicker-free editing
 - support for unique Patterns
     - set blocks in effectively infinite ways
@@ -39,6 +34,7 @@ Selection:
 | //pos1 [x] [y] [z]                                | Set the first position                                       | easyedit.select | //1<br>left click a block in creative with a wooden axe                         |
 | //pos2 [x] [y] [z]                                | Set the first position                                       | easyedit.select | //2<br>break a block in creative with a wooden axe                              |
 | //extend [direction] [count]<br>//extend vertical | Extend the selected area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
+| //extend --min <x>,<y>,<z> --max <x>,<y>,<z>      | Extend the selected area                                     | easyedit.select | //expand<br>Look into the direction you want to extend to                       |
 | //set \<pattern>                                  | Set blocks in the selected area                              | easyedit.edit   |
 | //replace \<block> \<pattern>                     | Replace blocks in the selected area                          | easyedit.edit   |
 | //replace \<pattern>                              | Replace all solid blocks in the selected area                | easyedit.edit   |

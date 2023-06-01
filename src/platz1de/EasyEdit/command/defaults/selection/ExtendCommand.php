@@ -71,7 +71,7 @@ class ExtendCommand extends EasyEditCommand
 		}
 		if (!$flags->hasFlag("min") && !$flags->hasFlag("max")) {
 			$offset = ArgumentParser::parseDirectionVector($session, $args[0] ?? null, $args[1] ?? null, $count);
-			if ($count < 0 xor ($offset->x > 0 && $offset->y > 0 && $offset->z > 0)) {
+			if ($count < 0 xor ($offset->x >= 0 && $offset->y >= 0 && $offset->z >= 0)) {
 				yield VectorCommandFlag::with($offset, "max");
 			} else {
 				yield VectorCommandFlag::with($offset, "min");
