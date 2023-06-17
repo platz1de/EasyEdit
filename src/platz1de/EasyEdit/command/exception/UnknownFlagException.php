@@ -9,16 +9,16 @@ use UnexpectedValueException;
 
 class UnknownFlagException extends CommandException
 {
-	public function __construct(string $flag, private EasyEditCommand $command)
+	public function __construct(string $flag)
 	{
 		parent::__construct($flag);
 	}
 
-	public function sendWarning(Session $session): void
+	public function sendWarning(Session $session, EasyEditCommand $command): void
 	{
-		if ($this->command->getUsage() instanceof Translatable) {
+		if ($command->getUsage() instanceof Translatable) {
 			throw new UnexpectedValueException("EasyEdit commands should not use translatable usages");
 		}
-		$session->sendMessage("unknown-flag", ["{flag}" => $this->getMessage(), "{usage}" => $this->command->getUsage()]);
+		$session->sendMessage("unknown-flag", ["{flag}" => $this->getMessage(), "{usage}" => $command->getUsage()]);
 	}
 }

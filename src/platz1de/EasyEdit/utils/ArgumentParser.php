@@ -88,30 +88,4 @@ class ArgumentParser
 			default => VectorUtils::getFacing($session->asPlayer()->getLocation())
 		};
 	}
-
-	/**
-	 * @param string[]        $args
-	 * @param int             $count
-	 * @param EasyEditCommand $command
-	 */
-	public static function requireArgumentCount(array $args, int $count, EasyEditCommand $command): void
-	{
-		if (count($args) < $count) {
-			throw new InvalidUsageException($command);
-		}
-	}
-
-	/**
-	 * @param bool        $default
-	 * @param string|null $argument
-	 * @return bool
-	 */
-	public static function parseBool(bool $default, string $argument = null): bool
-	{
-		return match (strtolower($argument ?? "")) {
-			"true", "t", "yes", "y", "1", "+" => true,
-			"false", "f", "no", "n", "0", "-" => false,
-			default => $default
-		};
-	}
 }

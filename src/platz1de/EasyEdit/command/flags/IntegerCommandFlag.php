@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\session\Session;
 
@@ -12,15 +11,14 @@ use platz1de\EasyEdit\session\Session;
 class IntegerCommandFlag extends ValuedCommandFlag
 {
 	/**
-	 * @param EasyEditCommand $command
 	 * @param Session         $session
 	 * @param string          $argument
 	 * @return IntegerCommandFlag
 	 */
-	public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self
+	public function parseArgument(Session $session, string $argument): self
 	{
 		if (!is_numeric($argument)) {
-			throw new InvalidUsageException($command);
+			throw new InvalidUsageException();
 		}
 		$this->setArgument((int) $argument);
 		return $this;

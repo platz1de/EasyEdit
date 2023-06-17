@@ -14,7 +14,7 @@ use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 
-abstract class EasyEditCommand extends Command implements PluginOwned
+abstract class EasyEditCommand extends Command implements PluginOwned, CommandExecutor
 {
 	/**
 	 * @param string   $name
@@ -47,24 +47,12 @@ abstract class EasyEditCommand extends Command implements PluginOwned
 	}
 
 	/**
-	 * @param Session               $session
-	 * @param CommandFlagCollection $flags
+	 * @param string[] $args
 	 */
-	abstract public function process(Session $session, CommandFlagCollection $flags): void;
-
-	/**
-	 * @param Session $session
-	 * @return CommandFlag[]
-	 */
-	abstract public function getKnownFlags(Session $session): array;
-
-	/**
-	 * @param CommandFlagCollection $flags
-	 * @param Session               $session
-	 * @param string[]              $args
-	 * @return Generator<CommandFlag>
-	 */
-	abstract public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator;
+	public function getExecutor(array &$args): CommandExecutor
+	{
+		return $this;
+	}
 
 	/**
 	 * @return EasyEdit

@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\CommandExecutor;
 use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\command\exception\UnknownFlagException;
 use platz1de\EasyEdit\session\Session;
@@ -10,12 +10,12 @@ use platz1de\EasyEdit\session\Session;
 class CommandFlagParser
 {
 	/**
-	 * @param EasyEditCommand $command
+	 * @param CommandExecutor $command
 	 * @param string[]        $args
 	 * @param Session         $session
 	 * @return CommandFlagCollection
 	 */
-	public static function parseFlags(EasyEditCommand $command, array $args, Session $session): CommandFlagCollection
+	public static function parseFlags(CommandExecutor $command, array $args, Session $session): CommandFlagCollection
 	{
 		$known = $command->getKnownFlags($session);
 		$ids = [];
@@ -36,34 +36,34 @@ class CommandFlagParser
 					continue; //Negative numbers are not flags
 				}
 				if ($skip) {
-					throw new InvalidUsageException($command);
+					throw new InvalidUsageException();
 				}
 				if (str_starts_with($arg, "--")) {
 					$name = strtolower(substr($arg, 2));
 					if (!isset($known[$name])) {
-						throw new UnknownFlagException(substr($arg, 2), $command);
+						throw new UnknownFlagException(substr($arg, 2));
 					}
 					$flag = $known[$name];
-					if (self::checkFlagArgument($flag, $args, $i, $command)) {
-						$flag->parseArgument($command, $session, $args[$i + 1]);
+					if (self::checkFlagArgument($flag, $args, $i)) {
+						$flag->parseArgument($session, $args[$i + 1]);
 						$skip = true;
 					}
 					$flags->addFlag($flag);
 				} else {
 					if ($arg === "-") {
-						throw new UnknownFlagException("", $command);
+						throw new UnknownFlagException("");
 					}
 					$list = str_split(strtolower(substr($arg, 1)));
 					foreach ($list as $key => $f) {
 						if (!isset($ids[$f])) {
-							throw new UnknownFlagException(substr($arg, 2), $command);
+							throw new UnknownFlagException(substr($arg, 2));
 						}
 						$flag = $ids[$f];
-						if (self::checkFlagArgument($flag, $args, $i, $command)) {
+						if (self::checkFlagArgument($flag, $args, $i)) {
 							if ($key !== array_key_last($list)) {
-								throw new InvalidUsageException($command);
+								throw new InvalidUsageException();
 							}
-							$flag->parseArgument($command, $session, $args[$i + 1]);
+							$flag->parseArgument($session, $args[$i + 1]);
 							$skip = true;
 						}
 						$flags->addFlag($flag);
@@ -85,17 +85,16 @@ class CommandFlagParser
 	 * @param CommandFlag     $flag
 	 * @param string[]        $args
 	 * @param int             $i
-	 * @param EasyEditCommand $command
 	 * @return bool
 	 */
-	private static function checkFlagArgument(CommandFlag $flag, array $args, int $i, EasyEditCommand $command): bool
+	private static function checkFlagArgument(CommandFlag $flag, array $args, int $i): bool
 	{
 		if ($flag->needsArgument()) {
 			if (isset($args[$i + 1])) {
 				return true;
 			}
 
-			throw new InvalidUsageException($command);
+			throw new InvalidUsageException();
 		}
 
 		return false;

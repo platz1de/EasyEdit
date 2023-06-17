@@ -2,19 +2,23 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\FloatCommandFlag;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\Session;
 
-abstract class SphericalSelectionCommand extends SimpleFlagArgumentCommand
+abstract class SphericalSelectionCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	public function __construct(string $name, array $permissions, array $aliases = [])
 	{
-		parent::__construct($name, ["radius" => false], $permissions, $aliases);
+		parent::__construct($name, $permissions, $aliases);
+		$this->flagOrder = ["radius" => false];
 	}
 
 	public function getKnownFlags(Session $session): array

@@ -2,19 +2,23 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\SetTask;
 
-class SetCommand extends SimpleFlagArgumentCommand
+class SetCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	public function __construct()
 	{
-		parent::__construct("/set", ["pattern" => true], [KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/set", [KnownPermissions::PERMISSION_EDIT]);
+		$this->flagOrder = ["pattern" => true];
 	}
 
 	/**

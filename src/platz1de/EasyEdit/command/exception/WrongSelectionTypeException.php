@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\command\exception;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\session\Session;
 
 class WrongSelectionTypeException extends CommandException
@@ -11,7 +12,7 @@ class WrongSelectionTypeException extends CommandException
 		parent::__construct("Wrong selection type " . $given . " given, expected " . $expected);
 	}
 
-	public function sendWarning(Session $session): void
+	public function sendWarning(Session $session, EasyEditCommand $command): void
 	{
 		$session->sendMessage("wrong-selection", ["{given}" => $this->given, "{expected}" => $this->expected]);
 	}

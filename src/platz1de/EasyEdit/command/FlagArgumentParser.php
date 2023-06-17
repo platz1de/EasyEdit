@@ -9,18 +9,16 @@ use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\ValuedCommandFlag;
 use platz1de\EasyEdit\session\Session;
 
-abstract class SimpleFlagArgumentCommand extends EasyEditCommand
+trait FlagArgumentParser
 {
+	/** @var array<string, bool> */
+	private array $flagOrder = [];
+
 	/**
-	 * @param string   $name
-	 * @param bool[]   $flagOrder
-	 * @param string[] $permissions
-	 * @param string[] $aliases
+	 * @param Session $session
+	 * @return CommandFlag[]
 	 */
-	public function __construct(string $name, private array $flagOrder, array $permissions, array $aliases = [])
-	{
-		parent::__construct($name, $permissions, $aliases);
-	}
+	abstract public function getKnownFlags(Session $session): array;
 
 	/**
 	 * @param CommandFlagCollection $flags
@@ -34,10 +32,10 @@ abstract class SimpleFlagArgumentCommand extends EasyEditCommand
 		$i = 0;
 		foreach ($this->flagOrder as $flag => $needed) {
 			if (!$flags->hasFlag($flag)) {
-				if (isset($args[$i])) {
-					yield $known[$flag]->parseArgument($this, $session, $args[$i]);
+				if (isset($args[$i]) && $known[$flag]->fits($args[$i])) {
+					yield $known[$flag]->needsArgument() ? $known[$flag]->parseArgument($session, $args[$i]) : $known[$flag];
 				} elseif ($needed) {
-					throw new InvalidUsageException($this);
+					throw new InvalidUsageException();
 				}
 			}
 			$i++;

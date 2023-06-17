@@ -3,22 +3,26 @@
 namespace platz1de\EasyEdit\command\defaults\utility;
 
 use platz1de\EasyEdit\command\CommandManager;
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\lang\Translatable;
 use UnexpectedValueException;
 
-class HelpCommand extends SimpleFlagArgumentCommand
+class HelpCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	private const COMMANDS_PER_PAGE = 8;
 
 	public function __construct()
 	{
-		parent::__construct("/commands", ["page" => false], [KnownPermissions::PERMISSION_INFO], ["/h", "/cmd"]);
+		parent::__construct("/commands", [KnownPermissions::PERMISSION_INFO], ["/h", "/cmd"]);
+		$this->flagOrder = ["page" => false];
 	}
 
 	/**

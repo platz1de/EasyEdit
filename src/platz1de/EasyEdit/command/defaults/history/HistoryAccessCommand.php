@@ -41,7 +41,7 @@ class HistoryAccessCommand extends EasyEditCommand
 	{
 		if (ConfigManager::isAllowingOtherHistory() && $session->asPlayer()->hasPermission(KnownPermissions::PERMISSION_HISTORY_OTHER)) {
 			if (isset($args[0]) && !is_numeric($args[0])) {
-				yield $this->getKnownFlags($session)["target"]->parseArgument($this, $session, $args[0]);
+				yield $this->getKnownFlags($session)["target"]->parseArgument($session, $args[0]);
 				array_shift($args);
 			} else {
 				yield SessionCommandFlag::with($session, "target");
@@ -53,7 +53,7 @@ class HistoryAccessCommand extends EasyEditCommand
 			yield SessionCommandFlag::with($session, "target");
 		}
 		if (!$flags->hasFlag("count")) {
-			yield $this->getKnownFlags($session)["count"]->parseArgument($this, $session, $args[0] ?? "1");
+			yield $this->getKnownFlags($session)["count"]->parseArgument($session, $args[0] ?? "1");
 		}
 	}
 

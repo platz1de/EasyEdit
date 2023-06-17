@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\exception;
 
 use InvalidArgumentException;
+use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\session\Session;
 
 /**
@@ -10,5 +11,5 @@ use platz1de\EasyEdit\session\Session;
  */
 abstract class CommandException extends InvalidArgumentException
 {
-	public function sendWarning(Session $session): void { }
+	public function sendWarning(Session $session, EasyEditCommand $command): void { }
 }

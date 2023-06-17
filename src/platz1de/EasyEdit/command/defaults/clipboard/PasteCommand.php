@@ -2,21 +2,24 @@
 
 namespace platz1de\EasyEdit\command\defaults\clipboard;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\DynamicStoredPasteTask;
 use platz1de\EasyEdit\task\editing\DynamicPasteTask;
 
-class PasteCommand extends SimpleFlagArgumentCommand
+class PasteCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	public function __construct()
 	{
-		parent::__construct("/paste", [], [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/paste", [KnownPermissions::PERMISSION_CLIPBOARD, KnownPermissions::PERMISSION_EDIT]);
 	}
 
 	/**

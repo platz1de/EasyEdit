@@ -2,20 +2,24 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\world\Position;
 
-class FirstPositionCommand extends SimpleFlagArgumentCommand
+class FirstPositionCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	public function __construct()
 	{
-		parent::__construct("/pos1", ["x" => false, "y" => false, "z" => false], [KnownPermissions::PERMISSION_SELECT], ["/1"]);
+		parent::__construct("/pos1", [KnownPermissions::PERMISSION_SELECT], ["/1"]);
+		$this->flagOrder = ["x" => false, "y" => false, "z" => false];
 	}
 
 	/**

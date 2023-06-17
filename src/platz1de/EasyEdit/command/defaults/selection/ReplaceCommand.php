@@ -40,11 +40,11 @@ class ReplaceCommand extends AliasedPatternCommand
 	public function parseArguments(CommandFlagCollection $flags, Session $session, array $args): Generator
 	{
 		if (count($args) >= 2) {
-			yield (new BlockCommandFlag("block"))->parseArgument($this, $session, $args[0]);
+			yield (new BlockCommandFlag("block"))->parseArgument($session, $args[0]);
 			array_shift($args);
 		} else {
 			yield BlockCommandFlag::with(new MaskedBlockGroup(HeightMapCache::getIgnore()), "block");
 		}
-		yield (new PatternCommandFlag("pattern"))->parseArgument($this, $session, $args[0]);
+		yield (new PatternCommandFlag("pattern"))->parseArgument($session, $args[0]);
 	}
 }

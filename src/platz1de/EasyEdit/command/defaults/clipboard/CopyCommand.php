@@ -2,12 +2,13 @@
 
 namespace platz1de\EasyEdit\command\defaults\clipboard;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\flags\VectorCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\result\CuttingTaskResult;
 use platz1de\EasyEdit\result\EditTaskResult;
@@ -17,11 +18,13 @@ use platz1de\EasyEdit\task\editing\CutTask;
 use platz1de\EasyEdit\utils\MixedUtils;
 use RuntimeException;
 
-class CopyCommand extends SimpleFlagArgumentCommand
+class CopyCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	public function __construct()
 	{
-		parent::__construct("/copy", [], [KnownPermissions::PERMISSION_CLIPBOARD]);
+		parent::__construct("/copy", [KnownPermissions::PERMISSION_CLIPBOARD]);
 	}
 
 	/**

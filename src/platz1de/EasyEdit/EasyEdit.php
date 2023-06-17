@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit;
 
 use platz1de\EasyEdit\command\CommandManager;
+use platz1de\EasyEdit\command\defaults\brush\BrushCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\CopyCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\FlipCommand;
 use platz1de\EasyEdit\command\defaults\clipboard\LoadSchematicCommand;
@@ -33,7 +34,6 @@ use platz1de\EasyEdit\command\defaults\selection\StackCommand;
 use platz1de\EasyEdit\command\defaults\selection\ViewCommand;
 use platz1de\EasyEdit\command\defaults\utility\BenchmarkCommand;
 use platz1de\EasyEdit\command\defaults\utility\BlockInfoCommand;
-use platz1de\EasyEdit\command\defaults\utility\BrushCommand;
 use platz1de\EasyEdit\command\defaults\utility\BuilderRodCommand;
 use platz1de\EasyEdit\command\defaults\utility\CancelCommand;
 use platz1de\EasyEdit\command\defaults\utility\DrainCommand;

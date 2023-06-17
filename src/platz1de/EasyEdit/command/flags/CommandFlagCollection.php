@@ -37,7 +37,7 @@ class CommandFlagCollection
 	public function getStringFlag(string $name): string
 	{
 		$flag = $this->flags[$name];
-		if (!$flag instanceof StringCommandFlag) {
+		if (!$flag instanceof StringCommandFlag && !$flag instanceof StringyPatternCommandFlag) {
 			throw new UnexpectedValueException("Flag is of wrong type " . get_class($flag) . ", expected String");
 		}
 		return $flag->getArgument();

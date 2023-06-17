@@ -2,20 +2,24 @@
 
 namespace platz1de\EasyEdit\command\defaults\movement;
 
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\block\Air;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\World;
 
-class UpCommand extends SimpleFlagArgumentCommand
+class UpCommand extends EasyEditCommand
 {
+	use FlagArgumentParser;
+
 	public function __construct()
 	{
-		parent::__construct("/up", ["amount" => false], [KnownPermissions::PERMISSION_UTIL, KnownPermissions::PERMISSION_EDIT]);
+		parent::__construct("/up", [KnownPermissions::PERMISSION_UTIL, KnownPermissions::PERMISSION_EDIT]);
+		$this->flagOrder = ["amount" => false];
 	}
 
 	/**

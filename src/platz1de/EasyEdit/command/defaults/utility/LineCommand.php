@@ -4,13 +4,14 @@ namespace platz1de\EasyEdit\command\defaults\utility;
 
 use Generator;
 use InvalidArgumentException;
+use platz1de\EasyEdit\command\EasyEditCommand;
+use platz1de\EasyEdit\command\FlagArgumentParser;
 use platz1de\EasyEdit\command\flags\BlockCommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\StringCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\command\SimpleFlagArgumentCommand;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\pattern\block\StaticBlock;
 use platz1de\EasyEdit\selection\LinearSelection;
@@ -21,15 +22,20 @@ use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
 
-class LineCommand extends SimpleFlagArgumentCommand
+class LineCommand extends EasyEditCommand
 {
+	use FlagArgumentParser {
+		parseArguments as private parseArgumentsDefault;
+	}
+
 	private const MODE_LINE = 0;
 	private const MODE_PATH = 1;
 	private const MODE_SOLID_PATH = 2;
 
 	public function __construct()
 	{
-		parent::__construct("/line", ["x" => true, "y" => true, "z" => true, "block" => false], [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE]);
+		parent::__construct("/line", [KnownPermissions::PERMISSION_EDIT, KnownPermissions::PERMISSION_GENERATE]);
+		$this->flagOrder = ["x" => true, "y" => true, "z" => true, "block" => false];
 	}
 
 	/**
@@ -92,6 +98,6 @@ class LineCommand extends SimpleFlagArgumentCommand
 		} else if (!$flags->hasFlag("mode")) {
 			yield IntegerCommandFlag::with(self::MODE_LINE, "mode");
 		}
-		yield from parent::parseArguments($flags, $session, $args);
+		yield from $this->parseArgumentsDefault($flags, $session, $args);
 	}
 }

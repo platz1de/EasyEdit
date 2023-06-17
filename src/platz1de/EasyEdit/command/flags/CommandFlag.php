@@ -2,7 +2,6 @@
 
 namespace platz1de\EasyEdit\command\flags;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\session\Session;
 
 abstract class CommandFlag
@@ -39,5 +38,10 @@ abstract class CommandFlag
 
 	abstract public function needsArgument(): bool;
 
-	abstract public function parseArgument(EasyEditCommand $command, Session $session, string $argument): self;
+	abstract public function parseArgument(Session $session, string $argument): self;
+
+	public function fits(string $argument): bool
+	{
+		return true;
+	}
 }
