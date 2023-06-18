@@ -8,8 +8,6 @@ use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
-use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
 use platz1de\EasyEdit\utils\VectorUtils;
@@ -23,11 +21,10 @@ class StaticPasteTask extends SelectionEditTask
 
 	/**
 	 * @param BlockListSelectionIdentifier $selection
-	 * @param SelectionContext|null        $context
 	 */
-	public function __construct(BlockListSelectionIdentifier $selection, ?SelectionContext $context = null)
+	public function __construct(BlockListSelectionIdentifier $selection)
 	{
-		parent::__construct($selection, $context);
+		parent::__construct($selection);
 	}
 
 	/**
