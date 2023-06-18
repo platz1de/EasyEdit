@@ -10,7 +10,7 @@ use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\selection\Cylinder;
 use platz1de\EasyEdit\selection\Sphere;
 use platz1de\EasyEdit\session\SessionManager;
-use platz1de\EasyEdit\task\DynamicStoredPasteTask;
+use platz1de\EasyEdit\task\editing\DynamicPasteTask;
 use platz1de\EasyEdit\task\editing\SetTask;
 use platz1de\EasyEdit\task\editing\smooth\SmoothTask;
 use pocketmine\block\BlockTypeIds;
@@ -63,7 +63,7 @@ class BrushHandler
 							$session->sendMessage("no-clipboard");
 							return;
 						}
-						$session->runSettingTask(new DynamicStoredPasteTask($clipboard, $world, $point->up(), $brush->getByte("isInsert", 0)));
+						$session->runSettingTask(new DynamicPasteTask($world, $clipboard, $point->up(), $brush->getByte("isInsert", 0)));
 				}
 			} catch (ParseError $e) {
 				$session->sendMessage("pattern-invalid", ["{message}" => $e->getMessage()]);

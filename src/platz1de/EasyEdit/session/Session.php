@@ -15,8 +15,8 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\task\editing\StaticPasteTask;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\task\StaticStoredPasteTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
 use platz1de\EasyEdit\utils\MessageComponent;
 use platz1de\EasyEdit\utils\MessageCompound;
@@ -168,7 +168,7 @@ class Session
 	public function undoStep(Session $executor): void
 	{
 		if ($this->canUndo()) {
-			$executor->runTask(new StaticStoredPasteTask($this->past->shift()->markForDeletion(), false))->then(function (EditTaskResult $result) {
+			$executor->runTask(new StaticPasteTask($this->past->shift()->markForDeletion()))->then(function (EditTaskResult $result) {
 				$this->sendMessage("blocks-pasted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 				$this->addToFuture($result->getSelection());
 			});
@@ -181,7 +181,7 @@ class Session
 	public function redoStep(Session $executor): void
 	{
 		if ($this->canRedo()) {
-			$executor->runEditTask("blocks-pasted", new StaticStoredPasteTask($this->future->shift()->markForDeletion(), false));
+			$executor->runEditTask("blocks-pasted", new StaticPasteTask($this->future->shift()->markForDeletion()));
 		}
 	}
 

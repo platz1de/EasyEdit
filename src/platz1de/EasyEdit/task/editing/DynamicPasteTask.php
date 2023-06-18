@@ -10,7 +10,6 @@ use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -24,16 +23,16 @@ class DynamicPasteTask extends SelectionEditTask
 	public const MODE_ONLY_SOLID = 2; //Only paste solid blocks
 	public const MODE_REPLACE_SOLID = 3; //Replace solid blocks with solid blocks from the selection
 
+	private DynamicBlockListSelection $cache;
+
 	/**
 	 * @param string                       $world
 	 * @param BlockListSelectionIdentifier $selection
 	 * @param OffGridBlockVector           $position
 	 * @param int                          $mode
 	 */
-	public function __construct(private string $world, BlockListSelectionIdentifier $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
+	public function __construct(private string $world, BlockListSelectionIdentifier $selection, private OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
-		$selection = StorageModule::mustGetDynamic($selection);
-		$selection->setPoint($position->offset($selection->getPoint())->diff(OffGridBlockVector::zero()));
 		parent::__construct($selection);
 	}
 
@@ -50,11 +49,15 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function getSelection(): DynamicBlockListSelection
 	{
-		$sel = parent::getSelection();
-		if (!$sel instanceof DynamicBlockListSelection) {
-			throw new InvalidArgumentException("Selection must be a dynamic block list");
+		if (!isset($this->cache)) {
+			$sel = parent::getSelection();
+			if (!$sel instanceof DynamicBlockListSelection) {
+				throw new InvalidArgumentException("Selection must be a dynamic block list");
+			}
+			$sel->setPoint($this->position->offset($sel->getPoint())->diff(OffGridBlockVector::zero()));
+			$this->cache = $sel;
 		}
-		return $sel;
+		return $this->cache;
 	}
 
 	/**
@@ -130,6 +133,7 @@ class DynamicPasteTask extends SelectionEditTask
 		parent::putData($stream);
 		$stream->putInt($this->mode);
 		$stream->putString($this->world);
+		$stream->putBlockVector($this->position);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -137,5 +141,6 @@ class DynamicPasteTask extends SelectionEditTask
 		parent::parseData($stream);
 		$this->mode = $stream->getInt();
 		$this->world = $stream->getString();
+		$this->position = $stream->getOffGridBlockVector();
 	}
 }
