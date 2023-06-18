@@ -6,6 +6,8 @@ use Generator;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\SelectionSerializer;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\CancelException;
@@ -33,10 +35,10 @@ abstract class SelectionEditTask extends ExecutableTask
 	private array $constructors;
 
 	/**
-	 * @param Selection             $selection
+	 * @param SelectionIdentifier   $selection
 	 * @param SelectionContext|null $context
 	 */
-	public function __construct(protected Selection $selection, ?SelectionContext $context = null)
+	public function __construct(private SelectionIdentifier $selection, ?SelectionContext $context = null)
 	{
 		$this->context = $context ?? SelectionContext::full();
 		parent::__construct();
@@ -50,10 +52,10 @@ abstract class SelectionEditTask extends ExecutableTask
 	{
 		$handler = $this->getChunkHandler();
 		ChunkRequestManager::setHandler($handler);
-		$chunks = $this->sortChunks($this->selection->getNeededChunks());
+		$chunks = $this->sortChunks($this->getSelection()->getNeededChunks());
 		$this->totalChunks = count($chunks);
 		$this->chunksLeft = count($chunks);
-		$fastSet = $this->selection->getSize()->volume() < ConfigManager::getFastSetMax();
+		$fastSet = $this->getSelection()->getSize()->volume() < ConfigManager::getFastSetMax();
 		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->getTargetWorld(), $this->undo, $fastSet);
 		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
@@ -144,13 +146,13 @@ abstract class SelectionEditTask extends ExecutableTask
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		$stream->putString($this->selection->fastSerialize());
+		$stream->putString(SelectionSerializer::fastSerialize($this->selection));
 		$stream->putString($this->context->fastSerialize());
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		$this->selection = Selection::fastDeserialize($stream->getString());
+		$this->selection = SelectionSerializer::fastDeserialize($stream->getString());
 		$this->context = SelectionContext::fastDeserialize($stream->getString());
 	}
 
@@ -159,7 +161,7 @@ abstract class SelectionEditTask extends ExecutableTask
 	 */
 	public function getSelection(): Selection
 	{
-		return $this->selection;
+		return $this->selection->asSelection();
 	}
 
 	/**
@@ -175,6 +177,6 @@ abstract class SelectionEditTask extends ExecutableTask
 	 */
 	public function getTargetWorld(): string
 	{
-		return $this->selection->getWorldName();
+		return $this->selection->asSelection()->getWorldName();
 	}
 }

@@ -3,14 +3,15 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
+use InvalidArgumentException;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
-use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\world\World;
 
@@ -21,16 +22,12 @@ class StaticPasteTask extends SelectionEditTask
 	}
 
 	/**
-	 * @phpstan-var StaticBlockListSelection|BinaryBlockListStream
+	 * @param BlockListSelectionIdentifier $selection
+	 * @param SelectionContext|null        $context
 	 */
-	protected Selection $selection;
-
-	/**
-	 * @param SelectionIdentifier $selection
-	 */
-	public function __construct(SelectionIdentifier $selection)
+	public function __construct(BlockListSelectionIdentifier $selection, ?SelectionContext $context = null)
 	{
-		parent::__construct(StorageModule::mustGetStatic($selection));
+		parent::__construct($selection, $context);
 	}
 
 	/**
@@ -42,6 +39,18 @@ class StaticPasteTask extends SelectionEditTask
 	}
 
 	/**
+	 * @return StaticBlockListSelection|BinaryBlockListStream
+	 */
+	public function getSelection(): StaticBlockListSelection|BinaryBlockListStream
+	{
+		$sel = parent::getSelection();
+		if (!$sel instanceof StaticBlockListSelection && !$sel instanceof BinaryBlockListStream) {
+			throw new InvalidArgumentException("Selection must be a static block list");
+		}
+		return $sel;
+	}
+
+	/**
 	 * @param EditTaskHandler $handler
 	 * @param int             $chunk
 	 */
@@ -50,7 +59,7 @@ class StaticPasteTask extends SelectionEditTask
 		parent::executeEdit($handler, $chunk);
 		$min = VectorUtils::getChunkPosition($chunk);
 		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		foreach ($this->selection->getTiles($min, $max) as $tile) {
+		foreach ($this->getSelection()->getTiles($min, $max) as $tile) {
 			$handler->addTile($tile);
 		}
 	}
@@ -61,10 +70,10 @@ class StaticPasteTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$selection = $this->selection;
+		$selection = $this->getSelection();
 		if ($selection instanceof BinaryBlockListStream) {
 			//WARNING: This isn't the default closure style
-			yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
+			yield from $selection->asShapeConstructors(function (int $x, int $y, int $z, int $block) use ($handler): void {
 				$handler->changeBlock($x, $y, $z, $block);
 			}, $this->context);
 		} else {
@@ -79,6 +88,6 @@ class StaticPasteTask extends SelectionEditTask
 
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return $this->selection instanceof BinaryBlockListStream ? new BinaryBlockListStream($this->getTargetWorld()) : $this->getDefaultBlockList();
+		return $this->getSelection() instanceof BinaryBlockListStream ? new BinaryBlockListStream($this->getTargetWorld()) : $this->getDefaultBlockList();
 	}
 }

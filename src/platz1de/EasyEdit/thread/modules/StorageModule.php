@@ -5,7 +5,7 @@ namespace platz1de\EasyEdit\thread\modules;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
-use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
@@ -62,10 +62,10 @@ class StorageModule
 	}
 
 	/**
-	 * @param SelectionIdentifier $id
+	 * @param BlockListSelectionIdentifier $id
 	 * @return StaticBlockListSelection|BinaryBlockListStream
 	 */
-	public static function mustGetStatic(SelectionIdentifier $id): StaticBlockListSelection|BinaryBlockListStream
+	public static function mustGetStatic(BlockListSelectionIdentifier $id): StaticBlockListSelection|BinaryBlockListStream
 	{
 		if (!$id instanceof StoredSelectionIdentifier) {
 			if ($id instanceof StaticBlockListSelection || $id instanceof BinaryBlockListStream) {
@@ -81,10 +81,10 @@ class StorageModule
 	}
 
 	/**
-	 * @param SelectionIdentifier $id
+	 * @param BlockListSelectionIdentifier $id
 	 * @return DynamicBlockListSelection
 	 */
-	public static function mustGetDynamic(SelectionIdentifier $id): DynamicBlockListSelection
+	public static function mustGetDynamic(BlockListSelectionIdentifier $id): DynamicBlockListSelection
 	{
 		if (!$id instanceof StoredSelectionIdentifier) {
 			if ($id instanceof DynamicBlockListSelection) {

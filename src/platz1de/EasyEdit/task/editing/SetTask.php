@@ -56,7 +56,7 @@ class SetTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$selection = $this->selection;
+		$selection = $this->getSelection();
 		$pattern = $this->pattern;
 		$updateHeightMap = $pattern->contains(GravityPattern::class);
 		yield from $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($updateHeightMap, $pattern, $selection, $handler): void {
@@ -75,7 +75,7 @@ class SetTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		if ($this->selection instanceof LinearSelection) {
+		if ($this->getSelection() instanceof LinearSelection) {
 			return new BinaryBlockListStream($this->getTargetWorld());
 		}
 		if ($this->pattern->contains(GravityPattern::class)) {

@@ -40,7 +40,7 @@ class SmoothTask extends SelectionEditTask
 		$map = [];
 		$reference = [];
 		$air = VanillaBlocks::AIR()->getStateId();
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($air, &$currentX, &$currentZ, &$map, &$reference, $handler): void {
+		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($air, &$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;
@@ -167,7 +167,7 @@ class SmoothTask extends SelectionEditTask
 		if ($chunk === -1) {
 			return;
 		}
-		HeightMapCache::loadBetween($handler->getOrigin(), $this->selection->getPos1(), $this->selection->getPos2());
+		HeightMapCache::loadBetween($handler->getOrigin(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 		foreach ($handler->getOrigin()->getManager()->getChunks() as $c => $_) {
 			parent::executeEdit($handler, $c);
 		}

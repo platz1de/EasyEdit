@@ -7,11 +7,12 @@ use Generator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\ReferencedWorldHolder;
 use pocketmine\math\Axis;
 
-abstract class Selection
+abstract class Selection implements SelectionIdentifier
 {
 	use ReferencedWorldHolder;
 
@@ -145,6 +146,11 @@ abstract class Selection
 		$this->pos2 = clone($this->selected2 = $pos2);
 
 		$this->update();
+	}
+
+	public function asSelection(): Selection
+	{
+		return $this;
 	}
 
 	/**

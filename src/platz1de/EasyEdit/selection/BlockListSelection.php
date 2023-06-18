@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\selection;
 
 use Generator;
 use platz1de\EasyEdit\math\BlockVector;
-use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -12,7 +12,7 @@ use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
 
-abstract class BlockListSelection extends Selection implements SelectionIdentifier
+abstract class BlockListSelection extends Selection implements BlockListSelectionIdentifier
 {
 	/**
 	 * @var CompoundTag[]

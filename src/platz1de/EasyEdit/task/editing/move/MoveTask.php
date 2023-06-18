@@ -46,10 +46,10 @@ class MoveTask extends SelectionEditTask
 		$dz = $this->direction->z;
 		//TODO: change order of iteration to optimize performance
 		$air = VanillaBlocks::AIR()->getStateId();
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $air): void {
+		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $air): void {
 			$handler->changeBlock($x, $y, $z, $air); //Make sure we don't overwrite anything
 		}, $this->context);
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $dx, $dy, $dz): void {
+		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($handler, $dx, $dy, $dz): void {
 			$handler->copyBlock($x + $dx, $y + $dy, $z + $dz, $x, $y, $z, false);
 		}, $this->context);
 	}
@@ -78,7 +78,7 @@ class MoveTask extends SelectionEditTask
 
 	public function getChunkHandler(): GroupedChunkHandler
 	{
-		return new MovingChunkHandler($this->getTargetWorld(), $this->selection, $this->direction);
+		return new MovingChunkHandler($this->getTargetWorld(), $this->getSelection(), $this->direction);
 	}
 
 	/**

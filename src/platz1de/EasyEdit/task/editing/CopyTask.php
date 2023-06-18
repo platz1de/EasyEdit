@@ -31,7 +31,7 @@ class CopyTask extends SelectionEditTask
 
 	public function executeInternal(): EditTaskResult
 	{
-		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
+		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 		return parent::executeInternal();
 	}
 
@@ -66,7 +66,7 @@ class CopyTask extends SelectionEditTask
 		$ox = $result->getWorldOffset()->x;
 		$oy = $result->getWorldOffset()->y;
 		$oz = $result->getWorldOffset()->z;
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
+		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $handler, $result): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
 		}, $this->context);

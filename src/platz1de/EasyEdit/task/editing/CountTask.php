@@ -43,7 +43,7 @@ class CountTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
+		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($handler): void {
 			$id = $handler->getBlock($x, $y, $z);
 			if (isset($this->counted[$id])) {
 				$this->counted[$id]++;

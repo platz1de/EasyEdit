@@ -2,7 +2,7 @@
 
 namespace platz1de\EasyEdit\result;
 
-use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
@@ -10,9 +10,9 @@ class EditTaskResult extends TaskResult
 {
 	/**
 	 * @param int                 $affected
-	 * @param SelectionIdentifier $selection Might be invalid, can be history or clipboard depending on the task
+	 * @param BlockListSelectionIdentifier $selection Might be invalid, can be history or clipboard depending on the task
 	 */
-	public function __construct(private int $affected, private SelectionIdentifier $selection) {}
+	public function __construct(private int $affected, private BlockListSelectionIdentifier $selection) {}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
@@ -45,9 +45,9 @@ class EditTaskResult extends TaskResult
 	}
 
 	/**
-	 * @return SelectionIdentifier
+	 * @return BlockListSelectionIdentifier
 	 */
-	public function getSelection(): SelectionIdentifier
+	public function getSelection(): BlockListSelectionIdentifier
 	{
 		return $this->selection;
 	}

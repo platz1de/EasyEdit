@@ -49,7 +49,7 @@ class Noise3DTask extends SelectionEditTask
 		if (!isset($this->noise)) {
 			$this->noise = new Simplex(new Random(time()), $this->octaves, $this->persistence, $this->expansion);
 		}
-		$selection = $this->selection;
+		$selection = $this->getSelection();
 		$size = $selection->getSize();
 		$noise = $this->noise->getFastNoise3D($size->x - 1, $size->y - 1, $size->z - 1, 1, 1, 1, $selection->getPos1()->x, $selection->getPos1()->y, $selection->getPos1()->z);
 		$stone = VanillaBlocks::STONE()->getStateId();

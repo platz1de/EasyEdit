@@ -8,8 +8,7 @@ use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
-use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
-use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -26,17 +25,12 @@ class DynamicPasteTask extends SelectionEditTask
 	public const MODE_REPLACE_SOLID = 3; //Replace solid blocks with solid blocks from the selection
 
 	/**
-	 * @var DynamicBlockListSelection
+	 * @param string                       $world
+	 * @param BlockListSelectionIdentifier $selection
+	 * @param OffGridBlockVector           $position
+	 * @param int                          $mode
 	 */
-	protected Selection $selection;
-
-	/**
-	 * @param string              $world
-	 * @param SelectionIdentifier $selection
-	 * @param OffGridBlockVector  $position
-	 * @param int                 $mode
-	 */
-	public function __construct(private string $world, SelectionIdentifier $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
+	public function __construct(private string $world, BlockListSelectionIdentifier $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
 		$selection = StorageModule::mustGetDynamic($selection);
 		$selection->setPoint($position->offset($selection->getPoint())->diff(OffGridBlockVector::zero()));
@@ -52,6 +46,18 @@ class DynamicPasteTask extends SelectionEditTask
 	}
 
 	/**
+	 * @return DynamicBlockListSelection
+	 */
+	public function getSelection(): DynamicBlockListSelection
+	{
+		$sel = parent::getSelection();
+		if (!$sel instanceof DynamicBlockListSelection) {
+			throw new InvalidArgumentException("Selection must be a dynamic block list");
+		}
+		return $sel;
+	}
+
+	/**
 	 * @param EditTaskHandler $handler
 	 * @param int             $chunk
 	 */
@@ -59,8 +65,8 @@ class DynamicPasteTask extends SelectionEditTask
 	{
 		parent::executeEdit($handler, $chunk);
 
-		$place = $this->selection->getPoint();
-		foreach ($this->selection->getOffsetTiles($chunk) as $tile) {
+		$place = $this->getSelection()->getPoint();
+		foreach ($this->getSelection()->getOffsetTiles($chunk) as $tile) {
 			$handler->addTile(TileUtils::offsetCompound($tile, $place->x, $place->y, $place->z));
 		}
 	}
@@ -71,7 +77,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$selection = $this->selection;
+		$selection = $this->getSelection();
 		$place = $selection->getPoint();
 		$ox = $place->x;
 		$oy = $place->y;
@@ -111,7 +117,7 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getTargetWorld(), $this->selection->getPos1()->offset($this->selection->getPoint()), $this->selection->getPos2()->offset($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getTargetWorld(), $this->getSelection()->getPos1()->offset($this->getSelection()->getPoint()), $this->getSelection()->getPos2()->offset($this->getSelection()->getPoint()));
 	}
 
 	public function getTargetWorld(): string

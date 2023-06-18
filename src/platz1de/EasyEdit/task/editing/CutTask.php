@@ -46,7 +46,7 @@ class CutTask extends SelectionEditTask
 
 	public function executeInternal(): EditTaskResult
 	{
-		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->selection->getPos1(), $this->selection->getPos2());
+		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 		return parent::executeInternal();
 	}
 
@@ -62,7 +62,7 @@ class CutTask extends SelectionEditTask
 		$oy = $result->getWorldOffset()->y;
 		$oz = $result->getWorldOffset()->z;
 
-		yield from $this->selection->asShapeConstructors(function (int $x, int $y, int $z) use ($id, $handler, $result, $ox, $oy, $oz): void {
+		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($id, $handler, $result, $ox, $oy, $oz): void {
 			$result->addBlock($x - $ox, $y - $oy, $z - $oz, $handler->getBlock($x, $y, $z));
 			$result->addTile(TileUtils::offsetCompound($handler->getTile($x, $y, $z), -$ox, -$oy, -$oz));
 			$handler->changeBlock($x, $y, $z, $id);

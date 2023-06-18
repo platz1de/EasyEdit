@@ -12,7 +12,7 @@ use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\result\TaskResult;
 use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\selection\Cube;
-use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\ExecutableTask;
@@ -119,9 +119,9 @@ class Session
 	}
 
 	/**
-	 * @param SelectionIdentifier $id
+	 * @param BlockListSelectionIdentifier $id
 	 */
-	public function addToHistory(SelectionIdentifier $id): void
+	public function addToHistory(BlockListSelectionIdentifier $id): void
 	{
 		$id = $id->toIdentifier();
 		if (!$id->isValid()) {
@@ -135,9 +135,9 @@ class Session
 	}
 
 	/**
-	 * @param SelectionIdentifier $id
+	 * @param BlockListSelectionIdentifier $id
 	 */
-	public function addToFuture(SelectionIdentifier $id): void
+	public function addToFuture(BlockListSelectionIdentifier $id): void
 	{
 		$id = $id->toIdentifier();
 		if (!$id->isValid()) {
@@ -197,9 +197,9 @@ class Session
 	}
 
 	/**
-	 * @param SelectionIdentifier $id
+	 * @param BlockListSelectionIdentifier $id
 	 */
-	public function setClipboard(SelectionIdentifier $id): void
+	public function setClipboard(BlockListSelectionIdentifier $id): void
 	{
 		$id = $id->toIdentifier();
 		if (!$id->isValid()) {

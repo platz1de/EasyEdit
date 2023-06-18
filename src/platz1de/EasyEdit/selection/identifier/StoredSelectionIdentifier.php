@@ -2,16 +2,19 @@
 
 namespace platz1de\EasyEdit\selection\identifier;
 
+use platz1de\EasyEdit\selection\Selection;
+use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
-class StoredSelectionIdentifier implements SelectionIdentifier
+class StoredSelectionIdentifier implements BlockListSelectionIdentifier
 {
 	private bool $delete = false;
+	private Selection $selectionCache;
 
 	/**
 	 * @param int $id
 	 */
-	public function __construct(private int $id) {}
+	final public function __construct(private int $id) { }
 
 	public static function invalid(): StoredSelectionIdentifier
 	{
@@ -28,6 +31,14 @@ class StoredSelectionIdentifier implements SelectionIdentifier
 		return $this;
 	}
 
+	public function asSelection(): Selection
+	{
+		if (!isset($this->selectionCache)) {
+			$this->selectionCache = StorageModule::getStored($this);
+		}
+		return $this->selectionCache;
+	}
+
 	public function fastSerialize(): string
 	{
 		$stream = new ExtendedBinaryStream();
@@ -36,10 +47,10 @@ class StoredSelectionIdentifier implements SelectionIdentifier
 		return $stream->getBuffer();
 	}
 
-	public static function fastDeserialize(string $data): StoredSelectionIdentifier
+	public static function fastDeserialize(string $data): static
 	{
 		$stream = new ExtendedBinaryStream($data);
-		$id = new StoredSelectionIdentifier($stream->getInt());
+		$id = new static($stream->getInt());
 		$id->delete = $stream->getBool();
 		return $id;
 	}
