@@ -78,7 +78,7 @@ class MoveTask extends SelectionEditTask
 
 	public function getChunkHandler(): GroupedChunkHandler
 	{
-		return new MovingChunkHandler($this->getWorld(), $this->selection, $this->direction);
+		return new MovingChunkHandler($this->getTargetWorld(), $this->selection, $this->direction);
 	}
 
 	/**
@@ -86,7 +86,7 @@ class MoveTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), BlockVector::minComponents($this->getSelection()->getPos1(), $this->getSelection()->getPos1()->offset($this->direction)), BlockVector::maxComponents($this->getSelection()->getPos2(), $this->getSelection()->getPos2()->offset($this->direction)));
+		return new StaticBlockListSelection($this->getTargetWorld(), BlockVector::minComponents($this->getSelection()->getPos1(), $this->getSelection()->getPos1()->offset($this->direction)), BlockVector::maxComponents($this->getSelection()->getPos2(), $this->getSelection()->getPos2()->offset($this->direction)));
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

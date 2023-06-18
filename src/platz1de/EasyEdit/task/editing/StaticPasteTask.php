@@ -79,6 +79,6 @@ class StaticPasteTask extends SelectionEditTask
 
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return $this->selection instanceof BinaryBlockListStream ? new BinaryBlockListStream($this->getWorld()) : $this->getDefaultBlockList();
+		return $this->selection instanceof BinaryBlockListStream ? new BinaryBlockListStream($this->getTargetWorld()) : $this->getDefaultBlockList();
 	}
 }

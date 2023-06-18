@@ -91,12 +91,12 @@ class StackTask extends SelectionEditTask
 			throw new UnexpectedValueException("Selection is not a StackingHelper");
 		}
 		if ($this->selection->getAxis() === Axis::Y) {
-			return new SingleChunkHandler($this->getWorld());
+			return new SingleChunkHandler($this->getTargetWorld());
 		}
 		if ($this->selection->isCopying()) {
-			return new CopyingStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis());
+			return new CopyingStackingChunkHandler($this->getTargetWorld(), $this->original, $this->selection->getAxis());
 		}
-		return new SimpleStackingChunkHandler($this->getWorld(), $this->original, $this->selection->getAxis());
+		return new SimpleStackingChunkHandler($this->getTargetWorld(), $this->original, $this->selection->getAxis());
 	}
 
 	protected function sortChunks(array $chunks): array

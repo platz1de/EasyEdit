@@ -8,7 +8,7 @@ use platz1de\EasyEdit\selection\StaticBlockListSelection;
 
 trait CubicStaticUndo
 {
-	abstract public function getWorld(): string;
+	abstract public function getTargetWorld(): string;
 
 	abstract public function getSelection(): Selection;
 
@@ -17,6 +17,6 @@ trait CubicStaticUndo
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
+		return new StaticBlockListSelection($this->getTargetWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 	}
 }

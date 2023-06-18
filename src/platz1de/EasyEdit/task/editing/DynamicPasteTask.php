@@ -36,12 +36,11 @@ class DynamicPasteTask extends SelectionEditTask
 	 * @param OffGridBlockVector  $position
 	 * @param int                 $mode
 	 */
-	public function __construct(string $world, SelectionIdentifier $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
+	public function __construct(private string $world, SelectionIdentifier $selection, OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
 		$selection = StorageModule::mustGetDynamic($selection);
 		$selection->setPoint($position->offset($selection->getPoint())->diff(OffGridBlockVector::zero()));
 		parent::__construct($selection);
-		$this->world = $world;
 	}
 
 	/**
@@ -112,18 +111,25 @@ class DynamicPasteTask extends SelectionEditTask
 	 */
 	public function createUndoBlockList(): BlockListSelection
 	{
-		return new StaticBlockListSelection($this->getWorld(), $this->selection->getPos1()->offset($this->selection->getPoint()), $this->selection->getPos2()->offset($this->selection->getPoint()));
+		return new StaticBlockListSelection($this->getTargetWorld(), $this->selection->getPos1()->offset($this->selection->getPoint()), $this->selection->getPos2()->offset($this->selection->getPoint()));
+	}
+
+	public function getTargetWorld(): string
+	{
+		return $this->world;
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
 		$stream->putInt($this->mode);
+		$stream->putString($this->world);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
 		$this->mode = $stream->getInt();
+		$this->world = $stream->getString();
 	}
 }

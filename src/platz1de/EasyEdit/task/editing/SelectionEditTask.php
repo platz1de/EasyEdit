@@ -28,10 +28,6 @@ abstract class SelectionEditTask extends ExecutableTask
 	private int $totalChunks;
 	private int $chunksLeft;
 	/**
-	 * @var string
-	 */
-	protected string $world;
-	/**
 	 * @var ShapeConstructor[]
 	 */
 	private array $constructors;
@@ -43,7 +39,6 @@ abstract class SelectionEditTask extends ExecutableTask
 	public function __construct(protected Selection $selection, ?SelectionContext $context = null)
 	{
 		$this->context = $context ?? SelectionContext::full();
-		$this->world = $selection->getWorldName();
 		parent::__construct();
 	}
 
@@ -60,7 +55,7 @@ abstract class SelectionEditTask extends ExecutableTask
 		$this->chunksLeft = count($chunks);
 		$fastSet = $this->selection->getSize()->volume() < ConfigManager::getFastSetMax();
 		$this->undo = $this->createUndoBlockList();
-		$this->handler = new EditTaskHandler($this->world, $this->undo, $fastSet);
+		$this->handler = new EditTaskHandler($this->getTargetWorld(), $this->undo, $fastSet);
 		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
 		$skipped = 0;
 		foreach ($chunks as $chunk) {
@@ -151,14 +146,12 @@ abstract class SelectionEditTask extends ExecutableTask
 	{
 		$stream->putString($this->selection->fastSerialize());
 		$stream->putString($this->context->fastSerialize());
-		$stream->putString($this->world);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->selection = Selection::fastDeserialize($stream->getString());
 		$this->context = SelectionContext::fastDeserialize($stream->getString());
-		$this->world = $stream->getString();
 	}
 
 	/**
@@ -174,14 +167,14 @@ abstract class SelectionEditTask extends ExecutableTask
 	 */
 	protected function getChunkHandler(): GroupedChunkHandler
 	{
-		return new SingleChunkHandler($this->getWorld());
+		return new SingleChunkHandler($this->getTargetWorld());
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getWorld(): string
+	public function getTargetWorld(): string
 	{
-		return $this->world;
+		return $this->selection->getWorldName();
 	}
 }

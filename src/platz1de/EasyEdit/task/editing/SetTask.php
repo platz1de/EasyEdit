@@ -76,10 +76,10 @@ class SetTask extends SelectionEditTask
 	public function createUndoBlockList(): BlockListSelection
 	{
 		if ($this->selection instanceof LinearSelection) {
-			return new BinaryBlockListStream($this->getWorld());
+			return new BinaryBlockListStream($this->getTargetWorld());
 		}
 		if ($this->pattern->contains(GravityPattern::class)) {
-			return new VerticalStaticBlockListSelection($this->getWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
+			return new VerticalStaticBlockListSelection($this->getTargetWorld(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 		}
 		return $this->getDefaultBlockList();
 	}

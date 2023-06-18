@@ -204,7 +204,7 @@ class SmoothTask extends SelectionEditTask
 
 	protected function getChunkHandler(): GroupedChunkHandler
 	{
-		return new SmoothingChunkHandler($this->world);
+		return new SmoothingChunkHandler($this->getTargetWorld());
 	}
 
 	protected function sortChunks(array $chunks): array
