@@ -44,19 +44,13 @@ class CutTask extends SelectionEditTask
 		return new CuttingTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo), StorageModule::store($this->result));
 	}
 
-	public function executeInternal(): EditTaskResult
-	{
-		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
-		return parent::executeInternal();
-	}
-
 	/**
 	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$result = $this->result;
+		$result = $this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->getSelection()->getPos1(), $this->getSelection()->getPos2());;
 		$id = VanillaBlocks::AIR()->getStateId();
 		$ox = $result->getWorldOffset()->x;
 		$oy = $result->getWorldOffset()->y;

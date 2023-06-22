@@ -29,12 +29,6 @@ class CopyTask extends SelectionEditTask
 		parent::__construct($selection, $context);
 	}
 
-	public function executeInternal(): EditTaskResult
-	{
-		$this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
-		return parent::executeInternal();
-	}
-
 	protected function toTaskResult(): EditTaskResult
 	{
 		return new EditTaskResult($this->result->getBlockCount(), StorageModule::store($this->result));
@@ -62,7 +56,7 @@ class CopyTask extends SelectionEditTask
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
 	{
-		$result = $this->result;
+		$result = $this->result = DynamicBlockListSelection::fromWorldPositions($this->position, $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
 		$ox = $result->getWorldOffset()->x;
 		$oy = $result->getWorldOffset()->y;
 		$oz = $result->getWorldOffset()->z;
