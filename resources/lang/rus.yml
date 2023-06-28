@@ -1,0 +1,225 @@
+#English language file
+#Author: platz1de
+#Last updated at: 2023-05-31
+
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
+
+prefix: "§l§aEasy§bEdit §r> "
+
+#Args: {x} {y} {z}
+selected-pos1: "Первая позиция установлена как {x} {y} {z}"
+selected-pos2: "Вторая позиция установлена как {x} {y} {z}"
+
+no-selection: "У Вас нет выбранной области"
+no-clipboard: "У Вас нет скопированной области"
+
+#Args: {given} {expected}
+wrong-selection: "Вами выбранная область это {given}, но должна быть {expected}"
+
+no-history: "Нечего отменять"
+no-future: "Нечего повторять"
+
+no-task: "В данный момент нет выполняемых задач"
+task-cancelled: "Текущая задача отменена"
+task-cancelled-self: "Ваша задача отменена"
+
+#Args: {usage}
+wrong-usage: "Неправильное использование команды:\n{usage}"
+
+#Args: {usage} {flag}
+unknown-flag: "Неизвестный флаг {flag}\n{usage}"
+
+#Args: {commands} {start} {end} {total}
+command-list: "Команды (отображение {start} до {end} из {total}):\n{commands}"
+
+#Args: {message}
+task-crash: "§cВаша задача крашнулась, сообщите это!\n{message}"
+pattern-invalid: "§cВами указанный шаблон неверный:\n{message}"
+
+#Args: {time} {changed}
+blocks-set: "{changed} блоков установлены за {time} сек"
+blocks-copied: "{changed} блоков было скопировано за {time} сек"
+blocks-pasted: "{changed} блоков было вставлено за {time} сек"
+blocks-rotated: "{changed} блоков было перевернуто за {time} сек"
+blocks-flipped: "{changed} блоков было перевернуто за {time} сек"
+blocks-cut: "{changed} блоков было вырезано за {time} сек"
+
+#Args: {time} {changed} {blocks}
+blocks-counted: "{changed} блоков было посчитано за {time} сек:\n{blocks}"
+
+#Args: {time} {changed} {name}
+schematic-created: "{changed} блоков сохранены как \"{name}\" за {time} сек"
+
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Статус EditThread:\nСтатус: {status}\nТекущая задача: {task}\nПрогресс: {progress}\nЗапланированные задачи: {queue}\nСохраненные выбранные области: {storage}\nПамять потока: {mem_current}MB ({mem_max}MB)"
+
+benchmark-start: "Бенчмарк начат, это займет несколько минут..."
+benchmark-running: "Бенчмарк уже запущен!"
+
+#Args: {done} {total}
+benchmark-progress: "Прогресс бенчмарка: {done}/{total}"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "Результаты бенчмарка:\nСредний TPS: {tps_avg} ({load_avg}%)\nМинимальный TPS: {tps_min} ({load_max}%)\nВыполнено {tasks} задач за {time} сек:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} за {time} сек"
+
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) на {x} {y} {z}\nСостояние блока: {state}\nJava состояние: {java_state}"
+
+#Args: {schematic} {known}
+unknown-schematic: "Неизвестная схема \"{schematic}\"\nИзвестные схемы: {known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "Установить первую позицию"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "Установить вторую позицию"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "Расширить выбранную область"
+command-extend-usage:
+  - "//extend [направление] [количество]"
+  - "//extend [количество] - Расширить выбланную область в сторону, в которую Вы смотрите"
+  - "//extend vertical - Полностью расширить выбранную область вертикально"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Изменить выбранную область с указанными позициями"
+command-set-description: "Установить блоки в выбранной области"
+command-set-usage: "//set <шаблон>"
+command-replace-description: "Заменить блоки в выбранной области"
+command-replace-usage:
+  - "//replace <блок> <шаблон>"
+  - "//replace <pattern> - Заменить все твердые блоки в выбранной области"
+command-overlay-description: "Наложить блоки в выбранной области"
+command-overlay-usage: "//overlay <шаблон>"
+command-naturalize-description: "Натурализация выбранной области"
+command-naturalize-usage: "//naturalize [шаблон] [шаблон] [шаблон]"
+command-smooth-description: "Сделать выбранную область гладкой"
+command-smooth-usage: "//smooth"
+command-center-description: "Установить блоки в центре в выбранной области"
+command-center-usage: "//center [шаблон]"
+command-walls-description: "Установить стены в выбранной области"
+command-walls-usage: "//walls [шаблон]"
+command-sides-description: "Установить стороны выбранной области"
+command-sides-usage: "//sides [шаблон]"
+command-move-description: "Переместить выбранную область"
+command-move-usage:
+  - "//move [направление] [количество]"
+  - "//move [count] - Переместить выбранную область в сторону, в которую Вы смотрите"
+  - "//move -v <x>,<y>,<z> - Переместить выбранную область на указанную позицию"
+command-stack-description: "Сложение выбранной области"
+command-stack-usage:
+  - "//stack [направление] [количество]"
+  - "//stack [количество] - Сложение выбранной области в направлении Вашего взгляда"
+command-istack-description: "Сложение выбранной области, не перезаписывая существующую местность"
+command-istack-usage:
+  - "//istack [направление] [количество]"
+  - "//istack [количество] - Сложение выбранной области в направлении Вашего взгляда"
+command-count-description: "Посчитать блоки в выбранной области"
+command-count-usage:
+  - "//count"
+  - "//count -d - Посчитать блоки и показать детальную информацию о состоянии блоков"
+  - "//count [радиус] - Посчитать блоки вокруг Вас"
+command-extinguish-description: "Потушить огонь в выбранной области"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [радиус] - Потушить огонь вокруг Вас"
+command-view-description: "Отобразить выбранную область"
+command-view-usage: "//view"
+
+
+command-undo-description: "Отменить последнее изменение"
+command-undo-usage:
+  - "//undo [количество]"
+  - "//undo <цель> [количество] - Отменить последнее изменение цели"
+command-redo-description: "Повторить последнее изменение"
+command-redo-usage:
+  - "//redo [количество]"
+  - "//redo <цель> [количество] - Повторить последнее измениение цели"
+
+
+command-copy-description: "Скопировать выбранную область"
+command-copy-usage:
+  - "//copy - Скопировать относительно игрока"
+  - "//copy -c - Скопировать относительно центра"
+command-cut-description: "Вырезать выбранную область и скопировать её"
+command-cut-usage:
+  - "//cut - Вырезать относительно игрока"
+  - "//cut -c - Вырезать относительно центра"
+command-paste-description: "Вставить область"
+command-paste-usage: "//paste"
+command-insert-description: "Вставить область"
+command-insert-usage: "//insert"
+command-merge-description: "Объединить текущую местность со скопированной областью"
+command-merge-usage: "//merge"
+command-rpaste-description: "Заменить текущую местность на скопированную область"
+command-rpaste-usage: "//rpaste"
+command-rotate-description: "Повернуть скопированную область"
+command-rotate-usage: "//rotate"
+command-flip-description: "Перевернуть скопированную область, отразив скопированное положение"
+command-flip-usage:
+  - "//flip [направление]"
+  - "//flip - Перевернуть скопированную область в направлении взгляда"
+command-loadschematic-description: "Загрузить сохраненную схему из диска"
+command-loadschematic-usage: "//loadschematic <schematicName>"
+command-saveschematic-description: "Сохранить сохраненную область как схему на диск"
+command-saveschematic-usage: "//saveschematic <schematicName>"
+
+
+command-sphere-description: "Сгенерировать сферу"
+command-sphere-usage: "//sphere <радиус> <шаблон>"
+command-hsphere-description: "Сгенерировать полую сферу"
+command-hsphere-usage: "//hsphere <радиус> <шаблон> [thickness]"
+command-cylinder-description: "Сгенерировать цилиндр"
+command-cylinder-usage: "//cylinder <радиус> <высота> <шаблон>"
+command-hcylinder-description: "Сгенерировать полый цилиндр"
+command-hcylinder-usage: "//hcylinder <радиус> <высота> <шаблон> [толщина]"
+command-noise-description: "Сгенерировать используя функцию простого шума"
+command-noise-usage: "//noise"
+command-cube-description: "Сгенерировать куб"
+command-cube-usage: "//cube <размер> <шаблон>"
+command-hcube-description: "Сгенерировать полый куб"
+command-hcube-usage: "//hcube <размер> <шаблон> [thickness]"
+
+
+command-commands-description: "Просмотреть все команды EasyEdit"
+command-commands-usage: "//commands [страница]"
+command-brush-description: "Создать новую кисть"
+command-brush-usage:
+  - "//brush sphere [радиус] [pattern] [gravity] - Создать сферическую кисть"
+  - "//brush smooth [радиус] - Создать сглаживающую кисть"
+  - "//brush naturalize [радиус] [верхнийБлок] [среднийБлок] [нижнийБлок] - Создать натурализующую кисть"
+  - "//brush cylinder [радиус] [height] [pattern] [gravity] - Создать цилиндрическую кисть"
+  - "//brush paste [вставить] - Создать вставляющую кисть"
+command-fill-description: "Заполнить область"
+command-fill-usage:
+  - "//fill <блок> [направление]"
+  - "//fill <блок> - Заполнить в сторону, в которую Вы смотрите"
+command-drain-description: "Осушить область"
+command-drain-usage: "//drain"
+command-line-description: "Генерировать линию"
+command-line-usage:
+  - "//line <x> <y> <z> [шаблон] - Нарисовать прямую линию до выбранной позиции"
+  - "//line find <x> <y> <z> [шаблон] - Найти правильный путь до выбранной позиции (медленно)"
+  - "//line solid <x> <y> <z> [шаблон] - Получить твердый путь до выбранной позиции (медленно)"
+command-blockinfo-description: "Получить палку для узнавания информации о блоке"
+command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "Создать строительный стержень"
+command-builderrod-usage: "//builderrod"
+command-status-description: "Получить состояние EditThread"
+command-status-usage: "//status"
+command-cancel-description: "Отменить текущую задачу"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "Начать бенчмарк"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "Вставить все известные состояния блока"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "Получить деревянный топорик"
+command-wand-usage: "//wand"
+
+command-thru-description: "Телепортироваться через блоки"
+command-thru-usage: "//thru"
+command-unstuck-description: "Телепортироваться в безопасное место"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Телепортироваться навверх"
+command-up-usage: "//up <amount>"
