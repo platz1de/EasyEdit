@@ -31,13 +31,13 @@ class AbstractByteArrayTag extends Tag
 		throw new BadMethodCallException("Abstract byte array cannot be read at once");
 	}
 
-	public function nextChunk(): string
+	public function nextChunk(int $sizeOffset = 0): string
 	{
 		if ($this->current >= $this->length) {
 			throw new NbtDataException("No more bytes left to read");
 		}
-		$r = $this->reader->readChunk(min(self::CHUNK_SIZE, $this->length - $this->current));
-		$this->current += self::CHUNK_SIZE;
+		$r = $this->reader->readChunk(min(self::CHUNK_SIZE + $sizeOffset, $this->length - $this->current));
+		$this->current += self::CHUNK_SIZE + $sizeOffset;
 		return $r;
 	}
 

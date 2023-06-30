@@ -135,7 +135,7 @@ class SpongeSchematic extends SchematicType
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
 					if ($i + 5 > AbstractByteArrayTag::CHUNK_SIZE) {
-						$blockData = substr($blockData, -5) . $blockDataRaw->nextChunk();
+						$blockData = substr($blockData, -5) . $blockDataRaw->nextChunk(-5);
 						$i -= AbstractByteArrayTag::CHUNK_SIZE - 5;
 					}
 
