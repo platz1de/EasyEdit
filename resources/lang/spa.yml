@@ -1,0 +1,225 @@
+#Archivo en Español (España)
+#Autor: SnowysOficial
+#Última actualización en: 2023-06-29
+
+#Si quieres incluir comillas dobles (") en tus mensajes por favor escápalas con una barra invertida (\")
+
+prefix: "§l§aEasy§bEdit §r> "
+
+#Args: {x} {y} {z}
+selected-pos1: "Has seleccionado la primera posición como {x} {y} {z}"
+selected-pos2: "Has seleccionado la segunda posición como {x} {y} {z}"
+
+no-selection: "No tienes una selección activa"
+no-clipboard: "No tienes un portapapeles activo"
+
+#Args: {given} {expected}
+wrong-selection: "Su selección es de tipo {given}, pero {expected} es obligatorio"
+
+no-history: "No hay nada que deshacer"
+no-future: "No hay nada que rehacer"
+
+no-task: "Ninguna tarea se está ejecutando actualmente"
+task-cancelled: "La tarea actual ha sido cancelada"
+task-cancelled-self: "Su tarea fue cancelada"
+
+#Args: {usage}
+wrong-usage: "Uso incorrecto del comando:\n{usage}"
+
+#Args: {usage} {flag}
+unknown-flag: "Bandera desconocida {flag}\n{usage}"
+
+#Args: {commands} {start} {end} {total}
+command-list: "Comandos (mostrando de {start} a {end} de {total}):\n{commands}"
+
+#Args: {message}
+task-crash: "§cSu tarea se ha bloqueado, ¡notifíquelo!\n{message}"
+pattern-invalid: "§cEl patrón introducido no es válido:\n{message}"
+
+#Args: {time} {changed}
+blocks-set: "{changed} bloques se fijaron en {time}s"
+blocks-copied: "{changed} bloques se copiaron en {time}s"
+blocks-pasted: "{changed} bloques se pegaron en {time}s"
+blocks-rotated: "{changed} bloques se rotaron en {time}s"
+blocks-flipped: "{changed} bloques se voltearon en {time}s"
+blocks-cut: "{changed} bloques se cortaron en {time}s"
+
+#Args: {time} {changed} {blocks}
+blocks-counted: "{changed} bloques se contaron en {time}s:\n{blocks}"
+
+#Args: {time} {changed} {name}
+schematic-created: "{changed} bloques se guardaron como \"{name}\" en {time}s"
+
+#Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
+thread-stats: "Estado de EditThread:\nEstado: {status}\nTarea actual: {task}\nProgreso: {progress}\nTareas en cola: {queue}\nSelecciones almacenadas: {storage}\nMemoria del hilo: {mem_current}MB ({mem_max}MB)"
+
+benchmark-start: "Iniciado el benchmark, esto puede llevar unos minutos..."
+benchmark-running: "Ya hay un benchmark en marcha"
+
+#Args: {done} {total}
+benchmark-progress: "Progreso del benchmark: {done}/{total}"
+
+#Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
+benchmark-finished: "Los resultados del benchmark:\nTPS medio: {tps_avg} ({load_avg}%)\nTPS minimo: {tps_min} ({load_max}%)\nEjecutado {tasks} tareas en {time}s:\n{results}"
+
+#Args: {task} {name} {time} {blocks}
+benchmark-result: "#{task}: {name} - {blocks} en {time}s"
+
+#Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
+block-info: "{name} ({id}:{meta}) a {x} {y} {z}\nEstado del bloque: {state}\nEstado Java: {java_state}"
+
+#Args: {schematic} {known}
+unknown-schematic: "Schematic desconocido \"{schematic}\"\nSchematics conocidos: {known}"
+
+#Commands
+#Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
+
+command-pos1-description: "Establecer la primera posición"
+command-pos1-usage: "//pos1 [x] [y] [z]"
+command-pos2-description: "Establecer la segunda posición"
+command-pos2-usage: "//pos2 [x] [y] [z]"
+command-extend-description: "Ampliar el área seleccionada"
+command-extend-usage:
+  - "//extend [direction] [count]"
+  - "//extend [count] - Extienda el área seleccionada en la dirección de su mirada"
+  - "//extend vertical - Extender verticalmente la zona seleccionada"
+  - "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Modificar el área seleccionada por los vectores dados"
+command-set-description: "Establecer bloques en el área seleccionada"
+command-set-usage: "//set <pattern>"
+command-replace-description: "Reemplazar bloques en el área seleccionada"
+command-replace-usage:
+  - "//replace <block> <pattern>"
+  - "//replace <pattern> - Reemplazar todos los bloques sólidos del área seleccionada"
+command-overlay-description: "Superponer bloques en el área seleccionada"
+command-overlay-usage: "//overlay <pattern>"
+command-naturalize-description: "Naturalizar la zona seleccionada"
+command-naturalize-usage: "//naturalize [pattern] [pattern] [pattern]"
+command-smooth-description: "Suavizar el área seleccionada"
+command-smooth-usage: "//smooth"
+command-center-description: "Establecer los bloques centrales del área seleccionada"
+command-center-usage: "//center [pattern]"
+command-walls-description: "Establecer las paredes de la zona seleccionada"
+command-walls-usage: "//walls [pattern]"
+command-sides-description: "Fijar los lados del área seleccionada"
+command-sides-usage: "//sides [pattern]"
+command-move-description: "Desplazar el área seleccionada"
+command-move-usage:
+  - "//move [direction] [count]"
+  - "//move [count] - Mueve el área seleccionada en la dirección de tu mirada"
+  - "//move -v <x>,<y>,<z> - Desplazar el área seleccionada por el vector dado"
+command-stack-description: "Apilar el área seleccionada"
+command-stack-usage:
+  - "//stack [direction] [count]"
+  - "//stack [count] - Apila el área seleccionada en la dirección de tu mirada"
+command-istack-description: "Apila el área seleccionada sin sobrescribir el terreno existente"
+command-istack-usage:
+  - "//istack [direction] [count]"
+  - "//istack [count] - Apila el área seleccionada en la dirección de tu mirada"
+command-count-description: "Contar bloques en el área seleccionada"
+command-count-usage:
+  - "//count"
+  - "//count -d - Contar bloques y mostrar información detallada sobre el estado de los bloques"
+  - "//count [radius] - Cuenta bloques en el área que te rodea"
+command-extinguish-description: "Extinguir el fuego en el área seleccionada"
+command-extinguish-usage:
+  - "//extinguish"
+  - "//extinguish [radius] - Extinguir el fuego en el área a su alrededor"
+command-view-description: "Ver el área seleccionada"
+command-view-usage: "//view"
+
+
+command-undo-description: "Revierte tu último cambio"
+command-undo-usage:
+  - "//undo [count]"
+  - "//undo <target> [count] - Revertir el último cambio del objetivo"
+command-redo-description: "Rehaz tu último cambio"
+command-redo-usage:
+  - "//redo [count]"
+  - "//redo <target> [count] - Rehacer el último cambio del objetivo"
+
+
+command-copy-description: "Copiar el área seleccionada"
+command-copy-usage:
+  - "//copy - Copia relativa al jugador"
+  - "//copy -c - Copia relativa al centro de la selección"
+command-cut-description: "Corta el área seleccionada y cópiala en el portapapeles"
+command-cut-usage:
+  - "//cut - Corte en relación con el jugador"
+  - "//cut -c - Corte relativo al centro de la selección"
+command-paste-description: "Pegar el portapapeles"
+command-paste-usage: "//paste"
+command-insert-description: "Insertar el portapapeles"
+command-insert-usage: "//insert"
+command-merge-description: "Fusionar el terreno actual con el portapapeles"
+command-merge-usage: "//merge"
+command-rpaste-description: "Sustituir el terreno actual por el portapapeles"
+command-rpaste-usage: "//rpaste"
+command-rotate-description: "Girar el portapapeles"
+command-rotate-usage: "//rotate"
+command-flip-description: "Voltear el portapapeles, reflejando en la posición copiada"
+command-flip-usage:
+  - "//flip [direction]"
+  - "//flip - Voltea el portapapeles en la dirección de tu mirada"
+command-loadschematic-description: "Cargar un schematic guardado desde el disco"
+command-loadschematic-usage: "//loadschematic <schematicName>"
+command-saveschematic-description: "Guardar el portapapeles como schematic en disco"
+command-saveschematic-usage: "//saveschematic <schematicName>"
+
+
+command-sphere-description: "Generar una esfera"
+command-sphere-usage: "//sphere <radius> <pattern>"
+command-hsphere-description: "Generar una esfera hueca"
+command-hsphere-usage: "//hsphere <radius> <pattern> [thickness]"
+command-cylinder-description: "Generar un cilindro"
+command-cylinder-usage: "//cylinder <radius> <height> <pattern>"
+command-hcylinder-description: "Generar un cilindro hueco"
+command-hcylinder-usage: "//hcylinder <radius> <height> <pattern> [thickness]"
+command-noise-description: "Generar utilizando una función de ruido simple"
+command-noise-usage: "//noise"
+command-cube-description: "Generar un cubo"
+command-cube-usage: "//cube <size> <pattern>"
+command-hcube-description: "Generar un cubo hueco"
+command-hcube-usage: "//hcube <size> <pattern> [thickness]"
+
+
+command-commands-description: "Lista de todos los comandos de EasyEdit"
+command-commands-usage: "//commands [page]"
+command-brush-description: "Crear un nuevo pincel"
+command-brush-usage:
+  - "//brush sphere [radius] [pattern] [gravity] - Crear un pincel esférico"
+  - "//brush smooth [radius] - Crear un cepillo alisador"
+  - "//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Crear un pincel naturalizador"
+  - "//brush cylinder [radius] [height] [pattern] [gravity] - Crear un pincel cilíndrico"
+  - "//brush paste [insert] - Crear un pincel para pegar"
+command-fill-description: "Llenar un área"
+command-fill-usage:
+  - "//fill <block> [direction]"
+  - "//fill <block> - Rellena en la dirección de tu mirada"
+command-drain-description: "Drenar una zona"
+command-drain-usage: "//drain"
+command-line-description: "Generar una línea"
+command-line-usage:
+  - "//line <x> <y> <z> [pattern] - Dibujar una línea directa a una posición dada"
+  - "//line find <x> <y> <z> [pattern] - Encontrar una ruta válida hacia el destino (lento)"
+  - "//line solid <x> <y> <z> [pattern] - Encontrar un camino sólido hacia el destino (despacio)"
+command-blockinfo-description: "Consigue un palo blockinfo"
+command-blockinfo-usage: "//blockinfo"
+command-builderrod-description: "Crear una vara de constructor"
+command-builderrod-usage: "//builderrod"
+command-status-description: "Obtener el estado del hilo de edición"
+command-status-usage: "//status"
+command-cancel-description: "Cancelar la tarea actual"
+command-cancel-usage: "//cancel"
+command-benchmark-description: "Iniciar un benchmark"
+command-benchmark-usage: "//benchmark"
+command-pastestates-description: "Pegar todos los estados de bloque conocidos"
+command-pastestates-usage: "//pastestates"
+command-wand-description: "Consigue un hacha de madera"
+command-wand-usage: "//wand"
+
+command-thru-description: "Teletransportarse a través de bloques"
+command-thru-usage: "//thru"
+command-unstuck-description: "Teletransportarse a un lugar seguro"
+command-unstuck-usage: "//unstuck"
+command-up-description: "Teletransporte arriba"
+command-up-usage: "//up <amount>"
