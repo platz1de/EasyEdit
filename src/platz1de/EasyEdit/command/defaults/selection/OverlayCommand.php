@@ -17,7 +17,7 @@ class OverlayCommand extends AliasedPatternCommand
 {
 	public function __construct()
 	{
-		parent::__construct("/overlay");
+		parent::__construct("/overlay", ["pattern" => true, "block" => false]);
 	}
 
 	/**
