@@ -57,6 +57,7 @@ class ConfigManager
 			EasyEdit::getInstance()->getLogger()->error("Failed to parse terrain-ignored-blocks: " . $e->getMessage());
 			throw new DisablePluginException(); //Graceful shutdown
 		}
+		HeightMapCache::setIgnore(self::$terrainIgnored);
 
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
 
