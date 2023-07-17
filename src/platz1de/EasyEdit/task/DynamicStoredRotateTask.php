@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\task;
 
 use platz1de\EasyEdit\convert\BlockRotationManipulator;
 use platz1de\EasyEdit\math\BlockOffsetVector;
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\selection\SelectionContext;
@@ -50,6 +51,8 @@ class DynamicStoredRotateTask extends ExecutableTask
 
 		$rotated = $selection->createSafeClone();
 		$rotated->free();
+		$rotated->setPos2(new BlockVector($selection->getPos2()->z, $selection->getPos2()->y, $selection->getPos2()->x));
+		$rotated->getManager()->loadBetween($rotated->getPos1(), $rotated->getPos2());
 		$rotated->setPoint(new BlockOffsetVector(-$selection->getPos2()->z - $selection->getPoint()->z, $selection->getPoint()->y, $selection->getPoint()->x));
 		$selection->setPoint(BlockOffsetVector::zero());
 		$dz = $selection->getPos2()->z;

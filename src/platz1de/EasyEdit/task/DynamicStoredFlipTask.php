@@ -53,6 +53,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		//TODO: Add a less wasteful way to copy a selection properly
 		$flipped = $selection->createSafeClone();
 		$flipped->free();
+		$flipped->getManager()->loadBetween($flipped->getPos1(), $flipped->getPos2());
 		$flipped->setPoint($selection->getPoint()->setComponent($this->axis, -$selection->getPos2()->getComponent($this->axis) - $selection->getPoint()->getComponent($this->axis)));
 		$selection->setPoint(BlockOffsetVector::zero());
 		$dx = $selection->getPos2()->x;
