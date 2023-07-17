@@ -8,8 +8,10 @@ use platz1de\EasyEdit\result\TaskResult;
 use platz1de\EasyEdit\result\TaskResultPromise;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\OutputData;
+use platz1de\EasyEdit\thread\ThreadData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pmmp\thread\Thread;
+use Throwable;
 
 /**
  * @template T of TaskResult
@@ -29,15 +31,33 @@ abstract class ExecutableTask
 	 */
 	public function run(): TaskResultPromise
 	{
+		if (Thread::getCurrentThread() instanceof EditThread) {
+			$start = microtime(true);
+			/** @phpstan-var TaskResultPromise<T> $promise */
+			$promise = new TaskResultPromise();
+			try {
+				$result = $this->executeInternal();
+			} catch (Throwable $throwable) {
+				if ($throwable instanceof CancelException) {
+					$promise->cancel(ThreadData::getCancelReason());
+				} else {
+					EditThread::getInstance()->getLogger()->logException($throwable);
+					$promise->reject($throwable->getMessage());
+				}
+				$result = $this->attemptRecovery();
+			}
+			$result->enrichWithTime(microtime(true) - $start);
+			$promise->resolve($result);
+			return $promise;
+		}
 		return EditHandler::runTask($this);
 	}
 
 	/**
 	 * @return T
 	 * @throws CancelException
-	 * @internal
 	 */
-	abstract public function executeInternal(): TaskResult;
+	abstract protected function executeInternal(): TaskResult;
 
 	/**
 	 * @return T

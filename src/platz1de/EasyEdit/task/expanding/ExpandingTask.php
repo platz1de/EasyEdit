@@ -33,7 +33,7 @@ abstract class ExpandingTask extends ExecutableTask
 		parent::__construct();
 	}
 
-	public function executeInternal(): EditTaskResult
+	protected function executeInternal(): EditTaskResult
 	{
 		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->world, $this->undo, true);

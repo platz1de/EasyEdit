@@ -35,7 +35,7 @@ class BenchmarkExecutor extends ExecutableTask
 		parent::__construct();
 	}
 
-	public function executeInternal(): BenchmarkTaskResult
+	protected function executeInternal(): BenchmarkTaskResult
 	{
 		$this->results = [];
 

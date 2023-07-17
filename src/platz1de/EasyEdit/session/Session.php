@@ -90,8 +90,8 @@ class Session
 	{
 		EditHandler::affiliateTask($this, $task->getTaskId());
 		return $task->run()
-			->onCancel(function ($self) {
-				if (!$self) {
+			->onCancel(function (SessionIdentifier $reason) {
+				if ($reason->getName() !== $this->getPlayer()) {
 					$this->sendMessage("task-cancelled-self");
 				}
 			})

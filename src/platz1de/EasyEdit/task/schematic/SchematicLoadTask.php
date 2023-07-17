@@ -31,7 +31,7 @@ class SchematicLoadTask extends ExecutableTask
 		return "schematic_load";
 	}
 
-	public function executeInternal(): EditTaskResult
+	protected function executeInternal(): EditTaskResult
 	{
 		$selection = DynamicBlockListSelection::empty();
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);

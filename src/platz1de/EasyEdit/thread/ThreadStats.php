@@ -11,9 +11,7 @@ use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\input\TaskInputData;
 use platz1de\EasyEdit\thread\output\ChunkRequestData;
 use platz1de\EasyEdit\thread\output\OutputData;
-use platz1de\EasyEdit\thread\output\result\CancelledTaskResultData;
-use platz1de\EasyEdit\thread\output\result\FullTaskResultData;
-use platz1de\EasyEdit\thread\output\result\TaskResultData;
+use platz1de\EasyEdit\thread\output\TaskResultData;
 use pmmp\thread\Thread;
 use pmmp\thread\ThreadSafe;
 use pocketmine\utils\SingletonTrait;
@@ -32,7 +30,6 @@ class ThreadStats extends ThreadSafe
 	private float $lastResponse = 0.0;
 	private string $taskName = "";
 	private int $taskId = -1;
-	private float $taskStartTime = 0.0;
 	private float $progress = 0.0;
 	private int $queueLength = 0;
 	private int $storageSize = 0;
@@ -60,7 +57,6 @@ class ThreadStats extends ThreadSafe
 	{
 		$newStatus = null;
 		if ($data instanceof TaskResultData) {
-			$data->getPayload()->enrichWithTime(microtime(true) - $this->taskStartTime);
 			$newStatus = self::STATUS_IDLE;
 		} elseif ($data instanceof ChunkRequestData) {
 			$newStatus = self::STATUS_WAITING;
@@ -85,7 +81,6 @@ class ThreadStats extends ThreadSafe
 			$this->lastResponse = microtime(true);
 			$this->taskName = $name;
 			$this->taskId = $id;
-			$this->taskStartTime = microtime(true);
 			$this->progress = 0.0;
 			$this->queueLength = ThreadData::getQueueLength();
 		});

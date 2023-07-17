@@ -7,9 +7,7 @@ use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\input\InputData;
 use platz1de\EasyEdit\thread\output\OutputData;
-use platz1de\EasyEdit\thread\output\result\CancelledTaskResultData;
-use platz1de\EasyEdit\thread\output\result\CrashedTaskResultData;
-use platz1de\EasyEdit\thread\output\result\FullTaskResultData;
+use platz1de\EasyEdit\thread\output\TaskResultData;
 use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use pocketmine\network\mcpe\convert\TypeConverter;
@@ -72,27 +70,11 @@ class EditThread extends Thread
 					}
 				});
 			} else {
-				try {
-					ThreadData::clear();
-					$this->stats->startTask($task);
-					$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
-					$this->sendOutput(new FullTaskResultData($task->getTaskId(), $task->executeInternal()));
-				} catch (Throwable $throwable) {
-					if ($throwable instanceof CancelException) {
-						$this->debug("Task " . $task->getTaskName() . ":" . $task->getTaskId() . " was cancelled");
-						$this->sendOutput(new CancelledTaskResultData($task->getTaskId(), $task->attemptRecovery(), ThreadData::getCancelReason()));
-					} else {
-						$this->logger->logException($throwable);
-						$this->sendOutput(new CrashedTaskResultData($task->getTaskId(), $task->attemptRecovery(), $throwable->getMessage()));
-					}
-					ChunkRequestManager::clear();
-					//throttle a bit to avoid spamming
-					$this->synchronized(function (): void {
-						if (!isset($this->inputData) && !$this->isKilled) {
-							$this->wait(10 * 1000 * 1000);
-						}
-					});
-				}
+				ThreadData::clear();
+				$this->stats->startTask($task);
+				$this->debug("Running task " . $task->getTaskName() . ":" . $task->getTaskId());
+				$this->sendOutput(new TaskResultData($task->getTaskId(), $task->run()->getRawPayload()));
+				ChunkRequestManager::clear();
 			}
 		}
 	}

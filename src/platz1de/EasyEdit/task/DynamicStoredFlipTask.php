@@ -37,7 +37,7 @@ class DynamicStoredFlipTask extends ExecutableTask
 		return "dynamic_storage_flip";
 	}
 
-	public function executeInternal(): SelectionManipulationResult
+	protected function executeInternal(): SelectionManipulationResult
 	{
 		if (!BlockRotationManipulator::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");

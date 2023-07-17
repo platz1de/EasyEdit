@@ -3,6 +3,9 @@
 namespace platz1de\EasyEdit\result;
 
 use Closure;
+use LogicException;
+use platz1de\EasyEdit\session\SessionIdentifier;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 /**
  * @template T of TaskResult
@@ -14,7 +17,7 @@ class TaskResultPromise
 	 */
 	private array $finish = [];
 	/**
-	 * @var array<int, Closure(bool): void>
+	 * @var array<int, Closure(SessionIdentifier): void>
 	 */
 	private array $cancel = [];
 	/**
@@ -36,7 +39,7 @@ class TaskResultPromise
 	 */
 	private TaskResult $result;
 	private string $message;
-	private bool $cancelSelf;
+	private SessionIdentifier $cancelReason;
 
 	/**
 	 * Called whenever the task is finished (successfully or not, data might be empty)
@@ -55,7 +58,7 @@ class TaskResultPromise
 
 	/**
 	 * Called whenever the task is cancelled
-	 * @param Closure(bool) : void $callback
+	 * @param Closure(SessionIdentifier) : void $callback
 	 * @return TaskResultPromise<T>
 	 */
 	public function onCancel(Closure $callback): self
@@ -63,7 +66,7 @@ class TaskResultPromise
 		if ($this->status === self::STATUS_WAITING) {
 			$this->cancel[] = $callback;
 		} elseif ($this->status === self::STATUS_CANCEL) {
-			$callback($this->cancelSelf);
+			$callback($this->cancelReason);
 		}
 		return $this;
 	}
@@ -126,12 +129,12 @@ class TaskResultPromise
 	/**
 	 * @internal
 	 */
-	public function cancel(bool $isSelf): void
+	public function cancel(SessionIdentifier $reason): void
 	{
 		$this->status = self::STATUS_CANCEL;
-		$this->cancelSelf = $isSelf;
+		$this->cancelReason = $reason;
 		foreach ($this->cancel as $callback) {
-			$callback($isSelf);
+			$callback($reason);
 		}
 		$this->cancel = [];
 	}
@@ -145,5 +148,56 @@ class TaskResultPromise
 		foreach ($this->notify as $callback) {
 			$callback($progress);
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRawPayload(): string
+	{
+		if ($this->status === self::STATUS_WAITING) {
+			throw new LogicException("Task is not finished yet");
+		}
+		$stream = new ExtendedBinaryStream();
+		$stream->putByte($this->status);
+		$stream->putString($this->result->fastSerialize());
+		switch ($this->status) {
+			case self::STATUS_FAIL:
+				$stream->putString($this->message);
+				break;
+			case self::STATUS_CANCEL:
+				$stream->putString($this->cancelReason->fastSerialize());
+				break;
+		}
+		return $stream->getBuffer();
+	}
+
+	public function applyRawPayload(string $payload): void
+	{
+		$stream = new ExtendedBinaryStream($payload);
+		$this->status = $stream->getByte();
+		/** @var T $result */
+		$result = TaskResult::fastDeserialize($stream->getString());
+		$this->result = $result;
+		switch ($this->status) {
+			case self::STATUS_FAIL:
+				$this->message = $stream->getString();
+				foreach ($this->fail as $callback) {
+					$callback($this->message);
+				}
+				$this->fail = [];
+				break;
+			case self::STATUS_CANCEL:
+				$this->cancelReason = SessionIdentifier::fastDeserialize($stream->getString());
+				foreach ($this->cancel as $callback) {
+					$callback($this->cancelReason);
+				}
+				$this->cancel = [];
+				break;
+		}
+		foreach ($this->finish as $callback) {
+			$callback($result);
+		}
+		$this->finish = [];
 	}
 }

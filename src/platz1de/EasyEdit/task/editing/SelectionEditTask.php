@@ -48,7 +48,7 @@ abstract class SelectionEditTask extends ExecutableTask
 	 * @return EditTaskResult
 	 * @throws CancelException
 	 */
-	public function executeInternal(): EditTaskResult
+	protected function executeInternal(): EditTaskResult
 	{
 		$handler = $this->getChunkHandler();
 		ChunkRequestManager::setHandler($handler);
