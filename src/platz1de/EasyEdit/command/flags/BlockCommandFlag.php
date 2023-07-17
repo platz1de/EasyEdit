@@ -7,6 +7,7 @@ use platz1de\EasyEdit\pattern\block\BlockType;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\pattern\parser\PatternParser;
 use platz1de\EasyEdit\session\Session;
+use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
 
 //TODO: Turn this into masks, as soon as they are implemented
 
@@ -25,8 +26,8 @@ class BlockCommandFlag extends ValuedCommandFlag
 		try {
 			$this->setArgument(PatternParser::getBlockType($argument, true));
 			return $this;
-		} catch (ParseError $exception) {
-			throw new PatternParseException($exception);
+		} catch (ParseError|UnsupportedBlockStateException $exception) {
+			throw new PatternParseException(new ParseError($exception->getMessage()));
 		}
 	}
 }
