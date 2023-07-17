@@ -65,6 +65,7 @@ class MaskedBlockGroup extends BlockType
 		foreach ($this->ids as $id) {
 			$stream->putInt($id);
 		}
+		$stream->putBool($this->invert);
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
@@ -73,5 +74,6 @@ class MaskedBlockGroup extends BlockType
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$this->ids[] = $stream->getInt();
 		}
+		$this->invert = $stream->getBool();
 	}
 }
