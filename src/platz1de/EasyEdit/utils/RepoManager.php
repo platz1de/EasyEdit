@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\utils;
 
 use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\data\bedrock\block\BlockStateData;
-use pocketmine\plugin\DiskResourceProvider;
 use pocketmine\utils\InternetException;
 use UnexpectedValueException;
 
@@ -94,11 +93,10 @@ class RepoManager
 			}
 		}
 
-		$stream = (new DiskResourceProvider(ConfigManager::getResourcePath()))->getResource("repo/" . $file . ".json");
-		if ($stream === null || ($data = stream_get_contents($stream)) === false) {
+		$data = file_get_contents(ConfigManager::getResourcePath() . "/repo/$file.json");
+		if ($data === false) {
 			throw new UnexpectedValueException("Couldn't read fallback datafile " . $file);
 		}
-		fclose($stream);
 
 		return MixedUtils::decodeJson($data, $depth);
 	}
