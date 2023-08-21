@@ -167,7 +167,7 @@ class EasyEdit extends PluginBase
 	 * @return string
 	 * @internal
 	 */
-	public static function getResourcePath(): string
+	public static function getResourcePathLegacy(): string
 	{
 		return self::getInstance()->getFile() . "resources";
 	}

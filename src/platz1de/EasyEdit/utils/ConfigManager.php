@@ -257,7 +257,7 @@ class ConfigManager
 		$stream->putString(self::$downloadData ? self::$dataRepo : "");
 		$stream->putBool(self::$sendDebug);
 		$stream->putBool(self::$cacheData);
-		$stream->putString(EasyEdit::getResourcePath());
+		$stream->putString(EasyEdit::getResourcePathLegacy());
 		$stream->putString(EasyEdit::getCachePath());
 	}
 
