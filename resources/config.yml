@@ -5,9 +5,11 @@ config-version: "3.0.1" #Please don't change this manually
 # auto - Detect from pocketmine
 # eng - English
 # deu - German
-# jpn - Japanese
-# vie - Vietnamese
 # idn - Indonesian
+# jpn - Japanese
+# rus - Russian
+# spa - Spanish
+# vie - Vietnamese
 # custom - Allows to modify the language file directly
 language: auto
 
