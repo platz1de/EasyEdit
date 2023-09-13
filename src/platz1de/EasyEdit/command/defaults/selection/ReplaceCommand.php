@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\command\defaults\selection;
 
 use Generator;
+use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\command\flags\BlockCommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\PatternCommandFlag;
@@ -42,8 +43,10 @@ class ReplaceCommand extends AliasedPatternCommand
 		if (count($args) >= 2) {
 			yield (new BlockCommandFlag("block"))->parseArgument($session, $args[0]);
 			array_shift($args);
-		} else {
+		} elseif (count($args) === 1) {
 			yield BlockCommandFlag::with(MaskedBlockGroup::inverted(HeightMapCache::getIgnore()), "block");
+		} else {
+			throw new InvalidUsageException();
 		}
 		yield (new PatternCommandFlag("pattern"))->parseArgument($session, $args[0]);
 	}
