@@ -107,7 +107,7 @@ abstract class ChunkManagedBlockList extends BlockListSelection
 			World::getXZ($hash, $x, $z);
 			$chunks->putInt($x);
 			$chunks->putInt($z);
-			$chunk->putData($stream);
+			$chunk->putData($chunks);
 			$count++;
 		}
 		$stream->putInt($count);
