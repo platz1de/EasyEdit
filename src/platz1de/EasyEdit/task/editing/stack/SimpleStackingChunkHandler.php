@@ -2,11 +2,11 @@
 
 namespace platz1de\EasyEdit\task\editing\stack;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\math\Axis;
 use pocketmine\world\World;
@@ -66,13 +66,13 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 			}
 			for ($resX = $min->x; $resX <= $max->x; $resX++) {
 				for ($resZ = $min->z; $resZ <= $max->z; $resZ++) {
-					ChunkRequestManager::addRequest(new ChunkRequest($this->world, World::chunkHash($resX, $resZ)));
+					EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, World::chunkHash($resX, $resZ)), $this);
 					$this->sourceOrder[$this->current]++;
 				}
 			}
 		}
 		$this->waiting[$this->current]++;
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $this->current));
+		EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $chunk, $this->current), $this);
 	}
 
 	/**
@@ -145,13 +145,13 @@ class SimpleStackingChunkHandler extends GroupedChunkHandler
 		if (!isset($offset)) {
 			throw new UnexpectedValueException("No chunk available");
 		}
-		ChunkRequestManager::markAsDone();
+		EasyEdit::getEnv()->finalizeChunkStep();
 		$ret = $this->source[$offset] ?? [];
 		$ret[$key] = $this->chunks[$offset][$key];
 		unset($this->chunks[$offset][$key]);
 		if (isset($this->waiting[$offset]) && --$this->waiting[$offset] === 0) {
 			for ($i = count($this->source[$offset]) - 1; $i >= 0; $i--) {
-				ChunkRequestManager::markAsDone();
+				EasyEdit::getEnv()->finalizeChunkStep();
 			}
 			unset($this->chunks[$offset], $this->waiting[$offset], $this->source[$offset]);
 		}

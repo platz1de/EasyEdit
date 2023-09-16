@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
@@ -38,7 +39,7 @@ abstract class ExpandingTask extends ExecutableTask
 		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->world, $this->undo, true);
 		$loader = new ManagedChunkHandler($this->handler);
-		ChunkRequestManager::setHandler($loader);
+		EasyEdit::getEnv()->initChunkHandler($loader);
 		$loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4));
 
 		HeightMapCache::prepare();

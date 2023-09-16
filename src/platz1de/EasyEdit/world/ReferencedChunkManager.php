@@ -48,6 +48,17 @@ class ReferencedChunkManager
 		return $this->chunks;
 	}
 
+	public function getModifiedChunks(): array
+	{
+		$chunks = [];
+		foreach ($this->chunks as $hash => $chunk) {
+			if ($chunk->wasUsed()) {
+				$chunks[$hash] = $chunk;
+			}
+		}
+		return $chunks;
+	}
+
 	/**
 	 * @param Closure $closure
 	 */

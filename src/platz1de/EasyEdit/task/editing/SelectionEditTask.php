@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
@@ -51,7 +52,7 @@ abstract class SelectionEditTask extends ExecutableTask
 	protected function executeInternal(): EditTaskResult
 	{
 		$handler = $this->getChunkHandler();
-		ChunkRequestManager::setHandler($handler);
+		EasyEdit::getEnv()->initChunkHandler($handler);
 		$chunks = $this->sortChunks($this->getSelection()->getNeededChunks());
 		$this->totalChunks = count($chunks);
 		$this->chunksLeft = count($chunks);
@@ -85,7 +86,7 @@ abstract class SelectionEditTask extends ExecutableTask
 
 				$this->executeEdit($this->handler, $key);
 				EditThread::getInstance()->debug("Chunk " . $key . " was edited successful, " . $this->chunksLeft . " chunks left");
-				EditThread::getInstance()->getStats()->updateProgress(($this->totalChunks - $this->chunksLeft) / $this->totalChunks);
+				EasyEdit::getEnv()->postProgress(($this->totalChunks - $this->chunksLeft) / $this->totalChunks);
 
 				$this->handler->finish();
 			}

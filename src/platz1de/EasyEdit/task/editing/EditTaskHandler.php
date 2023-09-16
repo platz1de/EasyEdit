@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\output\ResultingChunkData;
@@ -83,20 +84,7 @@ class EditTaskHandler
 
 	public function finish(): void
 	{
-		$send = $this->result->getManager()->getChunks();
-		foreach ($send as $hash => $chunk) {
-			if (!$chunk->wasUsed()) {
-				unset($send[$hash]);
-			}
-		}
-		if (!$this->result instanceof InjectingSubChunkController) {
-			$injections = [];
-		} else {
-			$injections = array_map(static function (InjectingData $injection) {
-				return $injection->toProtocol();
-			}, $this->result->getInjections());
-		}
-		EditThread::getInstance()->sendOutput(new ResultingChunkData($this->result->getManager()->getWorldName(), $send, $injections));
+		EasyEdit::getEnv()->submitResultingChunks($this->result);
 		$this->origin->reset();
 		$this->result->reset();
 	}

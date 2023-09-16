@@ -2,12 +2,12 @@
 
 namespace platz1de\EasyEdit\task\editing\move;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\world\World;
 use UnexpectedValueException;
@@ -47,7 +47,7 @@ class MovingChunkHandler extends GroupedChunkHandler
 	 */
 	public function request(int $chunk): void
 	{
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
+		EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $chunk, $chunk), $this);
 		$this->queue[] = $chunk;
 		$this->groupRequest[$chunk] = [$chunk => $chunk];
 		$min = $this->selection->getPos1()->forceIntoChunkStart($chunk)->offset($this->direction);
@@ -63,7 +63,7 @@ class MovingChunkHandler extends GroupedChunkHandler
 					continue;
 				}
 				$this->groupRequest[$chunk][$c] = $c;
-				ChunkRequestManager::addRequest(new ChunkRequest($this->world, $c, $chunk));
+				EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $c, $chunk), $this);
 			}
 		}
 		$this->last = $chunk;
@@ -132,7 +132,7 @@ class MovingChunkHandler extends GroupedChunkHandler
 		}
 		$ret = $this->groupData[$key];
 		foreach ($this->groupRequest[$key] as $chunk) {
-			ChunkRequestManager::markAsDone();
+			EasyEdit::getEnv()->finalizeChunkStep();
 		}
 		unset($this->groupData[$key], $this->groupRequest[$key]);
 		array_shift($this->queue);

@@ -2,13 +2,12 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\output\ResultingChunkData;
 use platz1de\EasyEdit\world\ChunkInformation;
 use UnexpectedValueException;
 
@@ -24,7 +23,7 @@ class ManagedChunkHandler implements ChunkHandler
 	 */
 	private array $loaded = [];
 
-	public function __construct(private EditTaskHandler $handler) {}
+	public function __construct(private EditTaskHandler $handler) { }
 
 	/**
 	 * @param int $chunk
@@ -39,7 +38,7 @@ class ManagedChunkHandler implements ChunkHandler
 			return;
 		} catch (UnexpectedValueException) {
 		}
-		ChunkRequestManager::addRequest(new ChunkRequest($manager->getWorldName(), $chunk));
+		EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($manager->getWorldName(), $chunk), $this);
 		while ($this->current === null) {
 			EditThread::getInstance()->checkExecution();
 			EditThread::getInstance()->waitForData();
@@ -54,7 +53,7 @@ class ManagedChunkHandler implements ChunkHandler
 		$this->current = null;
 		//TODO: Hack to prevent chunk cap
 		//Currently expanding selections expand in every direction, which means that the chunk cap is reached very quickly
-		ChunkRequestManager::markAsDone();
+		EasyEdit::getEnv()->finalizeChunkStep();
 	}
 
 	public function handleInput(int $chunk, ChunkInformation $data, ?int $payload): void
@@ -100,7 +99,7 @@ class ManagedChunkHandler implements ChunkHandler
 		if (isset($this->requests[$chunk]) && --$this->requests[$chunk] <= 0) {
 			unset($this->requests[$chunk], $this->loaded[$chunk]);
 
-			EditThread::getInstance()->sendOutput(new ResultingChunkData($this->handler->getResult()->getWorldName(), [$chunk => $handler->getResult()->getChunk($chunk)], $handler->prepareInjectionData($chunk)));
+			EasyEdit::getEnv()->submitSingleChunk($this->handler->getResult()->getWorldName(), $chunk, $handler->getResult()->getChunk($chunk), $handler->prepareInjectionData($chunk));
 
 			$this->handler->getOrigin()->getManager()->filterChunks(function (array $c) use ($chunk): array {
 				unset($c[$chunk]);
@@ -110,7 +109,7 @@ class ManagedChunkHandler implements ChunkHandler
 				unset($c[$chunk]);
 				return $c;
 			});
-			ChunkRequestManager::markAsDone();
+			EasyEdit::getEnv()->finalizeChunkStep();
 		}
 	}
 }

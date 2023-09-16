@@ -3,9 +3,9 @@
 namespace platz1de\EasyEdit\task\editing;
 
 use BadMethodCallException;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\world\ChunkInformation;
 
 class SingleChunkHandler extends GroupedChunkHandler
@@ -20,7 +20,7 @@ class SingleChunkHandler extends GroupedChunkHandler
 	 */
 	public function request(int $chunk): void
 	{
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk));
+		EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $chunk), $this);
 	}
 
 	/**
@@ -69,7 +69,7 @@ class SingleChunkHandler extends GroupedChunkHandler
 		if (($key = $this->getNextChunk()) === null) {
 			throw new BadMethodCallException("No chunk available");
 		}
-		ChunkRequestManager::markAsDone();
+		EasyEdit::getEnv()->finalizeChunkStep();
 		$ret = $this->chunks[$key];
 		unset($this->chunks[$key]);
 		return [$key => $ret];

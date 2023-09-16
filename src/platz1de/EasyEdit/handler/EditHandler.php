@@ -8,6 +8,7 @@ use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionIdentifier;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\TaskInputData;
+use platz1de\EasyEdit\thread\MainThreadTaskScheduler;
 use platz1de\EasyEdit\thread\output\TaskNotifyData;
 use UnexpectedValueException;
 
@@ -41,7 +42,8 @@ class EditHandler
 		/** @phpstan-var TaskResultPromise<T> $promise */
 		$promise = new TaskResultPromise();
 		self::$promises[$task->getTaskId()] = $promise;
-		TaskInputData::fromTask($task);
+		//TaskInputData::fromTask($task);
+		MainThreadTaskScheduler::getInstance()->enqueueTask($task);
 		return $promise;
 	}
 

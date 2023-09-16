@@ -32,25 +32,34 @@ abstract class ExecutableTask
 	public function run(): TaskResultPromise
 	{
 		if (Thread::getCurrentThread() instanceof EditThread) {
-			$start = microtime(true);
-			/** @phpstan-var TaskResultPromise<T> $promise */
-			$promise = new TaskResultPromise();
-			try {
-				$result = $this->executeInternal();
-			} catch (Throwable $throwable) {
-				if ($throwable instanceof CancelException) {
-					$promise->cancel(ThreadData::getCancelReason());
-				} else {
-					EditThread::getInstance()->getLogger()->logException($throwable);
-					$promise->reject($throwable->getMessage());
-				}
-				$result = $this->attemptRecovery();
-			}
-			$result->enrichWithTime(microtime(true) - $start);
-			$promise->resolve($result);
-			return $promise;
+			return $this->runInternal();
 		}
 		return EditHandler::runTask($this);
+	}
+
+	/**
+	 * @return TaskResultPromise<T>
+	 * @internal
+	 */
+	public function runInternal(): TaskResultPromise
+	{
+		$start = microtime(true);
+		/** @phpstan-var TaskResultPromise<T> $promise */
+		$promise = new TaskResultPromise();
+		try {
+			$result = $this->executeInternal();
+		} catch (Throwable $throwable) {
+			if ($throwable instanceof CancelException) {
+				$promise->cancel(ThreadData::getCancelReason());
+			} else {
+				EditThread::getInstance()->getLogger()->logException($throwable);
+				$promise->reject($throwable->getMessage());
+			}
+			$result = $this->attemptRecovery();
+		}
+		$result->enrichWithTime(microtime(true) - $start);
+		$promise->resolve($result);
+		return $promise;
 	}
 
 	/**

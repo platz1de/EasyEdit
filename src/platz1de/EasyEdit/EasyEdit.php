@@ -46,6 +46,8 @@ use platz1de\EasyEdit\command\defaults\utility\WandCommand;
 use platz1de\EasyEdit\command\FlagRemapAlias;
 use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
+use platz1de\EasyEdit\environment\MainThreadHandler;
+use platz1de\EasyEdit\environment\ThreadEnvironmentHandler;
 use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\DynamicPasteTask;
@@ -61,10 +63,12 @@ use pocketmine\utils\AssumptionFailedError;
 class EasyEdit extends PluginBase
 {
 	private static EasyEdit $instance;
+	private static ThreadEnvironmentHandler $environment;
 
 	public function onEnable(): void
 	{
 		self::$instance = $this;
+		self::setEnvironment(new MainThreadHandler());
 
 		if (!is_dir(self::getSchematicPath()) && !mkdir(self::getSchematicPath(), 0777, true) && !is_dir(self::getSchematicPath())) {
 			throw new AssumptionFailedError("Failed to created schematic directory");
@@ -161,6 +165,23 @@ class EasyEdit extends PluginBase
 	public static function getInstance(): self
 	{
 		return self::$instance;
+	}
+
+	public static function setEnvironment(ThreadEnvironmentHandler $environment): void
+	{
+		if (isset(self::$environment)) {
+			throw new AssumptionFailedError("Environment already set");
+		}
+		self::$environment = $environment;
+	}
+
+	/**
+	 * Use this class to call all potential thread specific methods (e.g. chunk loading)
+	 * @return ThreadEnvironmentHandler
+	 */
+	public static function getEnv(): ThreadEnvironmentHandler
+	{
+		return self::$environment;
 	}
 
 	/**

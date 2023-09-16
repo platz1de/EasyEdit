@@ -2,11 +2,11 @@
 
 namespace platz1de\EasyEdit\task\editing\stack;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\math\Axis;
@@ -51,7 +51,7 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 	{
 		$this->waiting[$chunk] = 0;
 		$this->groups[$chunk] = [];
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
+		EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $chunk, $chunk), $this);
 		World::getXZ($chunk, $x, $z);
 		$min = $this->selection->getPos1();
 		$size = $this->selection->getSize();
@@ -107,10 +107,10 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		if (isset($this->current) && $this->current === World::chunkHash($minX, $minZ)) {
 			$this->connections[$chunk] = $this->current;
 		} else {
-			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($minX, $minZ), $chunk));
+			EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($minX, $minZ), $chunk), $this);
 		}
 		if ($minX !== $maxX || $minZ !== $maxZ) {
-			ChunkRequestManager::addRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($maxX, $maxZ), $chunk));
+			EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $this->current = World::chunkHash($maxX, $maxZ), $chunk), $this);
 			$this->waiting[$chunk]++;
 		}
 	}
@@ -173,12 +173,12 @@ class CopyingStackingChunkHandler extends GroupedChunkHandler
 		if (($key = $this->getNextChunk()) === null) {
 			throw new UnexpectedValueException("No chunk available");
 		}
-		ChunkRequestManager::markAsDone();
+		EasyEdit::getEnv()->finalizeChunkStep();
 		$ret = [$key => $this->executors[$key]];
 		foreach ($this->groups[$key] as $chunk => $data) {
 			$ret[$chunk] = $data[1];
 			if ($data[0]) {
-				ChunkRequestManager::markAsDone();
+				EasyEdit::getEnv()->finalizeChunkStep();
 			}
 		}
 		unset($this->executors[$key], $this->groups[$key]);

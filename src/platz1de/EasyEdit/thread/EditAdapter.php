@@ -11,5 +11,6 @@ class EditAdapter extends Task
 	{
 		EditThread::getInstance()->parseOutput();
 		BlockStateTranslationManager::tick();
+		MainThreadTaskScheduler::getInstance()->tick();
 	}
 }

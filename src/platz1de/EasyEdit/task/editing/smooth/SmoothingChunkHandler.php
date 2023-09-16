@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\editing\smooth;
 
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
@@ -26,8 +27,8 @@ class SmoothingChunkHandler extends GroupedChunkHandler
 	 */
 	public function request(int $chunk): void
 	{
-		ChunkRequestManager::addRequest(new ChunkRequest($this->world, $chunk, $chunk));
-		ChunkRequestManager::markAsDone();
+		EasyEdit::getEnv()->processChunkRequest(new ChunkRequest($this->world, $chunk, $chunk), $this);
+		EasyEdit::getEnv()->finalizeChunkStep();
 		$this->left++;
 	}
 
