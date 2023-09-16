@@ -29,6 +29,11 @@ class DynamicStoredFlipTask extends ExecutableTask
 		parent::__construct();
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	/**
 	 * @return string
 	 */

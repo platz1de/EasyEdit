@@ -21,6 +21,11 @@ class CountTask extends SelectionEditTask
 		return new CountingTaskResult($this->counted);
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return $this->getSelection()->getSize()->volume();
+	}
+
 	/**
 	 * @return string
 	 */

@@ -36,6 +36,11 @@ class StackTask extends SelectionEditTask
 		parent::__construct($selection);
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return $this->getSelection()->getSize()->volume() * $this->direction->cubicVolume();
+	}
+
 	public function getSelection(): StackingHelper
 	{
 		if (!isset($this->helper)) {

@@ -35,6 +35,11 @@ class BenchmarkExecutor extends ExecutableTask
 		parent::__construct();
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	protected function executeInternal(): BenchmarkTaskResult
 	{
 		$this->results = [];

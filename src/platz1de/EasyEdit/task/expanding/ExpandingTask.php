@@ -34,6 +34,11 @@ abstract class ExpandingTask extends ExecutableTask
 		parent::__construct();
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	protected function executeInternal(): EditTaskResult
 	{
 		$this->undo = $this->createUndoBlockList();

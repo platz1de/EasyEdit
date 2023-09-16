@@ -31,6 +31,11 @@ class CutTask extends SelectionEditTask
 		parent::__construct($selection);
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return $this->getSelection()->getSize()->volume();
+	}
+
 	/**
 	 * @return string
 	 */

@@ -27,6 +27,11 @@ class MoveTask extends SelectionEditTask
 		parent::__construct($selection);
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return $this->getSelection()->getSize()->volume() * 2;
+	}
+
 	/**
 	 * @return string
 	 */

@@ -42,8 +42,13 @@ class EditHandler
 		/** @phpstan-var TaskResultPromise<T> $promise */
 		$promise = new TaskResultPromise();
 		self::$promises[$task->getTaskId()] = $promise;
-		//TaskInputData::fromTask($task);
-		MainThreadTaskScheduler::getInstance()->enqueueTask($task);
+		$complexity = $task->calculateEffectiveComplexity();
+		//TODO: Add a config option for this absolutely arbitrary value
+		if ($complexity === -1 || $complexity > 31250) { //half this value when pattern complexity is added
+			TaskInputData::fromTask($task);
+		} else {
+			MainThreadTaskScheduler::getInstance()->enqueueTask($task);
+		}
 		return $promise;
 	}
 

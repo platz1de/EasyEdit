@@ -31,6 +31,11 @@ class SchematicLoadTask extends ExecutableTask
 		return "schematic_load";
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	protected function executeInternal(): EditTaskResult
 	{
 		$selection = DynamicBlockListSelection::empty();

@@ -29,6 +29,11 @@ class CopyTask extends SelectionEditTask
 		parent::__construct($selection, $context);
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return $this->getSelection()->getSize()->volume() / 2;
+	}
+
 	protected function toTaskResult(): EditTaskResult
 	{
 		return new EditTaskResult($this->result->getBlockCount(), StorageModule::store($this->result));

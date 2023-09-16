@@ -31,6 +31,11 @@ class SchematicSaveTask extends ExecutableTask
 		return "schematic_save";
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	protected function executeInternal(): SelectionManipulationResult
 	{
 		$selection = StorageModule::mustGetDynamic($this->saveId);

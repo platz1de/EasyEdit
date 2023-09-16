@@ -27,6 +27,11 @@ class StaticPasteTask extends SelectionEditTask
 		parent::__construct($selection);
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	/**
 	 * @return string
 	 */

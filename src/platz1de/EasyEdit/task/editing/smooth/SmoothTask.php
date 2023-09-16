@@ -28,6 +28,11 @@ class SmoothTask extends SelectionEditTask
 		return "smooth";
 	}
 
+	public function calculateEffectiveComplexity(): int
+	{
+		return -1;
+	}
+
 	/**
 	 * This is pretty much magic code, so better don't touch it
 	 * @param EditTaskHandler $handler
