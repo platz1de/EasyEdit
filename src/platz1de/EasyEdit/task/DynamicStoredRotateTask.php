@@ -56,10 +56,11 @@ class DynamicStoredRotateTask extends ExecutableTask
 		$rotated->setPoint(new BlockOffsetVector(-$selection->getPos2()->z - $selection->getPoint()->z, $selection->getPoint()->y, $selection->getPoint()->x));
 		$selection->setPoint(BlockOffsetVector::zero());
 		$dz = $selection->getPos2()->z;
-		$constructors = $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dz, $selection, $rotated, $map): void {
-			$block = $selection->getIterator()->getBlock($x, $y, $z);
-			$rotated->addBlock($dz - $z, $y, $x, $map[$block] ?? throw new RuntimeException("Missing block $block"));
-		}, SelectionContext::full());
+		$constructors = iterator_to_array($selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dz, $selection, $rotated, $map): void {
+            $block = $selection->getIterator()->getBlock($x, $y, $z);
+            $rotated->addBlock($dz - $z, $y, $x, $map[$block] ?? throw new RuntimeException("Missing block $block"));
+        }, SelectionContext::full()));
+
 		//TODO: add possibility to response to requests
 		foreach ($selection->getNeededChunks() as $chunk) {
 			foreach ($constructors as $constructor) {
