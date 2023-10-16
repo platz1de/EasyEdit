@@ -64,21 +64,21 @@ class DynamicStoredFlipTask extends ExecutableTask
 		$dx = $selection->getPos2()->x;
 		$dy = $selection->getPos2()->y;
 		$dz = $selection->getPos2()->z;
-		$constructors = match ($this->axis) {
-			Axis::X => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dx, $selection, $flipped, $map): void {
-				$block = $selection->getIterator()->getBlock($x, $y, $z);
-				$flipped->addBlock($dx - $x, $y, $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
-			}, SelectionContext::full()),
-			Axis::Y => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dy, $selection, $flipped, $map): void {
-				$block = $selection->getIterator()->getBlock($x, $y, $z);
-				$flipped->addBlock($x, $dy - $y, $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
-			}, SelectionContext::full()),
-			Axis::Z => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dz, $selection, $flipped, $map): void {
-				$block = $selection->getIterator()->getBlock($x, $y, $z);
-				$flipped->addBlock($x, $y, $dz - $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
-			}, SelectionContext::full()),
-			default => throw new UnexpectedValueException("Invalid axis " . $this->axis)
-		};
+		$constructors = iterator_to_array(match ($this->axis) {
+            Axis::X => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dx, $selection, $flipped, $map): void {
+                $block = $selection->getIterator()->getBlock($x, $y, $z);
+                $flipped->addBlock($dx - $x, $y, $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
+            }, SelectionContext::full()),
+            Axis::Y => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dy, $selection, $flipped, $map): void {
+                $block = $selection->getIterator()->getBlock($x, $y, $z);
+                $flipped->addBlock($x, $dy - $y, $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
+            }, SelectionContext::full()),
+            Axis::Z => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dz, $selection, $flipped, $map): void {
+                $block = $selection->getIterator()->getBlock($x, $y, $z);
+                $flipped->addBlock($x, $y, $dz - $z, $map[$block] ?? throw new UnexpectedValueException("Unknown block $block"));
+            }, SelectionContext::full()),
+            default => throw new UnexpectedValueException("Invalid axis " . $this->axis)
+        });
 		//TODO: add possibility to response to requests
 		foreach ($selection->getNeededChunks() as $chunk) {
 			foreach ($constructors as $constructor) {
