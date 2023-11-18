@@ -106,7 +106,7 @@ class DynamicPasteTask extends SelectionEditTask
 			}, $this->context),
 			self::MODE_ONLY_SOLID => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($ox, $oy, $oz, $ignore, $handler, $selection): void {
 				$block = $selection->getIterator()->getBlock($x - $ox, $y - $oy, $z - $oz);
-				if ($block !== 0 && !in_array($block >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true)) {
+				if ($block !== 0 && (!in_array($block >> Block::INTERNAL_STATE_DATA_BITS, $ignore, true) || ($block >> Block::INTERNAL_STATE_DATA_BITS !== BlockTypeIds::AIR && $handler->getBlock($x, $y, $z) >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::AIR))) {
 					$handler->changeBlock($x, $y, $z, $block);
 				}
 			}, $this->context),
