@@ -196,7 +196,7 @@ class ConfigManager
 
 	public static function getPathfindingMax(): int
 	{
-		return self::$fastSetMax;
+		return self::$pathfindingMax;
 	}
 
 	public static function getFillDistance(): int
