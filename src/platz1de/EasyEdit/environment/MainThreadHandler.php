@@ -79,6 +79,10 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 			$tiles = array_map(static function (Tile $tile) {
 				return $tile->saveNBT();
 			}, $c->getTiles());
+			$c = clone $c;
+			foreach ($c->getTiles() as $tile) {
+				$c->removeTile($tile);
+			}
 		}
 		$handler->handleInput($chunk->getChunk(), new ChunkInformation($c, $tiles), $chunk->getPayload());
 	}
