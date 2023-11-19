@@ -56,9 +56,8 @@ abstract class SelectionEditTask extends ExecutableTask
 		$chunks = $this->sortChunks($this->getSelection()->getNeededChunks());
 		$this->totalChunks = count($chunks);
 		$this->chunksLeft = count($chunks);
-		$fastSet = $this->getSelection()->getSize()->volume() < ConfigManager::getFastSetMax();
 		$this->undo = $this->createUndoBlockList();
-		$this->handler = new EditTaskHandler($this->getTargetWorld(), $this->undo, $fastSet);
+		$this->handler = new EditTaskHandler($this->getTargetWorld(), $this->undo);
 		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
 		$skipped = 0;
 		foreach ($chunks as $chunk) {

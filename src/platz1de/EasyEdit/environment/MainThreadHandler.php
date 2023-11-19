@@ -10,6 +10,7 @@ use platz1de\EasyEdit\world\blockupdate\InjectingData;
 use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
+use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\Server;
 use pocketmine\world\format\io\ChunkData;
@@ -90,4 +91,9 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 	public function finalizeChunkStep(): void { }
 
 	public function postProgress(float $progress): void { }
+
+	public function getChunkController(ReferencedChunkManager $manager): ChunkController
+	{
+		return new InjectingSubChunkController($manager);
+	}
 }

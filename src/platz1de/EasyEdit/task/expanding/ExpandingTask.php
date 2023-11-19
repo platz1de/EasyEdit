@@ -42,7 +42,7 @@ abstract class ExpandingTask extends ExecutableTask
 	protected function executeInternal(): EditTaskResult
 	{
 		$this->undo = $this->createUndoBlockList();
-		$this->handler = new EditTaskHandler($this->world, $this->undo, true);
+		$this->handler = new EditTaskHandler($this->world, $this->undo);
 		$loader = new ManagedChunkHandler($this->handler);
 		EasyEdit::getEnv()->initChunkHandler($loader);
 		$loader->request(World::chunkHash($this->start->x >> 4, $this->start->z >> 4));

@@ -22,17 +22,12 @@ class EditTaskHandler
 
 	/**
 	 * @param BlockListSelection $changes Saves made changes, used for undoing
-	 * @param bool               $isFastSet
 	 */
-	public function __construct(string $world, protected BlockListSelection $changes, bool $isFastSet)
+	public function __construct(string $world, protected BlockListSelection $changes)
 	{
 		//TODO: Never use changes as result (eg. copy)
 		$this->origin = new ChunkController(new ReferencedChunkManager($world));
-		if ($isFastSet) {
-			$this->result = new InjectingSubChunkController(new ReferencedChunkManager($world));
-		} else {
-			$this->result = new ChunkController(new ReferencedChunkManager($world));
-		}
+		$this->result = EasyEdit::getEnv()->getChunkController(new ReferencedChunkManager($world));
 	}
 
 	public function setChunk(int $key, ChunkInformation $chunk): void

@@ -29,11 +29,6 @@ remap-commands: true
 #Enabling this allows setting blocks which are not registered, but might cause issues like game crashes or world corruption
 allow-unregistered-blocks: false
 
-#Max blocks to use fast set on
-#Fast set allows to set blocks without any flickering, but triples execution time
-#This is also somewhat harsh on client and network performance, so better not set this to high; default: 256000
-fast-set-max: 256000
-
 #Distance to check while filling; default: 100
 fill-distance: 100
 

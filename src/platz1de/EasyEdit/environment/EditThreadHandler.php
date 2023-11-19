@@ -11,6 +11,7 @@ use platz1de\EasyEdit\world\blockupdate\InjectingData;
 use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
+use platz1de\EasyEdit\world\ReferencedChunkManager;
 
 /**
  * The edit thread processes the tasks asynchronously
@@ -58,5 +59,10 @@ class EditThreadHandler extends ThreadEnvironmentHandler
 	public function postProgress(float $progress): void
 	{
 		EditThread::getInstance()->getStats()->updateProgress($progress);
+	}
+
+	public function getChunkController(ReferencedChunkManager $manager): ChunkController
+	{
+		return new ChunkController($manager);
 	}
 }

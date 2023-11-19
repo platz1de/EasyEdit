@@ -6,6 +6,7 @@ use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
+use platz1de\EasyEdit\world\ReferencedChunkManager;
 
 abstract class ThreadEnvironmentHandler
 {
@@ -26,4 +27,6 @@ abstract class ThreadEnvironmentHandler
 	abstract public function finalizeChunkStep(): void;
 
 	abstract public function postProgress(float $progress): void;
+
+	abstract public function getChunkController(ReferencedChunkManager $manager): ChunkController;
 }

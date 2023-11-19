@@ -54,7 +54,6 @@ class EditThread extends Thread
 		gc_enable();
 
 		EasyEdit::setEnvironment(new EditThreadHandler());
-		TypeConverter::getInstance(); //TODO: Remove "fast" setting when we finally can execute this in the main thread
 
 		$this->getLogger()->debug("Started EditThread");
 
