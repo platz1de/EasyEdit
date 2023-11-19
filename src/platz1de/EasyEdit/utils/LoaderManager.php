@@ -6,7 +6,6 @@ use platz1de\EasyEdit\world\blockupdate\UpdateSubChunkBlocksInjector;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
-use pocketmine\block\tile\Tile;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
@@ -107,10 +106,8 @@ class LoaderManager
 					} else {
 						//Hack to significantly reduce the delay of block updates, sadly it does not remove the flickering
 						$loader->getNetworkSession()->sendDataPacket(LevelChunkPacket::create(new ChunkPosition($x, $z), ChunkSerializer::getSubChunkCount($chunk), false, null, ChunkSerializer::serializeFullChunk($chunk, TypeConverter::getInstance()->getBlockTranslator(), new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()))));
-						$block = $chunk->getBlockStateId($x << 4, (int) $loader->getPosition()->getY(), $z << 4) >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::GOLD ? VanillaBlocks::RAW_GOLD() : VanillaBlocks::GOLD();
-						$block->position($this, $x << 4, (int) $loader->getPosition()->getY(), $z << 4);
 						//force reload of chunk
-						PacketUtils::sendFakeBlock($loader, $block);
+						PacketUtils::sendFakeBlockAt($loader, new Vector3($x << 4, (int) $loader->getPosition()->getY(), $z << 4), $chunk->getBlockStateId($x << 4, (int) $loader->getPosition()->getY(), $z << 4) >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::GOLD ? VanillaBlocks::RAW_GOLD() : VanillaBlocks::GOLD());
 						PacketUtils::resendBlock(new Vector3($x << 4, (int) $loader->getPosition()->getY(), $z << 4), $this, $loader);
 					}
 				} else {
@@ -123,13 +120,11 @@ class LoaderManager
 			$tile = TileFactory::getInstance()->createFromData($world, $rawTile);
 			if ($tile !== null) {
 				$chunk->addTile($tile);
-			}
-		}
-
-		if ($preparedInjections !== []) {
-			foreach ($chunkInformation->getTiles() as $tile) {
-				foreach ($world->getChunkPlayers($tile->getInt(Tile::TAG_X) >> 4, $tile->getInt(Tile::TAG_Z) >> 4) as $player) {
-					PacketUtils::resendBlock(new Vector3($tile->getInt(Tile::TAG_X), $tile->getInt(Tile::TAG_Y), $tile->getInt(Tile::TAG_Z)), $world, $player);
+				foreach ($world->getChunkPlayers($tile->getPosition()->getX() >> 4, $tile->getPosition()->getZ() >> 4) as $player) {
+					if ($preparedInjections === []) {
+						PacketUtils::sendFakeBlockAt($player, $tile->getPosition(), VanillaBlocks::AIR());
+					}
+					PacketUtils::resendBlock($tile->getPosition(), $world, $player);
 				}
 			}
 		}
