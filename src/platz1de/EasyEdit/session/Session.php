@@ -239,11 +239,7 @@ class Session
 	 */
 	public function selectPos1(Position $position): void
 	{
-		$this->createSelectionInWorld($position->getWorld()->getFolderName());
-		$this->selection->setPos1(BlockVector::fromVector($position));
-		$this->updateSelectionHighlight();
-
-		$this->sendMessage("selected-pos1", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
+		$this->selectPos($position, 1);
 	}
 
 	/**
@@ -251,11 +247,20 @@ class Session
 	 */
 	public function selectPos2(Position $position): void
 	{
+		$this->selectPos($position, 2);
+	}
+
+	/**
+	 * @param Position $position
+	 * @param int      $number
+	 */
+	public function selectPos(Position $position, int $number): void
+	{
 		$this->createSelectionInWorld($position->getWorld()->getFolderName());
-		$this->selection->setPos2(BlockVector::fromVector($position));
+		$this->selection->setPos(BlockVector::fromVector($position), $number);
 		$this->updateSelectionHighlight();
 
-		$this->sendMessage("selected-pos2", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
+		$this->sendMessage("selected-pos$number", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
 	}
 
 	/**

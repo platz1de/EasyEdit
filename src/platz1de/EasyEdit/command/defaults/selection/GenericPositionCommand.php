@@ -12,13 +12,13 @@ use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\utils\ArgumentParser;
 use pocketmine\world\Position;
 
-class SecondPositionCommand extends EasyEditCommand
+class GenericPositionCommand extends EasyEditCommand
 {
 	use FlagArgumentParser;
 
-	public function __construct()
+	public function __construct(private int $number)
 	{
-		parent::__construct("/pos2", [KnownPermissions::PERMISSION_SELECT], ["/2"]);
+		parent::__construct("/pos$number", [KnownPermissions::PERMISSION_SELECT], ["/$number"]);
 		$this->flagOrder = ["x" => false, "y" => false, "z" => false];
 	}
 
@@ -29,9 +29,9 @@ class SecondPositionCommand extends EasyEditCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		if ($flags->hasFlag("x") && $flags->hasFlag("y") && $flags->hasFlag("z")) {
-			$session->selectPos2(Position::fromObject(ArgumentParser::parseCoordinates($session, $flags->getStringFlag("x"), $flags->getStringFlag("y"), $flags->getStringFlag("z")), $session->asPlayer()->getPosition()->getWorld()));
+			$session->selectPos(Position::fromObject(ArgumentParser::parseCoordinates($session, $flags->getStringFlag("x"), $flags->getStringFlag("y"), $flags->getStringFlag("z")), $session->asPlayer()->getPosition()->getWorld()), $this->number);
 		} else {
-			$session->selectPos2($session->asPlayer()->getPosition());
+			$session->selectPos($session->asPlayer()->getPosition(), $this->number);
 		}
 	}
 

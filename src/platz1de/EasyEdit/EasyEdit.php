@@ -22,12 +22,11 @@ use platz1de\EasyEdit\command\defaults\selection\AliasedContextCommand;
 use platz1de\EasyEdit\command\defaults\selection\CountCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtinguishCommand;
-use platz1de\EasyEdit\command\defaults\selection\FirstPositionCommand;
+use platz1de\EasyEdit\command\defaults\selection\GenericPositionCommand;
 use platz1de\EasyEdit\command\defaults\selection\MoveCommand;
 use platz1de\EasyEdit\command\defaults\selection\NaturalizeCommand;
 use platz1de\EasyEdit\command\defaults\selection\OverlayCommand;
 use platz1de\EasyEdit\command\defaults\selection\ReplaceCommand;
-use platz1de\EasyEdit\command\defaults\selection\SecondPositionCommand;
 use platz1de\EasyEdit\command\defaults\selection\SetCommand;
 use platz1de\EasyEdit\command\defaults\selection\SmoothCommand;
 use platz1de\EasyEdit\command\defaults\selection\StackCommand;
@@ -85,8 +84,8 @@ class EasyEdit extends PluginBase
 
 		CommandManager::registerCommands([
 			//Selection
-			new FirstPositionCommand(),
-			new SecondPositionCommand(),
+			new GenericPositionCommand(1),
+			new GenericPositionCommand(2),
 			new ExtendCommand(),
 			new SetCommand(),
 			new ReplaceCommand(),

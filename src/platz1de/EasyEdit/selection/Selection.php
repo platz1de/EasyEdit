@@ -148,6 +148,20 @@ abstract class Selection implements SelectionIdentifier
 		$this->update();
 	}
 
+	/**
+	 * @param BlockVector $pos
+	 * @param int         $number
+	 */
+	public function setPos(BlockVector $pos, int $number): void
+	{
+		//TODO: Selections really shouldn't be restricted to two points
+		if ($number === 1) {
+			$this->setPos1($pos);
+		} else {
+			$this->setPos2($pos);
+		}
+	}
+
 	public function asSelection(): Selection
 	{
 		return $this;
