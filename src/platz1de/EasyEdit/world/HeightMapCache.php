@@ -2,9 +2,16 @@
 
 namespace platz1de\EasyEdit\world;
 
+use platz1de\EasyEdit\convert\BlockTagManager;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\math\BlockVector;
+use platz1de\EasyEdit\pattern\block\BlockGroup;
+use platz1de\EasyEdit\utils\BlockParser;
 use pocketmine\block\Block;
+use pocketmine\block\BlockTypeIds;
+use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
 use pocketmine\world\World;
+use UnexpectedValueException;
 
 class HeightMapCache
 {
@@ -241,11 +248,27 @@ class HeightMapCache
 	}
 
 	/**
-	 * @param int[] $ignore
+	 * @param string[] $ignore
 	 */
-	public static function setIgnore(array $ignore): void
+	public static function loadIgnore(array $ignore): void
 	{
-		self::$ignore = $ignore;
+		self::$ignore = [];
+		try {
+			foreach ($ignore as $block) {
+				try {
+					$tag = BlockTagManager::getTag($block, true);
+					if ($tag instanceof BlockGroup) {
+						throw new UnexpectedValueException("Masked block groups are not supported for terrain-ignored-blocks");
+					}
+					self::$ignore = array_merge(self::$ignore, $tag->getIds());
+				} catch (UnsupportedBlockStateException) {
+					self::$ignore[] = BlockParser::getRuntime($block) >> Block::INTERNAL_STATE_DATA_BITS;
+				}
+			}
+		} catch (UnsupportedBlockStateException) {
+			EasyEdit::getInstance()->getLogger()->error("Failed to load terrain-ignored-blocks, ignoring only air");
+			self::$ignore = [BlockTypeIds::AIR];
+		}
 	}
 
 	/**

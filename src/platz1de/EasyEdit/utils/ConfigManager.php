@@ -13,9 +13,6 @@ use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\listener\RemapEventListener;
 use platz1de\EasyEdit\thread\input\ConfigInputData;
 use platz1de\EasyEdit\world\HeightMapCache;
-use pocketmine\block\Block;
-use pocketmine\data\bedrock\block\convert\UnsupportedBlockStateException;
-use pocketmine\plugin\DisablePluginException;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use UnexpectedValueException;
@@ -25,7 +22,7 @@ class ConfigManager
 	private const CONFIG_VERSION = "3.0.1";
 
 	/**
-	 * @var int[]
+	 * @var string[]
 	 */
 	private static array $terrainIgnored = [];
 	private static float $toolCooldown;
@@ -47,16 +44,7 @@ class ConfigManager
 
 		Messages::load(strtolower(self::mustGetString($config, "language", "auto")));
 
-		//TODO: change most about this
-		try {
-			self::$terrainIgnored = array_map(static function (string $block): int {
-				return BlockParser::getRuntime($block) >> Block::INTERNAL_STATE_DATA_BITS;
-			}, self::mustGetStringArray($config, "terrain-ignored-blocks", []));
-		} catch (UnsupportedBlockStateException $e) {
-			EasyEdit::getInstance()->getLogger()->error("Failed to parse terrain-ignored-blocks: " . $e->getMessage());
-			throw new DisablePluginException(); //Graceful shutdown
-		}
-		HeightMapCache::setIgnore(self::$terrainIgnored);
+		self::$terrainIgnored = self::mustGetStringArray($config, "terrain-ignored-blocks", []);
 
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
 
@@ -164,7 +152,7 @@ class ConfigManager
 	}
 
 	/**
-	 * @return int[]
+	 * @return string[]
 	 */
 	public static function getTerrainIgnored(): array
 	{
@@ -241,7 +229,7 @@ class ConfigManager
 	{
 		$stream->putInt(count(self::$terrainIgnored));
 		foreach (self::$terrainIgnored as $id) {
-			$stream->putInt($id);
+			$stream->putString($id);
 		}
 		$stream->putBool(self::$allowUnregisteredBlocks);
 		$stream->putInt(self::$pathfindingMax);
@@ -257,7 +245,7 @@ class ConfigManager
 	{
 		$count = $stream->getInt();
 		for ($i = 0; $i < $count; $i++) {
-			self::$terrainIgnored[] = $stream->getInt();
+			self::$terrainIgnored[] = $stream->getString();
 		}
 		self::$allowUnregisteredBlocks = $stream->getBool();
 		self::$pathfindingMax = $stream->getInt();
@@ -272,7 +260,6 @@ class ConfigManager
 	public static function distributeData(): void
 	{
 		RepoManager::init(self::$dataRepo);
-		HeightMapCache::setIgnore(self::$terrainIgnored);
 		LegacyBlockIdConvertor::load();
 		BedrockStatePreprocessor::load();
 		BlockTagManager::load();
@@ -280,6 +267,7 @@ class ConfigManager
 		BlockRotationManipulator::load();
 		ItemConvertor::load();
 		TileConvertor::load(RepoManager::getVersion());
+		HeightMapCache::loadIgnore(self::$terrainIgnored);
 	}
 
 	private static function loadConfig(): Config

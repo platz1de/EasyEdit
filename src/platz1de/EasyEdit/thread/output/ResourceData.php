@@ -6,8 +6,10 @@ use platz1de\EasyEdit\convert\BedrockStatePreprocessor;
 use platz1de\EasyEdit\convert\BlockStateConvertor;
 use platz1de\EasyEdit\convert\BlockTagManager;
 use platz1de\EasyEdit\convert\TileConvertor;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\RepoManager;
+use platz1de\EasyEdit\world\HeightMapCache;
 
 class ResourceData extends OutputData
 {
@@ -32,5 +34,6 @@ class ResourceData extends OutputData
 		BedrockStatePreprocessor::loadResourceData($stream->getString());
 		BlockTagManager::loadResourceData($stream->getString());
 		TileConvertor::load($stream->getLong());
+		HeightMapCache::loadIgnore(ConfigManager::getTerrainIgnored());
 	}
 }

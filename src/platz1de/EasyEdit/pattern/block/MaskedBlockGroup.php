@@ -76,4 +76,12 @@ class MaskedBlockGroup extends BlockType
 		}
 		$this->invert = $stream->getBool();
 	}
+
+	/**
+	 * @return int[]
+	 */
+	public function getIds(): array
+	{
+		return $this->ids;
+	}
 }
