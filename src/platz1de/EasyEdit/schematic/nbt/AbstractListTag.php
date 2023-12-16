@@ -7,6 +7,7 @@ use pocketmine\nbt\NBT;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\NbtStreamWriter;
 use pocketmine\nbt\ReaderTracker;
+use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\Tag;
 
 class AbstractListTag extends Tag
@@ -80,6 +81,15 @@ class AbstractListTag extends Tag
 	public function getLength(): int
 	{
 		return $this->length;
+	}
+
+	public function toListTag(): ListTag
+	{
+		$result = [];
+		for ($i = 0; $i < $this->length; $i++) {
+			$result[] = $this->next();
+		}
+		return new ListTag($result, $this->type);
 	}
 
 	protected function getTypeName(): string

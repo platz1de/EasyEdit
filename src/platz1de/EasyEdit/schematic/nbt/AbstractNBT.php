@@ -79,4 +79,45 @@ class AbstractNBT extends NBT
 				throw new NbtDataException("Unknown NBT tag type $type");
 		}
 	}
+
+	public static function isAbstract(Tag $tag): bool
+	{
+		return $tag instanceof AbstractByteArrayTag || $tag instanceof AbstractListTag;
+	}
+
+	public static function fromAbstractTile(CompoundTag|null $tag): CompoundTag|null
+	{
+		if ($tag === null) {
+			return null;
+		}
+		$ret = self::fromAbstract($tag);
+		if (!$ret instanceof CompoundTag) {
+			throw new NbtDataException("Abstract tile must be compound");
+		}
+		return $ret;
+	}
+
+	public static function fromAbstract(Tag $tag): Tag
+	{
+		if ($tag instanceof CompoundTag) {
+			foreach ($tag->getValue() as $key => $value) {
+				if (self::isAbstract($value)) {
+					$tag->setTag($key, self::fromAbstract($value));
+				}
+			}
+		}
+		if ($tag instanceof AbstractByteArrayTag) {
+			$tag = $tag->toByteArrayTag();
+		}
+		if ($tag instanceof AbstractListTag) {
+			$tag = $tag->toListTag();
+			foreach ($tag->getValue() as $key => $value) {
+				if (self::isAbstract($value)) {
+					$tag->set($key, self::fromAbstract($value));
+					break;
+				}
+			}
+		}
+		return $tag;
+	}
 }

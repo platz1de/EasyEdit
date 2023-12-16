@@ -8,6 +8,7 @@ use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
+use platz1de\EasyEdit\schematic\nbt\AbstractNBT;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
@@ -142,7 +143,7 @@ class SpongeSchematic extends SchematicType
 					$target->addBlock($x, $y, $z, $palette[$j = Binary::readUnsignedVarInt($blockData, $i)] ?? 0);
 
 					if (isset($tileData[World::blockHash($x, $y, $z)])) {
-						$target->addTile(TileConvertor::toBedrock($tileData[World::blockHash($x, $y, $z)], $tilePalette[$j] ?? null));
+						$target->addTile(AbstractNBT::fromAbstractTile(TileConvertor::toBedrock($tileData[World::blockHash($x, $y, $z)], $tilePalette[$j] ?? null)));
 					}
 				}
 			}

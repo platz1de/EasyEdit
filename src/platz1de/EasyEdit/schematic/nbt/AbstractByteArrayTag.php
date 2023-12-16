@@ -6,6 +6,7 @@ use BadMethodCallException;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\NbtStreamWriter;
+use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\Tag;
 
 class AbstractByteArrayTag extends Tag
@@ -49,6 +50,15 @@ class AbstractByteArrayTag extends Tag
 	public function write(NbtStreamWriter $writer): void
 	{
 		throw new \RuntimeException("unimplemented");
+	}
+
+	public function toByteArrayTag(): ByteArrayTag
+	{
+		$value = "";
+		for ($i = 0; $i < $this->length; $i += self::CHUNK_SIZE) {
+			$value .= $this->nextChunk();
+		}
+		return new ByteArrayTag($value);
 	}
 
 	protected function getTypeName(): string
