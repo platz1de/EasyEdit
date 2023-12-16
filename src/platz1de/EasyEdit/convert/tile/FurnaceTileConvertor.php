@@ -21,15 +21,15 @@ class FurnaceTileConvertor extends ContainerTileConvertor
 		$tile->removeTag(self::JAVA_RECIPES_USED);
 		$tile->setInt(self::TAG_STORED_XP, 0);
 		//No idea where pmmp got "MaxTime" from
-		$tile->setInt(Furnace::TAG_MAX_TIME, $tile->getInt(self::JAVA_MAX_TIME, 0));
-		$tile->setInt(self::TAG_MAX_TIME_2, $tile->getInt(self::JAVA_MAX_TIME, 0));
+		$tile->setShort(Furnace::TAG_MAX_TIME, $tile->getShort(self::JAVA_MAX_TIME, 0));
+		$tile->setShort(self::TAG_MAX_TIME_2, $tile->getShort(self::JAVA_MAX_TIME, 0));
 		$tile->removeTag(self::JAVA_MAX_TIME);
 	}
 
 	public function toJava(CompoundTag $tile, BlockStateData $state): ?BlockStateData
 	{
 		parent::toJava($tile, $state);
-		$tile->setInt(self::JAVA_MAX_TIME, $tile->getInt(Furnace::TAG_MAX_TIME, 0));
+		$tile->setShort(self::JAVA_MAX_TIME, $tile->getShort(Furnace::TAG_MAX_TIME, 0));
 		$tile->removeTag(self::TAG_STORED_XP, self::TAG_MAX_TIME_2, Furnace::TAG_MAX_TIME);
 		$tile->setTag(self::JAVA_RECIPES_USED, new CompoundTag());
 		return null;
