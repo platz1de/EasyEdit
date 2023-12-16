@@ -61,4 +61,9 @@ class AbstractNBTSerializer extends BigEndianNbtSerializer
 	{
 		$this->buffer = clone $this->buffer;
 	}
+
+	public function optimizeHighFrequencyAccess(): void
+	{
+		$this->buffer->optimizeHighFrequencyAccess();
+	}
 }

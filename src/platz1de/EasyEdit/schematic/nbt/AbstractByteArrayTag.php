@@ -70,4 +70,9 @@ class AbstractByteArrayTag extends Tag
 	{
 		$this->reader->close();
 	}
+
+	public function optimizeHighFrequencyAccess(): void
+	{
+		$this->reader->optimizeHighFrequencyAccess();
+	}
 }

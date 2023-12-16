@@ -2,76 +2,44 @@
 
 namespace platz1de\EasyEdit\schematic\nbt;
 
-use BadMethodCallException;
-use pocketmine\utils\BinaryDataException;
 use pocketmine\utils\BinaryStream;
 
 class CompressedFileStream extends BinaryStream
 {
-	/**
-	 * @var resource
-	 */
-	private $stream;
+	private CompressedFileReader $file;
 
-	public function __construct(private string $fileName)
+	public function __construct(string $fileName)
 	{
-		$file = gzopen($fileName, "r");
+		$this->file = new CompressedFileReader($fileName);
 
-		if ($file === false) {
-			throw new BadMethodCallException("Failed to open file " . $fileName);
-		}
-
-		$this->stream = $file;
 		parent::__construct();
 	}
 
 	public function get(int $len): string
 	{
-		if ($len === 0) {
-			return "";
-		}
-
-		if (feof($this->stream)) {
-			throw new BinaryDataException("Reached end of file, need $len bytes");
-		}
-
-		$r = gzread($this->stream, $len);
-
-		if ($r === false) {
-			throw new BinaryDataException("Failed to read $len bytes");
-		}
-
-		return $r;
+		$ret = $this->file->get($len, $this->offset);
+		$this->offset += $len;
+		return $ret;
 	}
 
 	public function setOffset(int $offset): void
 	{
-		gzseek($this->stream, $offset);
-	}
-
-	public function getOffset(): int
-	{
-		$offset = gztell($this->stream);
-		if ($offset === false) {
-			throw new BinaryDataException("Failed to get offset");
-		}
-		return $offset;
+		$this->offset = $offset;
 	}
 
 	public function close(): void
 	{
-		gzclose($this->stream);
+		$this->file->close();
 	}
 
-	public function __clone(): void
+	/**
+	 * Optimizes the stream for high-frequency access.
+	 * Clones the file reader to avoid seeking back and forth.
+	 *
+	 * Make sure you manually call {@link close()} on this after you are done with it.
+	 */
+	public function optimizeHighFrequencyAccess(): void
 	{
-		$offset = gztell($this->stream);
-
-		$file = gzopen($this->fileName, "r");
-		if ($file === false || $offset === false) {
-			throw new BadMethodCallException("Failed to open file " . $this->fileName);
-		}
-		$this->stream = $file;
-		gzseek($this->stream, $offset);
+		$this->file = clone $this->file;
 	}
 }

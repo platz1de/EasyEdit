@@ -42,6 +42,9 @@ class McEditSchematic extends SchematicType
 			throw new UnexpectedValueException("Invalid schematic file");
 		}
 
+		$blockIdData->optimizeHighFrequencyAccess();
+		$blockMetaData->optimizeHighFrequencyAccess();
+
 		$blockIdChunk = "";
 		$blockMetaChunk = "";
 		$blockCache = [];
