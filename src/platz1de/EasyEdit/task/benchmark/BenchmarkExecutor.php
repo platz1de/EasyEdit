@@ -11,6 +11,7 @@ use platz1de\EasyEdit\selection\Cube;
 use platz1de\EasyEdit\task\editing\CopyTask;
 use platz1de\EasyEdit\task\editing\DynamicPasteTask;
 use platz1de\EasyEdit\task\editing\SetTask;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\output\TaskNotifyData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -22,6 +23,8 @@ use pocketmine\world\World;
  */
 class BenchmarkExecutor extends ExecutableTask
 {
+	use EditThreadExclusive;
+
 	/**
 	 * @var array{string, int, float}[]
 	 */
@@ -33,11 +36,6 @@ class BenchmarkExecutor extends ExecutableTask
 	public function __construct(private string $world)
 	{
 		parent::__construct();
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	protected function executeInternal(): BenchmarkTaskResult

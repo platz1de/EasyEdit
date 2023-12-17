@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\task\schematic;
 use platz1de\EasyEdit\result\SelectionManipulationResult;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -14,6 +15,8 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
  */
 class SchematicSaveTask extends ExecutableTask
 {
+	use EditThreadExclusive;
+
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param string                    $schematicPath
@@ -29,11 +32,6 @@ class SchematicSaveTask extends ExecutableTask
 	public function getTaskName(): string
 	{
 		return "schematic_save";
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	protected function executeInternal(): SelectionManipulationResult

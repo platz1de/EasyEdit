@@ -6,9 +6,8 @@ use Generator;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use pocketmine\block\Block;
-use pocketmine\block\BlockTypeIds;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\Random;
 use pocketmine\world\generator\noise\Noise;
@@ -17,6 +16,7 @@ use pocketmine\world\generator\noise\Simplex;
 class Noise3DTask extends SelectionEditTask
 {
 	use CubicStaticUndo;
+	use EditThreadExclusive;
 
 	private Noise $noise;
 
@@ -30,11 +30,6 @@ class Noise3DTask extends SelectionEditTask
 	public function __construct(Selection $selection, private int $octaves = 4, private float $persistence = 0.25, private float $expansion = 0.05, private float $threshold = 0)
 	{
 		parent::__construct($selection);
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	/**

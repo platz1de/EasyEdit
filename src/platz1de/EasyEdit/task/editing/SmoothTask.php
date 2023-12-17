@@ -1,13 +1,22 @@
 <?php
 
-namespace platz1de\EasyEdit\task\editing\smooth;
+namespace platz1de\EasyEdit\task\editing;
 
 use Generator;
+use platz1de\EasyEdit\EasyEdit;
+use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
-use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\task\editing\EditTaskHandler;
-use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
-use platz1de\EasyEdit\task\editing\SelectionEditTask;
+use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\SelectionSerializer;
+use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\selection\SelectionContext;
+use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\CancelException;
+use platz1de\EasyEdit\task\EditThreadExclusive;
+use platz1de\EasyEdit\task\ExecutableTask;
+use platz1de\EasyEdit\thread\EditThread;
+use platz1de\EasyEdit\thread\modules\StorageModule;
+use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
@@ -16,9 +25,20 @@ use pocketmine\math\Axis;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 
-class SmoothTask extends SelectionEditTask
+/**
+ * @extends ExecutableTask<EditTaskResult>
+ */
+class SmoothTask extends ExecutableTask
 {
-	use CubicStaticUndo;
+	use EditThreadExclusive;
+
+	/**
+	 * @param SelectionIdentifier $selection
+	 */
+	public function __construct(private SelectionIdentifier $selection)
+	{
+		parent::__construct();
+	}
 
 	/**
 	 * @return string
@@ -28,9 +48,46 @@ class SmoothTask extends SelectionEditTask
 		return "smooth";
 	}
 
-	public function calculateEffectiveComplexity(): int
+	/**
+	 * @return EditTaskResult
+	 * @throws CancelException
+	 */
+	protected function executeInternal(): EditTaskResult
 	{
-		return -1;
+		$selection = $this->selection->asSelection();
+		$chunkHandler = new FullChunkHandler($selection->getWorldName());
+		EasyEdit::getEnv()->initChunkHandler($chunkHandler);
+
+		$min = $selection->getPos1()->add(-1, 0, -1);
+		$max = $selection->getPos2()->add(1, 0, 1);
+
+		for ($x = $min->x; $x <= $max->x; $x++) {
+			for ($z = $min->z; $z <= $max->z; $z++) {
+				$chunkHandler->request(World::chunkHash($x, $z));
+			}
+		}
+
+		while (!$chunkHandler->isDone()) {
+			EditThread::getInstance()->checkExecution();
+			EditThread::getInstance()->waitForData();
+		}
+
+		$undo = new StaticBlockListSelection($selection->getWorldName(), $selection->getPos1(), $selection->getPos2());
+		$editHandler = new EditTaskHandler($selection->getWorldName(), $undo);
+		HeightMapCache::loadBetween($editHandler->getOrigin(), $min, $max);
+
+		$constructors = iterator_to_array($this->prepareConstructors($editHandler));
+		foreach ($chunkHandler->getChunkIndexes() as $chunk) {
+			foreach ($constructors as $constructor) {
+				$constructor->moveTo($chunk);
+			}
+		}
+		return new EditTaskResult($editHandler->getChangedBlockCount(), StorageModule::store($undo));
+	}
+
+	public function attemptRecovery(): EditTaskResult
+	{
+		return new EditTaskResult(0, StoredSelectionIdentifier::invalid());
 	}
 
 	/**
@@ -45,7 +102,7 @@ class SmoothTask extends SelectionEditTask
 		$map = [];
 		$reference = [];
 		$air = VanillaBlocks::AIR()->getStateId();
-		yield from $this->getSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($air, &$currentX, &$currentZ, &$map, &$reference, $handler): void {
+		yield from $this->selection->asSelection()->asShapeConstructors(function (int $x, int $y, int $z) use ($air, &$currentX, &$currentZ, &$map, &$reference, $handler): void {
 			if ($currentX !== $x || $currentZ !== $z) {
 				//Prepare data sets for all y-values
 				$currentX = $x;
@@ -160,22 +217,7 @@ class SmoothTask extends SelectionEditTask
 			}
 
 			$handler->copyBlock($x, $y, $z, $x, $target, $z);
-		}, $this->context);
-	}
-
-	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
-	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
-	{
-		if ($chunk === -1) {
-			return;
-		}
-		HeightMapCache::loadBetween($handler->getOrigin(), $this->getSelection()->getPos1(), $this->getSelection()->getPos2());
-		foreach ($handler->getOrigin()->getManager()->getChunks() as $c => $_) {
-			parent::executeEdit($handler, $c);
-		}
+		}, SelectionContext::full());
 	}
 
 	/**
@@ -207,26 +249,13 @@ class SmoothTask extends SelectionEditTask
 		return $map;
 	}
 
-	protected function getChunkHandler(): GroupedChunkHandler
+	public function putData(ExtendedBinaryStream $stream): void
 	{
-		return new SmoothingChunkHandler($this->getTargetWorld());
+		$stream->putString(SelectionSerializer::fastSerialize($this->selection));
 	}
 
-	protected function sortChunks(array $chunks): array
+	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		//Make sure all surrounding chunks are loaded
-		//TODO: Add actual logic to this
-		foreach ($chunks as $chunk) {
-			World::getXZ($chunk, $x, $z);
-			for ($xi = -1; $xi <= 1; $xi++) {
-				for ($zi = -1; $zi <= 1; $zi++) {
-					$h = World::chunkHash($x + $xi, $z + $zi);
-					if (!in_array($h, $chunks, true)) {
-						$chunks[] = $h;
-					}
-				}
-			}
-		}
-		return $chunks;
+		$this->selection = SelectionSerializer::fastDeserialize($stream->getString());
 	}
 }

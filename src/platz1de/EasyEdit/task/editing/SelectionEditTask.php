@@ -23,17 +23,11 @@ use platz1de\EasyEdit\world\HeightMapCache;
 /**
  * @extends ExecutableTask<EditTaskResult>
  */
-abstract class SelectionEditTask extends ExecutableTask
+abstract class SelectionEditTask extends ExecutableTask implements ChunkedTask
 {
 	protected SelectionContext $context;
 	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
-	private int $totalChunks;
-	private int $chunksLeft;
-	/**
-	 * @var ShapeConstructor[]
-	 */
-	private array $constructors;
 
 	/**
 	 * @param SelectionIdentifier   $selection
@@ -47,57 +41,14 @@ abstract class SelectionEditTask extends ExecutableTask
 
 	/**
 	 * @return EditTaskResult
-	 * @throws CancelException
 	 */
 	protected function executeInternal(): EditTaskResult
 	{
 		$handler = $this->getChunkHandler();
 		EasyEdit::getEnv()->initChunkHandler($handler);
-		$chunks = $this->sortChunks($this->getSelection()->getNeededChunks());
-		$this->totalChunks = count($chunks);
-		$this->chunksLeft = count($chunks);
 		$this->undo = $this->createUndoBlockList();
 		$this->handler = new EditTaskHandler($this->getTargetWorld(), $this->undo);
-		$this->constructors = iterator_to_array($this->prepareConstructors($this->handler), false);
-		$skipped = 0;
-		foreach ($chunks as $chunk) {
-			if ($handler->shouldRequest($chunk, $this->constructors)) {
-				$handler->request($chunk);
-			} else {
-				$skipped++;
-			}
-		}
-		$this->totalChunks -= $skipped;
-		$this->chunksLeft -= $skipped;
-		if ($skipped > 0) {
-			EditThread::getInstance()->debug("Skipped " . $skipped . " chunks");
-		}
-		while (true) {
-			EditThread::getInstance()->checkExecution();
-			if (($key = $handler->getNextChunk()) !== null) {
-				$this->chunksLeft--;
-
-				foreach ($handler->getData() as $k => $information) {
-					$this->handler->setChunk($k, $information);
-				}
-
-				HeightMapCache::prepare();
-
-				$this->executeEdit($this->handler, $key);
-				EditThread::getInstance()->debug("Chunk " . $key . " was edited successful, " . $this->chunksLeft . " chunks left");
-				EasyEdit::getEnv()->postProgress(($this->totalChunks - $this->chunksLeft) / $this->totalChunks);
-
-				$this->handler->finish();
-			}
-			if ($this->chunksLeft <= 0) {
-				break;
-			}
-			if ($handler->getNextChunk() === null) {
-				EditThread::getInstance()->waitForData();
-			} else {
-				EditThread::getInstance()->parseInput();
-			}
-		}
+		EasyEdit::getEnv()->executeChunkedTask($this, $handler, $this->handler, $this->sortChunks($this->getSelection()->getNeededChunks()));
 
 		EditThread::getInstance()->debug("Task " . $this->getTaskName() . ":" . $this->getTaskId() . " was executed successful, changing " . $this->handler->getChangedBlockCount() . " blocks (" . $this->handler->getReadBlockCount() . " read, " . $this->handler->getWrittenBlockCount() . " written)");
 		return $this->toTaskResult();
@@ -118,24 +69,13 @@ abstract class SelectionEditTask extends ExecutableTask
 	 */
 	abstract public function createUndoBlockList(): BlockListSelection;
 
-	/**
-	 * @param EditTaskHandler $handler
-	 * @return Generator<ShapeConstructor>
-	 */
-	abstract public function prepareConstructors(EditTaskHandler $handler): Generator;
-
-	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
-	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
+	public function canExecuteOnMainThread(): bool
 	{
-		foreach ($this->constructors as $constructor) {
-			$constructor->moveTo($chunk);
-		}
+		return $this->getChunkHandler()->checkLoaded($this->getSelection());
 	}
 
 	/**
+	 * This method may only shuffle the chunks, not add or remove any (otherwise stuff will break, beware!)
 	 * @param int[] $chunks
 	 * @return int[]
 	 */

@@ -20,17 +20,14 @@ use RuntimeException;
  */
 class DynamicStoredRotateTask extends ExecutableTask
 {
+	use EditThreadExclusive;
+
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 */
 	public function __construct(private StoredSelectionIdentifier $saveId)
 	{
 		parent::__construct();
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	/**

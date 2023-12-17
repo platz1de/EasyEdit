@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\thread;
 use platz1de\EasyEdit\handler\EditHandler;
 use platz1de\EasyEdit\result\TaskResult;
 use platz1de\EasyEdit\task\ExecutableTask;
+use platz1de\EasyEdit\thread\input\TaskInputData;
 use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
 use SplQueue;
@@ -27,10 +28,7 @@ class MainThreadTaskScheduler
 	public function tick(): void
 	{
 		if (!$this->queue->isEmpty()) {
-			/** @var ExecutableTask<TaskResult> $task */
-			$task = $this->queue->dequeue();
-			EditHandler::callback($task->getTaskId(), $task->runInternal()->getRawPayload());
-			$this->lastTick = Server::getInstance()->getTick();
+			$this->executeTask($this->queue->dequeue());
 		}
 	}
 
@@ -40,10 +38,23 @@ class MainThreadTaskScheduler
 	public function enqueueTask(ExecutableTask $task): void
 	{
 		if ($this->queue->isEmpty() && Server::getInstance()->getTick() !== $this->lastTick) {
-			EditHandler::callback($task->getTaskId(), $task->runInternal()->getRawPayload());
-			$this->lastTick = Server::getInstance()->getTick();
+			$this->executeTask($task);
 		} else {
 			$this->queue->enqueue($task);
 		}
+	}
+
+	/**
+	 * @param ExecutableTask<TaskResult> $task
+	 */
+	private function executeTask(ExecutableTask $task): void
+	{
+		if (!$task->canExecuteOnMainThread()) {
+			EditThread::getInstance()->debug("Task " . $task->getTaskId() . " has unloaded chunks, moving to edit thread");
+			TaskInputData::fromTask($task);
+			return;
+		}
+		EditHandler::callback($task->getTaskId(), $task->runInternal()->getRawPayload());
+		$this->lastTick = Server::getInstance()->getTick();
 	}
 }

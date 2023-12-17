@@ -9,8 +9,8 @@ use platz1de\EasyEdit\selection\BlockListSelection;
 use platz1de\EasyEdit\selection\ExpandingStaticBlockListSelection;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -22,6 +22,8 @@ use pocketmine\world\World;
  */
 abstract class ExpandingTask extends ExecutableTask
 {
+	use EditThreadExclusive;
+
 	protected BlockListSelection $undo;
 	protected EditTaskHandler $handler;
 
@@ -32,11 +34,6 @@ abstract class ExpandingTask extends ExecutableTask
 	public function __construct(private string $world, protected BlockVector $start)
 	{
 		parent::__construct();
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	protected function executeInternal(): EditTaskResult

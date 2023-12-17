@@ -6,10 +6,12 @@ use Generator;
 use InvalidArgumentException;
 use platz1de\EasyEdit\selection\BinaryBlockListStream;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\RawShapeConstructor;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
 use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\utils\VectorUtils;
 use pocketmine\world\World;
 
@@ -18,6 +20,7 @@ class StaticPasteTask extends SelectionEditTask
 	use CubicStaticUndo {
 		CubicStaticUndo::createUndoBlockList as private getDefaultBlockList;
 	}
+	use EditThreadExclusive;
 
 	/**
 	 * @param BlockListSelectionIdentifier $selection
@@ -25,11 +28,6 @@ class StaticPasteTask extends SelectionEditTask
 	public function __construct(BlockListSelectionIdentifier $selection)
 	{
 		parent::__construct($selection);
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	/**
@@ -54,20 +52,6 @@ class StaticPasteTask extends SelectionEditTask
 
 	/**
 	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
-	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
-	{
-		parent::executeEdit($handler, $chunk);
-		$min = VectorUtils::getChunkPosition($chunk);
-		$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
-		foreach ($this->getSelection()->getTiles($min, $max) as $tile) {
-			$handler->addTile($tile);
-		}
-	}
-
-	/**
-	 * @param EditTaskHandler $handler
 	 * @return Generator<ShapeConstructor>
 	 */
 	public function prepareConstructors(EditTaskHandler $handler): Generator
@@ -86,6 +70,13 @@ class StaticPasteTask extends SelectionEditTask
 				}
 			}, $this->context);
 		}
+		yield new RawShapeConstructor(function (int $chunk) use ($handler, $selection): void {
+			$min = VectorUtils::getChunkPosition($chunk);
+			$max = $min->add(15, World::Y_MAX - World::Y_MIN - 1, 15);
+			foreach ($selection->getTiles($min, $max) as $tile) {
+				$handler->addTile($tile);
+			}
+		}, false);
 	}
 
 	public function createUndoBlockList(): BlockListSelection

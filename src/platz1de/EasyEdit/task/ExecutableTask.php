@@ -38,11 +38,15 @@ abstract class ExecutableTask
 	}
 
 	/**
-	 * The effective complexity is used to determine wether a task should be executed on the main thread or not.
-	 * Returning -1 will always execute the task on the edit thread. 0 will always execute the task on the main thread.
+	 * The effective complexity is used to determine whether a task should be executed on the main thread or not.
 	 * @return int
 	 */
 	abstract public function calculateEffectiveComplexity(): int;
+
+	/**
+	 * @return bool whether this task can be executed on the main thread
+	 */
+	abstract public function canExecuteOnMainThread(): bool;
 
 	/**
 	 * @return TaskResultPromise<T>

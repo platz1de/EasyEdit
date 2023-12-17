@@ -20,6 +20,8 @@ use UnexpectedValueException;
  */
 class DynamicStoredFlipTask extends ExecutableTask
 {
+	use EditThreadExclusive;
+
 	/**
 	 * @param StoredSelectionIdentifier $saveId
 	 * @param int                       $axis
@@ -27,11 +29,6 @@ class DynamicStoredFlipTask extends ExecutableTask
 	public function __construct(private StoredSelectionIdentifier $saveId, private int $axis)
 	{
 		parent::__construct();
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	/**

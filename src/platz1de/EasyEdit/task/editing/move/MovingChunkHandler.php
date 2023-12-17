@@ -9,6 +9,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\world\ChunkInformation;
+use pocketmine\Server;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -77,6 +78,34 @@ class MovingChunkHandler extends GroupedChunkHandler
 	public function shouldRequest(int $chunk, array $constructors): bool
 	{
 		return true; //TODO: Add support for contexts
+	}
+
+	/**
+	 * @param Selection $selection
+	 * @return bool
+	 */
+	public function checkLoaded(Selection $selection): bool
+	{
+		$world = Server::getInstance()->getWorldManager()->getWorldByName($this->world);
+		if ($world === null) {
+			return false;
+		}
+		foreach ($selection->getNeededChunks() as $chunk) {
+			World::getXZ($chunk, $x, $z);
+			if (!$world->isChunkLoaded($x, $z)) {
+				return false;
+			}
+		}
+		$min = $this->selection->getPos1()->offset($this->direction);
+		$max = $this->selection->getPos2()->offset($this->direction);
+		for ($x = $min->x >> 4; $x <= $max->x >> 4; $x++) {
+			for ($z = $min->z >> 4; $z <= $max->z >> 4; $z++) {
+				if (!$world->isChunkLoaded($x, $z)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

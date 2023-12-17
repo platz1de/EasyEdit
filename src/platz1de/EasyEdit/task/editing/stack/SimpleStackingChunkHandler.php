@@ -5,14 +5,13 @@ namespace platz1de\EasyEdit\task\editing\stack;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\Selection;
-use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\math\Axis;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
-class SimpleStackingChunkHandler extends GroupedChunkHandler
+class SimpleStackingChunkHandler extends StackingChunkHandler
 {
 	/**
 	 * @var array<int, array<int, ChunkInformation>>

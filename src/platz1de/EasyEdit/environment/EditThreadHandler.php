@@ -2,6 +2,10 @@
 
 namespace platz1de\EasyEdit\environment;
 
+use platz1de\EasyEdit\task\CancelException;
+use platz1de\EasyEdit\task\editing\ChunkedTask;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
@@ -11,6 +15,7 @@ use platz1de\EasyEdit\world\blockupdate\InjectingData;
 use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
+use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 
 /**
@@ -64,5 +69,47 @@ class EditThreadHandler extends ThreadEnvironmentHandler
 	public function getChunkController(ReferencedChunkManager $manager): ChunkController
 	{
 		return new ChunkController($manager);
+	}
+
+	/**
+	 * @param ChunkedTask         $task
+	 * @param GroupedChunkHandler $chunkHandler
+	 * @param EditTaskHandler     $editHandler
+	 * @param int[]               $chunks
+	 * @throws CancelException
+	 */
+	public function executeChunkedTask(ChunkedTask $task, GroupedChunkHandler $chunkHandler, EditTaskHandler $editHandler, array $chunks): void
+	{
+		$constructors = iterator_to_array($task->prepareConstructors($editHandler), false);
+		$left = $total = $chunkHandler->requestAll($chunks, $constructors);
+		while (true) {
+			EditThread::getInstance()->checkExecution();
+			if (($key = $chunkHandler->getNextChunk()) !== null) {
+				$left--;
+
+				foreach ($chunkHandler->getData() as $k => $information) {
+					$editHandler->setChunk($k, $information);
+				}
+
+				HeightMapCache::prepare();
+
+				foreach ($constructors as $constructor) {
+					$constructor->moveTo($key);
+				}
+
+				EditThread::getInstance()->debug("Chunk " . $key . " was edited successful, " . $left . " chunks left");
+				$this->postProgress(($total - $left) / $total);
+
+				$editHandler->finish();
+			}
+			if ($left <= 0) {
+				break;
+			}
+			if ($chunkHandler->getNextChunk() === null) {
+				EditThread::getInstance()->waitForData();
+			} else {
+				EditThread::getInstance()->parseInput();
+			}
+		}
 	}
 }

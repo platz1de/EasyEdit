@@ -2,6 +2,9 @@
 
 namespace platz1de\EasyEdit\environment;
 
+use platz1de\EasyEdit\task\editing\ChunkedTask;
+use platz1de\EasyEdit\task\editing\EditTaskHandler;
+use platz1de\EasyEdit\task\editing\GroupedChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkHandler;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\thread\EditThread;
@@ -10,10 +13,12 @@ use platz1de\EasyEdit\world\blockupdate\InjectingData;
 use platz1de\EasyEdit\world\blockupdate\InjectingSubChunkController;
 use platz1de\EasyEdit\world\ChunkController;
 use platz1de\EasyEdit\world\ChunkInformation;
+use platz1de\EasyEdit\world\HeightMapCache;
 use platz1de\EasyEdit\world\ReferencedChunkManager;
 use pocketmine\block\tile\Tile;
 use pocketmine\Server;
-use pocketmine\world\format\io\ChunkData;
+use pocketmine\utils\AssumptionFailedError;
+use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -56,27 +61,11 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 	{
 		World::getXZ($chunk->getChunk(), $x, $z);
 		if ($chunk->getWorld()->isChunkLoaded($x, $z)) {
-			$this->chunkRequestCallback($chunk, $handler);
-		} else {
-			$chunk->getWorld()->requestChunkPopulation($x, $z, null)->onCompletion(
-				function () use ($chunk, $handler): void {
-					$this->chunkRequestCallback($chunk, $handler);
-				},
-				function () use ($x, $z): void {
-					EditThread::getInstance()->getLogger()->warning("Failed to load chunk $x $z");
-				}
-			);
-		}
-	}
-
-	private function chunkRequestCallback(ChunkRequest $chunk, ChunkHandler $handler): void
-	{
-		World::getXZ($chunk->getChunk(), $x, $z);
-		$c = LoaderManager::getChunk($chunk->getWorld(), $x, $z);
-		if ($c instanceof ChunkData) {
-			$tiles = $c->getTileNBT();
-			$c = $c->getChunk();
-		} else {
+			World::getXZ($chunk->getChunk(), $x, $z);
+			$c = $chunk->getWorld()->getChunk($x, $z);
+			if (!$c instanceof Chunk) {
+				throw new AssumptionFailedError();
+			}
 			$tiles = array_map(static function (Tile $tile) {
 				return $tile->saveNBT();
 			}, $c->getTiles());
@@ -84,8 +73,10 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 			foreach ($c->getTiles() as $tile) {
 				$c->removeTile($tile);
 			}
+			$handler->handleInput($chunk->getChunk(), new ChunkInformation($c, $tiles), $chunk->getPayload());
+		} else {
+			EditThread::getInstance()->getLogger()->error("Chunk " . $chunk->getChunk() . " was unloaded while processing");
 		}
-		$handler->handleInput($chunk->getChunk(), new ChunkInformation($c, $tiles), $chunk->getPayload());
 	}
 
 	public function finalizeChunkStep(): void { }
@@ -95,5 +86,30 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 	public function getChunkController(ReferencedChunkManager $manager): ChunkController
 	{
 		return new InjectingSubChunkController($manager);
+	}
+
+	/**
+	 * @param ChunkedTask         $task
+	 * @param GroupedChunkHandler $chunkHandler
+	 * @param EditTaskHandler     $editHandler
+	 * @param int[]               $chunks
+	 */
+	public function executeChunkedTask(ChunkedTask $task, GroupedChunkHandler $chunkHandler, EditTaskHandler $editHandler, array $chunks): void
+	{
+		$constructors = iterator_to_array($task->prepareConstructors($editHandler), false);
+		$chunkHandler->requestAll($chunks, $constructors);
+		while (($key = $chunkHandler->getNextChunk()) !== null) {
+			foreach ($chunkHandler->getData() as $k => $information) {
+				$editHandler->setChunk($k, $information);
+			}
+
+			HeightMapCache::prepare();
+
+			foreach ($constructors as $constructor) {
+				$constructor->moveTo($key);
+			}
+
+			$editHandler->finish();
+		}
 	}
 }

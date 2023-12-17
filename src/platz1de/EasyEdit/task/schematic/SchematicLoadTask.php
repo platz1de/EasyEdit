@@ -6,6 +6,7 @@ use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\schematic\SchematicFileAdapter;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
@@ -15,6 +16,8 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
  */
 class SchematicLoadTask extends ExecutableTask
 {
+	use EditThreadExclusive;
+
 	/**
 	 * @param string $schematicPath
 	 */
@@ -29,11 +32,6 @@ class SchematicLoadTask extends ExecutableTask
 	public function getTaskName(): string
 	{
 		return "schematic_load";
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	protected function executeInternal(): EditTaskResult

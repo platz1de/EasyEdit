@@ -6,10 +6,12 @@ use Generator;
 use InvalidArgumentException;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\selection\BlockListSelection;
+use platz1de\EasyEdit\selection\constructor\RawShapeConstructor;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
 use platz1de\EasyEdit\selection\StaticBlockListSelection;
+use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use platz1de\EasyEdit\world\HeightMapCache;
@@ -18,6 +20,8 @@ use pocketmine\block\BlockTypeIds;
 
 class DynamicPasteTask extends SelectionEditTask
 {
+	use EditThreadExclusive;
+
 	public const MODE_REPLACE_ALL = 0; //Replace everything with the selection
 	public const MODE_REPLACE_AIR = 1; //Replace air with the selection
 	public const MODE_ONLY_SOLID = 2; //Only paste solid blocks
@@ -34,11 +38,6 @@ class DynamicPasteTask extends SelectionEditTask
 	public function __construct(private string $world, BlockListSelectionIdentifier $selection, private OffGridBlockVector $position, private int $mode = self::MODE_REPLACE_ALL)
 	{
 		parent::__construct($selection);
-	}
-
-	public function calculateEffectiveComplexity(): int
-	{
-		return -1;
 	}
 
 	/**
@@ -63,20 +62,6 @@ class DynamicPasteTask extends SelectionEditTask
 			$this->cache = $sel;
 		}
 		return $this->cache;
-	}
-
-	/**
-	 * @param EditTaskHandler $handler
-	 * @param int             $chunk
-	 */
-	public function executeEdit(EditTaskHandler $handler, int $chunk): void
-	{
-		parent::executeEdit($handler, $chunk);
-
-		$place = $this->getSelection()->getPoint();
-		foreach ($this->getSelection()->getOffsetTiles($chunk) as $tile) {
-			$handler->addTile(TileUtils::offsetCompound($tile, $place->x, $place->y, $place->z));
-		}
 	}
 
 	/**
@@ -118,6 +103,11 @@ class DynamicPasteTask extends SelectionEditTask
 			}, $this->context),
 			default => throw new InvalidArgumentException("Invalid mode $this->mode"),
 		};
+		yield new RawShapeConstructor(function (int $chunk) use ($ox, $oy, $oz, $handler, $selection): void {
+			foreach ($selection->getOffsetTiles($chunk) as $tile) {
+				$handler->addTile(TileUtils::offsetCompound($tile, $ox, $oy, $oz));
+			}
+		}, false);
 	}
 
 	/**

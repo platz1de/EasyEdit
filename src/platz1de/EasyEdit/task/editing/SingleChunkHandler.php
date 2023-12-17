@@ -5,8 +5,11 @@ namespace platz1de\EasyEdit\task\editing;
 use BadMethodCallException;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
+use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\thread\chunk\ChunkRequest;
 use platz1de\EasyEdit\world\ChunkInformation;
+use pocketmine\Server;
+use pocketmine\world\World;
 
 class SingleChunkHandler extends GroupedChunkHandler
 {
@@ -36,6 +39,25 @@ class SingleChunkHandler extends GroupedChunkHandler
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @param Selection $selection
+	 * @return bool
+	 */
+	public function checkLoaded(Selection $selection): bool
+	{
+		$world = Server::getInstance()->getWorldManager()->getWorldByName($this->world);
+		if ($world === null) {
+			return false;
+		}
+		foreach ($selection->getNeededChunks() as $chunk) {
+			World::getXZ($chunk, $x, $z);
+			if (!$world->isChunkLoaded($x, $z)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
