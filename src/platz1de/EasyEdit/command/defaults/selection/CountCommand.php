@@ -2,12 +2,10 @@
 
 namespace platz1de\EasyEdit\command\defaults\selection;
 
-use InvalidArgumentException;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\result\CountingTaskResult;
-use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\task\editing\CountTask;
@@ -30,10 +28,7 @@ class CountCommand extends SphericalSelectionCommand
 	 */
 	public function processSelection(Session $session, Selection $selection, CommandFlagCollection $flags): void
 	{
-		$session->runTask(new CountTask($selection))->then(function (EditTaskResult $result) use ($flags, $session): void {
-			if (!$result instanceof CountingTaskResult) { //TODO: Remove this once the stupid EditTask inheritance is gone
-				throw new InvalidArgumentException("Expected CountingTaskResult, got " . get_class($result));
-			}
+		$session->runTask(new CountTask($selection))->then(function (CountingTaskResult $result) use ($flags, $session): void {
 			$blocks = [];
 			if ($flags->hasFlag("detailed")) {
 				foreach ($result->getBlocks() as $block => $count) {
@@ -53,7 +48,7 @@ class CountCommand extends SphericalSelectionCommand
 					$blocks[] = ($certainNames[$block] ?? "Unknown") . ": " . MixedUtils::humanReadable($count);
 				}
 			}
-			$session->sendMessage("blocks-counted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected()), "{blocks}" => implode("\n", $blocks)]);
+			$session->sendMessage("blocks-counted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable(array_sum($result->getBlocks())), "{blocks}" => implode("\n", $blocks)]);
 		});
 	}
 

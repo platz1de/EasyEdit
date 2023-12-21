@@ -2,10 +2,9 @@
 
 namespace platz1de\EasyEdit\result;
 
-use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
-class CountingTaskResult extends EditTaskResult
+class CountingTaskResult extends TaskResult
 {
 	/**
 	 * @param array<int, int> $blocks
@@ -13,12 +12,10 @@ class CountingTaskResult extends EditTaskResult
 	public function __construct(private array $blocks)
 	{
 		arsort($this->blocks);
-		parent::__construct(array_sum($blocks), StoredSelectionIdentifier::invalid());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void
 	{
-		parent::putData($stream);
 		$stream->putInt(count($this->blocks));
 		foreach ($this->blocks as $id => $count) {
 			$stream->putInt($id);
@@ -28,7 +25,6 @@ class CountingTaskResult extends EditTaskResult
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
-		parent::parseData($stream);
 		$blocks = [];
 		for ($i = $stream->getInt(); $i > 0; $i--) {
 			$blocks[$stream->getInt()] = $stream->getInt();
