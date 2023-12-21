@@ -82,7 +82,7 @@ class AbstractNBT extends NBT
 
 	public static function isAbstract(Tag $tag): bool
 	{
-		return $tag instanceof AbstractByteArrayTag || $tag instanceof AbstractListTag;
+		return $tag instanceof AbstractByteArrayTag || $tag instanceof AbstractListTag || $tag instanceof CompoundTag;
 	}
 
 	public static function fromAbstractTile(CompoundTag|null $tag): CompoundTag|null
