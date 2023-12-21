@@ -32,7 +32,10 @@ class EditThreadHandler extends ThreadEnvironmentHandler
 				return $injection->toProtocol();
 			}, $controller->getInjections());
 		}
-		EditThread::getInstance()->sendOutput(new ResultingChunkData($controller->getManager()->getWorldName(), $controller->getManager()->getModifiedChunks(), $injections));
+		$data = new ResultingChunkData($controller->getManager()->getWorldName(), $controller->getManager()->getModifiedChunks(), $injections);
+		if ($data->checkSend()) {
+			EditThread::getInstance()->sendOutput($data);
+		}
 	}
 
 	/**
