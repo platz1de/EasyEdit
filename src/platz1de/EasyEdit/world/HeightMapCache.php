@@ -20,7 +20,7 @@ class HeightMapCache
 	 */
 	private static array $ignore;
 
-	private static bool $loaded;
+	private static bool $loaded = false;
 	/**
 	 * @var int[][][] starting height -> thickness (downwards)
 	 */
