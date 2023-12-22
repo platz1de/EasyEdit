@@ -60,8 +60,8 @@ class SmoothTask extends ExecutableTask
 		$min = $selection->getPos1()->add(-1, 0, -1);
 		$max = $selection->getPos2()->add(1, 0, 1);
 
-		for ($x = $min->x; $x <= $max->x; $x++) {
-			for ($z = $min->z; $z <= $max->z; $z++) {
+		for ($x = $min->x >> 4; $x <= $max->x >> 4; $x++) {
+			for ($z = $min->z >> 4; $z <= $max->z >> 4; $z++) {
 				$chunkHandler->request(World::chunkHash($x, $z));
 			}
 		}
@@ -73,6 +73,10 @@ class SmoothTask extends ExecutableTask
 
 		$undo = new StaticBlockListSelection($selection->getWorldName(), $selection->getPos1(), $selection->getPos2());
 		$editHandler = new EditTaskHandler($selection->getWorldName(), $undo);
+		foreach ($chunkHandler->getChunks() as $index => $chunk) {
+			$editHandler->setChunk($index, $chunk);
+		}
+		HeightMapCache::prepare();
 		HeightMapCache::loadBetween($editHandler->getOrigin(), $min, $max);
 
 		$constructors = iterator_to_array($this->prepareConstructors($editHandler));
@@ -81,7 +85,7 @@ class SmoothTask extends ExecutableTask
 				$constructor->moveTo($chunk);
 			}
 		}
-		return new EditTaskResult($editHandler->getChangedBlockCount(), StorageModule::store($undo));
+		$editHandler->finish();
 		return new EditTaskResult($editHandler->getChangedBlockCount(), $undo);
 	}
 
