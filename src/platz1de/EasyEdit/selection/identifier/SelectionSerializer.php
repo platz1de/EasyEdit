@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\selection\identifier;
 
+use InvalidArgumentException;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class SelectionSerializer
@@ -23,5 +24,18 @@ class SelectionSerializer
 		 */
 		$class = $stream->getString();
 		return $class::fastDeserialize($stream->getString());
+	}
+
+	/**
+	 * @param string $data
+	 * @return BlockListSelectionIdentifier
+	 */
+	public static function mustGetBlockList(string $data): BlockListSelectionIdentifier
+	{
+		$identifier = self::fastDeserialize($data);
+		if ($identifier instanceof BlockListSelectionIdentifier) {
+			return $identifier;
+		}
+		throw new InvalidArgumentException("Expected BlockListSelectionIdentifier, got " . get_class($identifier));
 	}
 }

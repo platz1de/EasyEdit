@@ -15,7 +15,6 @@ use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
@@ -83,6 +82,7 @@ class SmoothTask extends ExecutableTask
 			}
 		}
 		return new EditTaskResult($editHandler->getChangedBlockCount(), StorageModule::store($undo));
+		return new EditTaskResult($editHandler->getChangedBlockCount(), $undo);
 	}
 
 	public function attemptRecovery(): EditTaskResult

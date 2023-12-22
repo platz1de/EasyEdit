@@ -89,7 +89,7 @@ class Session
 	public function runTask(ExecutableTask $task): TaskResultPromise
 	{
 		EditHandler::affiliateTask($this, $task->getTaskId());
-		return $task->run()
+		return $task->storeSelections()->run()
 			->onCancel(function (SessionIdentifier $reason) {
 				if ($reason->getName() !== $this->getPlayer()) {
 					$this->sendMessage("task-cancelled-self");

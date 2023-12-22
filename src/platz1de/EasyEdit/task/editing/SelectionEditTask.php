@@ -2,23 +2,16 @@
 
 namespace platz1de\EasyEdit\task\editing;
 
-use Generator;
 use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\BlockListSelection;
-use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\identifier\SelectionIdentifier;
 use platz1de\EasyEdit\selection\identifier\SelectionSerializer;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\chunk\ChunkRequestManager;
 use platz1de\EasyEdit\thread\EditThread;
-use platz1de\EasyEdit\thread\modules\StorageModule;
-use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
-use platz1de\EasyEdit\world\HeightMapCache;
 
 /**
  * @extends ExecutableTask<EditTaskResult>
@@ -56,7 +49,7 @@ abstract class SelectionEditTask extends ExecutableTask implements ChunkedTask
 
 	protected function toTaskResult(): EditTaskResult
 	{
-		return new EditTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo));
+		return new EditTaskResult($this->handler->getChangedBlockCount(), $this->undo);
 	}
 
 	public function attemptRecovery(): EditTaskResult

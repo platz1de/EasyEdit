@@ -63,7 +63,7 @@ class BenchmarkExecutor extends ExecutableTask
 
 		//Task #3 - copy
 		$start = microtime(true);
-		$res = (new CopyTask($testCube, $pos))->executeInternal(); //TODO: Don't save the selection (literal memory leak)
+		$res = (new CopyTask($testCube, $pos))->executeInternal();
 		$this->results[] = ["copy", $res->getAffected(), microtime(true) - $start];
 		$this->sendOutputPacket(new TaskNotifyData(3));
 

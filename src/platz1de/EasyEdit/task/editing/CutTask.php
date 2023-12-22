@@ -5,12 +5,10 @@ namespace platz1de\EasyEdit\task\editing;
 use Generator;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\result\CuttingTaskResult;
-use platz1de\EasyEdit\result\EditTaskResult;
 use platz1de\EasyEdit\selection\constructor\ShapeConstructor;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\cubic\CubicStaticUndo;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\block\VanillaBlocks;
@@ -46,7 +44,7 @@ class CutTask extends SelectionEditTask
 
 	protected function toTaskResult(): CuttingTaskResult
 	{
-		return new CuttingTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo), StorageModule::store($this->result));
+		return new CuttingTaskResult($this->handler->getChangedBlockCount(), $this->undo, $this->result);
 	}
 
 	/**

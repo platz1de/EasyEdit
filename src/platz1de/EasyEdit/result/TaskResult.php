@@ -41,6 +41,8 @@ abstract class TaskResult
 		return (string) round($this->getTime(), 2);
 	}
 
+	public function storeSelections(): void { }
+
 	/**
 	 * @return string
 	 */

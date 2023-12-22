@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\result;
 
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
-use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\SelectionSerializer;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class CuttingTaskResult extends EditTaskResult
@@ -21,13 +21,19 @@ class CuttingTaskResult extends EditTaskResult
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		parent::putData($stream);
-		$stream->putString($this->clipboard->toIdentifier()->fastSerialize());
+		$stream->putString(SelectionSerializer::fastSerialize($this->clipboard));
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		parent::parseData($stream);
-		$this->clipboard = StoredSelectionIdentifier::fastDeserialize($stream->getString());
+		$this->clipboard = SelectionSerializer::mustGetBlockList($stream->getString());
+	}
+
+	public function storeSelections(): void
+	{
+		parent::storeSelections();
+		$this->clipboard = $this->clipboard->toIdentifier();
 	}
 
 	/**

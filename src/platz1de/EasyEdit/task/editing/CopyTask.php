@@ -11,7 +11,6 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\NonSavingBlockListSelection;
 use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\selection\SelectionContext;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 
@@ -36,7 +35,7 @@ class CopyTask extends SelectionEditTask
 
 	protected function toTaskResult(): EditTaskResult
 	{
-		return new EditTaskResult($this->result->getBlockCount(), StorageModule::store($this->result));
+		return new EditTaskResult($this->result->getBlockCount(), $this->result);
 	}
 
 	/**

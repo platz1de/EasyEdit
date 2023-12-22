@@ -3,7 +3,7 @@
 namespace platz1de\EasyEdit\result;
 
 use platz1de\EasyEdit\selection\identifier\BlockListSelectionIdentifier;
-use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
+use platz1de\EasyEdit\selection\identifier\SelectionSerializer;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 class EditTaskResult extends TaskResult
@@ -17,23 +17,18 @@ class EditTaskResult extends TaskResult
 	public function putData(ExtendedBinaryStream $stream): void
 	{
 		$stream->putInt($this->affected);
-		$this->selection = $this->selection->toIdentifier();
-		if ($this->selection->isValid()) {
-			$stream->putBool(true);
-			$stream->putString($this->selection->fastSerialize());
-		} else {
-			$stream->putBool(false);
-		}
+		$stream->putString(SelectionSerializer::fastSerialize($this->selection));
 	}
 
 	public function parseData(ExtendedBinaryStream $stream): void
 	{
 		$this->affected = $stream->getInt();
-		if ($stream->getBool()) {
-			$this->selection = StoredSelectionIdentifier::fastDeserialize($stream->getString());
-		} else {
-			$this->selection = StoredSelectionIdentifier::invalid();
-		}
+		$this->selection = SelectionSerializer::mustGetBlockList($stream->getString());
+	}
+
+	public function storeSelections(): void
+	{
+		$this->selection = $this->selection->toIdentifier();
 	}
 
 	/**

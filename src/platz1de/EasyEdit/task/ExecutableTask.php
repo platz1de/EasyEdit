@@ -20,6 +20,10 @@ abstract class ExecutableTask
 {
 	private static int $id = 0;
 	private int $taskId;
+	private int $flags = self::FLAG_NONE;
+
+	private const FLAG_NONE = 0;
+	private const FLAG_STORE_SELECTIONS = 1; //Store selections on the edit thread and return an identifier instead of the actual selection
 
 	public function __construct()
 	{
@@ -69,6 +73,9 @@ abstract class ExecutableTask
 			$result = $this->attemptRecovery();
 		}
 		$result->enrichWithTime(microtime(true) - $start);
+		if (($this->flags & self::FLAG_STORE_SELECTIONS) !== 0) {
+			$result->storeSelections();
+		}
 		$promise->resolve($result);
 		return $promise;
 	}
@@ -138,15 +145,16 @@ abstract class ExecutableTask
 	 */
 	public function __serialize(): array
 	{
-		return [$this->taskId];
+		return [$this->taskId, $this->flags];
 	}
 
 	/**
-	 * @param array{int} $data
+	 * @param array{int, int} $data
 	 */
 	public function __unserialize(array $data): void
 	{
 		$this->taskId = $data[0];
+		$this->flags = $data[1];
 	}
 
 	/**
@@ -160,5 +168,14 @@ abstract class ExecutableTask
 	public function getTaskId(): int
 	{
 		return $this->taskId;
+	}
+
+	/**
+	 * @return self<T>
+	 */
+	public function storeSelections(): self
+	{
+		$this->flags |= self::FLAG_STORE_SELECTIONS;
+		return $this;
 	}
 }

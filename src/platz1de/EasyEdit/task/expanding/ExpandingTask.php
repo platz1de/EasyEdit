@@ -56,7 +56,7 @@ abstract class ExpandingTask extends ExecutableTask
 
 	protected function toTaskResult(): EditTaskResult
 	{
-		return new EditTaskResult($this->handler->getChangedBlockCount(), StorageModule::store($this->undo));
+		return new EditTaskResult($this->handler->getChangedBlockCount(), $this->undo);
 	}
 
 	public function attemptRecovery(): EditTaskResult

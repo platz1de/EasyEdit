@@ -8,7 +8,6 @@ use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\selection\identifier\StoredSelectionIdentifier;
 use platz1de\EasyEdit\task\EditThreadExclusive;
 use platz1de\EasyEdit\task\ExecutableTask;
-use platz1de\EasyEdit\thread\modules\StorageModule;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 
 /**
@@ -38,8 +37,7 @@ class SchematicLoadTask extends ExecutableTask
 	{
 		$selection = DynamicBlockListSelection::empty();
 		SchematicFileAdapter::readIntoSelection($this->schematicPath, $selection);
-		$changeId = StorageModule::store($selection);
-		return new EditTaskResult($selection->getIterator()->getWrittenBlockCount(), $changeId);
+		return new EditTaskResult($selection->getIterator()->getWrittenBlockCount(), $selection);
 	}
 
 	public function attemptRecovery(): EditTaskResult
