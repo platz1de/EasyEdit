@@ -38,12 +38,12 @@ class SchematicSaveTask extends ExecutableTask
 	{
 		$selection = StorageModule::mustGetDynamic($this->saveId);
 		SchematicFileAdapter::createFromSelection($this->schematicPath, $selection);
-		return new SelectionManipulationResult($selection->getIterator()->getReadBlockCount());
+		return new SelectionManipulationResult($selection->getIterator()->getReadBlockCount(), StoredSelectionIdentifier::invalid());
 	}
 
 	public function attemptRecovery(): SelectionManipulationResult
 	{
-		return new SelectionManipulationResult(0);
+		return new SelectionManipulationResult(0, StoredSelectionIdentifier::invalid());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

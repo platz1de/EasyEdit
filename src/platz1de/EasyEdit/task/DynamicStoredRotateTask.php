@@ -71,14 +71,17 @@ class DynamicStoredRotateTask extends ExecutableTask
 		foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 			$rotated->addTile(TileUtils::rotateCompound($tile, $selection->getPos2()->z));
 		}
-		StorageModule::forceStore($this->saveId, $rotated);
-		return new SelectionManipulationResult($rotated->getIterator()->getWrittenBlockCount());
+		if ($this->shouldWriteInPlace()) {
+			StorageModule::forceStore($this->saveId, $rotated);
+			return new SelectionManipulationResult($rotated->getIterator()->getWrittenBlockCount(), $this->saveId);
+		}
+		return new SelectionManipulationResult($rotated->getIterator()->getWrittenBlockCount(), $rotated);
 	}
 
 	public function attemptRecovery(): SelectionManipulationResult
 	{
 		//TODO: splitting so we can some report time
-		return new SelectionManipulationResult(0);
+		return new SelectionManipulationResult(0, StoredSelectionIdentifier::invalid());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

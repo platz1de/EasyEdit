@@ -85,14 +85,17 @@ class DynamicStoredFlipTask extends ExecutableTask
 		foreach ($selection->getTiles($selection->getPos1(), $selection->getPos2()) as $tile) {
 			$flipped->addTile(TileUtils::flipCompound($this->axis, $tile, $selection->getPos2()->getComponent($this->axis)));
 		}
-		StorageModule::forceStore($this->saveId, $flipped);
-		return new SelectionManipulationResult($flipped->getIterator()->getWrittenBlockCount());
+		if ($this->shouldWriteInPlace()) {
+			StorageModule::forceStore($this->saveId, $flipped);
+			return new SelectionManipulationResult($flipped->getIterator()->getWrittenBlockCount(), $this->saveId);
+		}
+		return new SelectionManipulationResult($flipped->getIterator()->getWrittenBlockCount(), $flipped);
 	}
 
 	public function attemptRecovery(): SelectionManipulationResult
 	{
 		//TODO: splitting
-		return new SelectionManipulationResult(0);
+		return new SelectionManipulationResult(0, StoredSelectionIdentifier::invalid());
 	}
 
 	public function putData(ExtendedBinaryStream $stream): void

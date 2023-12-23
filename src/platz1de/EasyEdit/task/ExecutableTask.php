@@ -24,6 +24,7 @@ abstract class ExecutableTask
 
 	private const FLAG_NONE = 0;
 	private const FLAG_STORE_SELECTIONS = 1; //Store selections on the edit thread and return an identifier instead of the actual selection
+	private const FLAG_WRITE_IN_PLACE = 2; //Write the result in place instead of creating a new selection in storage (requires FLAG_STORE_SELECTIONS)
 
 	public function __construct()
 	{
@@ -177,5 +178,22 @@ abstract class ExecutableTask
 	{
 		$this->flags |= self::FLAG_STORE_SELECTIONS;
 		return $this;
+	}
+
+	/**
+	 * @return self<T>
+	 */
+	public function writeInPlace(): self
+	{
+		$this->flags |= self::FLAG_WRITE_IN_PLACE;
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	protected function shouldWriteInPlace(): bool
+	{
+		return ($this->flags & self::FLAG_WRITE_IN_PLACE) !== 0 && ($this->flags & self::FLAG_STORE_SELECTIONS) !== 0;
 	}
 }
