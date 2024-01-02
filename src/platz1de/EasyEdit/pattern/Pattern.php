@@ -113,9 +113,6 @@ abstract class Pattern
 	 */
 	public function getSelectionContext(): SelectionContext
 	{
-		if (static::class === __CLASS__ && $this->pieces === []) {
-			return SelectionContext::full(); //TODO: Add separate Mask pattern types
-		}
 		$context = SelectionContext::empty();
 		$this->applySelectionContext($context);
 		return $context;
