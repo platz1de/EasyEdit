@@ -57,6 +57,7 @@ use platz1de\EasyEdit\world\clientblock\RegistryUpdateTask;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\AssumptionFailedError;
+use const pocketmine\BEDROCK_DATA_PATH;
 
 class EasyEdit extends PluginBase
 {
@@ -64,6 +65,11 @@ class EasyEdit extends PluginBase
 
 	public function onEnable(): void
 	{
+		if (!str_contains(BEDROCK_DATA_PATH, "/vendor/pocketmine/bedrock-data/")) {
+			$this->getLogger()->critical("Pocketmine spoons are not supported");
+			return;
+		}
+
 		self::$instance = $this;
 
 		if (!is_dir(self::getSchematicPath()) && !mkdir(self::getSchematicPath(), 0777, true) && !is_dir(self::getSchematicPath())) {
