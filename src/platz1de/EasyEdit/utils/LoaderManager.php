@@ -106,7 +106,7 @@ class LoaderManager
 						}
 					} else {
 						//Hack to significantly reduce the delay of block updates, sadly it does not remove the flickering
-						$loader->getNetworkSession()->sendDataPacket(LevelChunkPacket::create(new ChunkPosition($x, $z), ChunkSerializer::getSubChunkCount($chunk, DimensionIds::OVERWORLD), false, null, ChunkSerializer::serializeFullChunk($chunk, TypeConverter::getInstance()->getBlockTranslator(), new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()))));
+						$loader->getNetworkSession()->sendDataPacket(LevelChunkPacket::create(new ChunkPosition($x, $z), DimensionIds::OVERWORLD, ChunkSerializer::getSubChunkCount($chunk, DimensionIds::OVERWORLD), false, null, ChunkSerializer::serializeFullChunk($chunk, DimensionIds::OVERWORLD, TypeConverter::getInstance()->getBlockTranslator(), new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()))));
 						//force reload of chunk
 						PacketUtils::sendFakeBlockAt($loader, new Vector3($x << 4, (int) $loader->getPosition()->getY(), $z << 4), $chunk->getBlockStateId($x << 4, (int) $loader->getPosition()->getY(), $z << 4) >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::GOLD ? VanillaBlocks::RAW_GOLD() : VanillaBlocks::GOLD());
 						PacketUtils::resendBlock(new Vector3($x << 4, (int) $loader->getPosition()->getY(), $z << 4), $this, $loader);
