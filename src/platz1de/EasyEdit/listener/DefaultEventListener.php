@@ -155,5 +155,6 @@ class DefaultEventListener implements Listener
 	public function onQuit(PlayerQuitEvent $event): void
 	{
 		unset(self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()]);
+		ChunkRefreshListener::getInstance()->clearPlayer($event->getPlayer()->getName());
 	}
 }

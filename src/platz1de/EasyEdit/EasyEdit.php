@@ -47,6 +47,7 @@ use platz1de\EasyEdit\command\flags\IntegerCommandFlag;
 use platz1de\EasyEdit\command\flags\SingularCommandFlag;
 use platz1de\EasyEdit\environment\MainThreadHandler;
 use platz1de\EasyEdit\environment\ThreadEnvironmentHandler;
+use platz1de\EasyEdit\listener\ChunkRefreshListener;
 use platz1de\EasyEdit\listener\DefaultEventListener;
 use platz1de\EasyEdit\selection\SelectionContext;
 use platz1de\EasyEdit\task\editing\DynamicPasteTask;
@@ -81,6 +82,7 @@ class EasyEdit extends PluginBase
 		$this->getScheduler()->scheduleRepeatingTask(new EditAdapter(), 1);
 
 		DefaultEventListener::init();
+		Server::getInstance()->getPluginManager()->registerEvents(ChunkRefreshListener::getInstance(), $this);
 
 		CommandManager::registerCommands([
 			//Selection

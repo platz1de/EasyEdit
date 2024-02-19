@@ -2,18 +2,11 @@
 
 namespace platz1de\EasyEdit\utils;
 
+use platz1de\EasyEdit\listener\ChunkRefreshListener;
 use platz1de\EasyEdit\world\blockupdate\UpdateSubChunkBlocksInjector;
 use platz1de\EasyEdit\world\ChunkInformation;
-use pocketmine\block\Block;
-use pocketmine\block\BlockTypeIds;
 use pocketmine\block\tile\TileFactory;
-use pocketmine\block\VanillaBlocks;
-use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\TypeConverter;
-use pocketmine\network\mcpe\protocol\LevelChunkPacket;
-use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
-use pocketmine\network\mcpe\protocol\types\ChunkPosition;
-use pocketmine\network\mcpe\serializer\ChunkSerializer;
+use pocketmine\block\VanillaBlocks;use pocketmine\network\mcpe\protocol\LevelChunkPacket;
 use pocketmine\player\Player;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\ChunkData;
@@ -104,11 +97,8 @@ class LoaderManager
 							$loader->getNetworkSession()->sendDataPacket(UpdateSubChunkBlocksInjector::create($injection));
 						}
 					} else {
-						//Hack to significantly reduce the delay of block updates, sadly it does not remove the flickering
-						$loader->getNetworkSession()->sendDataPacket(LevelChunkPacket::create(new ChunkPosition($x, $z), ChunkSerializer::getSubChunkCount($chunk), false, null, ChunkSerializer::serializeFullChunk($chunk, TypeConverter::getInstance()->getBlockTranslator(), new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()))));
-						//force reload of chunk
-						PacketUtils::sendFakeBlockAt($loader, new Vector3($x << 4, (int) $loader->getPosition()->getY(), $z << 4), $chunk->getBlockStateId($x << 4, (int) $loader->getPosition()->getY(), $z << 4) >> Block::INTERNAL_STATE_DATA_BITS === BlockTypeIds::GOLD ? VanillaBlocks::RAW_GOLD() : VanillaBlocks::GOLD());
-						PacketUtils::resendBlock(new Vector3($x << 4, (int) $loader->getPosition()->getY(), $z << 4), $this, $loader);
+						$loader->onChunkChanged($x, $z, $chunk);
+						ChunkRefreshListener::getInstance()->addAffectedPlayer($loader->getName());
 					}
 				} else {
 					$loader->onChunkChanged($x, $z, $chunk);
