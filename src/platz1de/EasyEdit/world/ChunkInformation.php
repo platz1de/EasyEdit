@@ -44,6 +44,15 @@ class ChunkInformation
 	}
 
 	/**
+	 * @param Chunk $chunk
+	 * @return ChunkInformation
+	 */
+	public static function fromChunk(Chunk $chunk): ChunkInformation
+	{
+		return new self($chunk, array_map(fn(Tile $tile) => $tile->saveNBT(), $chunk->getTiles()));
+	}
+
+	/**
 	 * @param ExtendedBinaryStream $stream
 	 */
 	public function putData(ExtendedBinaryStream $stream): void
@@ -123,11 +132,6 @@ class ChunkInformation
 		foreach ($this->tiles as $key => $tile) {
 			$this->tiles[$key] = clone $tile;
 		}
-		$this->used = false;
-	}
-
-	public function resetFlags(): void
-	{
 		$this->used = false;
 	}
 

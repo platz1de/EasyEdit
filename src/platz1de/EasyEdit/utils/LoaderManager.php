@@ -6,10 +6,9 @@ use platz1de\EasyEdit\listener\ChunkRefreshListener;
 use platz1de\EasyEdit\world\blockupdate\UpdateSubChunkBlocksInjector;
 use platz1de\EasyEdit\world\ChunkInformation;
 use pocketmine\block\tile\TileFactory;
-use pocketmine\block\VanillaBlocks;use pocketmine\network\mcpe\protocol\LevelChunkPacket;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\player\Player;
 use pocketmine\world\format\Chunk;
-use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\World;
 use UnexpectedValueException;
 
@@ -19,17 +18,13 @@ class LoaderManager
 	 * @param World $world
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
-	 * @return Chunk|ChunkData
+	 * @return Chunk
 	 */
-	public static function getChunk(World $world, int $chunkX, int $chunkZ): Chunk|ChunkData
+	public static function getChunk(World $world, int $chunkX, int $chunkZ): Chunk
 	{
-		if ($world->isChunkLoaded($chunkX, $chunkZ)) {
-			$chunk = $world->getChunk($chunkX, $chunkZ);
-		} else {
-			$chunk = $world->getProvider()->loadChunk($chunkX, $chunkZ);
-		}
+		$chunk = $world->getChunk($chunkX, $chunkZ);
 
-		if (!$chunk instanceof Chunk && !$chunk instanceof ChunkData) {
+		if (!$chunk instanceof Chunk) {
 			throw new UnexpectedValueException("Could not load chunk " . $chunkX . " " . $chunkZ . ", was it generated first?");
 		}
 
@@ -118,20 +113,5 @@ class LoaderManager
 				}
 			}
 		}
-	}
-
-	/**
-	 * @param ChunkInformation $chunk
-	 * @return bool
-	 */
-	public static function isChunkUsed(ChunkInformation $chunk): bool
-	{
-		foreach ($chunk->getChunk()->getSubChunks() as $subChunk) {
-			if (!$subChunk->isEmptyFast()) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

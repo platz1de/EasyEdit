@@ -9,9 +9,7 @@ use platz1de\EasyEdit\thread\input\task\CancelTaskData;
 use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\LoaderManager;
 use platz1de\EasyEdit\world\ChunkInformation;
-use pocketmine\block\tile\Tile;
 use pocketmine\utils\SingletonTrait;
-use pocketmine\world\format\io\ChunkData;
 use pocketmine\world\World;
 use Throwable;
 
@@ -59,17 +57,7 @@ class ChunkRequestExecutor
 	{
 		$stream->putInt($x);
 		$stream->putInt($z);
-		$chunk = LoaderManager::getChunk($world, $x, $z);
-		if ($chunk instanceof ChunkData) {
-			//TODO: can this even happen?
-			$tiles = $chunk->getTileNBT();
-			$chunk = $chunk->getChunk();
-		} else {
-			$tiles = array_map(static function (Tile $tile) {
-				return $tile->saveNBT();
-			}, $chunk->getTiles());
-		}
-		(new ChunkInformation($chunk, $tiles))->putData($stream);
+		ChunkInformation::fromChunk(LoaderManager::getChunk($world, $x, $z))->putData($stream);
 		return $stream->getBuffer();
 	}
 }
