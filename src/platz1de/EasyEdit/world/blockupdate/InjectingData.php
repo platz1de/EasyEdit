@@ -4,7 +4,6 @@ namespace platz1de\EasyEdit\world\blockupdate;
 
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
-use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\utils\Binary;
 
@@ -17,7 +16,7 @@ class InjectingData
 	public function __construct(int $x, int $y, int $z)
 	{
 		$this->position = new BlockPosition($x, $y, $z);
-		$this->injection = PacketSerializer::encoder(new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()));
+		$this->injection = PacketSerializer::encoder();
 	}
 
 	public function writeBlock(int $x, int $y, int $z, int $id): void
@@ -34,7 +33,7 @@ class InjectingData
 
 	public function toProtocol(): string
 	{
-		$serializer = PacketSerializer::encoder(new PacketSerializerContext(TypeConverter::getInstance()->getItemTypeDictionary()));
+		$serializer = PacketSerializer::encoder();
 		$serializer->putBlockPosition($this->position);
 		$serializer->putUnsignedVarInt($this->blockCount);
 		$serializer->put($this->injection->getBuffer());
