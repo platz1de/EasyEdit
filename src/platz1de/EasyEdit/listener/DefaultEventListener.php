@@ -64,24 +64,23 @@ class DefaultEventListener implements Listener
 	public function onInteract(PlayerInteractEvent $event): void
 	{
 		if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
-			if ((self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] ?? .0) < microtime(true)) {
+			$canEdit = (self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] ?? .0) < microtime(true);
+			if ($canEdit) {
 				self::$cooldown[$event->getPlayer()->getUniqueId()->getBytes()] = microtime(true) + ConfigManager::getToolCooldown();
-			} else {
-				return;
 			}
 
 			$item = $event->getItem();
 			if ($item instanceof TieredTool && $item->getTier() === ToolTier::WOOD() && $event->getPlayer()->isCreative()) {
 				if ($item instanceof Axe && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_SELECT)) {
 					$event->cancel();
-					SessionManager::get($event->getPlayer())->selectPos2($event->getBlock()->getPosition());
+					if ($canEdit) SessionManager::get($event->getPlayer())->selectPos2($event->getBlock()->getPosition());
 				} elseif ($item instanceof Shovel && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_BRUSH) && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT)) {
 					$event->cancel();
-					BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
+					if ($canEdit) BrushHandler::handleBrush($item->getNamedTag(), $event->getPlayer());
 				}
 			} elseif ($item instanceof BlazeRod && $item->getNamedTag()->getByte("isBuilderRod", 0) === 1 && $event->getPlayer()->hasPermission(KnownPermissions::PERMISSION_EDIT) && $event->getPlayer()->isCreative()) {
 				$event->cancel();
-				SessionManager::get($event->getPlayer())->runSettingTask(new ExtendBlockFaceTask($event->getPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($event->getBlock()->getPosition()), $event->getFace()));
+				if ($canEdit) SessionManager::get($event->getPlayer())->runSettingTask(new ExtendBlockFaceTask($event->getPlayer()->getWorld()->getFolderName(), BlockVector::fromVector($event->getBlock()->getPosition()), $event->getFace()));
 			}
 		}
 	}
