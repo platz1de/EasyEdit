@@ -27,7 +27,6 @@ class ConfigManager
 	private static array $terrainIgnored = [];
 	private static float $toolCooldown;
 	private static bool $allowOtherHistory;
-	private static bool $allowUnregisteredBlocks;
 	private static int $pathfindingMax;
 	private static int $fillDistance;
 	private static bool $sendDebug;
@@ -49,7 +48,6 @@ class ConfigManager
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
 
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
-		self::$allowUnregisteredBlocks = self::mustGetBool($config, "allow-unregistered-blocks", false);
 
 		self::$pathfindingMax = self::mustGetInt($config, "pathfinding-max", 1000000);
 		self::$fillDistance = self::mustGetInt($config, "fill-distance", 200);
@@ -167,14 +165,6 @@ class ConfigManager
 		return self::$allowOtherHistory;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public static function isAllowingUnregisteredBlocks(): bool
-	{
-		return self::$allowUnregisteredBlocks;
-	}
-
 	public static function getPathfindingMax(): int
 	{
 		return self::$pathfindingMax;
@@ -231,7 +221,6 @@ class ConfigManager
 		foreach (self::$terrainIgnored as $id) {
 			$stream->putString($id);
 		}
-		$stream->putBool(self::$allowUnregisteredBlocks);
 		$stream->putInt(self::$pathfindingMax);
 		$stream->putInt(self::$fillDistance);
 		$stream->putString(self::$downloadData ? self::$dataRepo : "");
@@ -247,7 +236,6 @@ class ConfigManager
 		for ($i = 0; $i < $count; $i++) {
 			self::$terrainIgnored[] = $stream->getString();
 		}
-		self::$allowUnregisteredBlocks = $stream->getBool();
 		self::$pathfindingMax = $stream->getInt();
 		self::$fillDistance = $stream->getInt();
 		self::$dataRepo = $stream->getString();

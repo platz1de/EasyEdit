@@ -25,10 +25,6 @@ allow-history-other: true
 #Disable this if you have commands requiring 3 slashes
 remap-commands: true
 
-#Whether to allow setting blocks which are not registered
-#Enabling this allows setting blocks which are not registered, but might cause issues like game crashes or world corruption
-allow-unregistered-blocks: false
-
 #Distance to check while filling; default: 100
 fill-distance: 100
 
