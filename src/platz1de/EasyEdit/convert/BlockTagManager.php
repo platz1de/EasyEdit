@@ -95,7 +95,16 @@ class BlockTagManager
 		if ($isMask) {
 			return new MaskedBlockGroup(self::$tags[$tag]);
 		}
-		return new BlockGroup(self::$tagStates[$tag]);
+		$group = [];
+		foreach (self::$tagStates[$tag] as $id) {
+			if ($id !== BlockParser::getInvalidBlockId()) {
+				$group[] = $id;
+			}
+		}
+		if ($group === []) {
+			throw new UnsupportedBlockStateException("No blocks available for tag $tag");
+		}
+		return new BlockGroup($group);
 	}
 
 	public static function loadResourceData(string $rawData): void
