@@ -104,7 +104,9 @@ class TaskResultPromise
 	 */
 	public function resolve(TaskResult $result): void
 	{
-		$this->status = self::STATUS_SUCCESS;
+		if ($this->status === self::STATUS_WAITING) {
+			$this->status = self::STATUS_SUCCESS;
+		}
 		$this->result = $result;
 		foreach ($this->finish as $callback) {
 			$callback($result);
