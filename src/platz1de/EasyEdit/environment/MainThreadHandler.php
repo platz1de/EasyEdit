@@ -28,6 +28,12 @@ use UnexpectedValueException;
  */
 class MainThreadHandler extends ThreadEnvironmentHandler
 {
+	/**
+	 * @var ChunkRequest[]
+	 */
+	private array $chunkRequestQueue = [];
+	private bool $isChunkPaused = false;
+
 	public function submitResultingChunks(ChunkController $controller): void
 	{
 		if (!$controller instanceof InjectingSubChunkController) {
@@ -55,9 +61,21 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 		LoaderManager::setChunks($w, [$index => $chunk], $injections);
 	}
 
-	public function initChunkHandler(ChunkHandler $handler): void { }
+	public function initChunkHandler(ChunkHandler $handler): void {
+		$this->chunkRequestQueue = [];
+		$this->isChunkPaused = false;
+	}
 
 	public function processChunkRequest(ChunkRequest $chunk, ChunkHandler $handler): void
+	{
+		if ($this->isChunkPaused) {
+			$this->chunkRequestQueue[] = $chunk;
+		} else {
+			$this->executeChunkRequest($chunk, $handler);
+		}
+	}
+
+	public function executeChunkRequest(ChunkRequest $chunk, ChunkHandler $handler): void
 	{
 		World::getXZ($chunk->getChunk(), $x, $z);
 		if ($chunk->getWorld()->isChunkLoaded($x, $z)) {
@@ -97,7 +115,13 @@ class MainThreadHandler extends ThreadEnvironmentHandler
 	public function executeChunkedTask(ChunkedTask $task, GroupedChunkHandler $chunkHandler, EditTaskHandler $editHandler, array $chunks): void
 	{
 		$constructors = iterator_to_array($task->prepareConstructors($editHandler), false);
+		$this->isChunkPaused = true;
 		$chunkHandler->requestAll($chunks, $constructors);
+		$this->isChunkPaused = false;
+		//Process all at once so relations are correct
+		foreach ($this->chunkRequestQueue as $chunk) {
+			$this->executeChunkRequest($chunk, $chunkHandler);
+		}
 		while (($key = $chunkHandler->getNextChunk()) !== null) {
 			foreach ($chunkHandler->getData() as $k => $information) {
 				$editHandler->setChunk($k, $information);
