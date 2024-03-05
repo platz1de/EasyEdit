@@ -18,7 +18,7 @@ Feature-rich WorldEditor for PocketMine-MP
 - selection axe & brushes
 - undo & redo your actions
 - tile support
-- load & save java selections (load MCEdit & Sponge format, save to Sponge)
+- load & save java selections (load McStructure, MCEdit & Sponge format, save to Sponge)
 - rotate & flip support
 - Translation support
     - [help translate EasyEdit](https://github.com/platz1de/EasyEdit/blob/dev/resources/lang/TRANSLATE.md)

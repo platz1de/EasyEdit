@@ -7,6 +7,7 @@ use pocketmine\nbt\NBT;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\NbtStreamWriter;
 use pocketmine\nbt\ReaderTracker;
+use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\Tag;
 
@@ -14,7 +15,7 @@ class AbstractListTag extends Tag
 {
 	private int $type;
 	private int $length;
-	private int $current = -1;
+	private int $current = 0;
 	private AbstractNBTSerializer $reader;
 	private ReaderTracker $tracker;
 
@@ -38,6 +39,11 @@ class AbstractListTag extends Tag
 		throw new BadMethodCallException("Abstract list cannot be read at once");
 	}
 
+	public function hasNext(): bool
+	{
+		return $this->current < $this->length;
+	}
+
 	public function next(): Tag
 	{
 		if (++$this->current > $this->length) {
@@ -55,6 +61,15 @@ class AbstractListTag extends Tag
 			throw new NbtDataException("Failed to read tag");
 		}
 		return $return;
+	}
+
+	public function mustGetInt(): int
+	{
+		$tag = $this->next();
+		if ($tag instanceof IntTag) {
+			return $tag->getValue();
+		}
+		throw new NbtDataException("Expected IntTag, got " . get_class($tag));
 	}
 
 	public function getType(): int

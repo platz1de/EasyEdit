@@ -6,6 +6,8 @@ use platz1de\EasyEdit\convert\LegacyBlockIdConvertor;
 use platz1de\EasyEdit\math\BlockOffsetVector;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
+use platz1de\EasyEdit\schematic\nbt\AbstractNBTSerializer;
+use platz1de\EasyEdit\schematic\nbt\BigEndianAbstractNBTSerializer;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\InternetException;
@@ -75,5 +77,10 @@ class McEditSchematic extends SchematicType
 		$blockMetaData->close();
 
 		//TODO: tiles and entities
+	}
+
+	public static function getNbtSerializer(): AbstractNBTSerializer
+	{
+		return new BigEndianAbstractNBTSerializer();
 	}
 }

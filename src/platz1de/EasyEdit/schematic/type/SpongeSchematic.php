@@ -9,6 +9,8 @@ use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\schematic\nbt\AbstractByteArrayTag;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
 use platz1de\EasyEdit\schematic\nbt\AbstractNBT;
+use platz1de\EasyEdit\schematic\nbt\AbstractNBTSerializer;
+use platz1de\EasyEdit\schematic\nbt\BigEndianAbstractNBTSerializer;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\thread\block\BlockStateTranslationManager;
@@ -292,5 +294,10 @@ class SpongeSchematic extends SchematicType
 			$tile->setIntArray(self::ENTITY_POSITION, [$x, $y, $z]);
 			$tiles[] = $tile; //filter
 		}
+	}
+
+	public static function getNbtSerializer(): AbstractNBTSerializer
+	{
+		return new BigEndianAbstractNBTSerializer();
 	}
 }

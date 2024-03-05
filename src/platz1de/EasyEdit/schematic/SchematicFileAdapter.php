@@ -3,8 +3,8 @@
 namespace platz1de\EasyEdit\schematic;
 
 use platz1de\EasyEdit\EasyEdit;
-use platz1de\EasyEdit\schematic\nbt\AbstractNBTSerializer;
 use platz1de\EasyEdit\schematic\type\McEditSchematic;
+use platz1de\EasyEdit\schematic\type\McStructureSchematic;
 use platz1de\EasyEdit\schematic\type\SchematicType;
 use platz1de\EasyEdit\schematic\type\SpongeSchematic;
 use platz1de\EasyEdit\selection\DynamicBlockListSelection;
@@ -23,7 +23,8 @@ class SchematicFileAdapter
 	 */
 	private static array $knownExtensions = [
 		".schematic" => McEditSchematic::class,
-		".schem" => SpongeSchematic::class
+		".schem" => SpongeSchematic::class,
+		".mcstructure" => McStructureSchematic::class
 	];
 
 	/**
@@ -47,7 +48,7 @@ class SchematicFileAdapter
 			throw new UnexpectedValueException("Unknown schematic " . $path);
 		}
 
-		$nbtParser = new AbstractNBTSerializer();
+		$nbtParser = $usedParser::getNbtSerializer();
 		$nbt = $nbtParser->readFile($file)->mustGetCompoundTag();
 
 		$usedParser::readIntoSelection($nbt, $target);
