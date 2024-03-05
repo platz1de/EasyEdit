@@ -1,6 +1,6 @@
 #Russian language file
 #Author: BlusteryS
-#Last updated at: 2023-06-19
+#Last updated at: 2023-06-19 (OUTDATED)
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -9,6 +9,8 @@ prefix: "§l§aEasy§bEdit §r> "
 #Args: {x} {y} {z}
 selected-pos1: "Выбрана первая позиция: {x} {y} {z}"
 selected-pos2: "Выбрана вторая позиция: {x} {y} {z}"
+
+deselected: "Deselected the current selection"
 
 no-selection: "У вас нет активного выделения"
 no-clipboard: "У вас нет активного буфера обмена"
@@ -78,6 +80,8 @@ command-pos1-description: "Установить первую позицию"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Установить вторую позицию"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Deselect the current selection"
+command-deselect-usage: "//deselect"
 command-extend-description: "Расширить выбранную область"
 command-extend-usage:
 - "//extend [направление] [количество]"

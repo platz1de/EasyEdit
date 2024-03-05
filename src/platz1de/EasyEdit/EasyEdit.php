@@ -20,6 +20,7 @@ use platz1de\EasyEdit\command\defaults\movement\UnstuckCommand;
 use platz1de\EasyEdit\command\defaults\movement\UpCommand;
 use platz1de\EasyEdit\command\defaults\selection\AliasedContextCommand;
 use platz1de\EasyEdit\command\defaults\selection\CountCommand;
+use platz1de\EasyEdit\command\defaults\selection\DeselectCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtendCommand;
 use platz1de\EasyEdit\command\defaults\selection\ExtinguishCommand;
 use platz1de\EasyEdit\command\defaults\selection\GenericPositionCommand;
@@ -88,6 +89,7 @@ class EasyEdit extends PluginBase
 			//Selection
 			new GenericPositionCommand(1),
 			new GenericPositionCommand(2),
+			new DeselectCommand(),
 			new ExtendCommand(),
 			new SetCommand(),
 			new ReplaceCommand(),

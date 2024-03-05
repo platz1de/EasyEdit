@@ -10,6 +10,8 @@ prefix: "§l§aEasy§bEdit §r> "
 selected-pos1: "Đã chọn tọa độ đầu tiên là {x} {y} {z}"
 selected-pos2: "Đã chọn tọa độ thứ hai là {x} {y} {z}"
 
+deselected: "Deselected the current selection"
+
 no-selection: "Bạn không có lựa chọn đang hoạt động"
 no-clipboard: "Bạn không có khay nhớ tạm thời đang hoạt động"
 
@@ -78,6 +80,8 @@ command-pos1-description: "Thiết lập tọa độ đầu tiên"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Thiết lập tọa độ thứ hai"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Deselect the current selection"
+command-deselect-usage: "//deselect"
 command-extend-description: "Mở rộng khu vực đã chọn"
 command-extend-usage:
   - "//extend [phương hướng] [số lượng]"

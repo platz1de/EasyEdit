@@ -10,6 +10,8 @@ prefix: "§l§aEasy§bEdit §r> "
 selected-pos1: "Terpilih posisi pertama pada {x} {y} {z}"
 selected-pos2: "Terpilih posisi kedua pada {x} {y} {z}"
 
+deselected: "Deselected the current selection"
+
 no-selection: "Anda tidak memiliki pilihan aktif"
 no-clipboard: "Anda tidak memiliki salinan aktif"
 
@@ -78,6 +80,8 @@ command-pos1-description: "Atur posisi pertama"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Atur posisi kedua"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Deselect the current selection"
+command-deselect-usage: "//deselect"
 command-extend-description: "Perluas area yang dipilih"
 command-extend-usage:
   - "//extend [direction] [count]"

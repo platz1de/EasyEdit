@@ -1,6 +1,6 @@
 #German language file
 #Author: platz1de
-#Last updated at: 2023-05-31
+#Last updated at: 2024-03-05
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -9,6 +9,8 @@ prefix: "§l§aEasy§bEdit §r> "
 #Args: {x} {y} {z}
 selected-pos1: "Die erste Position wurde auf {x} {y} {z} gesetzt"
 selected-pos2: "Die zweite Position wurde auf {x} {y} {z} gesetzt"
+
+deselected: "Die aktuelle Auswahl wurde entfernt"
 
 no-selection: "Es wurde keine Auswahl getroffen"
 no-clipboard: "Die Zwischenablage ist leer"
@@ -78,6 +80,8 @@ command-pos1-description: "Setze die erste Position"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Setze die zweite Position"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Entferne die aktuelle Auswahl"
+command-deselect-usage: "//deselect"
 command-extend-description: "Vergrößere die Auswahl"
 command-extend-usage:
   - "//extend [richtung] [anzahl]"

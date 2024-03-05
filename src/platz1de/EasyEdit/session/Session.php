@@ -263,6 +263,14 @@ class Session
 		$this->sendMessage("selected-pos$number", ["{x}" => (string) $position->getFloorX(), "{y}" => (string) $position->getFloorY(), "{z}" => (string) $position->getFloorZ()]);
 	}
 
+	public function deselect(): void
+	{
+		unset($this->selection);
+		$this->updateSelectionHighlight();
+
+		$this->sendMessage("deselected");
+	}
+
 	/**
 	 * @param string $world
 	 */
@@ -282,7 +290,7 @@ class Session
 		}
 		$this->highlight = -1;
 
-		if ($this->selection->isValid()) {
+		if (isset($this->selection) && $this->selection->isValid()) {
 			$this->highlight = ClientSideBlockManager::registerBlock($this->getPlayer(), new StructureBlockOutline($this->selection->getWorldName(), $this->selection->getPos1(), $this->selection->getPos2()));
 		}
 	}

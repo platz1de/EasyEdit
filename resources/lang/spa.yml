@@ -1,14 +1,16 @@
-#Archivo en Español (España)
-#Autor: SnowysOficial
-#Última actualización en: 2023-06-29
+#Spanish language file
+#Author: SnowysOficial
+#Last updated at: 2023-06-29 (OUTDATED)
 
-#Si quieres incluir comillas dobles (") en tus mensajes por favor escápalas con una barra invertida (\")
+#If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
 prefix: "§l§aEasy§bEdit §r> "
 
 #Args: {x} {y} {z}
 selected-pos1: "Has seleccionado la primera posición como {x} {y} {z}"
 selected-pos2: "Has seleccionado la segunda posición como {x} {y} {z}"
+
+deselected: "Deselected the current selection"
 
 no-selection: "No tienes una selección activa"
 no-clipboard: "No tienes un portapapeles activo"
@@ -78,6 +80,8 @@ command-pos1-description: "Establecer la primera posición"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Establecer la segunda posición"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Deselect the current selection"
+command-deselect-usage: "//deselect"
 command-extend-description: "Ampliar el área seleccionada"
 command-extend-usage:
   - "//extend [direction] [count]"

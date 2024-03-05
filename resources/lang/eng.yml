@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2023-05-31
+#Last updated at: 2024-03-05
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -9,6 +9,8 @@ prefix: "§l§aEasy§bEdit §r> "
 #Args: {x} {y} {z}
 selected-pos1: "Selected the first position as {x} {y} {z}"
 selected-pos2: "Selected the second position as {x} {y} {z}"
+
+deselected: "Deselected the current selection"
 
 no-selection: "You don't have an active selection"
 no-clipboard: "You don't have an active clipboard"
@@ -78,6 +80,8 @@ command-pos1-description: "Set the first position"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Set the second position"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Deselect the current selection"
+command-deselect-usage: "//deselect"
 command-extend-description: "Extend the selected area"
 command-extend-usage:
   - "//extend [direction] [count]"

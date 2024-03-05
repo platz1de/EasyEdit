@@ -10,6 +10,8 @@ prefix: "§l§aEasy§bEdit §r> "
 selected-pos1: "始点を指定しました: {x} {y} {z}"
 selected-pos2: "終点を指定しました: {x} {y} {z}"
 
+deselected: "Deselected the current selection"
+
 no-selection: "まだ項目を選択していません"
 no-clipboard: "まだクリップボードに何もコピーしていません"
 
@@ -78,6 +80,8 @@ command-pos1-description: "始点を指定する"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "終点を指定する"
 command-pos2-usage: "//pos2 [x] [y] [z]"
+command-deselect-description: "Deselect the current selection"
+command-deselect-usage: "//deselect"
 command-extend-description: "選択した領域を拡張する"
 command-extend-usage:
   - "//extend [拡張する方角] [拡張ブロック数]"
