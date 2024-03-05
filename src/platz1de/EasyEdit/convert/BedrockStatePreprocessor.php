@@ -7,6 +7,7 @@ use platz1de\EasyEdit\utils\BlockParser;
 use platz1de\EasyEdit\utils\MixedUtils;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\block\BlockStateData;
+use pocketmine\data\bedrock\block\BlockStateDeserializeException;
 use pocketmine\nbt\tag\Tag;
 use Throwable;
 
@@ -55,9 +56,10 @@ class BedrockStatePreprocessor
 
 	/**
 	 * @param BlockStateData $state
+	 * @param bool           $strict
 	 * @return BlockStateData
 	 */
-	public static function handle(BlockStateData $state): BlockStateData
+	public static function handle(BlockStateData $state, bool $strict = false): BlockStateData
 	{
 		if (!self::$available) {
 			return $state;
@@ -69,6 +71,9 @@ class BedrockStatePreprocessor
 		$defaults = self::$defaults[$state->getName()];
 		foreach ($states as $name => $value) {
 			if (!isset($defaults[$name])) {
+				if ($strict) {
+					throw new BlockStateDeserializeException("Unknown state \"$name\" for block " . $state->getName());
+				}
 				unset($states[$name]);
 			}
 		}

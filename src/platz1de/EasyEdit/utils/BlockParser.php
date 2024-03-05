@@ -37,51 +37,67 @@ class BlockParser
 			//Ignore
 		}
 
-		//Name Parser
-		$item = StringToItemParser::getInstance()->parse(explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[0]);
+		//strip meta if present
+		$string = explode(":", str_replace([" ", "minecraft:"], ["_", ""], trim($string)))[0];
+
+		//Name Parser (most minecraft: blocks, without any state data)
+		$item = StringToItemParser::getInstance()->parse($string);
 		if ($item !== null) {
 			return $item->getBlock()->getStateId();
 		}
 
-		$string = "minecraft:" . str_replace([" ", "minecraft:"], ["_", ""], trim($string));
 		try {
-			$state = self::fromStateString($string, BlockStateData::CURRENT_VERSION);
+			$state = self::fromStateString("minecraft:" . trim($string), BlockStateData::CURRENT_VERSION);
 		} catch (InvalidArgumentException $e) {
 			throw new UnsupportedBlockStateException($e->getMessage());
 		}
 
-		$ex = null;
+		$bedrockEx = null;
+		$javaEx = null;
+
+		//Bedrock state parser with strict autofill
 		try {
-			return GlobalBlockStateHandlers::getDeserializer()->deserialize(BedrockStatePreprocessor::handle($state));
+			return GlobalBlockStateHandlers::getDeserializer()->deserialize(BedrockStatePreprocessor::handle($state, true));
 		} catch (UnsupportedBlockStateException) {
-			//Ignore
+			//Invalid bedrock block
 		} catch (BlockStateDeserializeException $e) {
-			$ex = $e;
+			$bedrockEx = $e;
 		}
 
+		var_dump($state);
 		if (!BlockStateConvertor::isAvailable()) {
-			if ($ex !== null) {
-				throw new ParseError("Failed to parse block: " . $string . PHP_EOL . "Bedrock parser: " . $ex->getMessage());
-			}
-			throw new UnsupportedBlockStateException("Failed to parse block " . $string . ": Unknown block");
+			throw self::buildParseError($string, $bedrockEx, null);
 		}
 
 		$state = new BlockStateData($state->getName(), $state->getStates(), RepoManager::getVersion());
 		try {
 			$state = BlockStateConvertor::javaToBedrock($state, true);
+			$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
+			return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
 		} catch (UnsupportedBlockStateException) {
-			if ($ex !== null) {
-				throw new ParseError("Failed to parse block: " . $string . PHP_EOL . "Bedrock parser: " . $ex->getMessage());
-			}
-			throw new UnsupportedBlockStateException("Failed to parse block " . $string . ": Unknown block");
+			//Invalid java block
 		} catch (UnexpectedValueException $e) {
-			if ($ex !== null) {
-				throw new ParseError("Failed to parse block: " . $string . PHP_EOL . "Bedrock parser: " . $e->getMessage() . PHP_EOL . "Java parser: " . $ex->getMessage());
-			}
-			throw new ParseError("Failed to parse block: " . $string . PHP_EOL . "Bedrock parser: " . $e->getMessage());
+			$javaEx = $e;
+		} catch (BlockStateDeserializeException $e) {
+			$javaEx = new UnexpectedValueException("Failed to prepare java block: " . $e->getMessage());
 		}
-		$state = GlobalBlockStateHandlers::getUpgrader()->getBlockStateUpgrader()->upgrade($state);
-		return GlobalBlockStateHandlers::getDeserializer()->deserialize($state);
+
+		throw self::buildParseError($string, $bedrockEx, $javaEx);
+	}
+
+	private static function buildParseError(string $block, ?BlockStateDeserializeException $bedrockEx, ?UnexpectedValueException $javaEx): ParseError|UnsupportedBlockStateException
+	{
+		$message = "Failed to parse block \"$block\"";
+		if ($bedrockEx !== null) {
+			$message .= PHP_EOL . "Bedrock parser: " . $bedrockEx->getMessage();
+		}
+		if ($javaEx !== null) {
+			$message .= PHP_EOL . "Java parser: " . $javaEx->getMessage();
+		}
+		if ($bedrockEx !== null || $javaEx !== null) {
+			return new ParseError($message);
+		}
+		return new UnsupportedBlockStateException("$message (unknown block)");
 	}
 
 	/**

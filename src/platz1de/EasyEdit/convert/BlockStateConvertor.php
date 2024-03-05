@@ -87,12 +87,12 @@ class BlockStateConvertor
 		$converter = self::$convertorsJTB[$state->getName()] ?? null;
 		if ($converter === null) {
 			if ($strict) {
-				throw new UnsupportedBlockStateException("Unknown java state " . $state->getName());
+				throw new UnsupportedBlockStateException("Unknown java state \"" . $state->getName() . "\"");
 			}
-			EditThread::getInstance()->debug("Unknown java state " . $state->getName());
+			EditThread::getInstance()->debug("Unknown java state \"" . $state->getName() . "\"");
 			return $state;
 		}
-		$state = $converter->applyDefaults($state);
+		$state = $converter->applyDefaults($state, $strict);
 		try {
 			$res = $converter->translate($state);
 			$compound = TileConvertor::preprocessTileState($res);
@@ -101,7 +101,7 @@ class BlockStateConvertor
 			if ($strict) {
 				throw new UnexpectedValueException($e->getMessage(), 0, $e);
 			}
-			EditThread::getInstance()->getLogger()->critical("Failed to convert " . $state->getName() . " to bedrock");
+			EditThread::getInstance()->getLogger()->critical("Failed to convert \"" . $state->getName() . "\" to bedrock");
 			EditThread::getInstance()->getLogger()->logException($e);
 			return $state;
 		}

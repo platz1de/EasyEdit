@@ -47,7 +47,7 @@ abstract class BlockStateTranslator
 
 	abstract public function translate(BlockStateData $state): BlockStateData;
 
-	public function applyDefaults(BlockStateData $state): BlockStateData
+	public function applyDefaults(BlockStateData $state, bool $strict = false): BlockStateData
 	{
 		$states = $state->getStates();
 		if ($this->values !== []) {
@@ -57,11 +57,26 @@ abstract class BlockStateTranslator
 					if (in_array($stateValue, $this->values[$stateName], true)) {
 						continue;
 					}
-					EditThread::getInstance()->debug("State $stateName is $stateValue, but should be one of " . implode(", ", $this->values[$stateName]));
+					if ($strict) {
+						throw new UnexpectedValueException("State \"$stateName\" is \"$stateValue\", but should be one of " . implode(", ", $this->values[$stateName]));
+					}
+					EditThread::getInstance()->debug("State \"$stateName\" is \"$stateValue\", but should be one of " . implode(", ", $this->values[$stateName]));
 				} else {
-					EditThread::getInstance()->debug("Unknown state $stateName");
+					if ($strict) {
+						throw new UnexpectedValueException("Unknown state \"$stateName\", only " . implode(", ", array_keys($this->values)) . " are allowed");
+					}
+					EditThread::getInstance()->debug("Unknown state \"$stateName\"");
 				}
 				unset($states[$stateName]);
+			}
+		} else {
+			foreach ($states as $stateName => $stateValue) {
+				if (!isset($this->defaults[$stateName])) {
+					if ($strict) {
+						throw new UnexpectedValueException("Unknown state \"$stateName\" for block " . $state->getName());
+					}
+					unset($states[$stateName]);
+				}
 			}
 		}
 		foreach ($this->defaults as $stateName => $stateValue) {
