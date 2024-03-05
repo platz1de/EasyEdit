@@ -13,7 +13,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\block\VanillaBlocks;
 
-//TODO: Remove EditTask inheritance
 class CutTask extends SelectionEditTask
 {
 	use CubicStaticUndo;

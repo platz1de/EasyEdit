@@ -29,11 +29,6 @@ class EditThread extends Thread
 	private ThreadStats $stats;
 	private static EditThread $instance;
 
-	/**
-	 * Note: pthreads handling of strings is a bit weird
-	 * Properties for some reason just stop working when main thread accesses them before the thread is ready
-	 * As this only applies to strings, we just unset them whenever they were accessed
-	 */
 	private string $inputData;
 	private string $outputData;
 
