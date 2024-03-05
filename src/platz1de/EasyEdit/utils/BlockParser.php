@@ -64,7 +64,6 @@ class BlockParser
 			$bedrockEx = $e;
 		}
 
-		var_dump($state);
 		if (!BlockStateConvertor::isAvailable()) {
 			throw self::buildParseError($string, $bedrockEx, null);
 		}
