@@ -93,7 +93,7 @@ class PatternParser
 				$pieces[] = self::parsePiece(trim($piece));
 			}
 		} catch (ParseError|UnsupportedBlockStateException $exception) {
-			throw new ParseError('Failed to parse piece "' . $pattern . '"' . PHP_EOL . " - " . $exception->getMessage(), false);
+			throw new ParseError("Failed to parse piece \"$pattern\"" . PHP_EOL . " - " . str_replace(PHP_EOL, PHP_EOL . " - ", $exception->getMessage()), false);
 		}
 		return PatternConstruct::wrap($pieces);
 	}
