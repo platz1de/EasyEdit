@@ -48,7 +48,7 @@ class McStructureSchematic extends SchematicType
 		$zSize = $size->mustGetInt();
 		$target->setPoint(new BlockOffsetVector(0, -World::Y_MIN, 0));
 		$target->setPos1(new BlockVector(0, World::Y_MIN, 0));
-		$target->setPos2(new BlockVector($xSize, World::Y_MIN + $ySize, $zSize));
+		$target->setPos2(new BlockVector($xSize - 1, World::Y_MIN + $ySize - 1, $zSize - 1));
 		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
 
 		$offsetX = $offset->mustGetInt();
