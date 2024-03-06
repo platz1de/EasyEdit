@@ -2,6 +2,7 @@
 
 namespace platz1de\EasyEdit\task\expanding;
 
+use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\task\CancelException;
 use platz1de\EasyEdit\task\editing\EditTaskHandler;
 use platz1de\EasyEdit\utils\ConfigManager;
@@ -9,7 +10,6 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use SplPriorityQueue;
 
@@ -50,10 +50,10 @@ class DrainTask extends ExpandingTask
 			}
 			$handler->changeBlock($x, $y, $z, $air);
 			foreach (Facing::ALL as $facing) {
-				$side = (new Vector3($x, $y, $z))->getSide($facing);
-				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
+				$side = (new BlockVector($x, $y, $z))->getSide($facing);
+				if (!isset($scheduled[$hash = $side->getBlockHash()])) {
 					$scheduled[$hash] = true;
-					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$loader->registerRequestedChunks($side->getChunkHash());
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}

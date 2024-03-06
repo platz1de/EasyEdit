@@ -10,7 +10,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use SplPriorityQueue;
 
@@ -73,11 +72,11 @@ class ExtendBlockFaceTask extends ExpandingTask
 				if (Facing::axis($facing) === Facing::axis($this->face)) {
 					continue;
 				}
-				$side = (new Vector3($x, $y, $z))->getSide($facing);
-				if (!isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
+				$side = (new BlockVector($x, $y, $z))->getSide($facing);
+				if (!isset($scheduled[$hash = $side->getBlockHash()])) {
 					$scheduled[$hash] = true;
-					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
-					$loader->registerRequestedChunks(World::chunkHash(($side->getFloorX() + $offsetX) >> 4, ($side->getFloorZ() + $offsetZ) >> 4));
+					$loader->registerRequestedChunks($side->getChunkHash());
+					$loader->registerRequestedChunks(World::chunkHash(($side->x + $offsetX) >> 4, ($side->z + $offsetZ) >> 4));
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}

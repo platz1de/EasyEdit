@@ -12,7 +12,6 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\world\HeightMapCache;
 use pocketmine\block\Block;
 use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use SplPriorityQueue;
 
@@ -48,23 +47,23 @@ class FillTask extends ExpandingTask
 		$startY = $this->start->y;
 		$startZ = $this->start->z;
 		$validate = match ($this->direction) {
-			Facing::DOWN => static function (Vector3 $pos) use ($startY) {
-				return $pos->getFloorY() <= $startY;
+			Facing::DOWN => static function (BlockVector $pos) use ($startY) {
+				return $pos->y <= $startY;
 			},
-			Facing::UP => static function (Vector3 $pos) use ($startY) {
-				return $pos->getFloorY() >= $startY;
+			Facing::UP => static function (BlockVector $pos) use ($startY) {
+				return $pos->y >= $startY;
 			},
-			Facing::NORTH => static function (Vector3 $pos) use ($startZ) {
-				return $pos->getFloorZ() <= $startZ;
+			Facing::NORTH => static function (BlockVector $pos) use ($startZ) {
+				return $pos->z <= $startZ;
 			},
-			Facing::SOUTH => static function (Vector3 $pos) use ($startZ) {
-				return $pos->getFloorZ() >= $startZ;
+			Facing::SOUTH => static function (BlockVector $pos) use ($startZ) {
+				return $pos->z >= $startZ;
 			},
-			Facing::WEST => static function (Vector3 $pos) use ($startX) {
-				return $pos->getFloorX() <= $startX;
+			Facing::WEST => static function (BlockVector $pos) use ($startX) {
+				return $pos->x <= $startX;
 			},
-			Facing::EAST => static function (Vector3 $pos) use ($startX) {
-				return $pos->getFloorX() >= $startX;
+			Facing::EAST => static function (BlockVector $pos) use ($startX) {
+				return $pos->x >= $startX;
 			},
 			default => throw new BadMethodCallException("Invalid direction")
 		};
@@ -88,10 +87,10 @@ class FillTask extends ExpandingTask
 			}
 			$handler->changeBlock($x, $y, $z, $id);
 			foreach (Facing::ALL as $facing) {
-				$side = (new Vector3($x, $y, $z))->getSide($facing);
-				if ($validate($side) && !isset($scheduled[$hash = World::blockHash($side->getFloorX(), $side->getFloorY(), $side->getFloorZ())])) {
+				$side = (new BlockVector($x, $y, $z))->getSide($facing);
+				if ($validate($side) && !isset($scheduled[$hash = $side->getBlockHash()])) {
 					$scheduled[$hash] = true;
-					$loader->registerRequestedChunks(World::chunkHash($side->getFloorX() >> 4, $side->getFloorZ() >> 4));
+					$loader->registerRequestedChunks($side->getChunkHash());
 					$queue->insert($hash, $facing === Facing::DOWN || $facing === Facing::UP ? $current["priority"] : $current["priority"] - 1);
 				}
 			}

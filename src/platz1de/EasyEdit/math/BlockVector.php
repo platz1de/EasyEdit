@@ -57,6 +57,11 @@ class BlockVector extends BaseVector
 		return new BlockVector($this->x >> 4, $this->y >> 4, $this->z >> 4);
 	}
 
+	public function getBlockHash(): int
+	{
+		return World::blockHash($this->x, $this->y, $this->z);
+	}
+
 	public function getChunkHash(): int
 	{
 		return World::chunkHash($this->x >> 4, $this->z >> 4);
