@@ -4,7 +4,7 @@ namespace platz1de\EasyEdit\convert\item;
 
 use platz1de\EasyEdit\thread\EditThread;
 use pocketmine\data\bedrock\EnchantmentIdMap;
-use pocketmine\item\enchantment\Enchantment;
+use pocketmine\data\bedrock\EnchantmentIds;
 use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\Item;
 use pocketmine\lang\Translatable;
@@ -24,6 +24,8 @@ class EnchantmentItemConvertor extends ItemConvertorPiece
 	{
 		$enchantments = $tag->getListTag(self::JAVA_ENCHANTMENTS_TAG);
 		$storedEnchantments = $tag->getListTag(self::JAVA_STORED_ENCHANTMENTS_TAG);
+		$tag->removeTag(self::JAVA_ENCHANTMENTS_TAG);
+		$tag->removeTag(self::JAVA_STORED_ENCHANTMENTS_TAG);
 		$enchs = [];
 		if ($enchantments !== null && $enchantments->getTagType() === NBT::TAG_Compound) {
 			foreach ($enchantments as $enchantment) {
@@ -47,16 +49,16 @@ class EnchantmentItemConvertor extends ItemConvertorPiece
 					continue;
 				}
 				try {
-					/** @var Enchantment $ench */
-					$ench = VanillaEnchantments::__callStatic(str_replace("minecraft:", "", $name), []);
+					/** @var int $ench */
+					$ench = constant(EnchantmentIds::class . "::" . strtoupper(str_replace(["minecraft:", "_curse"], ["", ""], $name)));
 				} catch (Throwable) {
 					continue;
 				}
 				$enchantmentList[] = CompoundTag::create()
-					->setShort(self::ENCHANTMENT_TAG, EnchantmentIdMap::getInstance()->toId($ench))
+					->setShort(self::ENCHANTMENT_TAG, $ench)
 					->setShort(self::ENCHANTMENT_LVL, $level);
 			}
-			$item->setTag(Item::TAG_ENCH, new ListTag($enchantmentList, NBT::TAG_Compound));
+			$tag->setTag(Item::TAG_ENCH, new ListTag($enchantmentList, NBT::TAG_Compound));
 		}
 	}
 
@@ -81,7 +83,7 @@ class EnchantmentItemConvertor extends ItemConvertorPiece
 				$java = null;
 				foreach (VanillaEnchantments::getAll() as $name => $enchant) {
 					if ($enchant === $ench) {
-						$java = $name;
+						$java = $name . ($name === "VANISHING" || $name === "BINDING" ? "_curse" : "");
 						break;
 					}
 				}
