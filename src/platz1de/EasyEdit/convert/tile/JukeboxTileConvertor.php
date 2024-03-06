@@ -3,6 +3,7 @@
 namespace platz1de\EasyEdit\convert\tile;
 
 use platz1de\EasyEdit\convert\ItemConvertor;
+use platz1de\EasyEdit\schematic\nbt\AbstractNBT;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -29,7 +30,7 @@ class JukeboxTileConvertor extends TileConvertorPiece
 	{
 		parent::toBedrock($tile);
 		$tile->removeTag(self::JAVA_TAG_IS_PLAYING, self::JAVA_TAG_START_TICK, self::JAVA_TAG_TICK_COUNT);
-		$item = $tile->getTag(self::JAVA_TAG_RECORD_ITEM);
+		$item = AbstractNBT::fromAbstract($tile->getTag(self::JAVA_TAG_RECORD_ITEM));
 		if (!$item instanceof CompoundTag) {
 			return;
 		}

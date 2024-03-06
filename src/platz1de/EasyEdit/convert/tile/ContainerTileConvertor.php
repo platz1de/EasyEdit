@@ -4,6 +4,7 @@ namespace platz1de\EasyEdit\convert\tile;
 
 use platz1de\EasyEdit\convert\ItemConvertor;
 use platz1de\EasyEdit\schematic\nbt\AbstractListTag;
+use platz1de\EasyEdit\schematic\nbt\AbstractNBT;
 use pocketmine\block\tile\Container;
 use pocketmine\data\bedrock\block\BlockStateData;
 use pocketmine\nbt\NBT;
@@ -31,7 +32,7 @@ class ContainerTileConvertor extends TileConvertorPiece
 		$tile->setTag(Container::TAG_ITEMS, $new = new ListTag([], NBT::TAG_Compound));
 		$count = $items->getLength();
 		for ($i = 0; $i < $count; $i++) {
-			$item = $items->next();
+			$item = AbstractNBT::fromAbstract($items->next());
 			if (!$item instanceof CompoundTag) {
 				throw new UnexpectedValueException("Items need to be represented as compound tags");
 			}
