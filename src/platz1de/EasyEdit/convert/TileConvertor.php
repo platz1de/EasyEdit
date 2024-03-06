@@ -12,6 +12,7 @@ use platz1de\EasyEdit\convert\tile\CopyingTileConvertor;
 use platz1de\EasyEdit\convert\tile\FlowerPotTileConvertor;
 use platz1de\EasyEdit\convert\tile\FurnaceTileConvertor;
 use platz1de\EasyEdit\convert\tile\JukeboxTileConvertor;
+use platz1de\EasyEdit\convert\tile\LecternTileConvertor;
 use platz1de\EasyEdit\convert\tile\MobHeadTileConvertor;
 use platz1de\EasyEdit\convert\tile\NoteBlockTileConvertor;
 use platz1de\EasyEdit\convert\tile\ShulkerBoxTileConvertor;
@@ -40,9 +41,7 @@ class TileConvertor
 	 * Beacon
 	 * Spawner
 	 * Piston -> Moving Piston
-	 * Enchanting Table
 	 * End Portal
-	 * Ender Chest
 	 * Command Block
 	 * End Gateway
 	 * Structure Block
@@ -134,6 +133,7 @@ class TileConvertor
 		 */
 		foreach ([
 					 new ChestTileConvertor("Chest", "minecraft:chest", "minecraft:trapped_chest"),
+					 new ContainerTileConvertor("EnderChest", "minecraft:ender_chest"),
 					 new ContainerTileConvertor("Dispenser", "minecraft:dispenser"),
 					 new ContainerTileConvertor("Dropper", "minecraft:dropper"),
 					 new ContainerTileConvertor("Hopper", "minecraft:hopper"),
@@ -142,6 +142,7 @@ class TileConvertor
 					 new SignConvertor("Sign", "minecraft:sign"),
 					 new CopyingTileConvertor("Comparator", "minecraft:comparator"),
 					 new CopyingTileConvertor("DaylightDetector", "minecraft:daylight_detector"),
+					 new CopyingTileConvertor("EnchantTable", "minecraft:enchanting_table"),
 					 new FurnaceTileConvertor("Furnace", "minecraft:furnace"),
 					 new FurnaceTileConvertor("BlastFurnace", "minecraft:blast_furnace"),
 					 new FurnaceTileConvertor("Smoker", "minecraft:smoker"),
