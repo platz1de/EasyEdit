@@ -30,7 +30,7 @@ class McEditSchematic extends SchematicType
 		$xSize = $nbt->getShort(self::TAG_WIDTH);
 		$ySize = $nbt->getShort(self::TAG_HEIGHT);
 		$zSize = $nbt->getShort(self::TAG_LENGTH);
-		$target->setPoint(new BlockOffsetVector($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0), $nbt->getInt(self::OFFSET_Z, 0)));
+		$target->setPoint(new BlockOffsetVector($nbt->getInt(self::OFFSET_X, 0), $nbt->getInt(self::OFFSET_Y, 0) - World::Y_MIN, $nbt->getInt(self::OFFSET_Z, 0)));
 		$target->setPos1(new BlockVector(0, World::Y_MIN, 0));
 		$target->setPos2(new BlockVector($xSize - 1, World::Y_MIN + $ySize - 1, $zSize - 1));
 		$target->getManager()->loadBetween($target->getPos1(), $target->getPos2());
@@ -50,9 +50,10 @@ class McEditSchematic extends SchematicType
 		$blockIdChunk = "";
 		$blockMetaChunk = "";
 		$blockCache = [];
+		$ySize += World::Y_MIN;
 		$i = 0;
 		//McEdit why this weird order?
-		for ($y = 0; $y < $ySize; ++$y) {
+		for ($y = World::Y_MIN; $y < $ySize; ++$y) {
 			for ($z = 0; $z < $zSize; ++$z) {
 				for ($x = 0; $x < $xSize; ++$x) {
 					if ($i % AbstractByteArrayTag::CHUNK_SIZE === 0) {
