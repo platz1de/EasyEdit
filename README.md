@@ -137,6 +137,7 @@ This includes blocks and tile entities.
 Supported Formats:
 - Sponge
 - McEdit (reading only)
+- McStructure (reading only)
 
 ## Performance
 
