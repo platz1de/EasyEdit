@@ -134,7 +134,7 @@ class Session
 
 		if (ConfigManager::getHistoryDepth() != -1) {
 			if ($this->historyDepth > ConfigManager::getHistoryDepth()) {
-				$this->past->pop();
+				CleanStorageTask::from([$this->past->pop()->markForDeletion()]);
 				$this->historyDepth--;
 			}
 		}
