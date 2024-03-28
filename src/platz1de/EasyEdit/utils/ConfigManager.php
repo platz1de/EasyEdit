@@ -177,6 +177,11 @@ class ConfigManager
 		return self::$fillDistance;
 	}
 
+	public static function getHistoryDepth(): int
+	{
+		return self::$historyDepth;
+	}
+
 	/**
 	 * @return bool
 	 */
