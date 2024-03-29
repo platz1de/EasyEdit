@@ -49,7 +49,7 @@ class ConfigManager
 		self::$toolCooldown = self::mustGetFloat($config, "tool-cooldown", 0.5);
 
 		self::$allowOtherHistory = self::mustGetBool($config, "allow-history-other", true);
-		self::$historyDepth = self::mustGetInt($config, "history-depth", 3);
+		self::$historyDepth = self::mustGetInt($config, "history-depth", -1);
 
 		self::$pathfindingMax = self::mustGetInt($config, "pathfinding-max", 1000000);
 		self::$fillDistance = self::mustGetInt($config, "fill-distance", 200);
