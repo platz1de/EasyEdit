@@ -18,6 +18,7 @@ use platz1de\EasyEdit\selection\Selection;
 use platz1de\EasyEdit\task\editing\StaticPasteTask;
 use platz1de\EasyEdit\task\ExecutableTask;
 use platz1de\EasyEdit\thread\input\task\CleanStorageTask;
+use platz1de\EasyEdit\utils\ConfigManager;
 use platz1de\EasyEdit\utils\MessageComponent;
 use platz1de\EasyEdit\utils\MessageCompound;
 use platz1de\EasyEdit\utils\Messages;
@@ -128,6 +129,13 @@ class Session
 			return;
 		}
 		$this->past->unshift($id);
+
+		if (ConfigManager::getHistoryDepth() !== -1) {
+			if ($this->past->count() > ConfigManager::getHistoryDepth()) {
+				CleanStorageTask::from([$this->past->pop()]);
+			}
+		}
+
 		if (!$this->future->isEmpty()) {
 			CleanStorageTask::from(iterator_to_array($this->future, false));
 			$this->future = new SplStack();
