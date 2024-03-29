@@ -74,6 +74,8 @@ block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava sta
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
 
+item-info: "name: {name}, id: {id}, vanilla name: {vanillaname}, count: {count}, durability: {durability}, durability taken: {damage}, defense: {defense}"
+
 #Commands
 #Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
 
@@ -228,3 +230,6 @@ command-unstuck-description: "Teleport to a safe location"
 command-unstuck-usage: "//unstuck"
 command-up-description: "Teleport up"
 command-up-usage: "//up <amount>"
+
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
