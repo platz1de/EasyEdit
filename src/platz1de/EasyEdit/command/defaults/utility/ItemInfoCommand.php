@@ -7,10 +7,13 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
+use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\session\Session;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\item\Armor;
 use pocketmine\item\Tool;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 
 class ItemInfoCommand extends EasyEditCommand
 {
@@ -19,18 +22,37 @@ class ItemInfoCommand extends EasyEditCommand
 		parent::__construct("/iteminfo", [KnownPermissions::PERMISSION_UTIL]);
 	}
 
+    public static function getInternalNameForItem(Item $item): ?string
+    {
+        // could consider vanilla name assumption (to lowercase and replace spaces with underscores) -> names with `'` are definitely different
+
+        foreach(VanillaItems::getAll() as $internalName => $vanillaItem) {
+            if ($vanillaItem->getTypeId() === abs($item->getTypeId())) {
+                return $internalName;
+            }
+        }
+        
+        foreach(VanillaBlocks::getAll() as $internalBlockName => $vanillaBlock) {
+            if ($vanillaBlock->getTypeId() === abs($item->getTypeId())) {
+                return $internalBlockName;
+            }
+        }
+        return null;
+    }
+
     public static function createItemInfo(Session $session, Item $item): array
     {
         $baseInfo = [
             "{id}" => $item->getTypeId(),
             "{name}" => $item->getName(),
             "{vanillaname}" => $item->getVanillaName(),
+            "{internalname}" => self::getInternalNameForItem($item) ?? "N/A",
             "{count}" => $item->getCount(),
             "{damage}" => "N/A",
             "{durability}" => "N/A",
             "{defense}" => "N/A"
         ];
-
+        
         if ($item instanceof Tool) {
             $baseInfo["{damage}"] = $item->getDamage();
             $baseInfo["{durability}"] = $item->getMaxDurability();

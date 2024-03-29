@@ -70,7 +70,7 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava state: {java_state}"
 
-item-info: "name: {name}§r, id: {id}, vanilla name: {vanillaname}, count: {count}, durability: {durability}, durability taken: {damage}, defense: {defense}"
+item-info: "name: {name}§r, id: {id}, vanilla name: {vanillaname}, internal name: {internalname}, count: {count}, durability: {durability}, durability taken: {damage}, defense: {defense}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"

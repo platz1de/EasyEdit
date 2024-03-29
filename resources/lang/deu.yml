@@ -70,7 +70,7 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlockzustand: {state}\nJava Blockzustand: {java_state}"
 
-item-info: "Name: {name}§r, id: {id}, vanilla Name: {vanillaname}, Anzahl: {count}, Haltbarkeit: {durability}, verbrauchte Haltbarkeit: {damage}, Rüstungspunkte: {defense}"
+item-info: "Name: {name}§r, id: {id}, vanilla Name: {vanillaname}, interner Name: {internalname}, Anzahl: {count}, Haltbarkeit: {durability}, verbrauchte Haltbarkeit: {damage}, Rüstungspunkte: {defense}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unbekannte Struktur \"{schematic}\"\nBekannte Strukturen:{known}"

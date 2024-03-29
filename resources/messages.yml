@@ -74,7 +74,7 @@ block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava sta
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
 
-item-info: "name: {name}§r, id: {id}, vanilla name: {vanillaname}, count: {count}, durability: {durability}, durability taken: {damage}, defense: {defense}"
+item-info: "name: {name}§r, id: {id}, vanilla name: {vanillaname}, internal name: {internalname}, count: {count}, durability: {durability}, durability taken: {damage}, defense: {defense}"
 
 #Commands
 #Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
