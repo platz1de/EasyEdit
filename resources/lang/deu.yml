@@ -70,6 +70,8 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlockzustand: {state}\nJava Blockzustand: {java_state}"
 
+item-info: "Name: {name}, id: {id}, vanilla Name: {vanillaname}, Anzahl: {count}, Haltbarkeit: {durability}, verbrauchte Haltbarkeit: {damage}, Rüstungspunkte: {defense}"
+
 #Args: {schematic} {known}
 unknown-schematic: "Unbekannte Struktur \"{schematic}\"\nBekannte Strukturen:{known}"
 
@@ -226,3 +228,6 @@ command-unstuck-description: "Teleportiere zu einer sicheren Position"
 command-unstuck-usage: "//unstuck"
 command-up-description: "Teleportiere nach oben"
 command-up-usage: "//up <anzahl>"
+
+command-iteminfo-description: "Erhalte Informationen über den gehaltenen Gegenstand"
+command-iteminfo-usage: "//iteminfo"

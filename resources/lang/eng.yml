@@ -227,3 +227,6 @@ command-unstuck-description: "Teleport to a safe location"
 command-unstuck-usage: "//unstuck"
 command-up-description: "Teleport up"
 command-up-usage: "//up <amount>"
+
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
