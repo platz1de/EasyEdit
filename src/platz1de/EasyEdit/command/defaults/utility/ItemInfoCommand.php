@@ -24,17 +24,18 @@ class ItemInfoCommand extends EasyEditCommand
 
     public static function getInternalNameForItem(Item $item): ?string
     {
-        // could consider vanilla name assumption (to lowercase and replace spaces with underscores) -> names with `'` are definitely different
+        // could consider vanilla name assumption (to lowercase and replace spaces with underscores) -> names with `'` are definitely different, elements..
+        // maybe there is something inbuilt (couldn't find anything quickly though)
 
-        foreach(VanillaItems::getAll() as $internalName => $vanillaItem) {
+        foreach(VanillaItems::getAll() as $internalItemName => $vanillaItem) {
             if ($vanillaItem->getTypeId() === abs($item->getTypeId())) {
-                return $internalName;
+                return strtolower($internalItemName);
             }
         }
         
         foreach(VanillaBlocks::getAll() as $internalBlockName => $vanillaBlock) {
             if ($vanillaBlock->getTypeId() === abs($item->getTypeId())) {
-                return $internalBlockName;
+                return strtolower($internalBlockName);
             }
         }
         return null;
@@ -43,7 +44,7 @@ class ItemInfoCommand extends EasyEditCommand
     public static function createItemInfo(Session $session, Item $item): array
     {
         $baseInfo = [
-            "{id}" => $item->getTypeId(),
+            "{id}" => abs($item->getTypeId()),
             "{name}" => $item->getName(),
             "{vanillaname}" => $item->getVanillaName(),
             "{internalname}" => self::getInternalNameForItem($item) ?? "N/A",
