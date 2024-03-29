@@ -21,7 +21,7 @@ tool-cooldown: 0.2
 #Whether to allow user with "easyedit.history.other" permission to undo/redo other people's actions
 allow-history-other: true
 
-#Maximum amount of undo/redo steps
+#Maximum amount of undo/redo steps; for maximum steps, also the default: -1
 history-depth: -1
 
 #Remaps usages of 3 or more slashes to 2 slashes, allowing usage of minecraft autocomplete

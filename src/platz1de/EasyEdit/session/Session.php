@@ -43,7 +43,6 @@ class Session
 	private StoredSelectionIdentifier $clipboard;
 	private Selection $selection;
 	private int $highlight = -1;
-	private int $historyDepth = 0;
 
 	public function __construct(private SessionIdentifier $id)
 	{
@@ -130,12 +129,10 @@ class Session
 			return;
 		}
 		$this->past->unshift($id);
-		$this->historyDepth++;
 
-		if (ConfigManager::getHistoryDepth() != -1) {
-			if ($this->historyDepth > ConfigManager::getHistoryDepth()) {
-				CleanStorageTask::from([$this->past->pop()->markForDeletion()]);
-				$this->historyDepth--;
+		if (ConfigManager::getHistoryDepth() !== -1) {
+			if ($this->past->count() > ConfigManager::getHistoryDepth()) {
+				CleanStorageTask::from([$this->past->pop()]);
 			}
 		}
 
@@ -179,7 +176,6 @@ class Session
 	public function undoStep(Session $executor): void
 	{
 		if ($this->canUndo()) {
-			$this->historyDepth--;
 			$executor->runTask(new StaticPasteTask($this->past->shift()->markForDeletion()))->then(function (EditTaskResult $result) {
 				$this->sendMessage("blocks-pasted", ["{time}" => $result->getFormattedTime(), "{changed}" => MixedUtils::humanReadable($result->getAffected())]);
 				$this->addToFuture($result->getSelection());
