@@ -7,13 +7,19 @@ use platz1de\EasyEdit\command\EasyEditCommand;
 use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
-use platz1de\EasyEdit\EasyEdit;
 use platz1de\EasyEdit\session\Session;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\item\Armor;
 use pocketmine\item\Tool;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
+use pocketmine\nbt\tag\ByteArrayTag;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ImmutableTag;
+use pocketmine\nbt\tag\IntArrayTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\world\format\io\GlobalItemDataHandlers;
 
 class ItemInfoCommand extends EasyEditCommand
 {
@@ -22,46 +28,56 @@ class ItemInfoCommand extends EasyEditCommand
 		parent::__construct("/iteminfo", [KnownPermissions::PERMISSION_UTIL]);
 	}
 
-    public static function getInternalNameForItem(Item $item): ?string
+    public static function convertNbtToPrettyString(CompoundTag $nbt): string
     {
-        // could consider vanilla name assumption (to lowercase and replace spaces with underscores) -> names with `'` are definitely different, elements..
-        // maybe there is something inbuilt (couldn't find anything quickly though)
+        $stringified = "{";
 
-        foreach(VanillaItems::getAll() as $internalItemName => $vanillaItem) {
-            if ($vanillaItem->getTypeId() === abs($item->getTypeId())) {
-                return strtolower($internalItemName);
+        $idx = 0;
+		foreach($nbt->getValue() as $name => $tag) {
+            $value = null;
+            if ($tag instanceof CompoundTag) {
+                $value = self::convertNbtToPrettyString($tag);
+            } else {
+                $tagAsString = $tag->toString();
+                $value = substr($tagAsString, strpos($tagAsString,"=") + 1);
             }
-        }
-        
-        foreach(VanillaBlocks::getAll() as $internalBlockName => $vanillaBlock) {
-            if ($vanillaBlock->getTypeId() === abs($item->getTypeId())) {
-                return strtolower($internalBlockName);
+
+            $valueColor = "§r";
+            if ($tag instanceof StringTag) {
+                $valueColor = "§a";
+            } else if (!($tag instanceof IntArrayTag || $tag instanceof ByteArrayTag) 
+                && $tag instanceof ImmutableTag) 
+            {
+                $valueColor = "§6";
             }
+            
+            $hasNextTagChar = ($idx < count($nbt->getValue())-1) ? ", " : "";
+            $stringified .= "§b" . $name . "§r: " . $valueColor . $value . "§r" . $hasNextTagChar;
+
+            $idx++;
         }
-        return null;
+
+        return $stringified . "}";
     }
 
     public static function createItemInfo(Session $session, Item $item): array
     {
-        $baseInfo = [
-            "{id}" => abs($item->getTypeId()),
-            "{name}" => $item->getName(),
-            "{vanillaname}" => $item->getVanillaName(),
-            "{internalname}" => self::getInternalNameForItem($item) ?? "N/A",
-            "{count}" => $item->getCount(),
-            "{damage}" => "N/A",
-            "{durability}" => "N/A",
-            "{defense}" => "N/A"
-        ];
-        
-        if ($item instanceof Tool) {
-            $baseInfo["{damage}"] = $item->getDamage();
-            $baseInfo["{durability}"] = $item->getMaxDurability();
-        }
 
-        if ($item instanceof Armor) {
-            $baseInfo["{defense}"] = $item->getDefensePoints();
-        }
+        $testNbt = CompoundTag::create()->setIntArray("test", [1, 2, 3, 4, 5]);
+
+        $itemData = GlobalItemDataHandlers::getSerializer()->serializeType($item);
+        $baseInfo = [
+            // "{id}" => abs($item->getTypeId()),
+            "{name}" => $item->getName(),
+            // "{vanillaname}" => $item->getVanillaName(),
+            "{id}" => $itemData->getName(),
+            "{count}" => $item->getCount(),
+            "{meta}" => $itemData->getMeta(),
+            // "{nbt}" => $itemData->toNbt()->toString(),
+            "{nbt}" => self::convertNbtToPrettyString($itemData->toNbt()),
+            // "{nbt}" => self::convertNbtToPrettyString($testNbt),
+            "{java_nbt}" => $itemData->toNbt()->toString()
+        ];
 
         return $baseInfo;
     }
