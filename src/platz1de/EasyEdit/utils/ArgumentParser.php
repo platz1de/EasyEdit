@@ -79,12 +79,12 @@ class ArgumentParser
 	public static function parseFacing(Session $session, string $direction = null): int
 	{
 		return match (strtolower($direction ?? "")) {
-			"north", "n" => Facing::NORTH,
-			"south", "s" => Facing::SOUTH,
-			"east", "e" => Facing::EAST,
-			"west", "w" => Facing::WEST,
-			"up", "u" => Facing::UP,
-			"down", "d" => Facing::DOWN,
+			"north", "n", "-z" => Facing::NORTH,
+			"south", "s", "z", "+z" => Facing::SOUTH,
+			"east", "e", "x", "+x" => Facing::EAST,
+			"west", "w", "-x" => Facing::WEST,
+			"up", "u", "y", "+y" => Facing::UP,
+			"down", "d", "-y" => Facing::DOWN,
 			default => VectorUtils::getFacing($session->asPlayer()->getLocation())
 		};
 	}
