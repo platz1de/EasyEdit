@@ -13,6 +13,7 @@ use platz1de\EasyEdit\utils\ExtendedBinaryStream;
 use platz1de\EasyEdit\utils\TileUtils;
 use pocketmine\math\Axis;
 use pocketmine\utils\InternetException;
+use pocketmine\world\World;
 use UnexpectedValueException;
 
 /**
@@ -56,10 +57,10 @@ class DynamicStoredFlipTask extends ExecutableTask
 		$flipped = $selection->createSafeClone();
 		$flipped->free();
 		$flipped->getManager()->loadBetween($flipped->getPos1(), $flipped->getPos2());
-		$flipped->setPoint($selection->getPoint()->setComponent($this->axis, -$selection->getPos2()->getComponent($this->axis) - $selection->getPoint()->getComponent($this->axis)));
+		$flipped->setPoint($selection->getPoint()->setComponent($this->axis, -$selection->getPos2()->getComponent($this->axis) - $selection->getPoint()->getComponent($this->axis) - ($this->axis === Axis::Y ? World::Y_MIN : 0)));
 		$selection->setPoint(BlockOffsetVector::zero());
 		$dx = $selection->getPos2()->x;
-		$dy = $selection->getPos2()->y;
+		$dy = $selection->getPos2()->y + World::Y_MIN;
 		$dz = $selection->getPos2()->z;
 		$constructors = iterator_to_array(match ($this->axis) {
 			Axis::X => $selection->asShapeConstructors(function (int $x, int $y, int $z) use ($dx, $selection, $flipped, $map): void {
