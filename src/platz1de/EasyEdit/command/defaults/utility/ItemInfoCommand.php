@@ -8,18 +8,7 @@ use platz1de\EasyEdit\command\flags\CommandFlag;
 use platz1de\EasyEdit\command\flags\CommandFlagCollection;
 use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\session\Session;
-use pocketmine\block\VanillaBlocks;
-use pocketmine\item\Armor;
-use pocketmine\item\Tool;
-use pocketmine\item\Item;
-use pocketmine\item\VanillaItems;
-use pocketmine\nbt\tag\ByteArrayTag;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\ImmutableTag;
-use pocketmine\nbt\tag\IntArrayTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\StringTag;
-use pocketmine\world\format\io\GlobalItemDataHandlers;
+use platz1de\EasyEdit\utils\ItemInfoUtil;
 
 class ItemInfoCommand extends EasyEditCommand
 {
@@ -28,59 +17,6 @@ class ItemInfoCommand extends EasyEditCommand
 		parent::__construct("/iteminfo", [KnownPermissions::PERMISSION_UTIL]);
 	}
 
-    public static function convertNbtToPrettyString(CompoundTag $nbt): string
-    {
-        $stringified = "{";
-
-        $idx = 0;
-		foreach($nbt->getValue() as $name => $tag) {
-            $value = null;
-            if ($tag instanceof CompoundTag) {
-                $value = self::convertNbtToPrettyString($tag);
-            } else {
-                $tagAsString = $tag->toString();
-                $value = substr($tagAsString, strpos($tagAsString,"=") + 1);
-            }
-
-            $valueColor = "§r";
-            if ($tag instanceof StringTag) {
-                $valueColor = "§a";
-            } else if (!($tag instanceof IntArrayTag || $tag instanceof ByteArrayTag) 
-                && $tag instanceof ImmutableTag) 
-            {
-                $valueColor = "§6";
-            }
-            
-            $hasNextTagChar = ($idx < count($nbt->getValue())-1) ? ", " : "";
-            $stringified .= "§b" . $name . "§r: " . $valueColor . $value . "§r" . $hasNextTagChar;
-
-            $idx++;
-        }
-
-        return $stringified . "}";
-    }
-
-    public static function createItemInfo(Session $session, Item $item): array
-    {
-
-        $testNbt = CompoundTag::create()->setIntArray("test", [1, 2, 3, 4, 5]);
-
-        $itemData = GlobalItemDataHandlers::getSerializer()->serializeType($item);
-        $baseInfo = [
-            // "{id}" => abs($item->getTypeId()),
-            "{name}" => $item->getName(),
-            // "{vanillaname}" => $item->getVanillaName(),
-            "{id}" => $itemData->getName(),
-            "{count}" => $item->getCount(),
-            "{meta}" => $itemData->getMeta(),
-            // "{nbt}" => $itemData->toNbt()->toString(),
-            "{nbt}" => self::convertNbtToPrettyString($itemData->toNbt()),
-            // "{nbt}" => self::convertNbtToPrettyString($testNbt),
-            "{java_nbt}" => $itemData->toNbt()->toString()
-        ];
-
-        return $baseInfo;
-    }
 
 	/**
 	 * @param Session               $session
@@ -89,7 +25,7 @@ class ItemInfoCommand extends EasyEditCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
         $itemInHand = $session->asPlayer()->getInventory()->getItemInHand();
-        $session->sendMessage("item-info", self::createItemInfo($session, $itemInHand));
+        $session->sendMessage("item-info", ItemInfoUtil::createItemInfo($session, $itemInHand));
 	}
 
 	/**
