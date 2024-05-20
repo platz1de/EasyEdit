@@ -9,20 +9,24 @@ use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ImmutableTag;
 use pocketmine\nbt\tag\IntArrayTag;
+use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
+use platz1de\EasyEdit\thread\EditThread;
 
 class ItemInfoUtil
 {
 
-    public static function convertNbtToPrettyString(CompoundTag $nbt): string
+    public static function convertNbtToPrettyString(CompoundTag | ListTag $nbt): string
     {
-        $stringified = "{";
+        $isCompoundTag = $nbt instanceof CompoundTag;
+        $openingChar = $isCompoundTag ? "{" : "[";
+        $stringified = $openingChar;
 
         $idx = 0;
 		foreach($nbt->getValue() as $name => $tag) {
             $value = null;
-            if ($tag instanceof CompoundTag) {
+            if ($tag instanceof CompoundTag || $tag instanceof ListTag) {
                 $value = self::convertNbtToPrettyString($tag);
             } else {
                 $tagAsString = $tag->toString();
@@ -39,12 +43,14 @@ class ItemInfoUtil
             }
             
             $hasNextTagChar = ($idx < count($nbt->getValue())-1) ? ", " : "";
-            $stringified .= "§b" . $name . "§r: " . $valueColor . $value . "§r" . $hasNextTagChar;
+            $lhs = $isCompoundTag ? "§b" . $name . "§r: " : "";
+            $stringified .= $lhs . $valueColor . $value . "§r" . $hasNextTagChar;
 
             $idx++;
         }
 
-        return $stringified . "}";
+        $closingChar = $isCompoundTag ? "}" : "]";
+        return $stringified . $closingChar;
     }
 
     public static function createItemInfo(Session $session, Item $item): array
