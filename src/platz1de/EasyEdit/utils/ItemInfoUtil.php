@@ -50,13 +50,14 @@ class ItemInfoUtil
     public static function createItemInfo(Session $session, Item $item): array
     {
         $itemData = GlobalItemDataHandlers::getSerializer()->serializeType($item);
+        $javaNbt = ItemConvertor::convertItemJava($itemData->toNbt());
         $baseInfo = [
             "{name}" => $item->getName(),
             "{id}" => $itemData->getName(),
             "{count}" => $item->getCount(),
             "{meta}" => $itemData->getMeta(),
             "{nbt}" => self::convertNbtToPrettyString($itemData->toNbt()),
-            "{java_nbt}" => self::convertNbtToPrettyString(ItemConvertor::convertItemJava($itemData->toNbt()))
+            "{java_nbt}" => $javaNbt === null ? "-" : self::convertNbtToPrettyString($javaNbt)
         ];
 
         return $baseInfo;
