@@ -70,6 +70,7 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlockzustand: {state}\nJava Blockzustand: {java_state}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
 item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
 
 #Args: {schematic} {known}
@@ -221,6 +222,8 @@ command-pastestates-description: "Füge alle bekannten Blockzustände in die Wel
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Erhalte eine Holzaxt"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Erhalte Informationen über den gehaltenen Gegenstand"
+command-iteminfo-usage: "//iteminfo"
 
 command-thru-description: "Teleportiere durch blöcke hindurch"
 command-thru-usage: "//thru"
@@ -228,6 +231,3 @@ command-unstuck-description: "Teleportiere zu einer sicheren Position"
 command-unstuck-usage: "//unstuck"
 command-up-description: "Teleportiere nach oben"
 command-up-usage: "//up <anzahl>"
-
-command-iteminfo-description: "Erhalte Informationen über den gehaltenen Gegenstand"
-command-iteminfo-usage: "//iteminfo"
