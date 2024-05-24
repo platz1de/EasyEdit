@@ -251,9 +251,9 @@ class ConfigManager
 		LegacyBlockIdConvertor::load();
 		BedrockStatePreprocessor::load();
 		BlockTagManager::load();
+		ItemConvertor::load();
 		BlockStateConvertor::load();
 		BlockRotationManipulator::load();
-		ItemConvertor::load();
 		TileConvertor::load(RepoManager::getVersion());
 		HeightMapCache::loadIgnore(self::$terrainIgnored);
 	}

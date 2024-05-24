@@ -13,7 +13,6 @@ use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\nbt\tag\CompoundTag;
 use platz1de\EasyEdit\utils\MixedUtils;
-use platz1de\EasyEdit\thread\output\NbtConversionData;
 use Throwable;
 
 class ItemConvertor
@@ -30,10 +29,14 @@ class ItemConvertor
 	 * @var ItemConvertorPiece[]
 	 */
 	private static array $convertors = [];
+	/** 
+	* @internal cache before being passed to the main thread
+	* @var string
+	*/
+	public static string $rawConversionMap = "{}";
 
 	public static function load(): void
 	{
-		$rawConversionMap = "{}";
 		try {
 			/**
 			 * @var string                                  $java
@@ -44,7 +47,7 @@ class ItemConvertor
 				self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
 			}
 
-			$rawConversionMap = json_encode($conversionMap, JSON_THROW_ON_ERROR);
+			self::$rawConversionMap = json_encode($conversionMap, JSON_THROW_ON_ERROR);
 
 			/**
 			 * TODO: Add more convertors
@@ -72,7 +75,6 @@ class ItemConvertor
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
-		EditThread::getInstance()->sendOutput(new NbtConversionData($rawConversionMap));
 	}	
 
 	/**
