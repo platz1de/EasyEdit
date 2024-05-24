@@ -79,7 +79,7 @@ class ItemConvertor
 		try {
 			$conversionMap = MixedUtils::decodeJson($rawConversionMap, 3);
 		} catch (Throwable $e) {
-			EditThread::getInstance()->getLogger()->error("Failed to parse java and bedrock conversion map data");
+			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 			return;
 		}
