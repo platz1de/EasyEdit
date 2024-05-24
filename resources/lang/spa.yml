@@ -70,6 +70,9 @@ benchmark-result: "#{task}: {name} - {blocks} en {time}s"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) a {x} {y} {z}\nEstado del bloque: {state}\nEstado Java: {java_state}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
+
 #Args: {schematic} {known}
 unknown-schematic: "Schematic desconocido \"{schematic}\"\nSchematics conocidos: {known}"
 
@@ -220,6 +223,9 @@ command-pastestates-description: "Pegar todos los estados de bloque conocidos"
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Consigue un hacha de madera"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Teletransportarse a través de bloques"
 command-thru-usage: "//thru"

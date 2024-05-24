@@ -227,6 +227,7 @@ command-wand-usage: "//wand"
 command-iteminfo-description: "Get information about the item in your hand"
 command-iteminfo-usage: "//iteminfo"
 
+
 command-thru-description: "Teleport through blocks"
 command-thru-usage: "//thru"
 command-unstuck-description: "Teleport to a safe location"

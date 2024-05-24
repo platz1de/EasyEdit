@@ -25,7 +25,7 @@ class ItemInfoCommand extends EasyEditCommand
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
 		$itemInHand = $session->asPlayer()->getInventory()->getItemInHand();
-		$session->sendMessage("item-info", ItemInfoUtil::createItemInfo($session, $itemInHand));
+		$session->sendMessage("item-info", ItemInfoUtil::createItemInfo($itemInHand));
 	}
 
 	/**

@@ -70,6 +70,9 @@ benchmark-result: "#{task}: {name} - {blocks} за {time}сек."
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) на позиции {x} {y} {z}\nСостояние блока: {state}\nJava-состояние: {java_state}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
+
 #Args: {schematic} {known}
 unknown-schematic: "Неизвестная схема \"{schematic}\"\nИзвестные схемы: {known}"
 
@@ -218,6 +221,9 @@ command-pastestates-description: "Вставить все известные с�
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Получить деревянную топорище"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Телепортироваться сквозь блоки"
 command-thru-usage: "//thru"

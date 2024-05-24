@@ -29,10 +29,10 @@ class ItemConvertor
 	 * @var ItemConvertorPiece[]
 	 */
 	private static array $convertors = [];
-	/** 
-	* @internal cache before being passed to the main thread
-	* @var string
-	*/
+	/**
+	 * @internal cache before being passed to the main thread
+	 * @var string
+	 */
 	public static string $rawConversionMap = "{}";
 
 	public static function load(): void
@@ -75,7 +75,7 @@ class ItemConvertor
 			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
-	}	
+	}
 
 	/**
 	 * @param CompoundTag $item
@@ -152,7 +152,8 @@ class ItemConvertor
 		return $item;
 	}
 
-	public static function loadResourceData(string $rawConversionMap): void {
+	public static function loadResourceData(string $rawConversionMap): void
+	{
 		try {
 			$conversionMap = MixedUtils::decodeJson($rawConversionMap, 3);
 		} catch (Throwable $e) {

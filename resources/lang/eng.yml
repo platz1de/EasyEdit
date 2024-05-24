@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2024-03-05
+#Last updated at: 2024-05-24
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -225,6 +225,7 @@ command-wand-description: "Get a wooden axe"
 command-wand-usage: "//wand"
 command-iteminfo-description: "Get information about the item in your hand"
 command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Teleport through blocks"
 command-thru-usage: "//thru"
