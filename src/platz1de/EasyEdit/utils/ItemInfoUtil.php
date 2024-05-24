@@ -11,6 +11,7 @@ use pocketmine\nbt\tag\ImmutableTag;
 use pocketmine\nbt\tag\IntArrayTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\utils\TextFormat;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 
 class ItemInfoUtil
@@ -32,18 +33,18 @@ class ItemInfoUtil
 				$value = substr($tagAsString, strpos($tagAsString,"=") + 1);
 			}
 
-			$valueColor = "§r";
+			$valueColor = TextFormat::RESET;
 			if ($tag instanceof StringTag) {
-				$valueColor = "§a";
+				$valueColor = TextFormat::GREEN;
 			} else if (!($tag instanceof IntArrayTag || $tag instanceof ByteArrayTag) 
 				&& $tag instanceof ImmutableTag) 
 			{
-				$valueColor = "§6";
+				$valueColor = TextFormat::GOLD;
 			}
 			
 			$hasNextTagChar = ($idx < count($nbt->getValue())-1) ? ", " : "";
-			$lhs = $isCompoundTag ? "§b" . $name . "§r: " : "";
-			$stringified .= $lhs . $valueColor . $value . "§r" . $hasNextTagChar;
+			$lhs = $isCompoundTag ? TextFormat::AQUA . $name . TextFormat::RESET . ": " : "";
+			$stringified .= $lhs . $valueColor . $value . TextFormat::RESET . $hasNextTagChar;
 
 			$idx++;
 		}

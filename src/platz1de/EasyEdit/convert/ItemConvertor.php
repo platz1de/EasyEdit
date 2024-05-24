@@ -73,21 +73,7 @@ class ItemConvertor
 			EditThread::getInstance()->getLogger()->debug($e->getMessage());
 		}
 		EditThread::getInstance()->sendOutput(new NbtConversionData($rawConversionMap));
-	}
-
-	public static function loadResourceData(string $rawConversionMap): void {
-		try {
-			$conversionMap = MixedUtils::decodeJson($rawConversionMap, 3);
-		} catch (Throwable $e) {
-			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
-			EditThread::getInstance()->getLogger()->debug($e->getMessage());
-			return;
-		}
-		foreach ($conversionMap as $java => $bedrock) {
-			self::$itemTranslationBedrock[$java] = [$bedrock["name"], (int) $bedrock["damage"]];
-			self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
-		}
-	}
+	}	
 
 	/**
 	 * @param CompoundTag $item
@@ -162,5 +148,19 @@ class ItemConvertor
 			$item->setTag(SavedItemData::TAG_TAG, $extraData);
 		}
 		return $item;
+	}
+
+	public static function loadResourceData(string $rawConversionMap): void {
+		try {
+			$conversionMap = MixedUtils::decodeJson($rawConversionMap, 3);
+		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
+			EditThread::getInstance()->getLogger()->debug($e->getMessage());
+			return;
+		}
+		foreach ($conversionMap as $java => $bedrock) {
+			self::$itemTranslationBedrock[$java] = [$bedrock["name"], (int) $bedrock["damage"]];
+			self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
+		}
 	}
 }
