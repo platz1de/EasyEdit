@@ -70,6 +70,9 @@ benchmark-result: "#{task}: {name} - {blocks} trong {time}s"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) tại {x} {y} {z}\nTrạng thái khối: {state}\nJava state: {java_state}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
+
 #Args: {schematic} {known}
 unknown-schematic: "Sơ đồ không xác định \"{schematic}\"\nCác sơ đồ đã biết: {known}"
 
@@ -220,6 +223,9 @@ command-pastestates-description: "Dán tất cả các trạng thái khối đã
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Nhận một cái rìu gỗ"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Teleport through blocks"
 command-thru-usage: "//thru"

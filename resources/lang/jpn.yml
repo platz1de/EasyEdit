@@ -70,6 +70,9 @@ benchmark-result: "#{task}: {name} - {blocks} を {time} 秒で処理"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) {x} {y} {z}\nブロックステート: {state}\nJava state: {java_state}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
+
 #Args: {schematic} {known}
 unknown-schematic: "不明なschematic: \"{schematic}\"\n既知のschematic: {known}"
 
@@ -220,6 +223,9 @@ command-pastestates-description: "全ての既知のブロックステートを�
 command-pastestates-usage: "//pastestates"
 command-wand-description: "領域指定用の木の斧を手に入れる"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Teleport through blocks"
 command-thru-usage: "//thru"

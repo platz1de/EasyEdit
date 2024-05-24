@@ -1,6 +1,6 @@
 #English language file
 #Author: platz1de
-#Last updated at: 2024-03-05
+#Last updated at: 2024-05-24
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -69,6 +69,9 @@ benchmark-result: "#{task}: {name} - {blocks} in {time}s"
 
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava state: {java_state}"
+
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
@@ -220,6 +223,9 @@ command-pastestates-description: "Paste all known block states"
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Get a wooden axe"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Teleport through blocks"
 command-thru-usage: "//thru"

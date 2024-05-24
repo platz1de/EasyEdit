@@ -74,6 +74,9 @@ block-info: "{name} ({id}:{meta}) at {x} {y} {z}\nBlock state: {state}\nJava sta
 #Args: {schematic} {known}
 unknown-schematic: "Unknown schematic \"{schematic}\"\nKnown schematics: {known}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nItem data: {nbt}\nJava data: {java_nbt}"
+
 #Commands
 #Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
 
@@ -221,6 +224,9 @@ command-pastestates-description: "Paste all known block states"
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Get a wooden axe"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Get information about the item in your hand"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Teleport through blocks"
 command-thru-usage: "//thru"

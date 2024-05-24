@@ -12,6 +12,7 @@ use platz1de\EasyEdit\thread\EditThread;
 use platz1de\EasyEdit\utils\RepoManager;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\nbt\tag\CompoundTag;
+use platz1de\EasyEdit\utils\MixedUtils;
 use Throwable;
 
 class ItemConvertor
@@ -28,6 +29,11 @@ class ItemConvertor
 	 * @var ItemConvertorPiece[]
 	 */
 	private static array $convertors = [];
+	/**
+	 * @internal cache before being passed to the main thread
+	 * @var string
+	 */
+	public static string $rawConversionMap = "{}";
 
 	public static function load(): void
 	{
@@ -36,10 +42,12 @@ class ItemConvertor
 			 * @var string                                  $java
 			 * @var array{name: string, damage: string|int} $bedrock
 			 */
-			foreach (RepoManager::getJson("item-conversion-map", 3) as $java => $bedrock) {
+			foreach ($conversionMap = RepoManager::getJson("item-conversion-map", 3) as $java => $bedrock) {
 				self::$itemTranslationBedrock[$java] = [$bedrock["name"], (int) $bedrock["damage"]];
 				self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
 			}
+
+			self::$rawConversionMap = json_encode($conversionMap, JSON_THROW_ON_ERROR);
 
 			/**
 			 * TODO: Add more convertors
@@ -142,5 +150,20 @@ class ItemConvertor
 			$item->setTag(SavedItemData::TAG_TAG, $extraData);
 		}
 		return $item;
+	}
+
+	public static function loadResourceData(string $rawConversionMap): void
+	{
+		try {
+			$conversionMap = MixedUtils::decodeJson($rawConversionMap, 3);
+		} catch (Throwable $e) {
+			EditThread::getInstance()->getLogger()->error("Failed to parse conversion data, Item conversion is not available");
+			EditThread::getInstance()->getLogger()->debug($e->getMessage());
+			return;
+		}
+		foreach ($conversionMap as $java => $bedrock) {
+			self::$itemTranslationBedrock[$java] = [$bedrock["name"], (int) $bedrock["damage"]];
+			self::$itemTranslationJava[$bedrock["name"]][(int) $bedrock["damage"]] = $java;
+		}
 	}
 }
