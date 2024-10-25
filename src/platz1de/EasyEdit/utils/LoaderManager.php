@@ -81,7 +81,7 @@ class LoaderManager
 		(function () use ($preparedInjections, $z, $x, $chunkHash, $chunk): void {
 			$this->chunks[$chunkHash] = $chunk;
 
-			unset($this->blockCache[$chunkHash], $this->changedBlocks[$chunkHash]);
+			unset($this->blockCache[$chunkHash], $this->changedBlocks[$chunkHash], $this->blockCollisionBoxCache[$chunkHash]);
 
 			foreach ($this->getChunkListeners($x, $z) as $loader) {
 				//In 1.16 Mojang really ruined Chunk updates, normal block rendering is delayed by about 1-5 seconds
