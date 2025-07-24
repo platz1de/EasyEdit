@@ -36,11 +36,19 @@ class SchematicFileAdapter
 	{
 		$file = null;
 		$usedParser = null;
-		foreach (self::$knownExtensions as $extension => $parser) {
-			if (is_file($path . $extension)) {
-				$file = $path . $extension;
-				$usedParser = $parser;
-				break;
+		if (is_file($path)) {
+			$extension = pathinfo($path, PATHINFO_EXTENSION);
+			if (isset(self::$knownExtensions[$extension])) {
+				$file = $path;
+				$usedParser = self::$knownExtensions[$extension];
+			}
+		} else {
+			foreach (self::$knownExtensions as $extension => $parser) {
+				if (is_file($path . $extension)) {
+					$file = $path . $extension;
+					$usedParser = $parser;
+					break;
+				}
 			}
 		}
 
@@ -85,6 +93,9 @@ class SchematicFileAdapter
 
 	public static function schematicExists(string $path): bool
 	{
+		if (is_file($path)) {
+			return true;
+		}
 		foreach (self::$knownExtensions as $extension => $parser) {
 			if (is_file($path . $extension)) {
 				return true;
