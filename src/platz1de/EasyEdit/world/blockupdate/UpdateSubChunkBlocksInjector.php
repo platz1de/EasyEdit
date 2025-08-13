@@ -2,12 +2,12 @@
 
 namespace platz1de\EasyEdit\world\blockupdate;
 
-use BadMethodCallException;
 use pocketmine\network\mcpe\protocol\ClientboundPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PacketHandlerInterface;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pocketmine\network\mcpe\protocol\UpdateSubChunkBlocksPacket;
 
 /**
  * We inject our pre-generated packet data directly into the network sending to not require creation of (way too many) packet entries
@@ -32,7 +32,10 @@ class UpdateSubChunkBlocksInjector extends DataPacket implements ClientboundPack
 
 	protected function decodePayload(PacketSerializer $in): void
 	{
-		throw new BadMethodCallException("Injectors should never be decoded");
+		$prev = $in->getOffset();
+		$mock = new UpdateSubChunkBlocksPacket();
+		$mock->decodePayload($in);
+		$this->rawData = substr($in->getBuffer(), $prev, $in->getOffset() - $prev);
 	}
 
 	protected function encodePayload(PacketSerializer $out): void
@@ -42,6 +45,9 @@ class UpdateSubChunkBlocksInjector extends DataPacket implements ClientboundPack
 
 	public function handle(PacketHandlerInterface $handler): bool
 	{
-		throw new BadMethodCallException("Cannot handle injectors");
+		//Apparently some plugins just blindly handle packets sent to the network, so we need to emulate its behavior
+		$mock = new UpdateSubChunkBlocksPacket();
+		$mock->decodePayload(PacketSerializer::decoder($this->rawData, 0));
+		return $mock->handle($handler);
 	}
 }
