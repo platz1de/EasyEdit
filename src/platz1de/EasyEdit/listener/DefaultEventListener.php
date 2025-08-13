@@ -136,6 +136,7 @@ class DefaultEventListener implements Listener
 		$player = $event->getEntity();
 		if ($player instanceof Player) {
 			EasyEdit::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player): void {
+				if (!$player->isConnected()) return;
 				ClientSideBlockManager::updateAll($player);
 			}), 2); //Network ticks after schedulers (we need updated player chunks though)
 		}
