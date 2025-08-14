@@ -55,14 +55,14 @@ schematic-created: "{changed} блоків збережено як \"{name}\" з
 #Args: {task} {queue} {status} {progress} {storage} {mem_current} {mem_max}
 thread-stats: "Статус EditThread:\nСтатус: {status}\nПоточне завдання: {task}\nПрогрес: {progress}\nЗавдань у черзі: {queue}\nЗбережених виділень: {storage}\nПам'ять потоку: {mem_current} МБ ({mem_max} МБ)"
 
-benchmark-start: "Запущено бенчмарк, це може тривати кілька хвилин..."
-benchmark-running: "Бенчмарк уже запущено"
+benchmark-start: "Запущено тест продуктивності, це може тривати кілька хвилин..."
+benchmark-running: "Тест продуктивності вже запущено"
 
 #Args: {done} {total}
-benchmark-progress: "Прогрес бенчмарку: {done}/{total}"
+benchmark-progress: "Прогрес тесту продуктивності: {done}/{total}"
 
 #Args: {tps_avg} {tps_min} {load_avg} {load_max} {tasks} {time} {results}
-benchmark-finished: "Результати вашого бенчмарку:\nСередній TPS: {tps_avg} ({load_avg}%)\nМінімальний TPS: {tps_min} ({load_max}%)\nВиконано {tasks} завдань за {time} секунд:\n{results}"
+benchmark-finished: "Результати вашого тесту продуктивності:\nСередній TPS: {tps_avg} ({load_avg}%)\nМінімальний TPS: {tps_min} ({load_max}%)\nВиконано {tasks} завдань за {time} секунд:\n{results}"
 
 #Args: {task} {name} {time} {blocks}
 benchmark-result: "#{task}: {name} - {blocks} за {time} секунд"
@@ -217,7 +217,7 @@ command-status-description: "Отримати статус потоку реда
 command-status-usage: "//status"
 command-cancel-description: "Скасувати поточне завдання"
 command-cancel-usage: "//cancel"
-command-benchmark-description: "Запустити бенчмарк"
+command-benchmark-description: "Запустити тест продуктивності"
 command-benchmark-usage: "//benchmark"
 command-pastestates-description: "Вставити всі відомі стани блоків"
 command-pastestates-usage: "//pastestates"
