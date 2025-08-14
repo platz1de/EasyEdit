@@ -223,6 +223,9 @@ command-pastestates-description: "Вставити всі відомі стан�
 command-pastestates-usage: "//pastestates"
 command-wand-description: "Отримати дерев'яну сокиру"
 command-wand-usage: "//wand"
+command-iteminfo-description: "Отримати інформацію про предмет у руці"
+command-iteminfo-usage: "//iteminfo"
+
 
 command-thru-description: "Телепортуватися крізь блоки"
 command-thru-usage: "//thru"
