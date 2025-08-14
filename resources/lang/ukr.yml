@@ -74,7 +74,7 @@ block-info: "{name} ({id}:{meta}) на координатах {x} {y} {z}\nСт�
 item-info: "{count}x {name}§r ({id}:{meta})\nДані предмета: {nbt}\nДані Java: {java_nbt}"
 
 #Args: {schematic} {known}
-unknown-schematic: "Невідома схематика \"{schematic}\"\nВідомі схематики: {known}"
+unknown-schematic: "Схематику \"{schematic}\" не знайдено\nДоступні схематики: {known}"
 
 #Commands
 #Note: If command usages contains a short description, it should be spilt with a "-" (e.g. "help - Show this help")
