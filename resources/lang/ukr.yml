@@ -194,7 +194,7 @@ command-commands-usage: "//commands [page]"
 command-brush-description: "Створити новий пензель"
 command-brush-usage:
   - "//brush sphere [radius] [pattern] [gravity] - Створити сферичний пензель"
-  - "//brush smooth [radius] - Створити згладжуючий пензель"
+  - "//brush smooth [radius] - Створити згладжувальний пензель"
   - "//brush naturalize [radius] [topBlock] [middleBlock] [bottomBlock] - Створити пензель натуралізації"
   - "//brush cylinder [radius] [height] [pattern] [gravity] - Створити циліндричний пензель"
   - "//brush paste [insert] - Створити пензель для вставки"
