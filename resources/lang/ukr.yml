@@ -70,6 +70,9 @@ benchmark-result: "#{task}: {name} - {blocks} за {time} секунд"
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
 block-info: "{name} ({id}:{meta}) на координатах {x} {y} {z}\nСтан блоку: {state}\nСтан Java-блоку: {java_state}"
 
+#Args: {count} {name} {id} {meta} {nbt} {java_nbt}
+item-info: "{count}x {name}§r ({id}:{meta})\nДані предмета: {nbt}\nДані Java: {java_nbt}"
+
 #Args: {schematic} {known}
 unknown-schematic: "Невідома схематика \"{schematic}\"\nВідомі схематики: {known}"
 
