@@ -68,7 +68,7 @@ benchmark-finished: "Результати вашого бенчмарку:\nСе
 benchmark-result: "#{task}: {name} - {blocks} за {time} секунд"
 
 #Args: {state} {id} {meta} {name} {x} {y} {z} {java_state}
-block-info: "{name} ({id}:{meta}) за {x} {y} {z}\nСтан блоку: {state}\nСтан Java: {java_state}"
+block-info: "{name} ({id}:{meta}) на координатах {x} {y} {z}\nСтан блоку: {state}\nСтан Java-блоку: {java_state}"
 
 #Args: {schematic} {known}
 unknown-schematic: "Невідома схематика \"{schematic}\"\nВідомі схематики: {known}"
@@ -208,7 +208,7 @@ command-line-usage:
   - "//line solid <x> <y> <z> [pattern] - Знайти суцільний шлях до пункту призначення (повільно)"
 command-blockinfo-description: "Отримати палицю для перевірки блоків"
 command-blockinfo-usage: "//blockinfo"
-command-builderrod-description: "Створити будівельний жезл"
+command-builderrod-description: "Створити будівельну паличку"
 command-builderrod-usage: "//builderrod"
 command-status-description: "Отримати статус потоку редагування"
 command-status-usage: "//status"
