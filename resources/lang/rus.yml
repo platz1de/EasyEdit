@@ -1,6 +1,6 @@
 #Russian language file
-#Author: BlusteryS
-#Last updated at: 2023-06-19 (OUTDATED)
+#Author: BlusteryS, ChernegaSergiy
+#Last updated at: 2025-08-14
 
 #If you want to include double quotes (") in your messages please escape them with a backslash (\")
 
@@ -10,7 +10,7 @@ prefix: "§l§aEasy§bEdit §r> "
 selected-pos1: "Выбрана первая позиция: {x} {y} {z}"
 selected-pos2: "Выбрана вторая позиция: {x} {y} {z}"
 
-deselected: "Deselected the current selection"
+deselected: "Текущее выделение отменено"
 
 no-selection: "У вас нет активного выделения"
 no-clipboard: "У вас нет активного буфера обмена"
@@ -83,14 +83,14 @@ command-pos1-description: "Установить первую позицию"
 command-pos1-usage: "//pos1 [x] [y] [z]"
 command-pos2-description: "Установить вторую позицию"
 command-pos2-usage: "//pos2 [x] [y] [z]"
-command-deselect-description: "Deselect the current selection"
+command-deselect-description: "Отменить текущее выделение"
 command-deselect-usage: "//deselect"
 command-extend-description: "Расширить выбранную область"
 command-extend-usage:
 - "//extend [направление] [количество]"
 - "//extend [количество] - Расширить выбранную область в направлении, в котором вы смотрите"
 - "//extend vertical - Полностью расширить выбранную область по вертикали"
-- "//extend —min <x>,<y>,<z> —max <x>,<y>,<z> - Изменить выбранную область с помощью заданных векторов"
+- "//extend --min <x>,<y>,<z> --max <x>,<y>,<z> - Изменить выбранную область с помощью заданных векторов"
 command-set-description: "Установить блоки в выбранной области"
 command-set-usage: "//set <шаблон>"
 command-replace-description: "Заменить блоки в выбранной области"
