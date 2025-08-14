@@ -219,7 +219,7 @@ command-benchmark-description: "Запустить тест производит
 command-benchmark-usage: "//benchmark"
 command-pastestates-description: "Вставить все известные состояния блоков"
 command-pastestates-usage: "//pastestates"
-command-wand-description: "Получить деревянную топорище"
+command-wand-description: "Получить деревянный топор"
 command-wand-usage: "//wand"
 command-iteminfo-description: "Получить информацию о предмете в руке"
 command-iteminfo-usage: "//iteminfo"
