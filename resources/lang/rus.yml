@@ -154,7 +154,7 @@ command-cut-usage:
 - "//cut -c - Вырезать относительно центра выбора"
 command-paste-description: "Вставить из буфера обмена"
 command-paste-usage: "//paste"
-command-insert-description: "Вставить из буфера обмена"
+command-insert-description: "Вставить без замены существующих блоков"
 command-insert-usage: "//insert"
 command-merge-description: "Слить текущий рельеф с буфером обмена"
 command-merge-usage: "//merge"

@@ -155,7 +155,7 @@ command-cut-usage:
   - "//cut -c - Вирізати відносно центру виділення"
 command-paste-description: "Вставити з буфера"
 command-paste-usage: "//paste"
-command-insert-description: "Вставити з буфера"
+command-insert-description: "Вставити без заміни існуючих блоків"
 command-insert-usage: "//insert"
 command-merge-description: "Об'єднати поточний ландшафт з буфером"
 command-merge-usage: "//merge"
