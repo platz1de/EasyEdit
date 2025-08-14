@@ -211,7 +211,7 @@ command-line-usage:
   - "//line solid <x> <y> <z> [pattern] - Знайти суцільний шлях до пункту призначення (повільно)"
 command-blockinfo-description: "Отримати палицю для перевірки блоків"
 command-blockinfo-usage: "//blockinfo"
-command-builderrod-description: "Створити будівельну паличку"
+command-builderrod-description: "Створити будівельний стрижень"
 command-builderrod-usage: "//builderrod"
 command-status-description: "Отримати статус потоку редагування"
 command-status-usage: "//status"
