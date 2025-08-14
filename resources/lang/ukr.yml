@@ -12,7 +12,7 @@ selected-pos2: "Другу позицію встановлено на {x} {y} {z
 
 deselected: "Поточне виділення скасовано"
 
-no-selection: "У вас немає активного вибору"
+no-selection: "У вас немає активного виділення"
 no-clipboard: "У вас немає активного буфера"
 
 #Args: {given} {expected}
