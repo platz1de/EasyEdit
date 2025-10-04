@@ -3,41 +3,52 @@
 namespace platz1de\EasyEdit\world\blockupdate;
 
 use pocketmine\network\mcpe\convert\TypeConverter;
-use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\utils\Binary;
+use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\VarInt;
 
 class InjectingData
 {
-	private PacketSerializer $injection;
-	private int $blockCount = 0;
-	private BlockPosition $position;
+    private BlockPosition $position;
+    private int $blockCount = 0;
 
-	public function __construct(int $x, int $y, int $z)
-	{
-		$this->position = new BlockPosition($x, $y, $z);
-		$this->injection = PacketSerializer::encoder();
-	}
+    /** @var list<array{x:int,y:int,z:int,id:int}> */
+    private array $blocks = [];
 
-	public function writeBlock(int $x, int $y, int $z, int $id): void
-	{
-		$this->blockCount++;
-		$this->injection->putVarInt($x);
-		$this->injection->putUnsignedVarInt(Binary::unsignInt($y));
-		$this->injection->putVarInt($z);
-		$this->injection->putUnsignedVarInt(TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($id));
-		$this->injection->putUnsignedVarInt(2); //network flag
-		$this->injection->putUnsignedVarLong(-1); //we don't have any actors
-		$this->injection->putUnsignedVarInt(0); //not synced
-	}
+    public function __construct(int $x, int $y, int $z)
+    {
+        $this->position = new BlockPosition($x, $y, $z);
+    }
 
-	public function toProtocol(): string
-	{
-		$serializer = PacketSerializer::encoder();
-		$serializer->putBlockPosition($this->position);
-		$serializer->putUnsignedVarInt($this->blockCount);
-		$serializer->put($this->injection->getBuffer());
-		$serializer->putUnsignedVarInt(0); //we don't use the second layer
-		return $serializer->getBuffer();
-	}
+    public function writeBlock(int $x, int $y, int $z, int $id): void
+    {
+        $this->blockCount++;
+        $this->blocks[] = ['x' => $x, 'y' => $y, 'z' => $z, 'id' => $id];
+    }
+
+    public function toProtocol(): string
+    {
+        $out = new ByteBufferWriter();
+
+        CommonTypes::putSignedBlockPosition($out, $this->position);
+        VarInt::writeUnsignedInt($out, $this->blockCount);
+
+        foreach ($this->blocks as $b) {
+            VarInt::writeSignedInt($out, $b['x']);
+            VarInt::writeUnsignedInt($out, Binary::unsignInt($b['y']));
+            VarInt::writeSignedInt($out, $b['z']);
+
+            $runtimeId = TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($b['id']);
+            VarInt::writeUnsignedInt($out, $runtimeId);
+
+            VarInt::writeUnsignedInt($out, 2);
+            VarInt::writeUnsignedLong($out, -1);
+            VarInt::writeUnsignedInt($out, 0);
+        }
+
+        VarInt::writeUnsignedInt($out, 0);
+        return $out->getData();
+    }
 }

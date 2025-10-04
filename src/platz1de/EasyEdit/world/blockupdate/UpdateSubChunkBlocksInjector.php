@@ -7,7 +7,9 @@ use pocketmine\network\mcpe\protocol\ClientboundPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PacketHandlerInterface;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pmmp\encoding\Byte;
+use pmmp\encoding\ByteBufferReader;
+use pmmp\encoding\ByteBufferWriter;
 
 /**
  * We inject our pre-generated packet data directly into the network sending to not require creation of (way too many) packet entries
@@ -30,15 +32,19 @@ class UpdateSubChunkBlocksInjector extends DataPacket implements ClientboundPack
 		return $result;
 	}
 
-	protected function decodePayload(PacketSerializer $in): void
-	{
-		throw new BadMethodCallException("Injectors should never be decoded");
-	}
+    protected function decodePayload(ByteBufferReader $in) : void
+    {
+        throw new BadMethodCallException("Injectors should never be decoded");
+    }
 
-	protected function encodePayload(PacketSerializer $out): void
-	{
-		$out->put($this->rawData);
-	}
+    protected function encodePayload(ByteBufferWriter $out) : void
+    {
+        $bytes = $this->rawData;
+        $len = strlen($bytes);
+        for ($i = 0; $i < $len; ++$i) {
+            Byte::writeUnsigned($out, ord($bytes[$i]));
+        }
+    }
 
 	public function handle(PacketHandlerInterface $handler): bool
 	{
