@@ -5,6 +5,7 @@ namespace platz1de\EasyEdit\world\blockupdate;
 use pmmp\encoding\VarInt;
 use pmmp\encoding\ByteBufferWriter;
 use pocketmine\network\mcpe\convert\TypeConverter;
+use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\utils\Binary;
 
@@ -28,16 +29,14 @@ class InjectingData
         VarInt::writeSignedInt($this->injection, $z);
         VarInt::writeUnsignedInt($this->injection, TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($id));
         VarInt::writeUnsignedInt($this->injection, 2); //network flag
-        VarInt::writeSignedLong($this->injection, -1); //we don't have any actors
+        VarInt::writeUnsignedLong($this->injection, 0); //we don't have any actors
         VarInt::writeUnsignedInt($this->injection, 0); //not synced
 	}
 
 	public function toProtocol(): string
 	{
 		$serializer = new ByteBufferWriter();
-        VarInt::writeSignedInt($serializer, $this->position->getX());
-        VarInt::writeUnsignedInt($serializer, Binary::unsignInt($this->position->getY()));
-        VarInt::writeSignedInt($serializer, $this->position->getZ());
+        CommonTypes::putBlockPosition($serializer, $this->position);
         VarInt::writeUnsignedInt($serializer, $this->blockCount);
         $serializer->writeByteArray($this->injection->getData());
         VarInt::writeUnsignedInt($serializer, 0); //we don't use the second layer
