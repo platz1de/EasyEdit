@@ -227,7 +227,7 @@ command-iteminfo-description: "手に持っているアイテムの情報を見�
 command-iteminfo-usage: "//iteminfo"
 
 
-command-thru-description: "ブロックを貫通した先にテレポートする"
+command-thru-description: "ブロックを貫通してテレポートする"
 command-thru-usage: "//thru"
 command-unstuck-description: "安全な場所にテレポートする"
 command-unstuck-usage: "//unstuck"
