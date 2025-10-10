@@ -2,42 +2,44 @@
 
 namespace platz1de\EasyEdit\world\blockupdate;
 
+use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\VarInt;
 use pocketmine\network\mcpe\convert\TypeConverter;
-use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\utils\Binary;
 
 class InjectingData
 {
-	private PacketSerializer $injection;
+	private ByteBufferWriter $injection;
 	private int $blockCount = 0;
 	private BlockPosition $position;
 
 	public function __construct(int $x, int $y, int $z)
 	{
 		$this->position = new BlockPosition($x, $y, $z);
-		$this->injection = PacketSerializer::encoder();
+		$this->injection = new ByteBufferWriter();
 	}
 
 	public function writeBlock(int $x, int $y, int $z, int $id): void
 	{
 		$this->blockCount++;
-		$this->injection->putVarInt($x);
-		$this->injection->putUnsignedVarInt(Binary::unsignInt($y));
-		$this->injection->putVarInt($z);
-		$this->injection->putUnsignedVarInt(TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($id));
-		$this->injection->putUnsignedVarInt(2); //network flag
-		$this->injection->putUnsignedVarLong(-1); //we don't have any actors
-		$this->injection->putUnsignedVarInt(0); //not synced
+		VarInt::writeSignedInt($this->injection, $x);
+		VarInt::writeUnsignedInt($this->injection, Binary::unsignInt($y));
+		VarInt::writeSignedInt($this->injection, $z);
+		VarInt::writeUnsignedInt($this->injection, TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($id));
+		VarInt::writeUnsignedInt($this->injection, 2); //network flag
+		VarInt::writeUnsignedLong($this->injection, 0); //we don't have any actors
+		VarInt::writeUnsignedInt($this->injection, 0); //not synced
 	}
 
 	public function toProtocol(): string
 	{
-		$serializer = PacketSerializer::encoder();
-		$serializer->putBlockPosition($this->position);
-		$serializer->putUnsignedVarInt($this->blockCount);
-		$serializer->put($this->injection->getBuffer());
-		$serializer->putUnsignedVarInt(0); //we don't use the second layer
-		return $serializer->getBuffer();
+		$serializer = new ByteBufferWriter();
+		CommonTypes::putBlockPosition($serializer, $this->position);
+		VarInt::writeUnsignedInt($serializer, $this->blockCount);
+		$serializer->writeByteArray($this->injection->getData());
+		VarInt::writeUnsignedInt($serializer, 0); //we don't use the second layer
+		return $serializer->getData();
 	}
 }

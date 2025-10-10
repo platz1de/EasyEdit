@@ -49,6 +49,7 @@ class SpongeSchematic extends SchematicType
 	public const ENTITY_POSITION = "Pos"; //also used for tile entities
 	public const ENTITY_ID = "Id"; //also used for tile entities
 	public const ENTITY_EXTRA_DATA = "Data"; //also used for tile entities
+	public const ROOT_SCHEMATIC = "Schematic";
 
 	/**
 	 * @param CompoundTag               $nbt
@@ -59,6 +60,10 @@ class SpongeSchematic extends SchematicType
 	{
 		if (!BlockStateConvertor::isAvailable()) {
 			throw new InternetException("Couldn't load needed data files");
+		}
+		//Sponge v3 wraps the schematic in a compound tag
+		if ($nbt->getCompoundTag(self::ROOT_SCHEMATIC) !== null) {
+			$nbt = $nbt->getCompoundTag(self::ROOT_SCHEMATIC);
 		}
 		$version = $nbt->getInt(self::FORMAT_VERSION, 1);
 		$offset = BlockOffsetVector::zero();

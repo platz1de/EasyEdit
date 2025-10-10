@@ -8,6 +8,18 @@ use platz1de\EasyEdit\command\KnownPermissions;
 use platz1de\EasyEdit\command\OverloadedCommand;
 use platz1de\EasyEdit\session\Session;
 use RuntimeException;
+use platz1de\EasyEdit\command\defaults\brush\SphericalBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\SmoothingBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\NaturalizingBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\CylindricalBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\PastingBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\CubeBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\PyramidBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\ConeBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\TorusBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\EllipsoidBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\FlattenBrushSubCommand;
+use platz1de\EasyEdit\command\defaults\brush\ExtrudeBrushSubCommand;
 
 class BrushCommand extends OverloadedCommand
 {
@@ -18,7 +30,12 @@ class BrushCommand extends OverloadedCommand
 			new SmoothingBrushSubCommand(),
 			new NaturalizingBrushSubCommand(),
 			new CylindricalBrushSubCommand(),
-			new PastingBrushSubCommand()
+			new PastingBrushSubCommand(),
+			new CubeBrushSubCommand(),
+			new PyramidBrushSubCommand(),
+			new ConeBrushSubCommand(),
+			new TorusBrushSubCommand(),
+			new EllipsoidBrushSubCommand()
 		], true, [KnownPermissions::PERMISSION_BRUSH], ["/br"]);
 	}
 

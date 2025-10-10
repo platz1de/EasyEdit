@@ -28,7 +28,7 @@ class LoadSchematicCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$schematicName = $flags->hasFlag("schematic") ? pathinfo($flags->getStringFlag("schematic"), PATHINFO_FILENAME) : "";
+		$schematicName = $flags->hasFlag("schematic") ? pathinfo($flags->getStringFlag("schematic"), PATHINFO_BASENAME) : "";
 		if ($schematicName === "" || !SchematicFileAdapter::schematicExists(EasyEdit::getSchematicPath() . $schematicName)) {
 			$session->sendMessage("unknown-schematic", ["{schematic}" => $schematicName, "{known}" => implode(", ", SchematicFileAdapter::getSchematicList())]);
 			return;

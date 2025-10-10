@@ -31,7 +31,7 @@ class SaveSchematicCommand extends EasyEditCommand
 	 */
 	public function process(Session $session, CommandFlagCollection $flags): void
 	{
-		$schematicName = pathinfo($flags->getStringFlag("schematic"), PATHINFO_FILENAME);
+		$schematicName = pathinfo($flags->getStringFlag("schematic"), PATHINFO_BASENAME);
 		if ($schematicName === "") {
 			throw new InvalidUsageException();
 		}
