@@ -130,7 +130,7 @@ class SimpleStateTranslator extends BlockStateTranslator
 	 * @param array<string, Tag> $states
 	 * @return array<string, Tag>
 	 */
-	protected function process(array $states, SimpleStateTranslator $allowedOverwrites = null): array
+	protected function process(array $states, ?SimpleStateTranslator $allowedOverwrites = null) : array
 	{
 		foreach ($this->removedStates as $state) {
 			if (!isset($states[$state])) {

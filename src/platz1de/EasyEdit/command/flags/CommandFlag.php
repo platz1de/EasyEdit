@@ -13,7 +13,7 @@ abstract class CommandFlag
 	 * @param string[]    $aliases
 	 * @param string|null $id
 	 */
-	final public function __construct(private string $name, private array $aliases = [], string $id = null)
+	final public function __construct(private string $name, private array $aliases = [], ?string $id = null)
 	{
 		$this->id = $id ?? $name[0];
 	}

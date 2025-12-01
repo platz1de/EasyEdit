@@ -2,8 +2,6 @@
 
 namespace platz1de\EasyEdit\utils;
 
-use platz1de\EasyEdit\command\EasyEditCommand;
-use platz1de\EasyEdit\command\exception\InvalidUsageException;
 use platz1de\EasyEdit\math\OffGridBlockVector;
 use platz1de\EasyEdit\pattern\parser\ParseError;
 use platz1de\EasyEdit\session\Session;
@@ -56,7 +54,7 @@ class ArgumentParser
 	 * @param int|null    $amount
 	 * @return OffGridBlockVector
 	 */
-	public static function parseDirectionVector(Session $session, string $args1 = null, string $args2 = null, int &$amount = null): OffGridBlockVector
+	public static function parseDirectionVector(Session $session, string $args1 = null, string $args2 = null, ?int &$amount = null) : OffGridBlockVector
 	{
 		$amount = 1;
 		if (is_numeric($args1)) {
@@ -76,7 +74,7 @@ class ArgumentParser
 	 * @param string|null $direction
 	 * @return int
 	 */
-	public static function parseFacing(Session $session, string $direction = null): int
+	public static function parseFacing(Session $session, ?string $direction = null) : int
 	{
 		return match (strtolower($direction ?? "")) {
 			"north", "n", "-z" => Facing::NORTH,
