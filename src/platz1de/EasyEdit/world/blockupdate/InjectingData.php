@@ -25,7 +25,7 @@ class InjectingData
 	{
 		$this->blockCount++;
 		VarInt::writeSignedInt($this->injection, $x);
-		VarInt::writeUnsignedInt($this->injection, Binary::unsignInt($y));
+		VarInt::writeSignedInt($this->injection, $y);
 		VarInt::writeSignedInt($this->injection, $z);
 		VarInt::writeUnsignedInt($this->injection, TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($id));
 		VarInt::writeUnsignedInt($this->injection, 2); //network flag
